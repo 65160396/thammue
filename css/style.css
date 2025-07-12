@@ -1,3 +1,5 @@
+/*body หน้าแรก*/
+
 .header-wrapper {
   display: flex;
   align-items: center;
@@ -206,4 +208,131 @@ li a:hover {
 
 .category-button:hover {
   background-color: #0a6c81;
+}
+
+/*หน้า login*/
+
+.login-container {
+  background-color: #fff;
+  margin: 50px auto;
+  padding: 30px;
+  width: 400px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.login-box-wrapper {
+  background-color: #00809d;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.login-box-wrapper input[type="text"],
+.login-box-wrapper input[type="password"] {
+  width: 90%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 20px;
+}
+
+.login-box-wrapper button {
+  background-color: rgb(83, 135, 187);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.login-box-wrapper button:hover {
+  background-color: #3399ff;
+}
+
+.login-social-options {
+  margin-top: 20px;
+}
+
+.login-social-options img {
+  width: 30px;
+  margin: 0 10px;
+  vertical-align: middle;
+}
+
+.login-register-link {
+  margin-top: 15px;
+  font-size: 15px;
+}
+
+.login-register-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-register-link a:hover {
+  text-decoration: underline;
+}
+
+.login-forgot-password {
+  text-align: right;
+  font-size: 12px;
+  color: red;
+  margin-top: -5px;
+  margin-bottom: 10px;
+  cursor: pointer; /*ทำคลิกได้*/
+}
+
+.login-show-password {
+  position: absolute;
+  right: 15px;
+  top: 55%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.login-show-password img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.login-font-text {
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.login-register-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  font-size: 15px;
+  color: white;
+}
+
+.login-register-container p {
+  margin: 0;
+  padding: 0;
+  color: rgb(255, 255, 255);
+}
+
+.login-register-container a.register-link {
+  margin: 0;
+  padding: 0;
+  color: rgb(144, 58, 58);
+}
+
+.login-register-container a.register-link {
+  font-weight: bold;
+  text-decoration: none; /*เอาเส้นใต้ลิงก์ออก*/
+  cursor: pointer;
+}
+
+.login-register-container a.register-link:hover {
+  text-decoration: none; /* เวลาชี้เมาส์จะไม่มีเส้นใต้ */
 }
