@@ -1,5 +1,6 @@
 /*body หน้าแรก*/
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -18,6 +19,11 @@ body {
   padding: 10px 20px;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+
+body.login-page {
+  background-color: #ffffff;
+  min-height: 100vh;
 }
 
 .logo-container {
