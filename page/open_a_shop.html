@@ -9,26 +9,30 @@
 
     <body class="login-page">
         <ul>
-            <li><a class="right" href="#openashop">เปิดร้านค้า</a></li>
-            <li class="right"><a href="#applyformembership">สมัครสมาชิก</a></li>
-            <!---<li class="right"><a href="#login">เข้าสู่ระบบ</a></li>--->
+            <li><a class="" href="#openashop">เปิดร้านค้า</a></li>
+            <li class="right">
+                <a href="/page/add_member.html">สมัครสมาชิก</a></li>
+            <li class="right"><a href="/page/login.html">เข้าสู่ระบบ</a></li>
             <li class="right"><a href="#language">
                     <img src="/img/world.png" alt="ภาษา"
                         class="menu-icon" />ภาษา</a></li>
             <li class="right"><a href="#help">
                     <img src="/img/question.png" alt="ช่วยเหลือ"
                         class="menu-icon" /> ช่วยเหลือ</a></li>
+            <li class="right"><a href="#notification">
+                    <img src="/img/notification.png" alt="การแจ้งเตือน"
+                        class="menu-icon" /> การแจ้งเตือน</a></li>
         </ul>
+    </body>
 
-        <!--เข้าสู่ระบบ -->
         <div class="login-container">
             <div class="login-box-wrapper">
-                <img src="/img/user.png" alt="Logo"
+                <img src="/img/store.png" alt="Logo"
                     style="width:80px; margin-bottom:3px;">
                 <div class="login-font-text">
-                    <h2>เข้าสู่ระบบ</h2></div>
-                <input type="text" placeholder="หมายเลขโทรศัพท์ / ชื่อผู้ใช้">
-                <div style="position: relative;">
+                    <h2>เปิดร้านค้า</h2></div>
+                <input type="text" placeholder="อีเมล์">
+                <!---<div style="position: relative;">
                     <input type="password" placeholder="รหัสผ่าน"
                         id="passwordInput">
 
@@ -37,10 +41,10 @@
                         <img src="/img/Social/hidden.png" alt
                             id="togglePasswordIcon" />
                     </span>
-                </div>
+                </div>--->
 
-                <div class="login-forgot-password">ลืมรหัสผ่าน</div>
-                <button>เข้าสู่ระบบ</button>
+                <!---<div class="login-forgot-password">ลืมรหัสผ่าน</div>--->
+                <button>ถัดไป</button>
                 <div class="login-social-options">
                     <div class="login-font-text">
                         <p>หรือ</p></div>
@@ -58,24 +62,4 @@
 
             </div>
         </div>
-
-        <!--สคริปต์-->
-        <script>
-    function togglePassword() {
-        const input = document.getElementById("passwordInput");
-        const icon = document.getElementById("togglePasswordIcon");
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.src = "/img/Social/hidden.png"; //(แสดงรหัส)
-            icon.alt = "ซ่อนรหัสผ่าน";
-        } else {
-            input.type = "password";
-            icon.src = "/img/Social/show.png"; //(ซ่อนรหัส)
-            icon.alt = "แสดงรหัสผ่าน";
-        }
-    }
-</script>
-
-    </body>
 </html>
