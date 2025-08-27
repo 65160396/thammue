@@ -8,7 +8,6 @@ body {
 }
 
 body {
-  background-color: #00809d;
   min-height: 100vh;
 }
 
@@ -112,7 +111,6 @@ li a:hover {
   justify-content: center;
   border-radius: 0 4px 4px 0;
 }
-
 .search-container .search-button img {
   height: 20px;
   width: auto;
@@ -176,27 +174,27 @@ li a:hover {
 }
 
 .ad-banner {
+  /*โฆษณา*/
   width: 100%;
-  padding: 10px 0;
+  padding: 50px 0;
   text-align: center;
-  background-color: #00809d;
 }
 
 .ad-banner img {
   max-width: 100%;
-  width: 850px;
+  width: 600px;
   height: auto;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .category-buttons {
+  /*หมวดหมู่สินค้า*/
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  padding: 20px 0;
-  background-color: #00809d;
+  gap: 50px;
+  padding: 0px 0;
 }
 .category-button {
   display: flex;
@@ -204,8 +202,8 @@ li a:hover {
   align-items: center;
   justify-content: center;
 
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
+  background-color: #00809dde;
+  color: rgb(255, 255, 255);
   border: none;
   padding: 10px;
   width: 120px;
