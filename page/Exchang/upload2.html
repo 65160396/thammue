@@ -1,0 +1,116 @@
+<!-- Save this file as: upload.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>THAMMUE – แบบฟอร์มแลกเปลี่ยน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/exchang/form.css" />
+</head>
+<!-- เปลี่ยนคลาสของ <body> ระหว่าง step-1 / step-2 / step-3 เพื่อให้ตัวชี้สถานะ (จุดส้ม, หัวข้อหนา/จาง) ตรงกับภาพตัวอย่างทั้งสองรูป -->
+<body class="step-1">
+  <!-- แถบด้านบน -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="top-links">
+        <a href="#">อัปโหลดสินค้าแลกเปลี่ยน</a>
+        <span class="divider">|</span>
+        <a href="#">ซื้อสินค้า</a>
+      </div>
+      <div class="top-utils">
+        <a href="#"><i class="fa-regular fa-bell"></i> แจ้งเตือน</a>
+        <a href="#"><i class="fa-regular fa-circle-question"></i> ช่วยเหลือ</a>
+        <a href="#"><i class="fa-solid fa-globe"></i> ไทย</a>
+        <a href="#" class="user"><i class="fa-regular fa-user"></i> noon</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- เฮดเดอร์หลัก -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <div class="logo">T</div>
+        <span class="brand-text">THAMMUE</span>
+      </a>
+      <form class="search" role="search" aria-label="ค้นหา">
+        <input type="search" placeholder="ค้นหาสินค้าที่ต้องการแลก / ซื้อ..." />
+        <button type="submit" aria-label="ค้นหา"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
+      <div class="nav-icons">
+        <a href="#" aria-label="สลับแลกเปลี่ยน"><i class="fa-solid fa-rotate"></i></a>
+        <a href="#" aria-label="รายการโปรด"><i class="fa-regular fa-heart"></i></a>
+        <a href="#" aria-label="แชท"><i class="fa-regular fa-comment-dots"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ตัวชี้ขั้นตอน (Stepper) -->
+  <section class="wizard container">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="dots" role="list" aria-label="สถานะขั้นตอน">
+      <span class="dot dot-1" role="listitem"></span>
+      <span class="dot dot-2" role="listitem"></span>
+      <span class="dot dot-3" role="listitem"></span>
+    </div>
+    <div class="labels">
+      <div class="label lbl-1">ข้อมูลสินค้า</div>
+      <div class="label lbl-2">สินค้าที่ต้องการ</div>
+      <div class="label lbl-3">สถานที่นัดรับ</div>
+    </div>
+  </section>
+
+  <!-- ฟอร์มกลางหน้า -->
+  <main class="container form-wrap">
+    <form class="form" action="#" method="post">
+      <div class="index-bullet" aria-hidden="true">1.</div>
+      <div class="fields">
+        <div class="field">
+          <label for="pname"><span class="req">*</span>ชื่อสินค้า</label>
+          <input id="pname" name="pname" type="text" />
+        </div>
+
+        <div class="field">
+          <label for="cat"><span class="req">*</span>หมวดหมู่</label>
+          <select id="cat" name="cat">
+            <option value="" selected disabled>เลือกหมวดหมู่</option>
+            <option>สินค้าอิเล็กทรอนิกส์</option>
+            <option>เครื่องใช้ภายในบ้าน</option>
+            <option>อุปกรณ์เด็ก</option>
+            <option>เสื้อผ้า</option>
+            <option>หนังสือ</option>
+            <option>ของสะสม</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="desc"><span class="req">*</span>รายละเอียดสินค้า</label>
+          <input id="desc" name="desc" type="text" />
+        </div>
+
+        <div class="field">
+          <label for="photo"><span class="req">*</span>รูปสินค้า</label>
+          <label class="upload" for="photo">
+            <input id="photo" name="photo" type="file" accept="image/*" />
+            <i class="fa-solid fa-plus"></i>
+          </label>
+        </div>
+      </div>
+
+       <div class="actions">
+        <a href="./upload3.html" class="btn-next">ต่อไป</a>
+      </div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container"><p>© 2025 THAMMUE</p></div>
+  </footer>
+</body>
+</html>
+
+
