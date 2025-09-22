@@ -352,7 +352,6 @@ li a:hover {
   text-decoration: none; /* เวลาชี้เมาส์จะไม่มีเส้นใต้ */
 }
 
-
 /* หน้าแนะนำสินค้า */
 .recommended-products {
   background: #f9f9f9;
@@ -379,12 +378,12 @@ li a:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
   text-align: center;
-  transition: transform 0.2s ease-in-out;
+  /*transition: transform 0.2s ease-in-out;*/ /* เพิ่มเอฟเฟกต์เมื่อ hover */
 }
 
-.product-card:hover {
+/*.product-card:hover {
   transform: translateY(-5px);
-}
+}*/
 
 .product-card img {
   max-width: 100%;
