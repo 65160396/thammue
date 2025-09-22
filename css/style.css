@@ -351,3 +351,42 @@ li a:hover {
 .login-register-container a.register-link:hover {
   text-decoration: none; /* เวลาชี้เมาส์จะไม่มีเส้นใต้ */
 }
+
+.recommended-products {
+  background: #f9f9f9;
+  padding: 20px;
+  margin: 30px auto;
+  border-radius: 8px;
+  max-width: 1200px;
+}
+
+.recommended-products h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
