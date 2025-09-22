@@ -352,6 +352,8 @@ li a:hover {
   text-decoration: none; /* เวลาชี้เมาส์จะไม่มีเส้นใต้ */
 }
 
+
+/* หน้าแนะนำสินค้า */
 .recommended-products {
   background: #f9f9f9;
   padding: 20px;
