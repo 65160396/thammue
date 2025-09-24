@@ -8,89 +8,64 @@
     </head>
 
     <body>
-        <ul>
-            <li><a class="right"
-                    href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
-            <li class="right">
-                <a href="/page/add_member.html">สมัครสมาชิก</a></li>
-            <li class="right"><a href="/page/login.html">เข้าสู่ระบบ</a></li>
-            <li class="right"><a href="#language">
-                    <img src="/img/Icon/world.png" alt="ภาษา"
-                        class="menu-icon" />ภาษา</a></li>
-            <li class="right"><a href="#help">
-                    <img src="/img/Icon/question.png" alt="ช่วยเหลือ"
-                        class="menu-icon" /> ช่วยเหลือ</a></li>
-            <li class="right"><a href="#notification">
-                    <img src="/img/Icon/notification.png" alt="การแจ้งเตือน"
-                        class="menu-icon" /> การแจ้งเตือน</a></li>
+        <!-- แถบบนสุด -->
+        <ul class="top-nav">
+            <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+                <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#help">ช่วยเหลือ</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#lang">ไทย</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#login">เข้าสู่ระบบ</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#login">สมัครสมาชิก</a></li>
+
+            </div>
         </ul>
 
+        <!-- Header หลัก -->
         <div class="header-wrapper">
             <div class="logo-container">
-                <img src="/img/Illustration/สกาย.jpg" alt="THAMMUE">
+                <span class="brand-text">THAMMUE</span>
             </div>
 
             <div class="search-container">
                 <div class="search-group">
                     <input type="text" placeholder="ค้นหาสินค้า" />
                     <button class="search-button" aria-label="ค้นหา">
-                        <img src="/img/Icon/search.png" alt="ค้นหา" />
+                        <img src="/img/Icon/search (1).png" alt="ค้นหา" />
                     </button>
                 </div>
                 <div class="icon-buttons">
-                    <button class="action-button" aria-label="แลกเปลี่ยนสินค้า">
-                        <img src="/img/Icon/exchange.png"
-                            alt="แลกเปลี่ยนสินค้า" />
-                    </button>
-                    <button class="action-button"
-                        aria-label="เพิ่มสินค้าลงตะกร้า">
-                        <img src="/img/Icon/shopping-cart.png"
-                            alt="เพิ่มสินค้าลงตะกร้า" />
-                    </button>
-                    <button class="action-button" aria-label="แชท">
-                        <img src="/img/Icon/chat.png" alt="ช่องแชท" />
-                    </button>
+                    <button class="action-button"><img src="/img/Icon/heart.png"
+                            alt="รายการโปรด" /></button>
+                    <button class="action-button"><img
+                            src="/img/Icon/shopping-cart.png"
+                            alt="ตะกร้า" /></button>
+                    <button class="action-button"><img src="/img/Icon/chat.png"
+                            alt="แชท" /></button>
+                    <!-- <button class="action-button"><img src="/img/Icon/user (1).png"
+                            alt="โปรไฟล์" /></button> -->
                 </div>
             </div>
         </div>
 
-        <div class="ad-banner">
-            <img src="/img/Illustration/โฆษณา.jpg" alt="โฆษณา" />
-        </div>
 
         <div class="category-buttons">
-            <a href="category/handmade.html" style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/แฮนเมด.png"
-                        alt="สินค้าแฮนเมด" />สินค้าแฮนเมด</button>
-            </a>
-            <a href="category/crafts.html" style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/ประดิษฐ์.png"
-                        alt="งานประดิษฐ์" />งานประดิษฐ์</button>
-            </a>
-            <a href="category/local_products.html"
-                style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/ตะกร้าสาน.png"
-                        alt="สินค้าท้องถิ่น" />สินค้าท้องถิ่น</button>
-            </a>
-            <a href="category/home_decorations.html"
-                style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/แจกัน.png"
-                        alt="ของตกแต่งบ้าน" />ของตกแต่งบ้าน</button>
-            </a>
-            <a href="category/jewelry.html" style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/ต่างหู.png"
-                        alt="เครื่องประดับ" />เครื่องประดับ</button>
-            </a>
-            <a href="category/second_hand.html" style="text-decoration: none;">
-                <button class="category-button">
-                    <img src="/img/Product/Category_logo/เสื้อ.png"
-                        alt="สินค้ามือสอง" />สินค้ามือสอง</button>
-            </a>
+  <a href="category/handmade.html"><button class="category-button">สินค้าแฮนเมด</button></a>
+  <a href="category/crafts.html"><button class="category-button">งานประดิษฐ์</button></a>
+  <a href="category/local_products.html"><button class="category-button">สินค้าท้องถิ่น</button></a>
+  <a href="category/home_decorations.html"><button class="category-button">ของตกแต่งบ้าน</button></a>
+</div>
+
+
+
+        <div class="ad-banner">
+            <img src="/img/Illustration/โฆษณา.jpg" alt="โฆษณา" />
         </div>
 
         <!-- แนะนำสำหรับคุณ -->

@@ -1,4 +1,4 @@
-/*body หน้าแรก*/
+/* ========== body หน้าแรก ========== */
 html,
 body {
   margin: 0;
@@ -6,16 +6,16 @@ body {
   width: 100%;
   height: 100%;
 }
-
 body {
   min-height: 100vh;
 }
 
+/* ========== Header หลัก (แถวโลโก้ + ค้นหา + ไอคอน) ========== */
 .header-wrapper {
   display: flex;
-  align-items: center;
-  background-color: #00809d;
-  padding: 10px 20px;
+  align-items: center; /* เดิมเป็น right (ไม่ถูกต้อง) */
+  background-color: #000000;
+  padding: 18px 24px; /* เดิม none -> 0 */
   justify-content: space-between;
   flex-wrap: wrap;
 }
@@ -28,7 +28,6 @@ body.login-page {
 .logo-container {
   margin-right: 20px;
 }
-
 .logo-container img {
   height: 80px;
   width: auto;
@@ -36,83 +35,123 @@ body.login-page {
   display: block;
 }
 
+.brand {
+  text-decoration: none;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.brand-text {
+  color: #fff;
+  font-size: 24px;
+  letter-spacing: 0.2em; /* เว้นระยะตัวอักษรแบบในภาพ */
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  font-family: "Cinzel", "Times New Roman", serif;
+}
+
+/*จอเล็ก ซ่อนไว้หรือย่อขนาด*/
+@media (max-width: 768px) {
+  .brand-text {
+    font-size: 18px;
+    letter-spacing: 0.35em;
+  }
+}
+
+/* แถบบนสุด (Top bar) */
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #00809d;
+  padding: 2px 12px;
+  background-color: #ffffff;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-
 li {
-  float: left;
+  float: none;
+  display: inline-flex;
+  align-items: center;
+}
+li.right {
+  margin-left: auto;
 }
 
-li.right {
-  float: right;
+li:has(> a.right) {
+  margin-left: auto;
 }
 
 li a {
   display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
+  color: #000000; /*หนังสือบนสุด*/
+  font-size: 12px;
+  padding: 2px 6px;
   text-decoration: none;
+  opacity: 0.9;
 }
-
 li a:hover {
-  background-color: #726e6e;
+  background-color: transparent;
+  opacity: 1;
 }
-
 .active {
   background-color: #107186;
-}
+} /* ถ้าใช้ที่อื่นอยู่ให้คงไว้ */
 
+/* ไอคอนใน top bar */
 .menu-icon {
   height: 20px;
   width: auto;
   vertical-align: middle;
   margin-right: 6px;
+  filter: invert(100%); /* ทำให้เป็นสีขาวบนพื้นดำ */
 }
 
+/* กล่องค้นหา + ปุ่มไอคอนขวา */
 .search-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* ชิดขวา */
   order: 2;
   flex-grow: 1;
-  gap: 20px; /* ระยะห่างระหว่าง input+search กับกลุ่มไอคอน */
+  gap: 12px;
 }
 
 .search-group {
   display: flex;
   align-items: center;
-  gap: 0; /* ช่องค้นหากับปุ่มค้นหาให้ติดกัน */
+  /*gap: 0; /* ช่องค้นหากับปุ่มค้นหาให้ติดกัน */
 }
 
 .search-container input[type="text"] {
-  padding: 6px 10px;
-  font-size: 17px;
+  padding: 8.5px 10px;
+  font-size: 15px;
   border: none;
   outline: none;
-  width: 550px;
-  max-width: 100%;
-  border-radius: 4px 0 0 4px;
+  height: 12px; /* ความสูงของกล่อง */
+  width: 260px; /* ขนาดความยาวของกล่อง */
+  max-width: 48vw;
+  border-radius: 2px 0 0 2px;
+  background: #ffffff;
 }
 
 .search-container .search-button {
-  padding: 6px 10px;
-  background: #ddd;
-  font-size: 17px;
-  border: none;
+  height: px;
+  padding: 7px 10px;
+  background: #ffffff;
+  font-size: 15px;
+  border: 1px solid #e5e5e5;
+  border-left: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 2px 2px 0;
 }
 .search-container .search-button img {
-  height: 20px;
+  height: 13px;
   width: auto;
   display: block;
 }
@@ -120,16 +159,16 @@ li a:hover {
 .search-container .icon-buttons {
   display: flex;
   align-items: center;
-  gap: 20px; /* ระยะห่างระหว่างแต่ละปุ่ม */
+  gap: 14px; /* ระยะห่างระหว่างแต่ละปุ่ม */
 }
 
 .search-container .action-button {
-  padding: 8px;
-  background: #00809d;
+  padding: 0;
+  background: transparent; /* โปร่งใสเหมือนภาพ */
   border: none;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,19 +176,25 @@ li a:hover {
   height: 36px;
   flex-shrink: 0;
 }
-
-.search-container .action-button img {
-  height: 20px;
-  width: auto;
-  display: block;
+.search-container .action-button:hover {
+  background: #111;
 }
 
-.search-container .action-button:hover {
-  background: #ccc;
+.search-container .action-button img {
+  height: 26px;
+  width: auto;
+  display: block;
+  /*filter: invert(100%) brightness(200%); /* ไอคอนเป็นสีขาว */
 }
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
+  ul {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
   .search-container {
     flex-direction: column;
     align-items: stretch;
@@ -160,7 +205,7 @@ li a:hover {
   .search-container .icon-buttons {
     width: 100%;
     margin: 0;
-    padding: 14px 0;
+    padding: 12px 0;
     justify-content: center;
   }
 
@@ -173,13 +218,12 @@ li a:hover {
   }
 }
 
+/* โฆษณา / หมวดหมู่ / หน้า login / แนะนำสินค้า */
 .ad-banner {
-  /*โฆษณา*/
   width: 100%;
   padding: 50px 0;
   text-align: center;
 }
-
 .ad-banner img {
   max-width: 100%;
   width: 600px;
@@ -188,45 +232,46 @@ li a:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/*หมวดหมู่*/
 .category-buttons {
-  /*หมวดหมู่สินค้า*/
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 50px;
-  padding: 0px 0;
+  gap: 30px;
+  padding: 12px 0;
+  background: #fff; /* ให้เป็นพื้นหลังขาว เหมือนเมนู */
+  border-bottom: 1px solid #eee;
 }
+
 .category-button {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  background-color: #00809dde;
-  color: rgb(255, 255, 255);
-  border: none;
-  padding: 10px;
-  width: 120px;
-  height: 120px;
-  font-size: 14px;
-  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-align: center;
+  transition: color 0.2s;
 }
-
 .category-button img {
-  width: 60px;
-  height: 60px;
+  width: 36px;
+  height: 36px;
   margin-bottom: 6px;
 }
-
 .category-button:hover {
-  background-color: #0a6c81;
+  color: #4e4e4e;
 }
 
-/*หน้า login*/
+.category-buttons a {
+  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  color: inherit;
+}
 
+.category-buttons a:hover {
+  text-decoration: none; /* ไม่โชว์เส้น */
+}
+
+/* หน้า login */
 .login-container {
   background-color: #fff;
   margin: 50px auto;
@@ -235,13 +280,11 @@ li a:hover {
   border-radius: 10px;
   text-align: center;
 }
-
 .login-box-wrapper {
   background-color: #00809d;
   padding: 30px;
   border-radius: 10px;
 }
-
 .login-box-wrapper input[type="text"],
 .login-box-wrapper input[type="password"] {
   width: 90%;
@@ -252,7 +295,6 @@ li a:hover {
   border-radius: 5px;
   height: 20px;
 }
-
 .login-box-wrapper button {
   background-color: rgb(83, 135, 187);
   color: white;
@@ -263,44 +305,36 @@ li a:hover {
   font-size: 15px;
   cursor: pointer;
 }
-
 .login-box-wrapper button:hover {
   background-color: #3399ff;
 }
-
 .login-social-options {
   margin-top: 20px;
 }
-
 .login-social-options img {
   width: 30px;
   margin: 0 10px;
   vertical-align: middle;
 }
-
 .login-register-link {
   margin-top: 15px;
   font-size: 15px;
 }
-
 .login-register-link a {
   color: #007bff;
   text-decoration: none;
 }
-
 .login-register-link a:hover {
   text-decoration: underline;
 }
-
 .login-forgot-password {
   text-align: right;
   font-size: 12px;
   color: red;
   margin-top: -5px;
   margin-bottom: 10px;
-  cursor: pointer; /*ทำคลิกได้*/
+  cursor: pointer;
 }
-
 .login-show-password {
   position: absolute;
   right: 15px;
@@ -308,20 +342,17 @@ li a:hover {
   transform: translateY(-50%);
   cursor: pointer;
 }
-
 .login-show-password img {
   width: 20px;
   height: 20px;
   object-fit: contain;
 }
-
 .login-font-text {
-  color: rgb(255, 255, 255);
+  color: #fff;
   font-size: 16px;
   margin-top: 15px;
   text-align: center;
 }
-
 .login-register-container {
   display: flex;
   justify-content: center;
@@ -329,27 +360,21 @@ li a:hover {
   font-size: 15px;
   color: white;
 }
-
 .login-register-container p {
   margin: 0;
   padding: 0;
-  color: rgb(255, 255, 255);
+  color: #fff;
 }
-
 .login-register-container a.register-link {
   margin: 0;
   padding: 0;
   color: rgb(144, 58, 58);
-}
-
-.login-register-container a.register-link {
   font-weight: bold;
-  text-decoration: none; /*เอาเส้นใต้ลิงก์ออก*/
+  text-decoration: none;
   cursor: pointer;
 }
-
 .login-register-container a.register-link:hover {
-  text-decoration: none; /* เวลาชี้เมาส์จะไม่มีเส้นใต้ */
+  text-decoration: none;
 }
 
 /* หน้าแนะนำสินค้า */
@@ -360,34 +385,24 @@ li a:hover {
   border-radius: 8px;
   max-width: 1200px;
 }
-
 .recommended-products h2 {
   text-align: center;
   margin-bottom: 20px;
 }
-
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 20px;
 }
-
 .product-card {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
   text-align: center;
-  text-decoration: none; 
-  color: inherit;   
-  /*transition: transform 0.2s ease-in-out;*/ /* เพิ่มเอฟเฟกต์เมื่อ hover */
+  text-decoration: none;
+  color: inherit;
 }
-
-/*.product-card:hover {
-  transform: translateY(-5px);
-  cursor: pointer;             
-}*/
-
 .product-card img {
   max-width: 100%;
   height: 180px;

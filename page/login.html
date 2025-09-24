@@ -1,81 +1,98 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
 
-    <body class="login-page">
-        <ul>
-            <li><a class="right" href="#openashop">เปิดร้านค้า</a></li>
-            <li class="right"><a href="#applyformembership">สมัครสมาชิก</a></li>
-            <!---<li class="right"><a href="#login">เข้าสู่ระบบ</a></li>--->
-            <li class="right"><a href="#language">
-                    <img src="/img/Icon/world.png" alt="ภาษา"
-                        class="menu-icon" />ภาษา</a></li>
-            <li class="right"><a href="#help">
-                    <img src="/img/Icon/question.png" alt="ช่วยเหลือ"
-                        class="menu-icon" /> ช่วยเหลือ</a></li>
-        </ul>
+<body class="login-page">
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+        <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
-        <!--เข้าสู่ระบบ -->
-        <div class="login-container">
-            <div class="login-box-wrapper">
-                <img src="/img/Icon/user.png" alt="Logo"
-                    style="width:80px; margin-bottom:3px;">
-                <div class="login-font-text">
-                    <h2>เข้าสู่ระบบ</h2></div>
-                <input type="text" placeholder="หมายเลขโทรศัพท์ / ชื่อผู้ใช้">
-                <div style="position: relative;">
-                    <input type="password" placeholder="รหัสผ่าน"
-                        id="passwordInput">
+        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#help">ช่วยเหลือ</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#lang">ไทย</a></li>
+    </ul>
 
-                    <span class="login-show-password"
-                        onclick="togglePassword()">
-                        <img src="/img/Social/hidden.png" alt
-                            id="togglePasswordIcon" />
-                    </span>
-                </div>
-
-                <div class="login-forgot-password">ลืมรหัสผ่าน</div>
-                <button>เข้าสู่ระบบ</button>
-                <div class="login-social-options">
-                    <div class="login-font-text">
-                        <p>หรือ</p></div>
-                    <a href="#"><img src="/img/Social/facebook.png"
-                            alt="Facebook"></a>
-                    <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
-                    <a href="#"><img src="/img/Social/google.png"
-                            alt="Google"></a>
-                </div>
-                <div class="login-font-text login-register-container">
-                    <p>คุณไม่มีบัญชีหรือไม่?</p>
-                    <a href="#applyformembership"
-                        class="register-link">สมัครสมาชิก</a>
-                </div>
-
-            </div>
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+        <div class="logo-container">
+            <span class="brand-text">THAMMUE</span>
         </div>
 
-        <!--สคริปต์-->
-        <script>
-    function togglePassword() {
-        const input = document.getElementById("passwordInput");
-        const icon = document.getElementById("togglePasswordIcon");
+        <div class="search-container">
+            <div class="search-group">
+                <input type="text" placeholder="ค้นหาสินค้า" />
+                <button class="search-button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search.png" alt="ค้นหา" />
+                </button>
+            </div>
+            <div class="icon-buttons">
+                <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+                <button class="action-button"><img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" /></button>
+                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+                <button class="action-button"><img src="/img/Icon/user (1).png" alt="โปรไฟล์" /></button>
+            </div>
+        </div>
+    </div>
 
-        if (input.type === "password") {
-            input.type = "text";
-            icon.src = "/img/Social/hidden.png"; //(แสดงรหัส)
-            icon.alt = "ซ่อนรหัสผ่าน";
-        } else {
-            input.type = "password";
-            icon.src = "/img/Social/show.png"; //(ซ่อนรหัส)
-            icon.alt = "แสดงรหัสผ่าน";
+    <!-- กล่องเข้าสู่ระบบ -->
+    <div class="login-container">
+        <div class="login-box-wrapper">
+            <img src="/img/Icon/user.png" alt="Logo" style="width:80px; margin-bottom:3px;">
+            <div class="login-font-text">
+                <h2>เข้าสู่ระบบ</h2>
+            </div>
+
+            <input type="text" placeholder="หมายเลขโทรศัพท์ / ชื่อผู้ใช้">
+            <div style="position: relative;">
+                <input type="password" placeholder="รหัสผ่าน" id="passwordInput">
+
+                <span class="login-show-password" onclick="togglePassword()">
+                    <img src="/img/Social/hidden.png" alt id="togglePasswordIcon" />
+                </span>
+            </div>
+
+            <div class="login-forgot-password">ลืมรหัสผ่าน</div>
+            <button>เข้าสู่ระบบ</button>
+
+            <div class="login-social-options">
+                <div class="login-font-text"><p>หรือ</p></div>
+                <a href="#"><img src="/img/Social/facebook.png" alt="Facebook"></a>
+                <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
+                <a href="#"><img src="/img/Social/google.png" alt="Google"></a>
+            </div>
+
+            <div class="login-font-text login-register-container">
+                <p>คุณไม่มีบัญชีหรือไม่?</p>
+                <a href="#applyformembership" class="register-link">สมัครสมาชิก</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- สคริปต์ -->
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("passwordInput");
+            const icon = document.getElementById("togglePasswordIcon");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.src = "/img/Social/hidden.png"; //(แสดงรหัส)
+                icon.alt = "ซ่อนรหัสผ่าน";
+            } else {
+                input.type = "password";
+                icon.src = "/img/Social/show.png"; //(ซ่อนรหัส)
+                icon.alt = "แสดงรหัสผ่าน";
+            }
         }
-    }
-</script>
-
-    </body>
+    </script>
+</body>
 </html>
