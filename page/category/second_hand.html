@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    </head>
+
+    <body>
+         <!-- แถบบนสุด -->
+        <ul class="top-nav">
+            <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+                <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#help">ช่วยเหลือ</a></li>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#lang">ไทย</a></li>
+            </div>
+        </ul>
+
+        <!-- Header หลัก -->
+        <div class="header-wrapper">
+            <div class="logo-container">
+                <span class="brand-text">THAMMUE</span>
+            </div>
+
+            <div class="search-container">
+                <div class="search-group">
+                    <input type="text" placeholder="ค้นหาสินค้า" />
+                    <button class="search-button" aria-label="ค้นหา">
+                        <img src="/img/Icon/search (1).png" alt="ค้นหา" />
+                    </button>
+                </div>
+                <div class="icon-buttons">
+                    <button class="action-button"><img src="/img/Icon/heart.png"
+                            alt="รายการโปรด" /></button>
+                    <button class="action-button"><img
+                            src="/img/Icon/shopping-cart.png"
+                            alt="ตะกร้า" /></button>
+                    <button class="action-button"><img src="/img/Icon/chat.png"
+                            alt="แชท" /></button>
+                    <button class="action-button"><img src="/img/Icon/user (1).png"
+                            alt="โปรไฟล์" /></button>
+                </div>
+            </div>
+        </div>
+
+
+       <div class="category-buttons">
+  <a href="/page/category/handmade.html" class="category-button">สินค้าแฮนเมด</a>
+  <a href="/page/category/jewelry.html"
+                class="category-button">เครื่องประดับ</a>
+  <a href="/page/category/local_products.html" class="category-button">สินค้าท้องถิ่น</a>
+  <a href="/page/category/second_hand.html" class="category-button">สินค้ามือสอง</a>
+</div>
+
+
+<script>
+(function () {
+  var path = window.location.pathname.toLowerCase();
+  document.querySelectorAll('.category-buttons a').forEach(function (a) {
+    var href = a.getAttribute('href').toLowerCase();
+    if (path.endsWith(href)) {
+      a.classList.add('active');
+    }
+  });
+})();
+</script>
+
+
+    </body>
+</html>

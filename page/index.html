@@ -55,14 +55,14 @@
         </div>
 
         <div class="category-buttons">
-            <a href="category/handmade.html"
+            <a href="/page/category/handmade.html"
                 class="category-button">สินค้าแฮนเมด</a>
-            <a href="category/crafts.html"
-                class="category-button">งานประดิษฐ์</a>
-            <a href="category/local_products.html"
+            <a href="/page/category/jewelry.html"
+                class="category-button">เครื่องประดับ</a>
+            <a href="/page/category/local_products.html"
                 class="category-button">สินค้าท้องถิ่น</a>
-            <a href="category/home_decorations.html"
-                class="category-button">ของตกแต่งบ้าน</a>
+            <a href="/page/category/second_hand.html"
+                class="category-button">สินค้ามือสอง</a>
         </div>
 
         <div class="ad-banner">
@@ -130,6 +130,18 @@
 
             </div>
         </div>
+
+        <script>
+(function () {
+  var path = location.pathname.replace(/\/+/g,'/').toLowerCase();
+  document.querySelectorAll('.category-buttons a.category-button').forEach(function (a) {
+    var href = a.getAttribute('href').replace(/\/+/g,'/').toLowerCase();
+    if (path.endsWith(href)) {
+      a.classList.add('active');
+    }
+  });
+})();
+</script>
 
     </body>
 </html>

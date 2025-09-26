@@ -236,39 +236,34 @@ li a:hover {
 .category-buttons {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  padding: 12px 0;
-  background: #fff; /* ให้เป็นพื้นหลังขาว เหมือนเมนู */
+  align-items: stretch; /* สำคัญ: ให้ลูกยืดเต็มสูง */
+  gap: 0; /* เอาช่องว่างออก จะได้ติดกัน */
+  padding: 0;
+  background: #fff;
   border-bottom: 1px solid #eee;
 }
 
 .category-button {
-  background: none;
-  border: none;
-  color: #000;
-  font-size: 14px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  transition: color 0.2s;
+  justify-content: center;
+  text-decoration: none;
+  padding: 8px 20px; /* ขนาดปุ่ม */
+  font-size: 14px;
+  color: #000;
+  background: #fff;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0; /* ไม่ต้องโค้ง */
 }
-.category-button img {
-  width: 36px;
-  height: 36px;
-  margin-bottom: 6px;
-}
+
 .category-button:hover {
-  color: #4e4e4e;
+  background: #f3f3f3;
 }
 
-.category-buttons a {
-  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
-  color: inherit;
-}
-
-.category-buttons a:hover {
-  text-decoration: none; /* ไม่โชว์เส้น */
+.category-button.active {
+  background: #000; /* พื้นหลังดำเต็ม */
+  color: #fff;
+  font-weight: 600;
 }
 
 /* หน้า login */

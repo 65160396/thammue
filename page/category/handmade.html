@@ -13,15 +13,11 @@
             <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
             <li><span class="top-divider">|</span></li>
             <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
-
                 <li class="right"><a href="#notification">แจ้งเตือน</a></li>
                 <li><span class="top-divider">|</span></li>
                 <li><a href="#help">ช่วยเหลือ</a></li>
                 <li><span class="top-divider">|</span></li>
                 <li><a href="#lang">ไทย</a></li>
-                <li><span class="top-divider">|</span></li>
-                <li><a href="#login">ลงชื่อเข้าใช้</a></li>
-
             </div>
         </ul>
 
@@ -53,11 +49,27 @@
         </div>
 
 
-        <div class="category-buttons">
-  <a href="category/handmade.html"><button class="category-button">สินค้าแฮนเมด</button></a>
-  <a href="category/crafts.html"><button class="category-button">งานประดิษฐ์</button></a>
-  <a href="category/local_products.html"><button class="category-button">สินค้าท้องถิ่น</button></a>
-  <a href="category/home_decorations.html"><button class="category-button">ของตกแต่งบ้าน</button></a>
+       <div class="category-buttons">
+  <a href="/page/category/handmade.html" class="category-button">สินค้าแฮนเมด</a>
+  <a href="/page/category/jewelry.html"
+                class="category-button">เครื่องประดับ</a>
+  <a href="/page/category/local_products.html" class="category-button">สินค้าท้องถิ่น</a>
+  <a href="/page/category/second_hand.html" class="category-button">สินค้ามือสอง</a>
 </div>
+
+
+<script>
+(function () {
+  var path = window.location.pathname.toLowerCase();
+  document.querySelectorAll('.category-buttons a').forEach(function (a) {
+    var href = a.getAttribute('href').toLowerCase();
+    if (path.endsWith(href)) {
+      a.classList.add('active');
+    }
+  });
+})();
+</script>
+
+
     </body>
 </html>
