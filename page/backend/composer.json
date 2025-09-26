@@ -1,0 +1,8 @@
+{
+  "name": "thammue/email-otp",
+  "description": "Email OTP verification for XAMPP",
+  "type": "project",
+  "require": {
+    "phpmailer/phpmailer": "^6.10"
+  }
+}

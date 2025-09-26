@@ -1,60 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
     <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
-        <link rel="stylesheet" href="/css/style.css" />
+        <meta charset="utf-8">
+        <title>สมัครสมาชิก</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <style>
+    .form{max-width:520px;margin:40px auto;font-family:sans-serif}
+    label{display:block;margin:10px 0 6px}
+    input{width:100%;padding:10px}
+    button{margin-top:12px;padding:10px 14px;cursor:pointer}
+    .hint{margin-top:10px;color:#555}
+  </style>
     </head>
-
-    <body class="login-page">
-        <ul>
-            <li><a class="right" href="#openashop">เปิดร้านค้า</a></li>
-            <!---<li class="right"><a href="#applyformembership">สมัครสมาชิก</a></li>--->
-            <li class="right"><a href="#login">เข้าสู่ระบบ</a></li>
-            <li class="right"><a href="#language">
-                    <img src="/img/Icon/world.png" alt="ภาษา"
-                        class="menu-icon" />ภาษา</a></li>
-            <li class="right"><a href="#help">
-                    <img src="/img/Icon/question.png" alt="ช่วยเหลือ"
-                        class="menu-icon" /> ช่วยเหลือ</a></li>
-        </ul>
-
-        <div class="login-container">
-            <div class="login-box-wrapper">
-                <img src="/img/Icon/contact.png" alt="Logo"
-                    style="width:80px; margin-bottom:3px;">
-                <div class="login-font-text">
-                    <h2>สมัครสมาชิก</h2></div>
-                <input type="text" placeholder="อีเมล์">
-                <!---<div style="position: relative;">
-                    <input type="password" placeholder="รหัสผ่าน"
-                        id="passwordInput">
-
-                    <span class="login-show-password"
-                        onclick="togglePassword()">
-                        <img src="/img/Social/hidden.png" alt
-                            id="togglePasswordIcon" />
-                    </span>
-                </div>--->
-
-                <!---<div class="login-forgot-password">ลืมรหัสผ่าน</div>--->
-                <button>ถัดไป</button>
-                <div class="login-social-options">
-                    <div class="login-font-text">
-                        <p>หรือ</p></div>
-                    <a href="#"><img src="/img/Social/facebook.png"
-                            alt="Facebook"></a>
-                    <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
-                    <a href="#"><img src="/img/Social/google.png"
-                            alt="Google"></a>
-                </div>
-                <div class="login-font-text login-register-container">
-                    <p>คุณไม่มีบัญชีหรือไม่?</p>
-                    <a href="#applyformembership"
-                        class="register-link">สมัครสมาชิก</a>
-                </div>
-
-            </div>
+    <body>
+        <div class="form">
+            <h2>สมัครสมาชิก</h2>
+            <form action="../backend/register.php" method="post">
+                <label>ชื่อ</label>
+                <input type="text" name="name" required>
+                <label>อีเมล</label>
+                <input type="email" name="email" required>
+                <label>รหัสผ่าน</label>
+                <input type="password" name="password" required>
+                <button type="submit">สมัครและรับ OTP</button>
+            </form>
+            <p class="hint">ได้รับ OTP แล้ว? ไปที่หน้า <a
+                    href="verify_otp.html">ยืนยัน OTP</a></p>
         </div>
     </body>
+</html>
