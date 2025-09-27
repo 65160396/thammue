@@ -1,79 +1,66 @@
 <?php
-// THAMMUE/backend/register.php
-declare(strict_types=1);
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
-require __DIR__ . '/vendor/autoload.php';       // จะมีหลังจาก composer install
-$config = require __DIR__ . '/config.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PDO, DateTime, DateInterval;
-
-// เชื่อม DB
-$dbcfg = $config['db'];
-$pdo = new PDO(
-    "mysql:host={$dbcfg['host']};dbname={$dbcfg['dbname']};charset={$dbcfg['charset']}",
-    $dbcfg['user'],
-    $dbcfg['pass'],
-    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-);
-
-// รับค่า
-$name = trim($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$password = $_POST['password'] ?? '';
-
-if (!$email || !$password) exit('ข้อมูลไม่ครบ');
-
-// เช็คอีเมลซ้ำ
-$st = $pdo->prepare("SELECT id,is_verified FROM users WHERE email=?");
-$st->execute([$email]);
-$exist = $st->fetch(PDO::FETCH_ASSOC);
-if ($exist && (int)$exist['is_verified'] === 1) exit('อีเมลนี้ถูกใช้งานแล้ว');
-
-// สร้าง user ถ้ายังไม่มี
-if (!$exist) {
-    $hash = password_hash($password, PASSWORD_BCRYPT);
-    $pdo->prepare("INSERT INTO users (name,email,password_hash) VALUES (?,?,?)")
-        ->execute([$name, $email, $hash]);
-    $user_id = (int)$pdo->lastInsertId();
-} else {
-    $user_id = (int)$exist['id'];
+// 1) กันเปิดตรง
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: /page/add_member.html');
+    exit;
 }
 
-// สร้าง OTP
-$len = (int)$config['otp']['length'];
-$otp = str_pad((string)random_int(0, (int)str_repeat('9', $len)), $len, '0', STR_PAD_LEFT);
-$expires = (new DateTime())->add(new DateInterval('PT' . $config['otp']['expire_minutes'] . 'M'))
-    ->format('Y-m-d H:i:s');
-
-// เก็บ OTP (ลบของเก่าก่อน)
-$pdo->prepare("DELETE FROM email_verifications WHERE user_id=?")->execute([$user_id]);
-$pdo->prepare("INSERT INTO email_verifications (user_id, otp_code, expires_at) VALUES (?,?,?)")
-    ->execute([$user_id, $otp, $expires]);
-
-// ส่งอีเมล
-try {
-    $s = $config['smtp'];
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host = $s['host'];
-    $mail->SMTPAuth = true;
-    $mail->Username = $s['username'];
-    $mail->Password = $s['password'];
-    $mail->SMTPSecure = $s['secure'];
-    $mail->Port = (int)$s['port'];
-    $mail->setFrom($s['from_email'], $s['from_name']);
-    $mail->addAddress($email, $name ?: $email);
-    $mail->isHTML(true);
-    $mail->Subject = 'OTP สำหรับยืนยันอีเมล';
-    $mail->Body = "<p>สวัสดี " . htmlspecialchars($name ?: $email) . "</p>
-                 <p>รหัส OTP ของคุณคือ <strong>" . htmlspecialchars($otp) . "</strong></p>
-                 <p>รหัสหมดอายุใน {$config['otp']['expire_minutes']} นาที</p>";
-    $mail->send();
-    echo "ส่ง OTP ไปแล้ว กรุณาตรวจอีเมล แล้วไปที่หน้า <a href=\"../page/verify_otp.html\">ยืนยัน OTP</a>.";
-} catch (\Throwable $e) {
+// 2) โหลด config + เช็ค $conn
+$cfg = __DIR__ . '/config.php';
+if (!file_exists($cfg)) {
     http_response_code(500);
-    echo "ส่งอีเมลไม่สำเร็จ: " . htmlspecialchars($e->getMessage());
+    exit("config.php not found");
 }
+require_once $cfg;
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    http_response_code(500);
+    exit("DB not ready");
+}
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$conn->set_charset('utf8mb4');
+
+// 3) รับค่า
+$email    = trim($_POST['email'] ?? '');
+$password = (string)($_POST['password'] ?? '');
+$confirm  = (string)($_POST['confirm_password'] ?? '');
+$name     = trim($_POST['name'] ?? '');
+
+// 4) ตรวจ
+$errors = [];
+if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'อีเมลไม่ถูกต้อง';
+if (mb_strlen($password) < 8)                                     $errors[] = 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
+if ($password !== $confirm)                                       $errors[] = 'รหัสผ่านยืนยันไม่ตรงกัน';
+if ($name === '')                                                 $errors[] = 'กรุณากรอกชื่อผู้ใช้';
+
+if ($errors) {
+    $msg = rawurlencode(implode(' • ', $errors));
+    header("Location: /page/add_member.html?type=error&msg={$msg}");
+    exit;
+}
+
+// 5) เช็คอีเมลซ้ำ
+$stmt = $conn->prepare('SELECT 1 FROM users WHERE email=? LIMIT 1');
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    $stmt->close();
+    $msg = rawurlencode('อีเมลนี้ถูกใช้งานแล้ว');
+    header("Location: /page/add_member.html?type=error&msg={$msg}");
+    exit;
+}
+$stmt->close();
+
+// 6) บันทึก
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$ins  = $conn->prepare('INSERT INTO users (name,email,password_hash) VALUES (?,?,?)');
+$ins->bind_param('sss', $name, $email, $hash);
+$ins->execute();
+$ins->close();
+$conn->close();
+
+// 7) สมัครสำเร็จ -> แจ้งบนฟอร์ม หรือจะพาไป login ก็ได้
+$msg = rawurlencode('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+header("Location: /page/add_member.html?type=success&msg={$msg}");
+exit;

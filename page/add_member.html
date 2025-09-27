@@ -1,31 +1,126 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
     <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>สมัครสมาชิก</title>
-        <link rel="stylesheet" href="../css/style.css">
         <style>
-    .form{max-width:520px;margin:40px auto;font-family:sans-serif}
-    label{display:block;margin:10px 0 6px}
-    input{width:100%;padding:10px}
-    button{margin-top:12px;padding:10px 14px;cursor:pointer}
-    .hint{margin-top:10px;color:#555}
+    body{font-family:sans-serif;max-width:520px;margin:40px auto}
+    label{display:block;margin-top:12px}
+    input{width:100%;padding:10px;margin-top:6px;box-sizing:border-box}
+    button{margin-top:16px;padding:10px;width:100%}
+    /* แสดงเฉพาะตอนมี error เท่านั้น */
+    .hint{display:none;margin-top:6px;font-size:13px;color:#c0392b}
+    /* flash จาก register.php */
+    .flash{display:none;padding:12px;border-radius:8px;margin:10px 0;font-size:14px}
+    .flash.show{display:block}
+    .flash.success{background:#e8fff0;border:1px solid #28a745;color:#19692c}
+    .flash.error{background:#fff1f1;border:1px solid #dc3545;color:#7a1f25}
   </style>
     </head>
     <body>
-        <div class="form">
-            <h2>สมัครสมาชิก</h2>
-            <form action="../backend/register.php" method="post">
-                <label>ชื่อ</label>
-                <input type="text" name="name" required>
-                <label>อีเมล</label>
-                <input type="email" name="email" required>
-                <label>รหัสผ่าน</label>
-                <input type="password" name="password" required>
-                <button type="submit">สมัครและรับ OTP</button>
-            </form>
-            <p class="hint">ได้รับ OTP แล้ว? ไปที่หน้า <a
-                    href="verify_otp.html">ยืนยัน OTP</a></p>
-        </div>
+        <h2>สมัครสมาชิก</h2>
+
+        <!-- กล่อง flash (ถ้ามีข้อความจาก register.php จะปรากฏที่นี่) -->
+        <div id="flash" class="flash" role="alert"></div>
+
+        <form action="/page/backend/register.php" method="POST" novalidate>
+            <label>อีเมล
+                <input id="email" type="email" name="email" required />
+                <!-- ไม่ใส่ข้อความตั้งต้น ให้ JS เติมเฉพาะตอนผิด -->
+                <small id="emailHelp" class="hint" aria-live="polite"></small>
+            </label>
+
+            <label>รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)
+                <input type="password" name="password" minlength="8" required />
+            </label>
+
+            <label>ยืนยันรหัสผ่าน
+                <input type="password" name="confirm_password" minlength="8"
+                    required />
+            </label>
+
+            <label>ชื่อผู้ใช้ / ชื่อที่แสดง
+                <input type="text" name="name" maxlength="150" required />
+            </label>
+
+            <button id="submitBtn" type="submit">สมัครสมาชิก</button>
+        </form>
+
+        <script>
+    // ----- อ่านพารามิเตอร์จาก register.php แล้วแสดง flash -----
+    const sp = new URLSearchParams(location.search);
+    const type = sp.get('type');   // success | error
+    const msg  = sp.get('msg');
+    const flashBox = document.getElementById('flash');
+    if (msg) {
+      flashBox.textContent = decodeURIComponent(msg);
+      flashBox.classList.add('show', type === 'success' ? 'success' : 'error');
+      history.replaceState({}, '', location.pathname); // ล้างพารามิเตอร์
+    }
+  </script>
+
+        <script>
+    // ----- ตรวจอีเมลแบบ realtime: แสดงเฉพาะตอน error -----
+    const emailInput = document.getElementById('email');
+    const help = document.getElementById('emailHelp');
+    const submitBtn = document.getElementById('submitBtn');
+    let typingTimer;
+
+    function validateFormat(v){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+    function showError(msg){
+      help.textContent = msg;
+      help.style.display = 'block';
+    }
+    function hideError(){
+      help.textContent = '';
+      help.style.display = 'none';
+    }
+
+    async function checkEmail(v){
+      try{
+        const res = await fetch('/page/backend/check_email.php?email=' + encodeURIComponent(v), {cache:'no-store'});
+        const data = await res.json();
+        if (data.exists){
+          showError('อีเมลนี้ถูกใช้งานแล้ว');
+          submitBtn.disabled = true;
+        }else{
+          hideError();               // ไม่ขึ้นอะไรถ้าไม่ซ้ำ
+          submitBtn.disabled = false;
+        }
+      }catch(e){
+        showError('ตรวจสอบไม่สำเร็จ ลองใหม่อีกครั้ง');
+        submitBtn.disabled = true;
+      }
+    }
+
+    emailInput.addEventListener('input', () => {
+      const v = emailInput.value.trim();
+      clearTimeout(typingTimer);
+
+      if (v === ''){
+        hideError();
+        submitBtn.disabled = false;
+        return;
+      }
+      if (!validateFormat(v)){
+        showError('รูปแบบอีเมลไม่ถูกต้อง');
+        submitBtn.disabled = true;
+        return;
+      }
+      // debounce 350ms
+      typingTimer = setTimeout(() => checkEmail(v), 350);
+    });
+
+    // กัน submit ถ้ายังมี error
+    document.querySelector('form').addEventListener('submit', (e) => {
+      const v = emailInput.value.trim();
+      if (!validateFormat(v) || help.style.display === 'block'){
+        e.preventDefault();
+      }
+    });
+  </script>
     </body>
 </html>
