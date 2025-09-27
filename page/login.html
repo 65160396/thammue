@@ -1,98 +1,149 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Thammue</title>
-    <link rel="stylesheet" href="/css/style.css" />
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <style>
+    /* เสริมเล็กน้อยสำหรับหน้านี้ */
+    .flash{display:none;padding:12px;border-radius:8px;margin:12px 0;font-size:14px}
+    .flash.show{display:block}
+    .flash.success{background:#e8fff0;border:1px solid #28a745;color:#19692c}
+    .flash.error{background:#fff1f1;border:1px solid #dc3545;color:#7a1f25}
 
-<body class="login-page">
-    <!-- แถบบนสุด -->
-    <ul class="top-nav">
-        <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+    .password-wrap{position:relative}
+    .login-show-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer}
+    .login-show-password img{width:22px;height:22px}
+    .login-box-wrapper form input{width:100%;padding:12px 44px 12px 12px;box-sizing:border-box}
+    .login-box-wrapper form button{width:100%;padding:12px;cursor:pointer}
+  </style>
+    </head>
 
-        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="#help">ช่วยเหลือ</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="#lang">ไทย</a></li>
-    </ul>
+    <body class="login-page">
+        <!-- แถบบนสุด -->
+        <ul class="top-nav">
+            <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
-    <!-- Header หลัก -->
-    <div class="header-wrapper">
-        <div class="logo-container">
-            <span class="brand-text">THAMMUE</span>
-        </div>
+            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#lang">ไทย</a></li>
+        </ul>
 
-        <div class="search-container">
-            <div class="search-group">
-                <input type="text" placeholder="ค้นหาสินค้า" />
-                <button class="search-button" aria-label="ค้นหา">
-                    <img src="/img/Icon/search.png" alt="ค้นหา" />
-                </button>
-            </div>
-            <div class="icon-buttons">
-                <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
-                <button class="action-button"><img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" /></button>
-                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
-                <button class="action-button"><img src="/img/Icon/user (1).png" alt="โปรไฟล์" /></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- กล่องเข้าสู่ระบบ -->
-    <div class="login-container">
-        <div class="login-box-wrapper">
-            <img src="/img/Icon/user.png" alt="Logo" style="width:80px; margin-bottom:3px;">
-            <div class="login-font-text">
-                <h2>เข้าสู่ระบบ</h2>
+        <!-- Header หลัก -->
+        <div class="header-wrapper">
+            <div class="logo-container">
+                <span class="brand-text">THAMMUE</span>
             </div>
 
-            <input type="text" placeholder="หมายเลขโทรศัพท์ / ชื่อผู้ใช้">
-            <div style="position: relative;">
-                <input type="password" placeholder="รหัสผ่าน" id="passwordInput">
-
-                <span class="login-show-password" onclick="togglePassword()">
-                    <img src="/img/Social/hidden.png" alt id="togglePasswordIcon" />
-                </span>
-            </div>
-
-            <div class="login-forgot-password">ลืมรหัสผ่าน</div>
-            <button>เข้าสู่ระบบ</button>
-
-            <div class="login-social-options">
-                <div class="login-font-text"><p>หรือ</p></div>
-                <a href="#"><img src="/img/Social/facebook.png" alt="Facebook"></a>
-                <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
-                <a href="#"><img src="/img/Social/google.png" alt="Google"></a>
-            </div>
-
-            <div class="login-font-text login-register-container">
-                <p>คุณไม่มีบัญชีหรือไม่?</p>
-                <a href="#applyformembership" class="register-link">สมัครสมาชิก</a>
+            <div class="search-container">
+                <div class="search-group">
+                    <input type="text" placeholder="ค้นหาสินค้า" />
+                    <button class="search-button" aria-label="ค้นหา">
+                        <img src="/img/Icon/search.png" alt="ค้นหา" />
+                    </button>
+                </div>
+                <div class="icon-buttons">
+                    <button class="action-button"><img src="/img/Icon/heart.png"
+                            alt="รายการโปรด" /></button>
+                    <button class="action-button"><img
+                            src="/img/Icon/shopping-cart.png"
+                            alt="ตะกร้า" /></button>
+                    <button class="action-button"><img src="/img/Icon/chat.png"
+                            alt="แชท" /></button>
+                    <button class="action-button"><img
+                            src="/img/Icon/user (1).png"
+                            alt="โปรไฟล์" /></button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- สคริปต์ -->
-    <script>
-        function togglePassword() {
-            const input = document.getElementById("passwordInput");
-            const icon = document.getElementById("togglePasswordIcon");
+        <!-- กล่องเข้าสู่ระบบ -->
+        <div class="login-container">
+            <div class="login-box-wrapper">
+                <img src="/img/Icon/user.png" alt="Logo"
+                    style="width:80px; margin-bottom:3px;">
+                <div class="login-font-text"><h2>เข้าสู่ระบบ</h2></div>
 
-            if (input.type === "password") {
-                input.type = "text";
-                icon.src = "/img/Social/hidden.png"; //(แสดงรหัส)
-                icon.alt = "ซ่อนรหัสผ่าน";
-            } else {
-                input.type = "password";
-                icon.src = "/img/Social/show.png"; //(ซ่อนรหัส)
-                icon.alt = "แสดงรหัสผ่าน";
-            }
-        }
-    </script>
-</body>
+                <!-- ข้อความจากฝั่ง PHP (ถ้ามี) -->
+                <div id="flash" class="flash" role="alert"></div>
+
+                <!-- ฟอร์มล็อกอิน (ส่งไป PHP endpoint) -->
+                <form action="/page/backend/login.php" method="POST" novalidate>
+                    <label class="login-font-text">
+                        อีเมลหรือชื่อผู้ใช้
+                        <input type="text" name="identifier"
+                            placeholder="อีเมล / ชื่อผู้ใช้" required />
+                    </label>
+
+                    <label class="login-font-text password-wrap">
+                        รหัสผ่าน
+                        <input type="password" name="password"
+                            id="passwordInput" placeholder="รหัสผ่าน"
+                            minlength="8" required />
+                        <span class="login-show-password"
+                            onclick="togglePassword()"
+                            aria-label="สลับการแสดงรหัสผ่าน">
+                            <!-- เริ่มต้นเป็นไอคอน 'แสดงรหัส' เพราะตอนนี้ซ่อนอยู่ -->
+                            <img id="togglePasswordIcon"
+                                src="/img/Social/show.png" alt="แสดงรหัสผ่าน" />
+                        </span>
+                    </label>
+
+                    <div class="login-forgot-password"><a
+                            href="#">ลืมรหัสผ่าน</a></div>
+                    <button type="submit">เข้าสู่ระบบ</button>
+                </form>
+
+                <div class="login-social-options">
+                    <div class="login-font-text"><p>หรือ</p></div>
+                    <a href="#"><img src="/img/Social/facebook.png"
+                            alt="Facebook"></a>
+                    <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
+                    <a href="#"><img src="/img/Social/google.png"
+                            alt="Google"></a>
+                </div>
+
+                <div class="login-font-text login-register-container">
+                    <p>คุณไม่มีบัญชีหรือไม่?</p>
+                    <a href="/page/add_member.html"
+                        class="register-link">สมัครสมาชิก</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- สคริปต์ -->
+        <script>
+    // โชว์/ซ่อนรหัสผ่าน
+    function togglePassword() {
+      const input = document.getElementById('passwordInput');
+      const icon  = document.getElementById('togglePasswordIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.src = '/img/Social/hidden.png'; // ตอนแสดงรหัส เปลี่ยนเป็นไอคอนซ่อน
+        icon.alt = 'ซ่อนรหัสผ่าน';
+      } else {
+        input.type = 'password';
+        icon.src = '/img/Social/show.png';   // ตอนซ่อนรหัส เปลี่ยนเป็นไอคอนแสดง
+        icon.alt = 'แสดงรหัสผ่าน';
+      }
+    }
+
+    // อ่าน ?type&msg ที่ login.php ส่งกลับมา แล้วแสดงบนหน้า
+    const sp = new URLSearchParams(location.search);
+    const type = sp.get('type'); // success | error
+    const msg  = sp.get('msg');
+    if (msg) {
+      const box = document.getElementById('flash');
+      box.textContent = decodeURIComponent(msg);
+      box.classList.add('show', type === 'success' ? 'success' : 'error');
+      // ล้างพารามิเตอร์กันโชว์ซ้ำเวลารีเฟรช
+      history.replaceState({}, '', location.pathname);
+    }
+  </script>
+    </body>
 </html>
