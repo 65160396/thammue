@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/exstyle.css" />
+</head>
+
+<body>
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+        <!-- ซ้าย -->
+        <li><a href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="/page/index.html">ซื้อสินค้า</a></li>
+
+        <!-- ขวา -->
+        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#help">ช่วยเหลือ</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+        <div class="logo-container">
+            <span class="brand-text">THAMMUE</span>
+        </div>
+
+        <div class="search-container">
+            <div class="search-group">
+                <input type="text" placeholder="ค้นหาสินค้า" />
+                <button class="search-button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search (1).png" alt="ค้นหา" />
+                </button>
+            </div>
+            <div class="icon-buttons">
+                <button class="action-button"><img src="/img/Icon/exchange.png" alt="คำขอแลกเปลี่ยน" /></button>
+                <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+                <button class="action-button"><img src="/img/Icon/user (1).png" alt="โปรไฟล์" /></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-buttons">
+        <a href="/exchangepage/category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
+        <a href="/exchangepage/category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
+        <a href="/exchangepage/category/children's.html" class="category-button">อุปกรณ์เด็ก</a>
+        <a href="/exchangepage/category/clothing.html" class="category-button">เสื้อผ้า</a>
+        <a href="/exchangepage/category/books.html" class="category-button">หนังสือ</a>
+        <a href="/exchangepage/category/collectibles.html" class="category-button">ของสะสม</a>
+    </div>
+
+    <body>
+        <main class="container">
+            <section class="card">
+                <h2 class="page-title">อัปโหลดข้อมูลสินค้า</h2>
+
+                <!-- Stepper -->
+                <div class="stepper" aria-label="ขั้นตอนการกรอกฟอร์ม">
+                    <div class="stepper-line">
+                        <span class="stepper-fill" style="width:0%"></span>
+                    </div>
+                    <div class="step" data-step="1">
+                        <span class="dot" aria-hidden="true"></span>
+                        <span class="label">ข้อมูลสินค้า</span>
+                    </div>
+                    <div class="step" data-step="2">
+                        <span class="dot" aria-hidden="true"></span>
+                        <span class="label">สินค้าที่ต้องการ</span>
+                    </div>
+                    <div class="step" data-step="3">
+                        <span class="dot" aria-hidden="true"></span>
+                        <span class="label">สถานที่จัดส่ง</span>
+                    </div>
+                </div>
+
+                <form id="exchangeForm" enctype="multipart/form-data" novalidate>
+                    <!-- STEP 1: ข้อมูลสินค้า -->
+                    <fieldset class="panel" data-step="1">
+                        <legend>ข้อมูลสินค้า</legend>
+
+                        <div class="field">
+                            <label for="p_name">* ชื่อสินค้า</label>
+                            <input id="p_name" name="p_name" type="text" required
+                                placeholder="เช่น เสื้อยืดมือสอง ไซส์ M" />
+                        </div>
+
+                        <div class="field">
+                            <label for="p_cat">* หมวดหมู่</label>
+                            <select id="p_cat" name="p_cat" required>
+                                <option value="" selected disabled>— เลือกหมวดหมู่ —</option>
+                                <option>เสื้อผ้า</option>
+                                <option>รองเท้า</option>
+                                <option>กระเป๋า</option>
+                                <option>อุปกรณ์อิเล็กทรอนิกส์</option>
+                                <option>ของใช้ในบ้าน</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="p_desc">รายละเอียดสินค้า</label>
+                            <textarea id="p_desc" name="p_desc" rows="3"
+                                placeholder="สภาพสินค้า / ปีที่ซื้อ / ตำหนิ"></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label>รูปสินค้า</label>
+                            <div class="upload">
+                                <input id="p_images" name="p_images" type="file" accept="image/*" multiple hidden />
+                                <button type="button" class="upload-box" data-for="p_images"
+                                    aria-label="เพิ่มรูปสินค้า">
+                                    <span class="plus">+</span>
+                                </button>
+                                <div class="thumbs" id="thumbs1"></div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn primary next">ต่อไป</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- STEP 2: สินค้าที่ต้องการ -->
+                    <fieldset class="panel" data-step="2" hidden>
+                        <legend>สินค้าที่ต้องการ</legend>
+
+                        <div class="field">
+                            <label for="w_name">ชื่อสินค้าที่ต้องการแลก</label>
+                            <input id="w_name" name="w_name" type="text" placeholder="เช่น เสื้อยืดลายการ์ตูน ไซส์ M" />
+                        </div>
+
+                        <div class="field">
+                            <label for="w_cat">หมวดหมู่</label>
+                            <select id="w_cat" name="w_cat">
+                                <option value="" selected disabled>— เลือกหมวดหมู่ —</option>
+                                <option>เสื้อผ้า</option>
+                                <option>รองเท้า</option>
+                                <option>กระเป๋า</option>
+                                <option>อุปกรณ์อิเล็กทรอนิกส์</option>
+                                <option>ของใช้ในบ้าน</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="w_desc">รายละเอียดเพิ่มเติม</label>
+                            <textarea id="w_desc" name="w_desc" rows="3"
+                                placeholder="สี/สไตล์/เงื่อนไขการแลก"></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label>รูปอ้างอิง (ถ้ามี)</label>
+                            <div class="upload">
+                                <input id="w_images" name="w_images" type="file" accept="image/*" multiple hidden />
+                                <button type="button" class="upload-box" data-for="w_images"
+                                    aria-label="เพิ่มรูปอ้างอิง">
+                                    <span class="plus">+</span>
+                                </button>
+                                <div class="thumbs" id="thumbs2"></div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn ghost back">ย้อนกลับ</button>
+                            <button type="button" class="btn primary next">ต่อไป</button>
+                        </div>
+                    </fieldset>
+
+                    <!-- STEP 3: สถานที่จัดส่ง -->
+                    <fieldset class="panel" data-step="3" hidden>
+                        <legend>สถานที่จัดส่ง</legend>
+
+                        <div class="grid-2">
+                            <div class="field">
+                                <label for="province">* จังหวัด</label>
+                                <select id="province" name="province" required>
+                                    <option value="" selected disabled>— เลือกจังหวัด —</option>
+                                    <option>กรุงเทพมหานคร</option>
+                                    <option>ชลบุรี</option>
+                                    <option>ระยอง</option>
+                                    <option>ฉะเชิงเทรา</option>
+                                    <option>จันทบุรี</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="district">* อำเภอ/เขต</label>
+                                <input id="district" name="district" type="text" required
+                                    placeholder="เช่น เมืองชลบุรี" />
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="field">
+                                <label for="subdistrict">ตำบล/แขวง</label>
+                                <input id="subdistrict" name="subdistrict" type="text" placeholder="เช่น บ้านสวน" />
+                            </div>
+                            <div class="field">
+                                <label for="zipcode">รหัสไปรษณีย์</label>
+                                <input id="zipcode" name="zipcode" type="text" inputmode="numeric" maxlength="5"
+                                    placeholder="20000" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="address">รายละเอียดสถานที่จัดส่ง</label>
+                            <input id="address" name="address" type="text" placeholder="บ้านเลขที่/หมู่/ซอย/ถนน" />
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn ghost back">ย้อนกลับ</button>
+                            <button type="submit" class="btn primary">ยืนยันการแลกเปลี่ยน</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </section>
+        </main>
+
+        <script>
+            // ======= Wizard Logic =======
+            const form = document.getElementById('exchangeForm');
+            const panels = [...form.querySelectorAll('.panel')];
+            const fill = document.querySelector('.stepper-fill');
+            const dots = [...document.querySelectorAll('.step .dot')];
+            let step = 1;
+
+            const showStep = (n) => {
+                step = Math.max(1, Math.min(3, n));
+                panels.forEach(p => p.hidden = Number(p.dataset.step) !== step);
+                dots.forEach((d, i) => d.classList.toggle('active', i < step));
+                fill.style.width = ((step - 1) / (3 - 1)) * 100 + '%';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const firstInvalidIn = (el) => {
+                const controls = el.querySelectorAll('input, select, textarea');
+                for (const c of controls) {
+                    if (!c.checkValidity()) return c;
+                }
+                return null;
+            };
+
+            form.addEventListener('click', (e) => {
+                if (e.target.classList.contains('next')) {
+                    const current = form.querySelector(`.panel[data-step="${step}"]`);
+                    const invalid = firstInvalidIn(current);
+                    if (invalid) { invalid.reportValidity(); return; }
+                    showStep(step + 1);
+                }
+                if (e.target.classList.contains('back')) {
+                    showStep(step - 1);
+                }
+            });
+
+            // ======= Upload + Thumbs =======
+            const previews = {
+                p_images: document.getElementById('thumbs1'),
+                w_images: document.getElementById('thumbs2')
+            };
+
+            document.querySelectorAll('.upload-box').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-for');
+                    document.getElementById(id).click();
+                });
+            });
+
+            const renderThumbs = (input, box) => {
+                box.innerHTML = '';
+                [...input.files].slice(0, 6).forEach(file => {
+                    const url = URL.createObjectURL(file);
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = file.name;
+                    img.className = 'thumb';
+                    box.appendChild(img);
+                });
+            };
+
+            Object.keys(previews).forEach(id => {
+                const input = document.getElementById(id);
+                input.addEventListener('change', () => renderThumbs(input, previews[id]));
+            });
+
+            // init
+            showStep(1);
+        </script>
+    </body>
+
+</html>
