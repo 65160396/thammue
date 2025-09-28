@@ -1,70 +1,266 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
 
-    <body>
-        <!-- แถบบนสุด -->
-        <ul class="top-nav">
-            <!-- ซ้าย -->
-            <li><a href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="/page/index.html">ซื้อสินค้า</a></li>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
 
-            <!-- ขวา -->
-            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
+<body>
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+        <!-- ซ้าย -->
+        <li><a href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="/page/index.html">ซื้อสินค้า</a></li>
 
-        <!-- Header หลัก -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <span class="brand-text">THAMMUE</span>
+        <!-- ขวา -->
+        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#help">ช่วยเหลือ</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+        <div class="logo-container">
+            <span class="brand-text">THAMMUE</span>
+        </div>
+
+        <div class="search-container">
+            <div class="search-group">
+                <input type="text" placeholder="ค้นหาสินค้า" />
+                <button class="search-button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search (1).png" alt="ค้นหา" />
+                </button>
             </div>
-
-            <div class="search-container">
-                <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
-                        <img src="/img/Icon/search (1).png" alt="ค้นหา" />
-                    </button>
-                </div>
-                <div class="icon-buttons">
-                    <button class="action-button"><img src="/img/Icon/exchange.png"
-                            alt="คำขอแลกเปลี่ยน" /></button>
-                    <button class="action-button"><img
-                            src="/img/Icon/heart.png"
-                            alt="รายการโปรด" /></button>
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
-                    <button class="action-button"><img src="/img/Icon/user (1).png"
-                            alt="โปรไฟล์" /></button> 
-                </div>
+            <div class="icon-buttons">
+                <button class="action-button"><img src="/img/Icon/exchange.png" alt="คำขอแลกเปลี่ยน" /></button>
+                <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+                <button class="action-button"><img src="/img/Icon/user (1).png" alt="โปรไฟล์" /></button>
             </div>
         </div>
+    </div>
 
-        <div class="category-buttons">
-            <a href="/exchangepage/category/Electronics.html"
-                class="category-button">อิเล็กทรอนิกส์</a>
-            <a href="/exchangepage/category/homeappliances.html"
-                class="category-button">เครื่องใช้ภายในบ้าน</a>
-            <a href="/exchangepage/category/children's.html"
-                class="category-button">อุปกรณ์เด็ก</a>
-            <a href="/exchangepage/category/clothing.html"
-                class="category-button">เสื้อผ้า</a>
-            <a href="/exchangepage/category/books.html"
-                class="category-button">หนังสือ</a>
-            <a href="/exchangepage/category/collectibles.html"
-                class="category-button">ของสะสม</a>
+    <div class="category-buttons">
+        <a href="/exchangepage/category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
+        <a href="/exchangepage/category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
+        <a href="/exchangepage/category/children's.html" class="category-button">อุปกรณ์เด็ก</a>
+        <a href="/exchangepage/category/clothing.html" class="category-button">เสื้อผ้า</a>
+        <a href="/exchangepage/category/books.html" class="category-button">หนังสือ</a>
+        <a href="/exchangepage/category/collectibles.html" class="category-button">ของสะสม</a>
+    </div>
+    <header class="hero">
+        <div class="container">
+            <h1>เชิญชวนแลกเปลี่ยน</h1>
+            <p class="hero-sub">
+                เปลี่ยนของที่ไม่ได้ใช้ ให้กลายเป็นคุณค่ากับเพื่อนบ้านและชุมชน — ประหยัดเงิน ลดขยะ ช่วยโลกไปด้วยกัน
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#exchange-popular">เริ่มต้นแลกเปลี่ยน</a>
+                <a class="btn btn-ghost" href="#why-local">ทำไมต้อง THAMMUE?</a>
+            </div>
         </div>
+    </header>
 
-        <div class="ad-banner">
-            <img src="/img/exchang/" alt="โฆษณา" />
+    <main>
+        <!-- สินค้าแลกเปลี่ยนยอดฮิต -->
+        <section class="section" id="exchange-popular">
+            <div class="container">
+                <div class="section-head">
+                    <h2>สินค้าแลกเปลี่ยนยอดฮิต</h2>
+                    <a class="link" href="#">ดูทั้งหมด</a>
+                </div>
+
+                <div class="grid grid-3">
+                    <!-- card 1 -->
+                    <article class="card">
+                        <div class="thumb" role="img" aria-label="หนังสือมือสอง"></div>
+                        <div class="card-body">
+                            <h3>หนังสือมือสอง</h3>
+                            <p class="muted">สภาพดี เหมาะสำหรับนักอ่าน แลกกับกาแฟคูปอง/ต้นไม้กระถาง</p>
+                            <div class="meta">
+                                <span>หมวด: หนังสือ</span>
+                                <span>ระยอง</span>
+                            </div>
+                            <a class="btn btn-sm" href="#">สนใจแลก</a>
+                        </div>
+                    </article>
+
+                    <!-- card 2 -->
+                    <article class="card">
+                        <div class="thumb" role="img" aria-label="เครื่องครัว"></div>
+                        <div class="card-body">
+                            <h3>เครื่องครัวสแตนเลส</h3>
+                            <p class="muted">หม้อ+ตะหลิวใช้น้อยมาก แลกกับวัตถุดิบท้องถิ่น/ผักสวนครัว</p>
+                            <div class="meta">
+                                <span>หมวด: ของใช้ในบ้าน</span>
+                                <span>ชลบุรี</span>
+                            </div>
+                            <a class="btn btn-sm" href="#">สนใจแลก</a>
+                        </div>
+                    </article>
+
+                    <!-- card 3 -->
+                    <article class="card">
+                        <div class="thumb" role="img" aria-label="เสื้อยืด"></div>
+                        <div class="card-body">
+                            <h3>เสื้อยืดผ้าฝ้ายแท้</h3>
+                            <p class="muted">ไซต์ M สภาพใหม่ แลกกับหนังสือ/อุปกรณ์วาดรูป</p>
+                            <div class="meta">
+                                <span>หมวด: แฟชั่น</span>
+                                <span>ฉะเชิงเทรา</span>
+                            </div>
+                            <a class="btn btn-sm" href="#">สนใจแลก</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- แบนเนอร์ “สินค้าเหลือใช้…” -->
+        <section class="section section-band">
+            <div class="container band">
+                <div class="band-content">
+                    <h2>สินค้าเหลือใช้อย่าทิ้ง ลองมาแลกเปลี่ยนกัน</h2>
+                    <p class="muted">
+                        อัปโหลดรูปและบอกสิ่งที่อยากได้กลับ เราจะช่วยจับคู่ให้เหมาะทั้งราคา คุณค่า และระยะทาง
+                    </p>
+                    <a class="btn btn-primary" href="#">ดูข้อมูลเพิ่มเติม</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- เพราะคุณชอบหนังสือ -->
+        <section class="section">
+            <div class="container">
+                <h3 class="section-title">เพราะคุณชอบหนังสือ</h3>
+                <div class="grid grid-4">
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>นิยายวายป่วน</h4>
+                        <p class="muted">แลกกับ: โปสการ์ดทำมือ</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>How to UX เบื้องต้น</h4>
+                        <p class="muted">แลกกับ: ปากกา/สมุดโน้ต</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>การเงินแบบมินิมอล</h4>
+                        <p class="muted">แลกกับ: ถุงผ้า</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>สรุป JavaScript</h4>
+                        <p class="muted">แลกกับ: เมาส์พッド</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- เพราะคุณชอบเสื้อผ้า -->
+        <section class="section">
+            <div class="container">
+                <h3 class="section-title">เพราะคุณชอบเสื้อผ้า</h3>
+                <div class="grid grid-4">
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>แจ็กเก็ตยีนส์</h4>
+                        <p class="muted">แลกกับ: หมวกแก๊ป</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>กางเกงผ้าลินิน</h4>
+                        <p class="muted">แลกกับ: ผ้าพันคอทอมือ</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>กระโปรงพลีท</h4>
+                        <p class="muted">แลกกับ: ถุงเท้าใหม่</p>
+                    </article>
+                    <article class="card mini">
+                        <div class="thumb"></div>
+                        <h4>รองเท้าผ้าใบ</h4>
+                        <p class="muted">แลกกับ: หนังสือการ์ตูน</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ทำไมเราจึงควรเลือกใช้สินค้าท้องถิ่น -->
+        <section class="section section-why" id="why-local">
+            <div class="container">
+                <h2 class="center">การเลือกใช้สินค้าท้องถิ่น</h2>
+                <h3 class="center muted">ทำไมเราจึงควรเลือกใช้สินค้าท้องถิ่น</h3>
+
+                <div class="grid grid-3 mt-24">
+                    <div class="reason">
+                        <h4>สนับสนุนเศรษฐกิจชุมชน</h4>
+                        <p class="muted">
+                            เงินหมุนเวียนในพื้นที่ เกิดงานใหม่ และช่วยให้ผู้ผลิตรายย่อยอยู่ได้อย่างยั่งยืน
+                        </p>
+                    </div>
+                    <div class="reason">
+                        <h4>ลดรอยเท้าคาร์บอน</h4>
+                        <p class="muted">
+                            ระยะทางขนส่งสั้นลง ลดการปล่อยก๊าซเรือนกระจก เหมาะกับไลฟ์สไตล์รักษ์โลก
+                        </p>
+                    </div>
+                    <div class="reason">
+                        <h4>ได้ของดี มีที่มา</h4>
+                        <p class="muted">
+                            รู้แหล่งผลิต วัตถุดิบ และเรื่องราวเบื้องหลังสินค้า ทำให้เลือกได้อย่างมั่นใจ
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div>
+                <h5>เราทำเพื่อ</h5>
+                <p class="muted">
+                    ที่นี่ช่วยให้แบ่งปัน แลกเปลี่ยน และสร้างคุณค่าใหม่ให้กับสิ่งที่มีอยู่ของทุกคนในชุมชน
+                    เพื่อลดขยะ เพิ่มเรื่องราว และวิถีชีวิตที่ยั่งยืน
+                </p>
+            </div>
+            <div>
+                <h5>ตรวจสอบสถานะ</h5>
+                <ul class="list">
+                    <li><a href="#">สถานะการแลกเปลี่ยน</a></li>
+                    <li><a href="#">อัปเดต</a></li>
+                    <li><a href="#">คู่มือสมาชิก</a></li>
+                    <li><a href="#">การชำระ/การรับของ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>SUBSCRIBE</h5>
+                <form class="subscribe" action="#" method="post">
+                    <input type="email" placeholder="อีเมลของคุณ" required />
+                    <button type="submit" class="btn btn-sm">ติดตามข่าว</button>
+                </form>
+                <div class="social">
+                    <a href="#" aria-label="Facebook">🄵</a>
+                    <a href="#" aria-label="Instagram">🄸</a>
+                    <a href="#" aria-label="YouTube">🅈</a>
+                    <a href="#" aria-label="Line">🄻</a>
+                </div>
+            </div>
         </div>
+        <div class="container tiny muted center mt-24">
+            copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน
+        </div>
+    </footer>
+
+</body>
+
+</html>
