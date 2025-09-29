@@ -1,126 +1,139 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>สมัครสมาชิก</title>
-        <style>
-    body{font-family:sans-serif;max-width:520px;margin:40px auto}
-    label{display:block;margin-top:12px}
-    input{width:100%;padding:10px;margin-top:6px;box-sizing:border-box}
-    button{margin-top:16px;padding:10px;width:100%}
-    /* แสดงเฉพาะตอนมี error เท่านั้น */
-    .hint{display:none;margin-top:6px;font-size:13px;color:#c0392b}
-    /* flash จาก register.php */
-    .flash{display:none;padding:12px;border-radius:8px;margin:10px 0;font-size:14px}
-    .flash.show{display:block}
-    .flash.success{background:#e8fff0;border:1px solid #28a745;color:#19692c}
-    .flash.error{background:#fff1f1;border:1px solid #dc3545;color:#7a1f25}
-  </style>
-    </head>
-    <body>
-        <h2>สมัครสมาชิก</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>สมัครสมาชิก | กรอกข้อมูล</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+  </head>
 
-        <!-- กล่อง flash (ถ้ามีข้อความจาก register.php จะปรากฏที่นี่) -->
-        <div id="flash" class="flash" role="alert"></div>
+  <body class="auth">
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+      <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="open_a_shop.html">เปิดร้านค้า</a></li>
+      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
 
-        <form action="/page/backend/register.php" method="POST" novalidate>
-            <label>อีเมล
-                <input id="email" type="email" name="email" required />
-                <!-- ไม่ใส่ข้อความตั้งต้น ให้ JS เติมเฉพาะตอนผิด -->
-                <small id="emailHelp" class="hint" aria-live="polite"></small>
-            </label>
+    <!-- แถบแบรนด์ -->
+    <body class="auth">
+      <!-- top-nav และ topbar ตามเดิม -->
 
-            <label>รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)
-                <input type="password" name="password" minlength="8" required />
-            </label>
+      <div class="auth-topbar"><div class="auth-brand">THAMMUE</div></div>
 
-            <label>ยืนยันรหัสผ่าน
-                <input type="password" name="confirm_password" minlength="8"
-                    required />
-            </label>
+      <div class="auth-page"> <!-- ← เพิ่มตัวห่อ -->
+        <div class="auth-steps" aria-hidden="true">
+          <span class="auth-dot is-active"></span>
+          <span class="auth-line"></span>
+          <span class="auth-dot"></span>
+        </div>
+        <div class="auth-step-labels">
+          <span class="is-active">กรอกข้อมูล</span>
+          <span>สมัครสมาชิกเสร็จสิ้น</span>
+        </div>
 
-            <label>ชื่อผู้ใช้ / ชื่อที่แสดง
-                <input type="text" name="name" maxlength="150" required />
-            </label>
+        <!-- ฟอร์ม -->
+        <form class="auth-form" id="signupForm" action="./backend/register.php"
+          method="post" novalidate>
+          <label class="auth-label" for="email"><span
+              class="auth-req">*</span>อีเมล</label>
+          <input class="auth-input" id="email" name="email" type="email"
+            required>
+          <small id="emailMsg" class="auth-field-msg"></small>
 
-            <button id="submitBtn" type="submit">สมัครสมาชิก</button>
+          <label class="auth-label" for="password">
+            <span class="auth-req">*</span>รหัสผ่าน
+            <span class="auth-hint"
+              style="display:inline;margin-left:6px;">อย่างน้อย 8
+              ตัวอักษร</span>
+          </label>
+          <input class="auth-input" id="password" name="password"
+            type="password"
+            minlength="8" required>
+
+          <label class="auth-label" for="confirm"><span
+              class="auth-req">*</span>ยืนยันรหัสผ่าน</label>
+          <input class="auth-input" id="confirm" name="confirm" type="password"
+            minlength="8" required>
+
+          <label class="auth-label" for="display"><span
+              class="auth-req">*</span>ชื่อผู้ใช้</label>
+          <input class="auth-input" id="display" name="display" type="text"
+            required>
+
+          <button class="auth-btn" type="submit" id="submitBtn">ถัดไป</button>
         </form>
+      </div>
 
-        <script>
-    // ----- อ่านพารามิเตอร์จาก register.php แล้วแสดง flash -----
-    const sp = new URLSearchParams(location.search);
-    const type = sp.get('type');   // success | error
-    const msg  = sp.get('msg');
-    const flashBox = document.getElementById('flash');
-    if (msg) {
-      flashBox.textContent = decodeURIComponent(msg);
-      flashBox.classList.add('show', type === 'success' ? 'success' : 'error');
-      history.replaceState({}, '', location.pathname); // ล้างพารามิเตอร์
-    }
-  </script>
-
-        <script>
-    // ----- ตรวจอีเมลแบบ realtime: แสดงเฉพาะตอน error -----
+      <script>
+    // ===== ตรวจอีเมลซ้ำแบบทันที =====
     const emailInput = document.getElementById('email');
-    const help = document.getElementById('emailHelp');
-    const submitBtn = document.getElementById('submitBtn');
-    let typingTimer;
+    const emailMsg   = document.getElementById('emailMsg');
+    const submitBtn  = document.getElementById('submitBtn');
+    let debounceTimer;
 
-    function validateFormat(v){
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    }
-    function showError(msg){
-      help.textContent = msg;
-      help.style.display = 'block';
-    }
-    function hideError(){
-      help.textContent = '';
-      help.style.display = 'none';
-    }
+    emailInput.addEventListener('input', () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(checkEmail, 400); });
+    emailInput.addEventListener('blur', checkEmail);
 
-    async function checkEmail(v){
-      try{
-        const res = await fetch('/page/backend/check_email.php?email=' + encodeURIComponent(v), {cache:'no-store'});
-        const data = await res.json();
-        if (data.exists){
-          showError('อีเมลนี้ถูกใช้งานแล้ว');
-          submitBtn.disabled = true;
-        }else{
-          hideError();               // ไม่ขึ้นอะไรถ้าไม่ซ้ำ
-          submitBtn.disabled = false;
-        }
-      }catch(e){
-        showError('ตรวจสอบไม่สำเร็จ ลองใหม่อีกครั้ง');
-        submitBtn.disabled = true;
-      }
-    }
-
-    emailInput.addEventListener('input', () => {
-      const v = emailInput.value.trim();
-      clearTimeout(typingTimer);
-
-      if (v === ''){
-        hideError();
+    async function checkEmail(){
+      const val = emailInput.value.trim();
+      // ถ้ายังไม่ใช่รูปแบบอีเมลที่ถูกต้อง ไม่ต้องเช็ก
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
+        emailInput.classList.remove('is-invalid','is-valid');
+        emailMsg.textContent = '';
         submitBtn.disabled = false;
         return;
       }
-      if (!validateFormat(v)){
-        showError('รูปแบบอีเมลไม่ถูกต้อง');
-        submitBtn.disabled = true;
-        return;
+      try{
+        const res  = await fetch('./backend/check_email.php', {
+          method: 'POST',
+          headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          body: new URLSearchParams({email: val})
+        });
+        const data = await res.json();
+        if(data.ok && data.taken){
+          emailInput.classList.add('is-invalid');
+          emailInput.classList.remove('is-valid');
+          emailMsg.textContent = 'อีเมลนี้ถูกใช้งานแล้ว';
+          emailMsg.className = 'auth-field-msg is-error';
+          submitBtn.disabled = true;
+        }else if(data.ok){
+          emailInput.classList.remove('is-invalid');
+          emailInput.classList.add('is-valid');
+          emailMsg.textContent = 'อีเมลนี้สามารถใช้งานได้';
+          emailMsg.className = 'auth-field-msg is-success';
+          submitBtn.disabled = false;
+        }else{
+          emailInput.classList.remove('is-valid','is-invalid');
+          emailMsg.textContent = '';
+          submitBtn.disabled = false;
+        }
+      }catch(err){
+        console.error(err);
+        submitBtn.disabled = false; // อย่าล็อกผู้ใช้ในกรณี error ฝั่งเซิร์ฟเวอร์
       }
-      // debounce 350ms
-      typingTimer = setTimeout(() => checkEmail(v), 350);
-    });
+    }
 
-    // กัน submit ถ้ายังมี error
-    document.querySelector('form').addEventListener('submit', (e) => {
-      const v = emailInput.value.trim();
-      if (!validateFormat(v) || help.style.display === 'block'){
-        e.preventDefault();
-      }
+    // ===== ตรวจความถูกต้องก่อน submit =====
+    const form = document.getElementById('signupForm');
+    form.addEventListener('submit', (e) => {
+      const email = emailInput.value.trim();
+      const p     = document.getElementById('password').value;
+      const c     = document.getElementById('confirm').value;
+      const d     = document.getElementById('display').value.trim();
+
+      if (submitBtn.disabled) { e.preventDefault(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { e.preventDefault(); alert('กรุณากรอกอีเมลให้ถูกต้อง'); return; }
+      if (p.length < 8) { e.preventDefault(); alert('รหัสผ่านต้องอย่างน้อย 8 ตัวอักษร'); return; }
+      if (p !== c) { e.preventDefault(); alert('รหัสผ่านและยืนยันไม่ตรงกัน'); return; }
+      if (!d) { e.preventDefault(); alert('กรุณากรอกชื่อผู้ใช้'); return; }
     });
   </script>
     </body>
-</html>
+  </html>
