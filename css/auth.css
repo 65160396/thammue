@@ -1,0 +1,207 @@
+/* ===== Auth Pages (Register/Success) ===== */
+.auth {
+  margin: 0;
+  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial;
+  background: #fff;
+}
+/* Top brand bar */
+.auth .auth-topbar {
+  background: #000;
+  color: #fff;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+.auth .auth-brand {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px;
+  letter-spacing: 0.35em;
+  font-weight: 600;
+}
+/* Layout */
+.auth .auth-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+}
+
+:root {
+  --stepper-width: 360px; /* อยากสั้น/ยาวกว่านี้ก็เพิ่ม-ลดเลขนี้ได้ */
+}
+
+/* ===== Stepper (จุด+เส้น แบบรูปแรก) ===== */
+.auth .auth-steps {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* จุดอยู่ปลายซ้าย-ขวา */
+  max-width: 650px;
+  width: 100%;
+  margin: 0 auto 12px;
+
+  --dot: 14px; /* เส้นผ่านศูนย์กลางจุด */
+  --gap: 34px; /* ระยะจากขอบจุดถึงต้น/ปลายเส้น */
+}
+/* เส้นกลาง (ไม่ชนจุด) */
+.auth .auth-steps::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--dot) / 2);
+  left: calc(var(--dot) / 2 + var(--gap));
+  right: calc(var(--dot) / 2 + var(--gap));
+  height: 2px;
+  background: #d9d9d9;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+/* จุดซ้าย/ขวา */
+.auth .auth-dot {
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: #d9d9d9;
+  position: relative;
+  z-index: 1; /* ให้อยู่เหนือเส้น */
+}
+.auth .auth-dot.is-active {
+  background: #000;
+}
+/* ถ้ามี <span class="auth-line"> ใน HTML ให้ซ่อนไว้ */
+.auth .auth-line {
+  display: none !important;
+}
+
+/* ข้อความใต้จุด */
+.auth .auth-step-labels {
+  display: grid;
+  grid-template-columns: var(--dot) 1fr var(--dot); /* จุด-เส้น-จุด */
+  align-items: center;
+  justify-items: center;
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto 28px;
+  font-size: 22px;
+  color: #b7b7b7;
+}
+.auth .auth-step-labels span { grid-row: 1; justify-self: center; white-space: nowrap; }
+.auth .auth-step-labels span:first-child { grid-column: 1; } /* ใต้จุดซ้าย */
+.auth .auth-step-labels span:last-child  { grid-column: 3; } /* ใต้จุดขวา */
+.auth .auth-step-labels .is-active { color:#000; font-weight:600; }
+
+
+/* ===== ที่เหลือคงเดิม ===== */
+.auth .auth-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 8px 0 24px;
+}
+/* Form */
+.auth .auth-form {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.auth .auth-label {
+  display: block;
+  font-size: 18px;
+  color: #222;
+  margin: 16px 0 8px;
+}
+.auth .auth-req {
+  color: #d0342c;
+  margin-right: 6px;
+}
+.auth .auth-hint {
+  color: #d0342c;
+  font-size: 14px;
+  margin: -4px 0 10px;
+}
+.auth .auth-input {
+  width: 100%;
+  height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #9e9e9e;
+  border-radius: 2px;
+  outline: none;
+}
+.auth .auth-btn {
+  display: block;
+  width: 240px;
+  margin: 28px auto 0;
+  padding: 14px 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+.auth .auth-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Alert (optional) */
+.auth .auth-alert {
+  max-width: 520px;
+  margin: 0 auto 16px;
+  background: #e9f8ec;
+  border: 1px solid #94d3a2;
+  color: #1e7f3b;
+  padding: 12px 14px;
+  border-radius: 6px;
+  display: none;
+}
+
+/* Success page */
+.auth .auth-success-title {
+  font-size: 36px;
+  text-align: center;
+  margin: 40px 0 28px;
+}
+.auth .auth-link-btn {
+  display: block;
+  width: 220px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* ข้อความใต้ช่องกรอก + สถานะ */
+.auth .auth-field-msg {
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+.auth .auth-field-msg.is-error {
+  color: #d0342c;
+}
+.auth .auth-field-msg.is-success {
+  color: #1e7f3b;
+}
+
+/* ไฮไลต์ช่องกรอกเวลา error/success */
+.auth .auth-input.is-invalid {
+  border-color: #d0342c;
+  background: #fff7f7;
+}
+.auth .auth-input.is-valid {
+  border-color: #1e7b3b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth .auth-steps,
+  .auth .auth-step-labels {
+    max-width: 92vw;
+  }
+  .auth .auth-step-labels {
+    font-size: 18px;
+  }
+}
