@@ -22,56 +22,51 @@
     </ul>
 
     <!-- แถบแบรนด์ -->
-    <body class="auth">
-      <!-- top-nav และ topbar ตามเดิม -->
+    <div class="auth-topbar"><div class="auth-brand">THAMMUE</div></div>
 
-      <div class="auth-topbar"><div class="auth-brand">THAMMUE</div></div>
-
-      <div class="auth-page"> <!-- ← เพิ่มตัวห่อ -->
-        <div class="auth-steps" aria-hidden="true">
-          <span class="auth-dot is-active"></span>
-          <span class="auth-line"></span>
-          <span class="auth-dot"></span>
-        </div>
-        <div class="auth-step-labels">
-          <span class="is-active">กรอกข้อมูล</span>
-          <span>สมัครสมาชิกเสร็จสิ้น</span>
-        </div>
-
-        <!-- ฟอร์ม -->
-        <form class="auth-form" id="signupForm" action="./backend/register.php"
-          method="post" novalidate>
-          <label class="auth-label" for="email"><span
-              class="auth-req">*</span>อีเมล</label>
-          <input class="auth-input" id="email" name="email" type="email"
-            required>
-          <small id="emailMsg" class="auth-field-msg"></small>
-
-          <label class="auth-label" for="password">
-            <span class="auth-req">*</span>รหัสผ่าน
-            <span class="auth-hint"
-              style="display:inline;margin-left:6px;">อย่างน้อย 8
-              ตัวอักษร</span>
-          </label>
-          <input class="auth-input" id="password" name="password"
-            type="password"
-            minlength="8" required>
-
-          <label class="auth-label" for="confirm"><span
-              class="auth-req">*</span>ยืนยันรหัสผ่าน</label>
-          <input class="auth-input" id="confirm" name="confirm" type="password"
-            minlength="8" required>
-
-          <label class="auth-label" for="display"><span
-              class="auth-req">*</span>ชื่อผู้ใช้</label>
-          <input class="auth-input" id="display" name="display" type="text"
-            required>
-
-          <button class="auth-btn" type="submit" id="submitBtn">ถัดไป</button>
-        </form>
+    <div class="auth-page">
+      <!-- Stepper: 2 ขั้น -->
+      <div class="auth-steps" aria-hidden="true">
+        <span class="auth-dot is-active"></span><span
+          class="auth-line"></span>
+        <span class="auth-dot"></span>
+      </div>
+      <div class="auth-step-labels">
+        <span class="is-active">กรอกข้อมูล</span>
+        <span>สมัครสมาชิกเสร็จสิ้น</span>
       </div>
 
-      <script>
+      <!-- ฟอร์ม -->
+      <form class="auth-form" id="signupForm" action="./backend/register.php"
+        method="post" novalidate>
+        <label class="auth-label" for="email"><span
+            class="auth-req">*</span>อีเมล</label>
+        <input class="auth-input" id="email" name="email" type="email" required>
+        <small id="emailMsg" class="auth-field-msg"></small>
+
+        <label class="auth-label" for="password">
+          <span class="auth-req">*</span>รหัสผ่าน
+          <span class="auth-hint"
+            style="display:inline;margin-left:6px;">อย่างน้อย 8 ตัวอักษร</span>
+        </label>
+        <input class="auth-input" id="password" name="password" type="password"
+          minlength="8" required>
+
+        <label class="auth-label" for="confirm"><span
+            class="auth-req">*</span>ยืนยันรหัสผ่าน</label>
+        <input class="auth-input" id="confirm" name="confirm" type="password"
+          minlength="8" required>
+
+        <label class="auth-label" for="display"><span
+            class="auth-req">*</span>ชื่อผู้ใช้</label>
+        <input class="auth-input" id="display" name="display" type="text"
+          required>
+
+        <button class="auth-btn" type="submit" id="submitBtn">ถัดไป</button>
+      </form>
+    </div>
+
+    <script>
     // ===== ตรวจอีเมลซ้ำแบบทันที =====
     const emailInput = document.getElementById('email');
     const emailMsg   = document.getElementById('emailMsg');
@@ -135,5 +130,5 @@
       if (!d) { e.preventDefault(); alert('กรุณากรอกชื่อผู้ใช้'); return; }
     });
   </script>
-    </body>
-  </html>
+  </body>
+</html>

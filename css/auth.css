@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between; /* จุดอยู่ปลายซ้าย-ขวา */
-  max-width: 800px;
+  max-width: 650px;
   width: 100%;
   margin: 0 auto 12px;
 
@@ -76,36 +76,21 @@
 
 /* ข้อความใต้จุด */
 .auth .auth-step-labels {
-  display: flex;
-  justify-content: space-between; /* ข้อความอยู่ใต้จุดพอดี */
+  display: grid;
+  grid-template-columns: var(--dot) 1fr var(--dot); /* จุด-เส้น-จุด */
+  align-items: center;
+  justify-items: center;
   max-width: 880px;
   width: 100%;
   margin: 0 auto 28px;
-  text-align: center;
   font-size: 22px;
   color: #b7b7b7;
 }
+.auth .auth-step-labels span { grid-row: 1; justify-self: center; white-space: nowrap; }
+.auth .auth-step-labels span:first-child { grid-column: 1; } /* ใต้จุดซ้าย */
+.auth .auth-step-labels span:last-child  { grid-column: 3; } /* ใต้จุดขวา */
+.auth .auth-step-labels .is-active { color:#000; font-weight:600; }
 
-.auth .auth-step-labels span {
-  grid-row: 1;
-  justify-self: center; /* จัดกลางตามคอลัมน์ */
-  white-space: nowrap;
-}
-.auth .auth-step-labels span:first-child {
-  grid-column: 1;
-} /* ใต้จุดซ้าย */
-.auth .auth-step-labels span:last-child {
-  grid-column: 2;
-} /* ใต้จุดขวา */
-
-.auth .auth-step-labels .is-active {
-  color: #000;
-  font-weight: 600;
-}
-.auth .auth-step-labels .is-active {
-  color: #000;
-  font-weight: 600;
-}
 
 /* ===== ที่เหลือคงเดิม ===== */
 .auth .auth-title {
