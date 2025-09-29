@@ -60,14 +60,15 @@
                         <input id="shopName" name="shopName" required />
                     </div>
                     <div class="field">
-                        <label for="pickupAddr">ที่อยู่ในการเข้ารับสินค้า</label>
+                        <label
+                            for="pickupAddr">ที่อยู่ในการเข้ารับสินค้า</label>
                         <textarea id="pickupAddr" name="pickupAddr"
                             required></textarea>
                     </div>
                     <div class="field">
                         <label for="shopEmail">อีเมล์</label>
                         <input id="shopEmail" type="email" name="shopEmail"
-                            required />
+                            required>
                     </div>
                     <div class="field">
                         <label for="shopPhone">หมายเลขโทรศัพท์</label>
@@ -80,21 +81,93 @@
                     </div>
                 </form>
 
-                <!-- STEP 2 -->
-                <form id="step2" class="panel" hidden>
-                    <div class="field" style="max-width:560px">
+                <!-- STEP 2 : ยืนยันตัวตน -->
+                <form id="step2" class="panel" hidden
+                    enctype="multipart/form-data">
+                    <header class="panel-head">
+                        <h2 class="panel-title">ยืนยันตัวตน</h2>
+                        <hr class="panel-hr">
+                    </header>
+
+                    <div class="field">
                         <label>ประเภทผู้ขาย *</label>
-                        <div
-                            style="display:flex;gap:16px;align-items:center">
+                        <div class="radio-row">
                             <label><input type="radio" name="sellerType"
-                                    value="บุคคลธรรมดา" required />
-                                บุคคลธรรมดา</label>
+                                    value="person" required> บุคคลธรรมดา</label>
                             <label><input type="radio" name="sellerType"
-                                    value="นิติบุคคล" /> นิติบุคคล</label>
+                                    value="company"> นิติบุคคล</label>
                         </div>
                         <div class="hint" id="typeHint"
                             hidden>กรุณาเลือกประเภทผู้ขาย</div>
                     </div>
+
+                    <!-- บุคคลธรรมดา -->
+                    <div id="personFields" class="type-group" hidden>
+                        <div class="field">
+                            <label for="citizenName">ชื่อ-นามสกุล *</label>
+                            <input id="citizenName" name="citizenName" disabled
+                                required>
+                        </div>
+                        <div class="field">
+                            <label for="citizenId">เลขบัตรประชาชน (13 หลัก)
+                                *</label>
+                            <input id="citizenId" name="citizenId"
+                                inputmode="numeric" maxlength="13"
+                                pattern="\d{13}" disabled required>
+                        </div>
+
+                        <div class="grid2">
+                            <div class="field">
+                                <label for="idFront">บัตรประชาชนด้านหน้า
+                                    (JPG/PNG/PDF ≤ 5MB) *</label>
+                                <input type="file" id="idFront" name="idFront"
+                                    accept="image/*,application/pdf" disabled
+                                    required>
+                                <div class="preview" id="prevFront"></div>
+                            </div>
+                            <div class="field">
+                                <label for="idBack">บัตรประชาชนด้านหลัง
+                                    (JPG/PNG/PDF ≤ 5MB) *</label>
+                                <input type="file" id="idBack" name="idBack"
+                                    accept="image/*,application/pdf" disabled
+                                    required>
+                                <div class="preview" id="prevBack"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- นิติบุคคล -->
+                    <div id="companyFields" class="type-group" hidden>
+                        <div class="field">
+                            <label for="companyName">ชื่อบริษัท *</label>
+                            <input id="companyName" name="companyName" disabled
+                                required>
+                        </div>
+                        <div class="field">
+                            <label for="taxId">เลขประจำตัวผู้เสียภาษี *</label>
+                            <input id="taxId" name="taxId" inputmode="numeric"
+                                maxlength="13" pattern="\d{10,13}" disabled
+                                required>
+                        </div>
+
+                        <div class="grid2">
+                            <div class="field">
+                                <label for="regDoc">หนังสือรับรองนิติบุคคล
+                                    (PDF/JPG/PNG ≤ 5MB) *</label>
+                                <input type="file" id="regDoc" name="regDoc"
+                                    accept="application/pdf,image/*" disabled
+                                    required>
+                            </div>
+                            <div class="field">
+                                <label for="idRep">บัตรประชาชนผู้มีอำนาจลงนาม
+                                    (PDF/JPG/PNG ≤ 5MB) *</label>
+                                <input type="file" id="idRep" name="idRep"
+                                    accept="application/pdf,image/*" disabled
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="actions">
                         <button type="button" class="btn ghost"
                             data-prev>ย้อนกลับ</button>
@@ -177,6 +250,30 @@
   }
 
   goto(1);
+</script>
+
+        <script>
+/* Prefill email from ?email= หรือ PHP session (me.php) โดยไม่ล็อกช่อง/ไม่โชว์ hint */
+(function(){
+  const emailInput = document.getElementById('shopEmail');
+  if (!emailInput) return;
+
+  // ตั้งค่าเฉพาะถ้ายังไม่มีใครพิมพ์ไว้
+  const setEmailIfEmpty = (v) => {
+    if (!v) return;
+    if (!emailInput.value) emailInput.value = v;
+  };
+
+  // 1) จาก query string (เช่น ...?email=foo@bar.com)
+  const sp = new URLSearchParams(location.search);
+  setEmailIfEmpty(sp.get('email'));
+
+  // 2) จาก PHP session (ถ้าล็อกอินอยู่)
+  fetch('/page/backend/me.php', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : { ok:false })
+    .then(d => { if (d && d.ok) setEmailIfEmpty(d.user?.email || ''); })
+    .catch(() => {});
+})();
 </script>
 
     </body>
