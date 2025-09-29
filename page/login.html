@@ -3,30 +3,17 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
+        <title>Thammue – เข้าสู่ระบบ</title>
+        <link rel="stylesheet" href="/css/auth.css" />
         <link rel="stylesheet" href="/css/style.css" />
-        <style>
-    /* เสริมเล็กน้อยสำหรับหน้านี้ */
-    .flash{display:none;padding:12px;border-radius:8px;margin:12px 0;font-size:14px}
-    .flash.show{display:block}
-    .flash.success{background:#e8fff0;border:1px solid #28a745;color:#19692c}
-    .flash.error{background:#fff1f1;border:1px solid #dc3545;color:#7a1f25}
-
-    .password-wrap{position:relative}
-    .login-show-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer}
-    .login-show-password img{width:22px;height:22px}
-    .login-box-wrapper form input{width:100%;padding:12px 44px 12px 12px;box-sizing:border-box}
-    .login-box-wrapper form button{width:100%;padding:12px;cursor:pointer}
-  </style>
     </head>
 
-    <body class="login-page">
-        <!-- แถบบนสุด -->
+    <body class="auth login-page">
+
         <ul class="top-nav">
             <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
             <li><span class="top-divider">|</span></li>
             <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
-
             <li class="right"><a href="#notification">แจ้งเตือน</a></li>
             <li><span class="top-divider">|</span></li>
             <li><a href="#help">ช่วยเหลือ</a></li>
@@ -34,116 +21,124 @@
             <li><a href="#lang">ไทย</a></li>
         </ul>
 
-        <!-- Header หลัก -->
         <div class="header-wrapper">
             <div class="logo-container">
                 <span class="brand-text">THAMMUE</span>
             </div>
-
-            <div class="search-container">
-                <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
-                        <img src="/img/Icon/search.png" alt="ค้นหา" />
-                    </button>
-                </div>
-                <div class="icon-buttons">
-                    <button class="action-button"><img src="/img/Icon/heart.png"
-                            alt="รายการโปรด" /></button>
-                    <button class="action-button"><img
-                            src="/img/Icon/shopping-cart.png"
-                            alt="ตะกร้า" /></button>
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
-                    <button class="action-button"><img
-                            src="/img/Icon/user (1).png"
-                            alt="โปรไฟล์" /></button>
-                </div>
-            </div>
         </div>
 
-        <!-- กล่องเข้าสู่ระบบ -->
-        <div class="login-container">
-            <div class="login-box-wrapper">
-                <img src="/img/Icon/user.png" alt="Logo"
-                    style="width:80px; margin-bottom:3px;">
-                <div class="login-font-text"><h2>เข้าสู่ระบบ</h2></div>
+        <main class="auth-container">
+            <section class="auth-card">
+                <h1 class="auth-title">เข้าสู่ระบบ</h1>
 
-                <!-- ข้อความจากฝั่ง PHP (ถ้ามี) -->
-                <div id="flash" class="flash" role="alert"></div>
+                <div id="flash" class="auth-flash" role="alert"
+                    aria-live="polite"></div>
 
-                <!-- ฟอร์มล็อกอิน (ส่งไป PHP endpoint) -->
-                <form action="/page/backend/login.php" method="POST" novalidate>
-                    <label class="login-font-text">
-                        อีเมลหรือชื่อผู้ใช้
-                        <input type="text" name="identifier"
-                            placeholder="อีเมล / ชื่อผู้ใช้" required />
-                    </label>
+                <form class="auth-form" action="/page/backend/login.php"
+                    method="POST" novalidate>
+                    <div class="auth-field">
+                        <label for="identifier" class="auth-label">อีเมล /
+                            ชื่อผู้ใช้</label>
+                        <input
+                            id="identifier"
+                            name="identifier"
+                            type="text"
+                            class="auth-input"
+                            required />
+                    </div>
 
-                    <label class="login-font-text password-wrap">
-                        รหัสผ่าน
-                        <input type="password" name="password"
-                            id="passwordInput" placeholder="รหัสผ่าน"
-                            minlength="8" required />
-                        <span class="login-show-password"
-                            onclick="togglePassword()"
-                            aria-label="สลับการแสดงรหัสผ่าน">
-                            <!-- เริ่มต้นเป็นไอคอน 'แสดงรหัส' เพราะตอนนี้ซ่อนอยู่ -->
-                            <img id="togglePasswordIcon"
-                                src="/img/Social/show.png" alt="แสดงรหัสผ่าน" />
-                        </span>
-                    </label>
+                    <div class="auth-field">
+                        <label for="passwordInput"
+                            class="auth-label">รหัสผ่าน</label>
+                        <div class="auth-password">
+                            <input
+                                id="passwordInput"
+                                name="password"
+                                type="password"
+                                class="auth-input"
+                                minlength="8"
+                                required />
+                            <button
+                                type="button"
+                                class="auth-eye"
+                                aria-label="สลับการแสดงรหัสผ่าน"
+                                onclick="togglePassword()">
+                                <img id="togglePasswordIcon"
+                                    src="/img/Icon/hidden (1).png"
+                                    alt="แสดงรหัสผ่าน" />
+                            </button>
+                        </div>
+                        <div class="auth-help">
+                            <a class="auth-link" href="#">ลืมรหัสผ่าน</a>
+                        </div>
+                    </div>
 
-                    <div class="login-forgot-password"><a
-                            href="#">ลืมรหัสผ่าน</a></div>
-                    <button type="submit">เข้าสู่ระบบ</button>
+                    <button type="submit"
+                        class="auth-button">เข้าสู่ระบบ</button>
+
+                    <div class="auth-divider"><span>หรือ</span></div>
+
+                    <div class="auth-social">
+                        <a class="auth-social-btn" href="#"
+                            aria-label="เข้าสู่ระบบด้วย Facebook">
+                            <img src="/img/Social/facebook.png"
+                                alt="Facebook" />
+                        </a>
+                        <a class="auth-social-btn" href="#"
+                            aria-label="เข้าสู่ระบบด้วย LINE">
+                            <img src="/img/Social/line.png" alt="LINE" />
+                        </a>
+                        <a class="auth-social-btn" href="#"
+                            aria-label="เข้าสู่ระบบด้วย Google">
+                            <img src="/img/Social/google.png" alt="Google" />
+                        </a>
+                    </div>
+
+                    <p class="auth-alt">
+                        คุณไม่มีบัญชีหรือไม่?
+                        <a class="auth-link"
+                            href="/page/add_member.html">สมัครสมาชิก</a>
+                    </p>
                 </form>
+            </section>
+        </main>
 
-                <div class="login-social-options">
-                    <div class="login-font-text"><p>หรือ</p></div>
-                    <a href="#"><img src="/img/Social/facebook.png"
-                            alt="Facebook"></a>
-                    <a href="#"><img src="/img/Social/line.png" alt="LINE"></a>
-                    <a href="#"><img src="/img/Social/google.png"
-                            alt="Google"></a>
-                </div>
-
-                <div class="login-font-text login-register-container">
-                    <p>คุณไม่มีบัญชีหรือไม่?</p>
-                    <a href="/page/add_member.html"
-                        class="register-link">สมัครสมาชิก</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- สคริปต์ -->
         <script>
-    // โชว์/ซ่อนรหัสผ่าน
-    function togglePassword() {
-      const input = document.getElementById('passwordInput');
-      const icon  = document.getElementById('togglePasswordIcon');
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.src = '/img/Social/hidden.png'; // ตอนแสดงรหัส เปลี่ยนเป็นไอคอนซ่อน
-        icon.alt = 'ซ่อนรหัสผ่าน';
-      } else {
-        input.type = 'password';
-        icon.src = '/img/Social/show.png';   // ตอนซ่อนรหัส เปลี่ยนเป็นไอคอนแสดง
-        icon.alt = 'แสดงรหัสผ่าน';
-      }
-    }
 
-    // อ่าน ?type&msg ที่ login.php ส่งกลับมา แล้วแสดงบนหน้า
-    const sp = new URLSearchParams(location.search);
-    const type = sp.get('type'); // success | error
-    const msg  = sp.get('msg');
-    if (msg) {
-      const box = document.getElementById('flash');
-      box.textContent = decodeURIComponent(msg);
-      box.classList.add('show', type === 'success' ? 'success' : 'error');
-      // ล้างพารามิเตอร์กันโชว์ซ้ำเวลารีเฟรช
-      history.replaceState({}, '', location.pathname);
-    }
-  </script>
+      // โชว์/ซ่อนรหัสผ่าน (ใช้ปุ่มวงกลมไอคอนตา เหมือนหน้า addmember)
+      function togglePassword() {
+        const input = document.getElementById('passwordInput');
+        const icon  = document.getElementById('togglePasswordIcon');
+        const showIcon = '/img/Icon/show.png';
+        const hideIcon = '/img/Icon/hidden (1).png';
+
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.src = hideIcon;
+          icon.alt = 'ซ่อนรหัสผ่าน';
+        } else {
+          input.type = 'password';
+          icon.src = showIcon;
+          icon.alt = 'แสดงรหัสผ่าน';
+        }
+      }
+
+      (function () {
+        const sp   = new URLSearchParams(location.search);
+        const type = sp.get('type');
+        const msg  = sp.get('msg');
+
+        if (msg) {
+          const box = document.getElementById('flash');
+          box.textContent = decodeURIComponent(msg);
+          box.classList.add('show');
+          if (type === 'success') box.classList.add('is-success');
+          else box.classList.add('is-error');
+
+          // ล้าง query เพื่อไม่ให้เด้งซ้ำเมื่อรีเฟรช
+          history.replaceState({}, '', location.pathname);
+        }
+      })();
+    </script>
     </body>
 </html>
