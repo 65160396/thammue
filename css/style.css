@@ -520,6 +520,7 @@ li a:hover {
     grid-template-columns: 1fr;
   }
 }
+<<<<<<< HEAD
 /*indexexchang*/
 :root {
   --bg: #f6f7fb;
@@ -814,6 +815,8 @@ a {
     grid-template-columns: 1fr;
   }
 }
+=======
+>>>>>>> aa86453d0edc6436bceff742eb47908ce24a7e88
 
 /* เอฟเฟกต์โชว์/ซ่อนสำหรับ flash */
 #flash {

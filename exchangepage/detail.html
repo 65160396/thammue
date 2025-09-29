@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue</title>
+    <link rel="stylesheet" href="/css/instyle.css" />
+    <link rel="stylesheet" href="/css/exdetail.css" />
+</head>
+
+<body>
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+        <!-- ซ้าย -->
+        <li><a href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="/page/index.html">ซื้อสินค้า</a></li>
+
+        <!-- ขวา -->
+        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#help">ช่วยเหลือ</a></li>
+        <li><span class="top-divider">|</span></li>
+        <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+        <div class="logo-container">
+            <a href="/exchangepage/index.html" class="brand-text">THAMMUE</a>
+        </div>
+        <div class="search-container">
+            <div class="search-group">
+                <input type="text" placeholder="ค้นหาสินค้า" />
+                <button class="search-button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search (1).png" alt="ค้นหา" />
+                </button>
+            </div>
+            <div class="icon-buttons">
+                <button class="action-button"><img src="/img/Icon/exchange.png" alt="คำขอแลกเปลี่ยน" /></button>
+                <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+                <button class="action-button"><img src="/img/Icon/user (1).png" alt="โปรไฟล์" /></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-buttons">
+        <a href="/exchangepage/category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
+        <a href="/exchangepage/category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
+        <a href="/exchangepage/category/children's.html" class="category-button">อุปกรณ์เด็ก</a>
+        <a href="/exchangepage/category/clothing.html" class="category-button">เสื้อผ้า</a>
+        <a href="/exchangepage/category/books.html" class="category-button">หนังสือ</a>
+        <a href="/exchangepage/category/collectibles.html" class="category-button">ของสะสม</a>
+    </div>
+    </div>
+
+    <body>
+
+        <div class="detail-wrap">
+            <a href="/exchangepage/Request.html" class="back-link">⟵ กลับไปหน้าคำขอแลก</a>
+
+            <div class="detail-grid">
+                <!-- ซ้าย: รูป -->
+                <div>
+                    <div class="photo-main" id="mainPhoto" aria-label="รูปสินค้า">
+                        <img src="https://picsum.photos/800?random=11" alt="รูปสินค้า">
+                    </div>
+                    <div class="thumbs" id="thumbs">
+                        <div class="thumb active"><img src="https://picsum.photos/200?random=11" alt=""></div>
+                        <div class="thumb"><img src="https://picsum.photos/200?random=12" alt=""></div>
+                        <div class="thumb"><img src="https://picsum.photos/200?random=13" alt=""></div>
+                        <div class="thumb"><img src="https://picsum.photos/200?random=14" alt=""></div>
+                    </div>
+                </div>
+
+                <!-- ขวา: รายละเอียด -->
+                <div>
+                    <div class="box">
+                        <h2 class="detail-title">โคมไฟตั้งโต๊ะไม้สไตล์มินิมอล</h2>
+                        <div class="meta">
+                            <span class="chip">หมวด: ของใช้ในบ้าน</span>
+                            <span class="chip">สภาพ: ใช้น้อยมาก</span>
+                            <span class="chip">พื้นที่: เมืองชลบุรี</span>
+                        </div>
+                        <p class="muted detail-desc">
+                            โคมไฟแสงวอร์มไวท์ เหมาะกับโต๊ะอ่านหนังสือ ต้องการแลกกับ: หนังสือ How to UX
+                            หรือเสื้อยืดผ้าฝ้าย
+                        </p>
+                        <div class="actions">
+                            <button class="btn-ghost-blue">💬 ข้อความ</button>
+                            <button class="btn-primary-blue">แลกเปลี่ยนสินค้า</button>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- การ์ดคำขอ -->
+                    <div class="request-card">
+                        <div class="request-head">
+                            <strong>คำขอจาก: bud*****@mail.com</strong>
+                            <div>
+                                <button class="btn-accept">ยอมรับ</button>
+                                <button class="btn-reject">ปฏิเสธ</button>
+                            </div>
+                        </div>
+                        <div class="request-meta">สินค้าที่เสนอมาแลก: หนังสือ UX เบื้องต้น เล่ม 3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- แยก JS (ถ้าไม่ต้องแยก คุณสามารถเอาโค้ดไปวางใน <script> ได้) -->
+        // เปลี่ยนรูปหลักเมื่อคลิก thumbnail
+        <script>
+            const mainImg = document.querySelector('#mainPhoto img');
+            const thumbs = document.getElementById('thumbs');
+
+            if (thumbs && mainImg) {
+                thumbs.addEventListener('click', (e) => {
+                    const t = e.target.closest('.thumb');
+                    if (!t) return;
+                    document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+                    t.classList.add('active');
+
+                    // แทนที่ /200 ด้วย /800 (แค่ตัวอย่าง demo)
+                    const src = t.querySelector('img').getAttribute('src').replace('/200', '/800');
+                    mainImg.src = src;
+                });
+            }
+
+            // อ่าน ?id=... เผื่อไว้โหลดข้อมูลจริงภายหลัง
+            const params = new URLSearchParams(location.search);
+            const id = params.get('id');
+            if (id) {
+                console.log('detail id:', id);
+                // TODO: fetch(`/api/products/${id}`) แล้วอัปเดต DOM
+            }
+        </script>
+    </body>
+
+</html>
