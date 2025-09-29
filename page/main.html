@@ -26,7 +26,7 @@
         <!-- Header หลัก -->
         <div class="header-wrapper">
             <div class="logo-container">
-                <span class="brand-text">THAMMUE</span>
+                <a href="/page/main.html" class="brand-text">THAMMUE</a>
             </div>
 
             <div class="search-container">
@@ -185,47 +185,6 @@
                 copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน
             </div>
         </footer>
-
-        <script>
-  (function () {
-    // หา container ปุ่มด้านขวา
-    const iconBar = document.querySelector('.icon-buttons');
-    if (!iconBar) return;
-
-    fetch('/page/backend/me.php', {cache: 'no-store'})
-      .then(r => r.json())
-      .then(d => {
-        // ล้างปุ่ม user เดิม (ถ้ามี)
-        // (ในโค้ดคุณคอมเมนต์ปุ่ม user ไว้แล้ว แต่กันไว้ในอนาคต)
-        // [...iconBar.querySelectorAll('[data-user]')].forEach(el => el.remove());
-
-        if (d.ok) {
-          // ล็อกอินแล้ว → แสดงชื่อผู้ใช้ + ปุ่มออกจากระบบ
-          const hello = document.createElement('span');
-          hello.style.margin = '0 8px';
-          hello.textContent = 'สวัสดี, ' + d.user.name;
-
-          const logout = document.createElement('a');
-          logout.href = '/page/backend/logout.php';
-          logout.className = 'action-button';
-          logout.textContent = 'ออกจากระบบ';
-
-          iconBar.appendChild(hello);
-          iconBar.appendChild(logout);
-        } else {
-          // ยังไม่ล็อกอิน → แสดงปุ่มเข้าสู่ระบบ
-          const login = document.createElement('a');
-          login.href = '/page/login.html';
-          login.className = 'action-button';
-          login.textContent = 'เข้าสู่ระบบ';
-          iconBar.appendChild(login);
-        }
-      })
-      .catch(() => {
-        // error เงียบ ๆ
-      });
-  })();
-</script>
 
         <script>
   // แสดงข้อความจาก ?type=success|error&msg=... แล้วให้หายไปอัตโนมัติ
