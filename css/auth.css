@@ -86,11 +86,21 @@
   font-size: 22px;
   color: #b7b7b7;
 }
-.auth .auth-step-labels span { grid-row: 1; justify-self: center; white-space: nowrap; }
-.auth .auth-step-labels span:first-child { grid-column: 1; } /* ใต้จุดซ้าย */
-.auth .auth-step-labels span:last-child  { grid-column: 3; } /* ใต้จุดขวา */
-.auth .auth-step-labels .is-active { color:#000; font-weight:600; }
-
+.auth .auth-step-labels span {
+  grid-row: 1;
+  justify-self: center;
+  white-space: nowrap;
+}
+.auth .auth-step-labels span:first-child {
+  grid-column: 1;
+} /* ใต้จุดซ้าย */
+.auth .auth-step-labels span:last-child {
+  grid-column: 3;
+} /* ใต้จุดขวา */
+.auth .auth-step-labels .is-active {
+  color: #000;
+  font-weight: 600;
+}
 
 /* ===== ที่เหลือคงเดิม ===== */
 .auth .auth-title {
@@ -204,4 +214,244 @@
   .auth .auth-step-labels {
     font-size: 18px;
   }
+}
+
+/* ====== Login (เพิ่มใหม่) ====== */
+
+/* ให้ทั้งหน้า login ใช้ wrapper .auth */
+.auth a {
+  color: #000;
+  text-decoration: none;
+}
+.auth a:hover {
+  text-decoration: underline;
+}
+
+/* เฮดเดอร์แบรนด์ (ถ้าใช้ .auth-header/.brand แทน .auth-topbar/.auth-brand) */
+.auth .auth-header {
+  background: #000;
+  color: #fff;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+.auth .auth-header .brand {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px;
+  letter-spacing: 0.35em;
+  font-weight: 600;
+}
+
+/* การ์ดกลาง (หุ้มฟอร์มให้คล้าย addmember) */
+.auth .auth-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+}
+.auth .auth-card {
+  max-width: 560px;
+  margin: 24px auto;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  padding: 32px 28px;
+}
+
+/* ไตเติล */
+.auth .auth-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 8px 0 24px;
+}
+
+/* ฟอร์ม (ใช้ของเดิมได้) */
+.auth .auth-form {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.auth .auth-label {
+  display: block;
+  font-size: 18px;
+  color: #222;
+  margin: 16px 0 8px;
+}
+.auth .auth-input {
+  width: 100%;
+  height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #9e9e9e;
+  border-radius: 2px;
+  outline: none;
+}
+.auth .auth-input:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+/* รหัสผ่าน + ปุ่มตา */
+.auth .auth-password {
+  position: relative;
+}
+.auth .auth-password .auth-input {
+  padding-right: 44px;
+}
+.auth .auth-eye {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.auth .auth-eye:hover {
+  background: #f3f3f3;
+}
+.auth .auth-eye img {
+  width: 20px;
+  height: 20px;
+}
+
+/* ปุ่ม submit (แมพให้ตรงกับสไตล์ .auth-btn เดิม) */
+.auth .auth-button,
+.auth .auth-btn {
+  display: block;
+  width: 240px;
+  margin: 28px auto 0;
+  padding: 14px 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+.auth .auth-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* เส้นคั่นคำว่า “หรือ” */
+.auth .auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 22px 0;
+  color: #9e9e9e;
+  font-size: 14px;
+  justify-content: center;
+}
+.auth .auth-divider::before,
+.auth .auth-divider::after {
+  content: "";
+  height: 1px;
+  width: 96px;
+  background: #e5e5e5;
+  display: block;
+}
+
+/* ปุ่มโซเชียล */
+.auth .auth-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 10px 0 8px;
+}
+.auth .auth-social-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #e5e5e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+.auth .auth-social-btn:hover {
+  background: #f9f9f9;
+}
+.auth .auth-social-btn img {
+  width: 26px;
+  height: 26px;
+}
+
+/* ลิงก์สมัครสมาชิก */
+.auth .auth-alt {
+  text-align: center;
+  margin-top: 6px;
+}
+.auth .auth-link {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* Flash message จาก PHP: ?type=success|error&msg=... */
+.auth .auth-flash {
+  max-width: 520px;
+  margin: 0 auto 16px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  display: none;
+  border: 1px solid transparent;
+  background: #f7f7f7;
+  color: #222;
+}
+.auth .auth-flash.show {
+  display: block;
+}
+.auth .auth-flash.is-success {
+  background: #e9f8ec;
+  border-color: #94d3a2;
+  color: #1e7f3b;
+}
+.auth .auth-flash.is-error {
+  background: #fff3f2;
+  border-color: #f1b0ab;
+  color: #b21f2d;
+}
+
+/* ช่วยจำแนกสถานะ input */
+.auth .auth-input.is-invalid {
+  border-color: #d0342c;
+  background: #fff7f7;
+}
+.auth .auth-input.is-valid {
+  border-color: #1e7b3b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth .auth-card {
+    margin: 12px auto;
+    padding: 24px 18px;
+  }
+  .auth .auth-divider::before,
+  .auth .auth-divider::after {
+    width: 72px;
+  }
+}
+
+.auth .auth-help {
+  text-align: right;
+  margin-top: 4px;
+}
+.auth .auth-help .auth-link {
+  font-size: 14px;
+  color: #000000; 
+  font-style: italic;
+  text-decoration: none;
+}
+.auth .auth-help .auth-link:hover {
+  text-decoration: underline;
 }
