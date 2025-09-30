@@ -155,3 +155,6 @@ try {
     http_response_code(400);
     echo "❌ " . $e->getMessage();
 }
+
+
+must(preg_match('/^\d{9,10}$/', $phone), 'เบอร์โทรต้องเป็นตัวเลข 9–10 หลัก');

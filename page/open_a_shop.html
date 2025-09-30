@@ -76,9 +76,16 @@
                         </div>
                         <div class="field">
                             <label for="phone">หมายเลขโทรศัพท์</label>
-                            <input id="phone" type="tel" name="phone"
+                            <input id="phone" name="phone"
+                                type="tel"
+                                inputmode="numeric"
+                                autocomplete="tel"
+                                maxlength="10"
+                                pattern="[0-9]{9,10}"
                                 required />
+
                         </div>
+
                         <div class="actions">
                             <button type="button" class="btn"
                                 data-next>ถัดไป</button>
@@ -207,17 +214,13 @@
 
             </section>
         </main>
-
         <script>
-  const total = 4;
-  let current = 1;
-  const steps  = [...document.querySelectorAll('.step')];
-  const panels = [
-    document.getElementById('step1'),
-    document.getElementById('step2'),
-    document.getElementById('step3'),
-    document.getElementById('step4')
-  ];
+(() => {
+  /* ---------- Base stepper ---------- */
+  const steps  = Array.from(document.querySelectorAll('.step'));
+  const panels = ['step1','step2','step3','step4'].map(id => document.getElementById(id));
+  const total  = panels.length;
+  let current  = 1;
 
   function goto(n){
     current = Math.max(1, Math.min(total, n));
@@ -233,133 +236,99 @@
   }));
   document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
 
+  /* ---------- Prefill email (จาก ?email= และ session) ---------- */
+  (function prefillEmail(){
+    const emailInput = document.getElementById('email');
+    if (!emailInput) return;
+    const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
+    const sp = new URLSearchParams(location.search);
+    setIfEmpty(sp.get('email'));
+    fetch('/page/backend/me.php', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : {ok:false})
+      .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
+      .catch(()=>{});
+  })();
+
+  /* ---------- เบอร์โทร: ให้พิมพ์ได้เฉพาะตัวเลข 0–9 และไม่เกิน 10 หลัก ---------- */
+  const phoneInput = document.getElementById('phone');
+  phoneInput?.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  /* ---------- Step 2: toggle กลุ่มฟิลด์ + validate ---------- */
+  const personGroup  = document.getElementById('personFields');
+  const companyGroup = document.getElementById('companyFields');
+  const typeHint     = document.getElementById('typeHint');
+
+  function toggleGroup(group, enable){
+    group.hidden = !enable;
+    group.querySelectorAll('input,textarea,select').forEach(el=>{
+      el.disabled = !enable;
+      el.required = enable;     // บังคับเฉพาะกลุ่มที่เลือก
+    });
+  }
+  function onTypeChange(){
+    const val = document.querySelector('input[name="sellerType"]:checked')?.value;
+    if (val === 'person') { toggleGroup(personGroup, true);  toggleGroup(companyGroup, false); }
+    else if (val === 'company') { toggleGroup(personGroup, false); toggleGroup(companyGroup, true); }
+  }
+  document.querySelectorAll('input[name="sellerType"]').forEach(r=>r.addEventListener('change', onTypeChange));
+  onTypeChange();
+
+  const MAX_FILE = 5 * 1024 * 1024;
+  function fileOK(input){
+    const f = input?.files?.[0];
+    if (!f) return false;
+    if (f.size > MAX_FILE)        { alert('ไฟล์เกิน 5MB'); return false; }
+    const ok = ['image/jpeg','image/png','application/pdf'];
+    if (!ok.includes(f.type))     { alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
+    return true;
+  }
+
+  /* ---------- ตรวจแต่ละสเตป ---------- */
   function validateStep(idx){
     if (idx === 1){
       const s1 = panels[0];
-      return [...s1.querySelectorAll('input[required],textarea[required]')]
+      const okRequired = [...s1.querySelectorAll('input[required],textarea[required]')]
         .every(el => el.value.trim() !== '');
+      if (!okRequired) return false;
+
+      const phoneVal = document.getElementById('phone').value.trim();
+      if (!/^[0-9]{9,10}$/.test(phoneVal)) {
+        alert('กรุณากรอกหมายเลขโทรศัพท์เป็นตัวเลข 9–10 หลัก');
+        return false;
+      }
+      return true;
     }
+
     if (idx === 2){
-      const ok = !!panels[1].querySelector('input[name="sellerType"]:checked');
-      document.getElementById('typeHint').hidden = ok;
-      return ok;
+      const type = document.querySelector('input[name="sellerType"]:checked')?.value;
+      const okType = !!type;
+      typeHint.hidden = okType;
+      if (!okType) return false;
+
+      if (type === 'person'){
+        const name = document.getElementById('citizenName').value.trim();
+        const cid  = document.getElementById('citizenId').value.trim();
+        if (!name){ alert('กรอกชื่อ-นามสกุล'); return false; }
+        if (!/^[0-9]{13}$/.test(cid)){ alert('เลขบัตรประชาชน 13 หลัก'); return false; }
+        if (!fileOK(document.getElementById('idFront')) || !fileOK(document.getElementById('idBack'))) return false;
+        return true;
+      }else{
+        const cname = document.getElementById('companyName').value.trim();
+        const taxid = document.getElementById('taxId').value.trim();
+        if (!cname){ alert('กรอกชื่อบริษัท'); return false; }
+        if (!/^[0-9]{10,13}$/.test(taxid)){ alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
+        if (!fileOK(document.getElementById('regDoc')) || !fileOK(document.getElementById('idRep'))) return false;
+        return true;
+      }
     }
     return true;
   }
 
+  /* เริ่มที่สเตป 1 */
   goto(1);
-</script>
-
-        <script>
-/* Prefill email from ?email= หรือ PHP session (me.php) โดยไม่ล็อกช่อง/ไม่โชว์ hint */
-(function(){
-  const emailInput = document.getElementById('shopEmail');
-  if (!emailInput) return;
-
-  // ตั้งค่าเฉพาะถ้ายังไม่มีใครพิมพ์ไว้
-  const setEmailIfEmpty = (v) => {
-    if (!v) return;
-    if (!emailInput.value) emailInput.value = v;
-  };
-
-  // 1) จาก query string (เช่น ...?email=foo@bar.com)
-  const sp = new URLSearchParams(location.search);
-  setEmailIfEmpty(sp.get('email'));
-
-  // 2) จาก PHP session (ถ้าล็อกอินอยู่)
-  fetch('/page/backend/me.php', { cache: 'no-store' })
-    .then(r => r.ok ? r.json() : { ok:false })
-    .then(d => { if (d && d.ok) setEmailIfEmpty(d.user?.email || ''); })
-    .catch(() => {});
 })();
-</script>
-
-        <script>
-(function(){
-  const emailInput = document.getElementById('email');
-  if (!emailInput) return;
-  const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
-
-  const sp = new URLSearchParams(location.search);
-  setIfEmpty(sp.get('email'));
-
-  fetch('/page/backend/me.php', { cache: 'no-store' })
-    .then(r => r.ok ? r.json() : { ok:false })
-    .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
-    .catch(()=>{});
-})();
-</script>
-
-        <script>
-/* ===== Step 2: toggle group + validate ===== */
-const personGroup  = document.getElementById('personFields');
-const companyGroup = document.getElementById('companyFields');
-const typeHint     = document.getElementById('typeHint');
-
-function toggleGroup(group, enable){
-  group.hidden = !enable;
-  group.querySelectorAll('input,textarea,select').forEach(el=>{
-    el.disabled  = !enable;
-    el.required  = enable;   // บังคับกรอกเฉพาะกลุ่มที่เลือก
-  });
-}
-
-function onTypeChange(){
-  const val = document.querySelector('input[name="sellerType"]:checked')?.value;
-  if (val === 'person') {
-    toggleGroup(personGroup,  true);
-    toggleGroup(companyGroup, false);
-  } else if (val === 'company') {
-    toggleGroup(personGroup,  false);
-    toggleGroup(companyGroup, true);
-  }
-}
-document.querySelectorAll('input[name="sellerType"]').forEach(r=>{
-  r.addEventListener('change', onTypeChange);
-});
-onTypeChange();
-
-/* ขยาย validateStep สำหรับสเตป 2 */
-const MAX_FILE = 5 * 1024 * 1024;
-function fileOK(input){
-  const f = input.files?.[0];
-  if (!f) return false;
-  if (f.size > MAX_FILE) { alert('ไฟล์เกิน 5MB'); return false; }
-  const ok = ['image/jpeg','image/png','application/pdf'];
-  if (!ok.includes(f.type)) { alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
-  return true;
-}
-
-const oldValidate = validateStep; // ของคุณเดิม
-validateStep = function(idx){
-  if (idx === 2){
-    const val = document.querySelector('input[name="sellerType"]:checked')?.value;
-    const okType = !!val;
-    typeHint.hidden = okType;
-    if (!okType) return false;
-
-    if (val === 'person') {
-      const name = document.getElementById('citizenName').value.trim();
-      const cid  = document.getElementById('citizenId').value.trim();
-      const f1   = document.getElementById('idFront');
-      const f2   = document.getElementById('idBack');
-      if (!name) { alert('กรอกชื่อ-นามสกุล'); return false; }
-      if (!/^\d{13}$/.test(cid)) { alert('เลขบัตรประชาชน 13 หลัก'); return false; }
-      if (!fileOK(f1) || !fileOK(f2)) return false;
-      return true;
-    } else {
-      const cname = document.getElementById('companyName').value.trim();
-      const taxid = document.getElementById('taxId').value.trim();
-      const d1    = document.getElementById('regDoc');
-      const d2    = document.getElementById('idRep');
-      if (!cname) { alert('กรอกชื่อบริษัท'); return false; }
-      if (!/^\d{10,13}$/.test(taxid)) { alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
-      if (!fileOK(d1) || !fileOK(d2)) return false;
-      return true;
-    }
-  }
-  return oldValidate(idx);
-};
 </script>
 
     </body>
