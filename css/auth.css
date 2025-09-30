@@ -448,10 +448,15 @@
 }
 .auth .auth-help .auth-link {
   font-size: 14px;
-  color: #000000; 
+  color: #000000;
   font-style: italic;
   text-decoration: none;
 }
 .auth .auth-help .auth-link:hover {
   text-decoration: underline;
+}
+
+/*ลบลิงค์ปุ่มกลับไปหน้า main */
+.auth .auth-link-btn:hover {
+  text-decoration: none;
 }
