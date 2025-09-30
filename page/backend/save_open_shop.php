@@ -51,6 +51,61 @@ if ($shop_id == 0) {
     $q->close();
 }
 
+/* ===== หลังจาก INSERT shops แล้ว และมี $shop_id ===== */
+
+$seller_type = $_POST['seller_type'] ?? '';
+
+if ($seller_type === 'person') {
+    // ฟิลด์ฝั่งบุคคลธรรมดา
+    $citizen_name = trim($_POST['citizen_name'] ?? '');
+    $citizen_id   = trim($_POST['citizen_id'] ?? '');
+    $dob          = $_POST['dob_iso'] ?? null;  // YYYY-MM-DD ที่เราสร้างไว้
+    $addr_line    = trim($_POST['addr_line'] ?? '');
+    $subdistrict  = trim($_POST['subdistrict'] ?? '');
+    $district     = trim($_POST['district'] ?? '');
+    $province     = trim($_POST['province'] ?? '');
+    $postcode     = trim($_POST['postcode'] ?? '');
+
+    $stmt2 = $conn->prepare("
+        INSERT INTO shop_verifications
+            (shop_id, seller_type, citizen_name, citizen_id, dob,
+             addr_line, subdistrict, district, province, postcode, status, created_at)
+        VALUES
+            (?,       ?,           ?,            ?,          ?,
+             ?,         ?,          ?,        ?,        ?,       'pending', NOW())
+    ");
+    $stmt2->bind_param(
+        "isssssssss",
+        $shop_id,
+        $seller_type,
+        $citizen_name,
+        $citizen_id,
+        $dob,
+        $addr_line,
+        $subdistrict,
+        $district,
+        $province,
+        $postcode
+    );
+    $stmt2->execute();
+    $stmt2->close();
+} elseif ($seller_type === 'company') {
+    // ฟิลด์ฝั่งนิติบุคคล
+    $company_name = trim($_POST['company_name'] ?? '');
+    $tax_id       = trim($_POST['tax_id'] ?? '');
+
+    $stmt2 = $conn->prepare("
+        INSERT INTO shop_verifications
+            (shop_id, seller_type, company_name, tax_id, status, created_at)
+        VALUES
+            (?,       ?,           ?,            ?,     'pending', NOW())
+    ");
+    $stmt2->bind_param("isss", $shop_id, $seller_type, $company_name, $tax_id);
+    $stmt2->execute();
+    $stmt2->close();
+}
+
+
 /* เสร็จแล้วพาไปหน้า success */
 header('Location: ../success.html');
 exit;
