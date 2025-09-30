@@ -454,14 +454,84 @@ a{text-decoration:none;color:inherit}
 .btn-sm{padding:8px 12px;font-size:14px}
 
 /* Hero */
-.hero{
-  background:#d9d9d9; /* ภาพตัวอย่างเทา */
-  padding:56px 0 72px;
+.hero {
+  position: relative;
+  padding: 72px 0 88px; /* desktop */
+  color: #fff;
+  background: url('/img/Illustration/people-meeting-barter-event-exchange-goods_23-2150208178.jpg')
+              no-repeat center/cover;
+  border-radius: 0;
+  min-height: 500px;  /* desktop default */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center; /* เพิ่มให้เนื้อหาตรงกลางเวลาอยู่มือถือ */
 }
-.hero h1{font-size:40px;margin:0 0 8px}
-.hero-sub{max-width:720px}
-.hero-actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
 
+/* Tablet */
+@media (max-width: 992px) {
+  .hero {
+    padding: 48px 0 64px;
+    min-height: 400px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .hero {
+    padding: 32px 0 48px;
+    min-height: 300px;  /* ลดความสูงลง */
+    background-position: center top; /* ขยับตำแหน่งภาพให้อยู่ด้านบน */
+  }
+}
+
+/* ถ้ารูปสว่างเกิน ให้ใส่ overlay เบา ๆ */
+.hero::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+               rgba(0,0,0,.25),        /* ด้านบนทึบหน่อย */
+               rgba(0,0,0,.35));       /* ด้านล่างทึบกว่าเล็กน้อย */
+  pointer-events: none;
+}
+.hero > .container{ position: relative; z-index: 1; } /* ให้ข้อความอยู่เหนือ overlay */
+
+/* ขนาดตัวอักษร/spacing */
+.hero h1 { 
+  font-size: clamp(28px, 5vw, 52px);   /* ย่อ/ขยายตามขนาดจอ */
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4); /* ทำให้ตัวอักษรชัดบนรูป */
+  letter-spacing: 0.5px;
+}
+
+/* คำโปรย */
+.hero-sub { 
+  font-size: clamp(15px, 2.2vw, 20px); 
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+  color: #f1f5f9; 
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* ปุ่มใน hero */
+.hero-actions .btn {
+  font-size: 16px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+
+/* มือถือ */
+@media (max-width: 740px){
+  .hero{ padding: 56px 0 68px; }
+  .hero h1{ font-size: 32px; }
+  .hero-sub{ max-width: 100%; }
+}
 /* Sections */
 .section{padding:40px 0}
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
