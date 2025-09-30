@@ -6,10 +6,15 @@
         <title>Thammue – เปิดร้านค้า</title>
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/open-shop.css" />
+        <style>
+    .open-shop .field.required > label::before{content:"* ";color:#d0342c;font-weight:600;}
+    .open-shop .field label:has(+ .dob-row select[required]){position:relative;padding-left:12px;}
+    .open-shop .field label:has(+ .dob-row select[required])::before{content:"*";position:absolute;left:0;top:0;color:#d0342c;font-weight:600;}
+  </style>
     </head>
-
     <body class="open-shop">
-        <!-- แถบบนสุด -->
+
+        <!-- topbar -->
         <ul class="top-nav">
             <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
             <li><span class="top-divider">|</span></li>
@@ -30,32 +35,23 @@
         <main class="wizard-page">
             <section class="wizard-card">
 
-                <!-- Stepper -->
+                <!-- Stepper (3 สเตป) -->
                 <nav class="stepper" aria-label="ขั้นตอนการเปิดร้าน">
-                    <div class="step is-active" data-step="1">
-                        <span class="dot"></span>
-                        <span class="label">ข้อมูลสินค้า</span>
-                    </div>
-                    <div class="step" data-step="2">
-                        <span class="dot"></span>
-                        <span class="label">ยืนยันตัวตน</span>
-                    </div>
-                    <div class="step" data-step="3">
-                        <span class="dot"></span>
-                        <span class="label">ข้อมูลเพิ่มเติม</span>
-                    </div>
-                    <div class="step" data-step="4">
-                        <span class="dot"></span>
-                        <span class="label">ส่งแบบฟอร์ม</span>
-                    </div>
+                    <div class="step is-active" data-step="1"><span
+                            class="dot"></span><span
+                            class="label">ข้อมูลร้านค้า</span></div>
+                    <div class="step" data-step="2"><span
+                            class="dot"></span><span
+                            class="label">ยืนยันตัวตน</span></div>
+                    <div class="step" data-step="3"><span
+                            class="dot"></span><span
+                            class="label">ส่งแบบฟอร์ม</span></div>
                 </nav>
 
-                <!-- ฟอร์มเปิดร้าน -->
+                <!-- ฟอร์ม -->
                 <form id="openShopForm"
-                    action="/page/backend/shop_create.php"
-                    method="post"
-                    enctype="multipart/form-data"
-                    autocomplete="off">
+                    action="/page/backend/save_open_shop.php" method="post"
+                    enctype="multipart/form-data" autocomplete="off">
 
                     <!-- STEP 1 -->
                     <section id="step1" class="panel">
@@ -72,39 +68,30 @@
                         <div class="field">
                             <label for="email">อีเมล์</label>
                             <input id="email" type="email" name="email"
-                                required>
+                                required />
                         </div>
                         <div class="field">
                             <label for="phone">หมายเลขโทรศัพท์</label>
-                            <input id="phone" name="phone"
-                                type="tel"
-                                inputmode="numeric"
-                                autocomplete="tel"
-                                maxlength="10"
-                                pattern="[0-9]{9,10}"
-                                required />
-
+                            <input id="phone" name="phone" type="tel"
+                                inputmode="numeric" autocomplete="tel"
+                                maxlength="10" pattern="[0-9]{9,10}" required />
                         </div>
-
                         <div class="actions">
                             <button type="button" class="btn"
                                 data-next>ถัดไป</button>
                         </div>
                     </section>
 
-                    <!-- STEP 2 : ยืนยันตัวตน -->
+                    <!-- STEP 2 -->
                     <section id="step2" class="panel" hidden>
-                        <header class="panel-head">
-                        </header>
-
                         <div class="field inline">
                             <label>ประเภทผู้ขาย *</label>
                             <div class="radio-row">
-                                <label><input type="radio" name="sellerType"
-                                        value="person" required>
+                                <label><input type="radio" name="seller_type"
+                                        value="person" required />
                                     บุคคลธรรมดา</label>
-                                <label><input type="radio" name="sellerType"
-                                        value="company"> นิติบุคคล</label>
+                                <label><input type="radio" name="seller_type"
+                                        value="company" /> นิติบุคคล</label>
                             </div>
                             <div class="hint" id="typeHint"
                                 hidden>กรุณาเลือกประเภทผู้ขาย</div>
@@ -113,33 +100,80 @@
                         <!-- บุคคลธรรมดา -->
                         <div id="personFields" class="type-group" hidden>
                             <div class="field">
-                                <label for="citizenName">ชื่อ-นามสกุล *</label>
-                                <input id="citizenName" name="citizenName"
+                                <label for="citizen_name">ชื่อ-นามสกุล</label>
+                                <input id="citizen_name" name="citizen_name"
+                                    disabled required />
+                            </div>
+
+                            <div class="field required">
+                                <label>วันเดือนปีเกิด</label>
+                                <div class="dob-row"
+                                    style="display:flex; gap:10px; align-items:center;">
+                                    <select id="dobDay" aria-label="วัน"
+                                        required disabled></select>
+                                    <select id="dobMonth" aria-label="เดือน"
+                                        required disabled></select>
+                                    <select id="dobYearBE" aria-label="พ.ศ."
+                                        required disabled></select>
+                                </div>
+                                <input type="hidden" name="dob_iso"
+                                    id="dobIso" />
+                                <div class="hint" id="dobHint"
+                                    hidden>กรุณาเลือกวันเดือนปีเกิดให้ถูกต้อง
+                                    (อายุ 18+)</div>
+                            </div>
+
+                            <div class="field">
+                                <label for="citizen_id">เลขบัตรประชาชน (13
+                                    หลัก)</label>
+                                <input id="citizen_id" name="citizen_id"
+                                    inputmode="numeric" maxlength="13"
+                                    pattern="\d{13}" disabled required />
+                            </div>
+
+                            <div class="field">
+                                <label
+                                    for="addr_line">ที่อยู่ตามบัตรประชาชน</label>
+                                <input id="addr_line" name="addr_line"
+                                    placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
                                     disabled required>
                             </div>
+
                             <div class="field">
-                                <label for="citizenId">เลขบัตรประชาชน (13 หลัก)
-                                    *</label>
-                                <input id="citizenId" name="citizenId"
-                                    inputmode="numeric" maxlength="13"
-                                    pattern="\d{13}" disabled required>
+                                <label for="subdistrict">ตำบล/แขวง</label>
+                                <input id="subdistrict" name="subdistrict"
+                                    disabled required>
+                            </div>
+
+                            <div class="field">
+                                <label for="district">อำเภอ/เขต</label>
+                                <input id="district" name="district" disabled
+                                    required>
+                            </div>
+
+                            <div class="field">
+                                <label for="province">จังหวัด</label>
+                                <input id="province" name="province" disabled
+                                    required>
+                            </div>
+
+                            <div class="field">
+                                <label for="postcode">รหัสไปรษณีย์</label>
+                                <input id="postcode" name="postcode"
+                                    inputmode="numeric" maxlength="5"
+                                    pattern="[0-9]{5}" disabled required>
+                                <div class="hint" id="postcodeHint"
+                                    hidden>กรุณากรอกรหัสไปรษณีย์ 5 หลัก</div>
                             </div>
 
                             <div class="grid2">
                                 <div class="field">
-                                    <label for="idFront">บัตรประชาชนด้านหน้า
-                                        (JPG/PNG/PDF ≤ 5MB) *</label>
-                                    <input type="file" id="idFront"
-                                        name="idFront"
+                                    <label
+                                        for="id_front">บัตรประชาชนด้านหน้า</label>
+                                    <input type="file" id="id_front"
+                                        name="id_front"
                                         accept="image/*,application/pdf"
-                                        disabled required>
-                                </div>
-                                <div class="field">
-                                    <label for="idBack">บัตรประชาชนด้านหลัง
-                                        (JPG/PNG/PDF ≤ 5MB) *</label>
-                                    <input type="file" id="idBack" name="idBack"
-                                        accept="image/*,application/pdf"
-                                        disabled required>
+                                        disabled required />
                                 </div>
                             </div>
                         </div>
@@ -147,33 +181,33 @@
                         <!-- นิติบุคคล -->
                         <div id="companyFields" class="type-group" hidden>
                             <div class="field">
-                                <label for="companyName">ชื่อบริษัท *</label>
-                                <input id="companyName" name="companyName"
-                                    disabled required>
+                                <label for="company_name">ชื่อบริษัท</label>
+                                <input id="company_name" name="company_name"
+                                    disabled required />
                             </div>
                             <div class="field">
-                                <label for="taxId">เลขประจำตัวผู้เสียภาษี (10–13
-                                    หลัก) *</label>
-                                <input id="taxId" name="taxId"
+                                <label for="tax_id">เลขประจำตัวผู้เสียภาษี
+                                    (10–13 หลัก)</label>
+                                <input id="tax_id" name="tax_id"
                                     inputmode="numeric" maxlength="13"
-                                    pattern="\d{10,13}" disabled required>
+                                    pattern="\d{10,13}" disabled required />
                             </div>
 
                             <div class="grid2">
                                 <div class="field">
-                                    <label for="regDoc">หนังสือรับรองนิติบุคคล
-                                        (PDF/JPG/PNG ≤ 5MB) *</label>
-                                    <input type="file" id="regDoc" name="regDoc"
+                                    <label
+                                        for="reg_doc">หนังสือรับรองนิติบุคคล</label>
+                                    <input type="file" id="reg_doc"
+                                        name="reg_doc"
                                         accept="application/pdf,image/*"
-                                        disabled required>
+                                        disabled required />
                                 </div>
                                 <div class="field">
                                     <label
-                                        for="idRep">บัตรประชาชนผู้มีอำนาจลงนาม
-                                        (PDF/JPG/PNG ≤ 5MB) *</label>
-                                    <input type="file" id="idRep" name="idRep"
+                                        for="id_rep">บัตรประชาชนผู้มีอำนาจลงนาม</label>
+                                    <input type="file" id="id_rep" name="id_rep"
                                         accept="application/pdf,image/*"
-                                        disabled required>
+                                        disabled required />
                                 </div>
                             </div>
                         </div>
@@ -188,148 +222,218 @@
 
                     <!-- STEP 3 -->
                     <section id="step3" class="panel" hidden>
-                        <!-- … โค้ดเดิม … -->
                         <div class="actions">
+                            <br> <br> <br> <br> <br> <br>
                             <button type="button" class="btn ghost"
                                 data-prev>ย้อนกลับ</button>
-                            <button type="button" class="btn"
-                                data-next>ถัดไป</button>
+                            <form id="openShopForm"
+                                action="/page/backend/save_open_shop.php"
+                                method="post" ...>
+                                <input id="shop_name" name="shop_name"
+                                    required />
+                                ...
+                                <button type="submit"
+                                    class="btn">ส่งแบบฟอร์ม</button>
+                            </form>
+
                         </div>
                     </section>
 
-                    <!-- STEP 4 -->
-                    <section id="step4" class="panel" hidden>
-                        <div style="max-width:560px;margin:0 auto">
-                            <p><strong>ตรวจสอบข้อมูลให้ครบถ้วน</strong> แล้วกด
-                                “ส่งแบบฟอร์ม”</p>
-                        </div>
-                        <div class="actions">
-                            <button type="button" class="btn ghost"
-                                data-prev>ย้อนกลับ</button>
-                            <button type="submit"
-                                class="btn">ส่งแบบฟอร์ม</button>
-                        </div>
-                    </section>
                 </form>
-
             </section>
         </main>
+
         <script>
-(() => {
-  /* ---------- Base stepper ---------- */
-  const steps  = Array.from(document.querySelectorAll('.step'));
-  const panels = ['step1','step2','step3','step4'].map(id => document.getElementById(id));
-  const total  = panels.length;
-  let current  = 1;
+  (() => {
+    // ⭐ แก้ panels ให้ตรงกับจำนวนสเตปจริง (3)
+    const steps  = Array.from(document.querySelectorAll('.step'));
+    const panels = ['step1','step2','step3'].map(id => document.getElementById(id));
+    const total  = panels.length;
+    let current  = 1;
 
-  function goto(n){
-    current = Math.max(1, Math.min(total, n));
-    panels.forEach((p,i)=> p.hidden = (i !== current-1));
-    steps.forEach((s,i)=>{
-      s.classList.toggle('is-active', i === current-1);
-      s.classList.toggle('is-done',   i <  current-1);
+    function goto(n){
+      current = Math.max(1, Math.min(total, n));
+      panels.forEach((p,i)=> p.hidden = (i !== current-1));
+      steps.forEach((s,i)=>{
+        s.classList.toggle('is-active', i === current-1);
+        s.classList.toggle('is-done',   i <  current-1);
+      });
+    }
+
+    document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{ if (validateStep(current)) goto(current+1); }));
+    document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
+
+    // Prefill email
+    (function prefillEmail(){
+      const emailInput = document.getElementById('email');
+      if (!emailInput) return;
+      const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
+      const sp = new URLSearchParams(location.search);
+      setIfEmpty(sp.get('email'));
+      fetch('/page/backend/me.php', { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : {ok:false})
+        .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
+        .catch(()=>{});
+    })();
+
+    // phone
+    const phoneInput = document.getElementById('phone');
+    phoneInput?.addEventListener('input', () => {
+      phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
     });
-  }
 
-  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{
-    if (validateStep(current)) goto(current+1);
-  }));
-  document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
-
-  /* ---------- Prefill email (จาก ?email= และ session) ---------- */
-  (function prefillEmail(){
-    const emailInput = document.getElementById('email');
-    if (!emailInput) return;
-    const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
-    const sp = new URLSearchParams(location.search);
-    setIfEmpty(sp.get('email'));
-    fetch('/page/backend/me.php', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : {ok:false})
-      .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
-      .catch(()=>{});
-  })();
-
-  /* ---------- เบอร์โทร: ให้พิมพ์ได้เฉพาะตัวเลข 0–9 และไม่เกิน 10 หลัก ---------- */
-  const phoneInput = document.getElementById('phone');
-  phoneInput?.addEventListener('input', () => {
-    phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
-  });
-
-  /* ---------- Step 2: toggle กลุ่มฟิลด์ + validate ---------- */
-  const personGroup  = document.getElementById('personFields');
-  const companyGroup = document.getElementById('companyFields');
-  const typeHint     = document.getElementById('typeHint');
-
-  function toggleGroup(group, enable){
-    group.hidden = !enable;
-    group.querySelectorAll('input,textarea,select').forEach(el=>{
-      el.disabled = !enable;
-      el.required = enable;     // บังคับเฉพาะกลุ่มที่เลือก
+    // citizen/postcode
+    const citizenIdInput = document.getElementById('citizen_id');
+    citizenIdInput?.addEventListener('input', () => {
+      citizenIdInput.value = citizenIdInput.value.replace(/\D/g,'').slice(0,13);
     });
-  }
-  function onTypeChange(){
-    const val = document.querySelector('input[name="sellerType"]:checked')?.value;
-    if (val === 'person') { toggleGroup(personGroup, true);  toggleGroup(companyGroup, false); }
-    else if (val === 'company') { toggleGroup(personGroup, false); toggleGroup(companyGroup, true); }
-  }
-  document.querySelectorAll('input[name="sellerType"]').forEach(r=>r.addEventListener('change', onTypeChange));
-  onTypeChange();
+    const postcodeInput = document.getElementById('postcode');
+    postcodeInput?.addEventListener('input', () => {
+      postcodeInput.value = postcodeInput.value.replace(/\D/g,'').slice(0,5);
+    });
 
-  const MAX_FILE = 5 * 1024 * 1024;
-  function fileOK(input){
-    const f = input?.files?.[0];
-    if (!f) return false;
-    if (f.size > MAX_FILE)        { alert('ไฟล์เกิน 5MB'); return false; }
-    const ok = ['image/jpeg','image/png','application/pdf'];
-    if (!ok.includes(f.type))     { alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
-    return true;
-  }
+    // DOB
+    const $dobDay   = document.getElementById('dobDay');
+    const $dobMonth = document.getElementById('dobMonth');
+    const $dobYearB = document.getElementById('dobYearBE');
+    const $dobIso   = document.getElementById('dobIso');
+    const $dobHint  = document.getElementById('dobHint');
 
-  /* ---------- ตรวจแต่ละสเตป ---------- */
-  function validateStep(idx){
-    if (idx === 1){
-      const s1 = panels[0];
-      const okRequired = [...s1.querySelectorAll('input[required],textarea[required]')]
-        .every(el => el.value.trim() !== '');
-      if (!okRequired) return false;
+    function fillDays(){
+      if (!$dobDay) return;
+      $dobDay.innerHTML = '<option value="">วัน</option>';
+      for (let d=1; d<=31; d++){
+        const opt = document.createElement('option');
+        opt.value = String(d).padStart(2,'0');
+        opt.textContent = d;
+        $dobDay.appendChild(opt);
+      }
+    }
+    function fillMonths(){
+      if (!$dobMonth) return;
+      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+      $dobMonth.innerHTML = '<option value="">เดือน</option>';
+      months.forEach((m,i)=>{
+        const opt = document.createElement('option');
+        opt.value = String(i+1).padStart(2,'0');
+        opt.textContent = m;
+        $dobMonth.appendChild(opt);
+      });
+    }
+    function fillYearsBE(){
+      if (!$dobYearB) return;
+      const now = new Date();
+      const thisBE = now.getFullYear()+543;
+      const maxBE = thisBE - 18;
+      const minBE = thisBE - 100;
+      $dobYearB.innerHTML = '<option value="">พ.ศ.</option>';
+      for (let y=maxBE; y>=minBE; y--){
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = y;
+        $dobYearB.appendChild(opt);
+      }
+    }
+    function updateDobIsoAndValidate(){
+      if (!$dobDay) return true;
+      const d = $dobDay.value, m = $dobMonth.value, yB = $dobYearB.value;
+      $dobHint.hidden = true;
+      if (!d || !m || !yB){ $dobIso.value=''; return false; }
+      const yC = parseInt(yB,10) - 543, mm = parseInt(m,10), dd = parseInt(d,10);
+      const dt = new Date(yC, mm-1, dd);
+      const valid = (dt.getFullYear()===yC && dt.getMonth()===(mm-1) && dt.getDate()===dd);
+      if (!valid){ $dobIso.value=''; $dobHint.hidden=false; return false; }
+      const today=new Date();
+      let age = today.getFullYear()-yC;
+      const beforeBD = (today.getMonth()+1<mm) || (today.getMonth()+1===mm && today.getDate()<dd);
+      if (beforeBD) age--;
+      if (age<18){ $dobIso.value=''; $dobHint.textContent='ผู้สมัครต้องมีอายุอย่างน้อย 18 ปีบริบูรณ์'; $dobHint.hidden=false; return false; }
+      $dobIso.value = `${yC}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+      return true;
+    }
+    fillDays(); fillMonths(); fillYearsBE();
+    [$dobDay,$dobMonth,$dobYearB].forEach(el=> el && el.addEventListener('change', updateDobIsoAndValidate));
 
-      const phoneVal = document.getElementById('phone').value.trim();
-      if (!/^[0-9]{9,10}$/.test(phoneVal)) {
-        alert('กรุณากรอกหมายเลขโทรศัพท์เป็นตัวเลข 9–10 หลัก');
-        return false;
+    // Toggle groups
+    const personGroup  = document.getElementById('personFields');
+    const companyGroup = document.getElementById('companyFields');
+    const typeHint     = document.getElementById('typeHint');
+
+    function toggleGroup(group, enable){
+      group.hidden = !enable;
+      group.querySelectorAll('input,textarea,select').forEach(el=>{
+        el.disabled = !enable;
+        el.required = enable && el.hasAttribute('required');
+      });
+    }
+    function onTypeChange(){
+      const val = document.querySelector('input[name="seller_type"]:checked')?.value;
+      if (val === 'person'){ toggleGroup(personGroup, true);  toggleGroup(companyGroup, false); }
+      else if (val === 'company'){ toggleGroup(personGroup, false); toggleGroup(companyGroup, true); }
+      updateDobIsoAndValidate();
+    }
+    document.querySelectorAll('input[name="seller_type"]').forEach(r=>r.addEventListener('change', onTypeChange));
+    onTypeChange();
+
+    const MAX_FILE = 5 * 1024 * 1024;
+    function fileOK(input){
+      const f = input?.files?.[0];
+      if (!f) return false;
+      if (f.size > MAX_FILE){ alert('ไฟล์เกิน 5MB'); return false; }
+      const ok = ['image/jpeg','image/png','application/pdf'];
+      if (!ok.includes(f.type)){ alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
+      return true;
+    }
+
+    // validate step
+    function validateStep(idx){
+      if (idx === 1){
+        const s1 = panels[0];
+        const okRequired = [...s1.querySelectorAll('input[required],textarea[required]')].every(el => el.value.trim() !== '');
+        if (!okRequired) return false;
+        const phoneVal = document.getElementById('phone').value.trim();
+        if (!/^[0-9]{9,10}$/.test(phoneVal)) { alert('กรุณากรอกหมายเลขโทรศัพท์เป็นตัวเลข 9–10 หลัก'); return false; }
+        return true;
+      }
+
+      if (idx === 2){
+        const type = document.querySelector('input[name="seller_type"]:checked')?.value;
+        const okType = !!type; typeHint.hidden = okType; if (!okType) return false;
+
+        if (type === 'person'){
+          const name = document.getElementById('citizen_name').value.trim();
+          const cid  = document.getElementById('citizen_id').value.trim();
+          if (!name){ alert('กรอกชื่อ-นามสกุล'); return false; }
+          if (!/^\d{13}$/.test(cid)){ alert('เลขบัตรประชาชน 13 หลัก'); return false; }
+          if (!updateDobIsoAndValidate()){ alert('กรุณาเลือกวันเดือนปีเกิดให้ถูกต้อง (อายุ 18+)'); return false; }
+
+          const addrLine    = document.getElementById('addr_line').value.trim();
+          const subdistrict = document.getElementById('subdistrict').value.trim();
+          const district    = document.getElementById('district').value.trim();
+          const province    = document.getElementById('province').value.trim();
+          const postcode    = document.getElementById('postcode').value.trim();
+          const pcOK        = /^\d{5}$/.test(postcode);
+          document.getElementById('postcodeHint').hidden = pcOK;
+          if (!addrLine || !subdistrict || !district || !province || !pcOK){
+            alert('กรอกที่อยู่ตามบัตรให้ครบ และรหัสไปรษณีย์ 5 หลัก'); return false;
+          }
+          if (!fileOK(document.getElementById('id_front'))) return false;
+          return true;
+
+        } else {
+          const cname = document.getElementById('company_name').value.trim();
+          const taxid = document.getElementById('tax_id').value.trim();
+          if (!cname){ alert('กรอกชื่อบริษัท'); return false; }
+          if (!/^\d{10,13}$/.test(taxid)){ alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
+          if (!fileOK(document.getElementById('reg_doc')) || !fileOK(document.getElementById('id_rep'))) return false;
+          return true;
+        }
       }
       return true;
     }
 
-    if (idx === 2){
-      const type = document.querySelector('input[name="sellerType"]:checked')?.value;
-      const okType = !!type;
-      typeHint.hidden = okType;
-      if (!okType) return false;
-
-      if (type === 'person'){
-        const name = document.getElementById('citizenName').value.trim();
-        const cid  = document.getElementById('citizenId').value.trim();
-        if (!name){ alert('กรอกชื่อ-นามสกุล'); return false; }
-        if (!/^[0-9]{13}$/.test(cid)){ alert('เลขบัตรประชาชน 13 หลัก'); return false; }
-        if (!fileOK(document.getElementById('idFront')) || !fileOK(document.getElementById('idBack'))) return false;
-        return true;
-      }else{
-        const cname = document.getElementById('companyName').value.trim();
-        const taxid = document.getElementById('taxId').value.trim();
-        if (!cname){ alert('กรอกชื่อบริษัท'); return false; }
-        if (!/^[0-9]{10,13}$/.test(taxid)){ alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
-        if (!fileOK(document.getElementById('regDoc')) || !fileOK(document.getElementById('idRep'))) return false;
-        return true;
-      }
-    }
-    return true;
-  }
-
-  /* เริ่มที่สเตป 1 */
-  goto(1);
-})();
-</script>
-
+    goto(1);
+  })();
+  </script>
     </body>
 </html>
