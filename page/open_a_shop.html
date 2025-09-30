@@ -50,165 +50,78 @@
                     </div>
                 </nav>
 
-                <!-- STEP 1 -->
-                <form id="step1" class="panel" autocomplete="off">
-                    <!---<header class="panel-head">
-                            <h2 class="panel-title">เปิดร้านค้า</h2>
-                        </header>--->
-                    <div class="field">
-                        <label for="shopName">ชื่อร้านค้า</label>
-                        <input id="shopName" name="shopName" required />
-                    </div>
-                    <div class="field">
-                        <label
-                            for="pickupAddr">ที่อยู่ในการเข้ารับสินค้า</label>
-                        <textarea id="pickupAddr" name="pickupAddr"
-                            required></textarea>
-                    </div>
-                    <div class="field">
-                        <label for="shopEmail">อีเมล์</label>
-                        <input id="shopEmail" type="email" name="shopEmail"
-                            required>
-                    </div>
-                    <div class="field">
-                        <label for="shopPhone">หมายเลขโทรศัพท์</label>
-                        <input id="shopPhone" type="tel" name="shopPhone"
-                            required />
-                    </div>
-                    <div class="actions">
-                        <button type="button" class="btn"
-                            data-next>ถัดไป</button>
-                    </div>
-                </form>
+                <!-- เดิมมีหลาย <form> เปลี่ยนเป็นฟอร์มเดียวที่ครอบทุกสเตป -->
+                <form id="openShopForm"
+                    action="/page/backend/shop_create.php"
+                    method="post"
+                    enctype="multipart/form-data"
+                    autocomplete="off">
 
-                <!-- STEP 2 : ยืนยันตัวตน -->
-                <form id="step2" class="panel" hidden
-                    enctype="multipart/form-data">
-                    <header class="panel-head">
-                        <h2 class="panel-title">ยืนยันตัวตน</h2>
-                        <hr class="panel-hr">
-                    </header>
-
-                    <div class="field">
-                        <label>ประเภทผู้ขาย *</label>
-                        <div class="radio-row">
-                            <label><input type="radio" name="sellerType"
-                                    value="person" required> บุคคลธรรมดา</label>
-                            <label><input type="radio" name="sellerType"
-                                    value="company"> นิติบุคคล</label>
-                        </div>
-                        <div class="hint" id="typeHint"
-                            hidden>กรุณาเลือกประเภทผู้ขาย</div>
-                    </div>
-
-                    <!-- บุคคลธรรมดา -->
-                    <div id="personFields" class="type-group" hidden>
+                    <!-- STEP 1 -->
+                    <section id="step1" class="panel">
                         <div class="field">
-                            <label for="citizenName">ชื่อ-นามสกุล *</label>
-                            <input id="citizenName" name="citizenName" disabled
+                            <label for="shop_name">ชื่อร้านค้า</label>
+                            <input id="shop_name" name="shop_name" required />
+                        </div>
+                        <div class="field">
+                            <label
+                                for="pickup_addr">ที่อยู่ในการเข้ารับสินค้า</label>
+                            <textarea id="pickup_addr" name="pickup_addr"
+                                required></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="email">อีเมล์</label>
+                            <input id="email" type="email" name="email"
                                 required>
                         </div>
                         <div class="field">
-                            <label for="citizenId">เลขบัตรประชาชน (13 หลัก)
-                                *</label>
-                            <input id="citizenId" name="citizenId"
-                                inputmode="numeric" maxlength="13"
-                                pattern="\d{13}" disabled required>
+                            <label for="phone">หมายเลขโทรศัพท์</label>
+                            <input id="phone" type="tel" name="phone"
+                                required />
                         </div>
+                        <div class="actions">
+                            <button type="button" class="btn"
+                                data-next>ถัดไป</button>
+                        </div>
+                    </section>
 
-                        <div class="grid2">
-                            <div class="field">
-                                <label for="idFront">บัตรประชาชนด้านหน้า
-                                    (JPG/PNG/PDF ≤ 5MB) *</label>
-                                <input type="file" id="idFront" name="idFront"
-                                    accept="image/*,application/pdf" disabled
-                                    required>
-                                <div class="preview" id="prevFront"></div>
-                            </div>
-                            <div class="field">
-                                <label for="idBack">บัตรประชาชนด้านหลัง
-                                    (JPG/PNG/PDF ≤ 5MB) *</label>
-                                <input type="file" id="idBack" name="idBack"
-                                    accept="image/*,application/pdf" disabled
-                                    required>
-                                <div class="preview" id="prevBack"></div>
-                            </div>
+                    <!-- STEP 2 : ยืนยันตัวตน -->
+                    <section id="step2" class="panel" hidden>
+                        <!-- … โค้ดเดิม … -->
+                        <div class="actions">
+                            <button type="button" class="btn ghost"
+                                data-prev>ย้อนกลับ</button>
+                            <button type="button" class="btn"
+                                data-next>ถัดไป</button>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- นิติบุคคล -->
-                    <div id="companyFields" class="type-group" hidden>
-                        <div class="field">
-                            <label for="companyName">ชื่อบริษัท *</label>
-                            <input id="companyName" name="companyName" disabled
-                                required>
+                    <!-- STEP 3 -->
+                    <section id="step3" class="panel" hidden>
+                        <!-- … โค้ดเดิม … -->
+                        <div class="actions">
+                            <button type="button" class="btn ghost"
+                                data-prev>ย้อนกลับ</button>
+                            <button type="button" class="btn"
+                                data-next>ถัดไป</button>
                         </div>
-                        <div class="field">
-                            <label for="taxId">เลขประจำตัวผู้เสียภาษี *</label>
-                            <input id="taxId" name="taxId" inputmode="numeric"
-                                maxlength="13" pattern="\d{10,13}" disabled
-                                required>
-                        </div>
+                    </section>
 
-                        <div class="grid2">
-                            <div class="field">
-                                <label for="regDoc">หนังสือรับรองนิติบุคคล
-                                    (PDF/JPG/PNG ≤ 5MB) *</label>
-                                <input type="file" id="regDoc" name="regDoc"
-                                    accept="application/pdf,image/*" disabled
-                                    required>
-                            </div>
-                            <div class="field">
-                                <label for="idRep">บัตรประชาชนผู้มีอำนาจลงนาม
-                                    (PDF/JPG/PNG ≤ 5MB) *</label>
-                                <input type="file" id="idRep" name="idRep"
-                                    accept="application/pdf,image/*" disabled
-                                    required>
-                            </div>
+                    <!-- STEP 4 -->
+                    <section id="step4" class="panel" hidden>
+                        <div style="max-width:560px;margin:0 auto">
+                            <p><strong>ตรวจสอบข้อมูลให้ครบถ้วน</strong> แล้วกด
+                                “ส่งแบบฟอร์ม”</p>
                         </div>
-                    </div>
-
-                    <div class="actions">
-                        <button type="button" class="btn ghost"
-                            data-prev>ย้อนกลับ</button>
-                        <button type="button" class="btn"
-                            data-next>ถัดไป</button>
-                    </div>
+                        <div class="actions">
+                            <button type="button" class="btn ghost"
+                                data-prev>ย้อนกลับ</button>
+                            <button type="submit"
+                                class="btn">ส่งแบบฟอร์ม</button>
+                        </div>
+                    </section>
                 </form>
 
-                <!-- STEP 3 -->
-                <form id="step3" class="panel" hidden>
-                    <div class="field">
-                        <label for="shopDesc">คำอธิบายร้านค้า
-                            (ไม่บังคับ)</label>
-                        <textarea id="shopDesc" name="shopDesc"></textarea>
-                    </div>
-                    <div class="field">
-                        <label
-                            for="contactTime">ช่วงเวลาที่สะดวกให้ติดต่อ</label>
-                        <input id="contactTime" name="contactTime" />
-                    </div>
-                    <div class="actions">
-                        <button type="button" class="btn ghost"
-                            data-prev>ย้อนกลับ</button>
-                        <button type="button" class="btn"
-                            data-next>ถัดไป</button>
-                    </div>
-                </form>
-
-                <!-- STEP 4 -->
-                <form id="step4" class="panel" hidden>
-                    <div style="max-width:560px;margin:0 auto">
-                        <p><strong>ตรวจสอบข้อมูลให้ครบถ้วน</strong> แล้วกด
-                            “ส่งแบบฟอร์ม” เพื่อส่งคำขอเปิดร้านค้า</p>
-                    </div>
-                    <div class="actions">
-                        <button type="button" class="btn ghost"
-                            data-prev>ย้อนกลับ</button>
-                        <button type="submit"
-                            class="btn">ส่งแบบฟอร์ม</button>
-                    </div>
-                </form>
             </section>
         </main>
 
@@ -229,17 +142,19 @@
     steps.forEach((s,i)=>{
       s.classList.toggle('is-active', i === current-1);
       s.classList.toggle('is-done',   i <  current-1);
-      s.classList.remove('active','done'); // เผื่อมีคลาสเก่าค้าง
     });
   }
 
-  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{ if (validateStep(current)) goto(current+1); }));
+  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{
+    if (validateStep(current)) goto(current+1);
+  }));
   document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
 
   function validateStep(idx){
     if (idx === 1){
-      const f = panels[0];
-      return [...f.querySelectorAll('input[required],textarea[required]')].every(el => el.value.trim() !== '');
+      const s1 = panels[0];
+      return [...s1.querySelectorAll('input[required],textarea[required]')]
+        .every(el => el.value.trim() !== '');
     }
     if (idx === 2){
       const ok = !!panels[1].querySelector('input[name="sellerType"]:checked');
@@ -273,6 +188,22 @@
     .then(r => r.ok ? r.json() : { ok:false })
     .then(d => { if (d && d.ok) setEmailIfEmpty(d.user?.email || ''); })
     .catch(() => {});
+})();
+</script>
+
+        <script>
+(function(){
+  const emailInput = document.getElementById('email');
+  if (!emailInput) return;
+  const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
+
+  const sp = new URLSearchParams(location.search);
+  setIfEmpty(sp.get('email'));
+
+  fetch('/page/backend/me.php', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : { ok:false })
+    .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
+    .catch(()=>{});
 })();
 </script>
 
