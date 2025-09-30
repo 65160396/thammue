@@ -50,7 +50,7 @@
                     </div>
                 </nav>
 
-                <!-- เดิมมีหลาย <form> เปลี่ยนเป็นฟอร์มเดียวที่ครอบทุกสเตป -->
+                <!-- ฟอร์มเปิดร้าน -->
                 <form id="openShopForm"
                     action="/page/backend/shop_create.php"
                     method="post"
@@ -87,7 +87,90 @@
 
                     <!-- STEP 2 : ยืนยันตัวตน -->
                     <section id="step2" class="panel" hidden>
-                        <!-- … โค้ดเดิม … -->
+                        <header class="panel-head">
+                        </header>
+
+                        <div class="field inline">
+                            <label>ประเภทผู้ขาย *</label>
+                            <div class="radio-row">
+                                <label><input type="radio" name="sellerType"
+                                        value="person" required>
+                                    บุคคลธรรมดา</label>
+                                <label><input type="radio" name="sellerType"
+                                        value="company"> นิติบุคคล</label>
+                            </div>
+                            <div class="hint" id="typeHint"
+                                hidden>กรุณาเลือกประเภทผู้ขาย</div>
+                        </div>
+
+                        <!-- บุคคลธรรมดา -->
+                        <div id="personFields" class="type-group" hidden>
+                            <div class="field">
+                                <label for="citizenName">ชื่อ-นามสกุล *</label>
+                                <input id="citizenName" name="citizenName"
+                                    disabled required>
+                            </div>
+                            <div class="field">
+                                <label for="citizenId">เลขบัตรประชาชน (13 หลัก)
+                                    *</label>
+                                <input id="citizenId" name="citizenId"
+                                    inputmode="numeric" maxlength="13"
+                                    pattern="\d{13}" disabled required>
+                            </div>
+
+                            <div class="grid2">
+                                <div class="field">
+                                    <label for="idFront">บัตรประชาชนด้านหน้า
+                                        (JPG/PNG/PDF ≤ 5MB) *</label>
+                                    <input type="file" id="idFront"
+                                        name="idFront"
+                                        accept="image/*,application/pdf"
+                                        disabled required>
+                                </div>
+                                <div class="field">
+                                    <label for="idBack">บัตรประชาชนด้านหลัง
+                                        (JPG/PNG/PDF ≤ 5MB) *</label>
+                                    <input type="file" id="idBack" name="idBack"
+                                        accept="image/*,application/pdf"
+                                        disabled required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- นิติบุคคล -->
+                        <div id="companyFields" class="type-group" hidden>
+                            <div class="field">
+                                <label for="companyName">ชื่อบริษัท *</label>
+                                <input id="companyName" name="companyName"
+                                    disabled required>
+                            </div>
+                            <div class="field">
+                                <label for="taxId">เลขประจำตัวผู้เสียภาษี (10–13
+                                    หลัก) *</label>
+                                <input id="taxId" name="taxId"
+                                    inputmode="numeric" maxlength="13"
+                                    pattern="\d{10,13}" disabled required>
+                            </div>
+
+                            <div class="grid2">
+                                <div class="field">
+                                    <label for="regDoc">หนังสือรับรองนิติบุคคล
+                                        (PDF/JPG/PNG ≤ 5MB) *</label>
+                                    <input type="file" id="regDoc" name="regDoc"
+                                        accept="application/pdf,image/*"
+                                        disabled required>
+                                </div>
+                                <div class="field">
+                                    <label
+                                        for="idRep">บัตรประชาชนผู้มีอำนาจลงนาม
+                                        (PDF/JPG/PNG ≤ 5MB) *</label>
+                                    <input type="file" id="idRep" name="idRep"
+                                        accept="application/pdf,image/*"
+                                        disabled required>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="actions">
                             <button type="button" class="btn ghost"
                                 data-prev>ย้อนกลับ</button>
@@ -205,6 +288,78 @@
     .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
     .catch(()=>{});
 })();
+</script>
+
+        <script>
+/* ===== Step 2: toggle group + validate ===== */
+const personGroup  = document.getElementById('personFields');
+const companyGroup = document.getElementById('companyFields');
+const typeHint     = document.getElementById('typeHint');
+
+function toggleGroup(group, enable){
+  group.hidden = !enable;
+  group.querySelectorAll('input,textarea,select').forEach(el=>{
+    el.disabled  = !enable;
+    el.required  = enable;   // บังคับกรอกเฉพาะกลุ่มที่เลือก
+  });
+}
+
+function onTypeChange(){
+  const val = document.querySelector('input[name="sellerType"]:checked')?.value;
+  if (val === 'person') {
+    toggleGroup(personGroup,  true);
+    toggleGroup(companyGroup, false);
+  } else if (val === 'company') {
+    toggleGroup(personGroup,  false);
+    toggleGroup(companyGroup, true);
+  }
+}
+document.querySelectorAll('input[name="sellerType"]').forEach(r=>{
+  r.addEventListener('change', onTypeChange);
+});
+onTypeChange();
+
+/* ขยาย validateStep สำหรับสเตป 2 */
+const MAX_FILE = 5 * 1024 * 1024;
+function fileOK(input){
+  const f = input.files?.[0];
+  if (!f) return false;
+  if (f.size > MAX_FILE) { alert('ไฟล์เกิน 5MB'); return false; }
+  const ok = ['image/jpeg','image/png','application/pdf'];
+  if (!ok.includes(f.type)) { alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
+  return true;
+}
+
+const oldValidate = validateStep; // ของคุณเดิม
+validateStep = function(idx){
+  if (idx === 2){
+    const val = document.querySelector('input[name="sellerType"]:checked')?.value;
+    const okType = !!val;
+    typeHint.hidden = okType;
+    if (!okType) return false;
+
+    if (val === 'person') {
+      const name = document.getElementById('citizenName').value.trim();
+      const cid  = document.getElementById('citizenId').value.trim();
+      const f1   = document.getElementById('idFront');
+      const f2   = document.getElementById('idBack');
+      if (!name) { alert('กรอกชื่อ-นามสกุล'); return false; }
+      if (!/^\d{13}$/.test(cid)) { alert('เลขบัตรประชาชน 13 หลัก'); return false; }
+      if (!fileOK(f1) || !fileOK(f2)) return false;
+      return true;
+    } else {
+      const cname = document.getElementById('companyName').value.trim();
+      const taxid = document.getElementById('taxId').value.trim();
+      const d1    = document.getElementById('regDoc');
+      const d2    = document.getElementById('idRep');
+      if (!cname) { alert('กรอกชื่อบริษัท'); return false; }
+      if (!/^\d{10,13}$/.test(taxid)) { alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
+      if (!fileOK(d1) || !fileOK(d2)) return false;
+      return true;
+    }
+  }
+  return oldValidate(idx);
+};
 </script>
 
     </body>

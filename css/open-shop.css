@@ -216,3 +216,54 @@
 .open-shop #editEmailBtn {
   display: none !important;
 }
+
+/*ปุ่มเลือกตอนบุคคล สเต็ป2 */
+/* ให้ label กับตัวเลือกอยู่บรรทัดเดียว */
+.field.inline {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* กำหนดความกว้างคอลัมน์ label ให้ตรงกับฟิลด์อื่น (ปรับตัวเลขได้) */
+.field.inline > label {
+  flex: 0 0 140px; /* 140–180px ตามดีไซน์คุณ */
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* เรียง radio 2 อันในแถวเดียว */
+.field .radio-row {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* ระยะห่างระหว่างตัวเลือก */
+  flex-wrap: nowrap; /* จอกว้างไม่ตัดบรรทัด */
+}
+
+.field .radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* ระยะวงกลมกับข้อความ */
+  margin: 0;
+  white-space: nowrap; /* กันข้อความขึ้นบรรทัดใหม่ */
+}
+
+.field .radio-row input[type="radio"] {
+  margin: 0;
+  /* accent-color: #000;  <-- อยากให้สีปุ่มวิทยุตรงธีม เปิดบรรทัดนี้ได้ */
+}
+
+/* มือถือให้ยอมตัดบรรทัด */
+@media (max-width: 640px) {
+  .field.inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .field.inline > label {
+    flex: none;
+  }
+  .field .radio-row {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+}
