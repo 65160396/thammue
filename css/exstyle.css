@@ -133,3 +133,8 @@ legend{position:absolute; left:-9999px} /* ซ่อน legend แต่อ่�
 
 /* ===== Panels ===== */
 .panel[hidden]{display:none}
+
+.is-public .request-card,
+.is-public .btn-primary-blue {
+  display: none !important;
+}
