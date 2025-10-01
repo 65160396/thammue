@@ -655,6 +655,13 @@
     postcode:    '#postcode'
   });
 
+  // ทำให้ .field ที่มีช่อง required ข้างใน ถูกเติม class "required" อัตโนมัติ
+document.querySelectorAll('.field').forEach(f => {
+  if (f.querySelector('input[required], select[required], textarea[required]')) {
+    f.classList.add('required');
+  }
+});
+
   goto(1);
 })();
 </script>
