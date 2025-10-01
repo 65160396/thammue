@@ -284,6 +284,40 @@
   cursor: pointer;
 }
 
+/* ดอกจันสำหรับ DOB: label + .dob-row ที่มี select[required] (และไม่ disabled) */
+.open-shop .field:has(.dob-row select[required]:not([disabled])) > label {
+  position: relative;
+  padding-left: 12px;
+}
+.open-shop
+  .field:has(.dob-row select[required]:not([disabled]))
+  > label::before {
+  content: "*";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #d0342c;
+  font-weight: 600;
+}
+
+/* ดอกจันสำหรับกลุ่ม radio: label + .radio-row ที่มี input[required] (และไม่ disabled) */
+.open-shop
+  .field.inline:has(.radio-row input[required]:not([disabled]))
+  > label {
+  position: relative;
+  padding-left: 12px;
+}
+.open-shop
+  .field.inline:has(.radio-row input[required]:not([disabled]))
+  > label::before {
+  content: "*";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #d0342c;
+  font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .open-shop .wizard-card {
