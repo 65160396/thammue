@@ -248,36 +248,116 @@
 
                         <!-- นิติบุคคล -->
                         <div id="companyFields" class="type-group" hidden>
+
+                            <!-- ประเภทนิติบุคคล (จัดเป็นกริด 3 คอลัมน์) -->
+                            <div class="field inline">
+                                <label>ประเภทนิติบุคคล</label>
+                                <div class="radio-row">
+                                    <label>
+                                        <input type="radio" name="corp_kind"
+                                            value="company_limited" required
+                                            disabled />
+                                        บริษัทจำกัด
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="corp_kind"
+                                            value="public_company_limited"
+                                            disabled />
+                                        บริษัทจำกัดมหาชน
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="corp_kind"
+                                            value="partnership_juristic"
+                                            disabled />
+                                        ห้างหุ้นส่วนสามัญนิติบุคคล
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="corp_kind"
+                                            value="partnership_limited"
+                                            disabled />
+                                        ห้างหุ้นส่วนจำกัด
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- ข้อมูลบริษัทพื้นฐาน -->
                             <div class="field">
                                 <label for="company_name">ชื่อบริษัท</label>
                                 <input id="company_name" name="company_name"
-                                    disabled required />
-                            </div>
-                            <div class="field">
-                                <label for="tax_id">เลขประจำตัวผู้เสียภาษี
-                                    (10–13 หลัก)</label>
-                                <input id="tax_id" name="tax_id"
-                                    inputmode="numeric" maxlength="13"
-                                    pattern="\d{10,13}" disabled required />
+                                    type="text" disabled required />
                             </div>
 
+                            <div class="field">
+                                <label for="tax_id">เลขทะเบียนนิติบุคคล (10–13
+                                    หลัก)</label>
+                                <input id="tax_id" name="tax_id"
+                                    inputmode="numeric" maxlength="13"
+                                    pattern="\d{10,13}"
+                                    disabled required />
+                            </div>
+
+                            <h3 class="form-section">ที่อยู่จดทะเบียนบริษัท</h3>
+
+                            <!-- จังหวัด / อำเภอ -->
+                            <div class="grid2">
+                                <div class="field">
+                                    <label for="co_province">จังหวัด</label>
+                                    <select id="co_province" disabled required>
+                                        <option value selected disabled>—
+                                            เลือกจังหวัด —</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="co_district">อำเภอ/เขต</label>
+                                    <select id="co_district" disabled required>
+                                        <option value selected disabled>—
+                                            เลือกอำเภอ/เขต —</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- ตำบล / ไปรษณีย์ -->
                             <div class="grid2">
                                 <div class="field">
                                     <label
-                                        for="reg_doc">หนังสือรับรองนิติบุคคล</label>
-                                    <input type="file" id="reg_doc"
-                                        name="reg_doc"
-                                        accept="application/pdf,image/*"
-                                        disabled required />
+                                        for="co_subdistrict">ตำบล/แขวง</label>
+                                    <select id="co_subdistrict" disabled
+                                        required>
+                                        <option value selected disabled>—
+                                            เลือกตำบล/แขวง —</option>
+                                    </select>
                                 </div>
                                 <div class="field">
                                     <label
-                                        for="id_rep">บัตรประชาชนผู้มีอำนาจลงนาม</label>
-                                    <input type="file" id="id_rep"
-                                        name="id_rep"
-                                        accept="application/pdf,image/*"
+                                        for="co_postcode">รหัสไปรษณีย์</label>
+                                    <input id="co_postcode" name="co_postcode"
+                                        inputmode="numeric" maxlength="5"
                                         disabled required />
                                 </div>
+                            </div>
+
+                            <div class="field">
+                                <label
+                                    for="co_addr_line">รายละเอียดที่จดทะเบียนบริษัท</label>
+                                <input id="co_addr_line" name="co_addr_line"
+                                    placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
+                                    disabled required />
+                            </div>
+
+                            <!-- เอกสารประกอบ -->
+                            <div class="field">
+                                <label for="reg_doc">หนังสือรับรองบริษัท</label>
+                                <input type="file" id="reg_doc" name="reg_doc"
+                                    accept="application/pdf,image/*"
+                                    disabled required />
+                            </div>
+
+                            <div class="field">
+                                <label
+                                    for="id_rep">บัตรประชาชนผู้มีอำนาจลงนาม</label>
+                                <input type="file" id="id_rep" name="id_rep"
+                                    accept="application/pdf,image/*"
+                                    disabled required />
                             </div>
                         </div>
 
