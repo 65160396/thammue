@@ -118,138 +118,103 @@ li a:hover {
   flex-grow: 1;
   gap: 12px;
 }
+/* ====== Search (แก้ใหม่) ====== */
 
-/* ปรับกล่องค้นหาให้ input + ปุ่มสูงเท่ากันและติดกันสวย */
-.search-group {
-  display: flex;
-  align-items: center;
-  height: 40px;                /* ความสูงคงที่ */
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  overflow: hidden;            /* ให้ขอบ input+button เป็นชิ้นเดียว */
-  background: #fff;
+/* แถวค้นหา + ไอคอนขวา */
+.search-container{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex:1 1 auto;           /* ยืดกินพื้นที่ที่เหลือ */
+  gap:12px;
 }
 
-.search-group input[type="text"] {
-  flex: 1;
-  height: 100%;
-  border: none;
-  padding: 0 12px;
-  font-size: 15px;
-  outline: none;
+/* กรอบค้นหา (input + ปุ่ม) */
+.search-group{
+  display:flex;
+  align-items:center;
+  height:44px;             /* ความสูงคงที่ */
+  border:1px solid #ccc;
+  border-radius:8px;
+  overflow:hidden;         /* ให้มุมโค้งเป็นชิ้นเดียว */
+  background:#fff;
+  width:min(400px, 400px);  /* ยืดหยุ่นตามความกว้างหน้าจอ */
 }
 
-.search-group .search-button {
-  width: 44px;
-  height: 100%;
-  border: none;
-  background: #fff;
-  border-left: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+/* กล่องข้อความ */
+.search-group input[type="text"]{
+  flex:1 1 auto;
+  height:100%;
+  border:none;
+  padding:0 14px;
+  font-size:16px;
+  outline:none;
 }
 
-.search-group .search-button img {
-  width: 18px;
-  height: 18px;
-  display: block;
+/* ปุ่มรูปแว่นขยาย */
+.search-group .search-button{
+  width:48px;
+  height:100%;
+  border:none;
+  border-left:1px solid #ddd;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.search-group .search-button img{
+  width:18px;
+  height:18px;
+  display:block;
 }
 
-
-.search-container input[type="text"] {
-  padding: 8.5px 10px;
-  font-size: 15px;
-  border: none;
-  outline: none;
-  height: 12px; /* ความสูงของกล่อง */
-  width: 260px; /* ขนาดความยาวของกล่อง */
-  max-width: 48vw;
-  border-radius: 2px 0 0 2px;
-  background: #ffffff;
+/* ปุ่มไอคอน 4 ตัวด้านขวา */
+.search-container .icon-buttons{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.search-container .action-button{
+  padding:0;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  border-radius:50%;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background-color .2s ease;
+}
+.search-container .action-button:hover{ background:#111; }
+.search-container .action-button img{
+  height:26px; width:auto; display:block;
 }
 
-.search-container .search-button {
-  height: px;
-  padding: 7px 10px;
-  background: #ffffff;
-  font-size: 15px;
-  border: 1px solid #e5e5e5;
-  border-left: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0 2px 2px 0;
+/* ====== Responsive ====== */
+@media (max-width: 1024px){
+  .search-group{ width:min(500px, 60vw); }
 }
-.search-container .search-button img {
-  height: 13px;
-  width: auto;
-  display: block;
-}
-
-.search-container .icon-buttons {
-  display: flex;
-  align-items: center;
-  gap: 14px; /* ระยะห่างระหว่างแต่ละปุ่ม */
-}
-
-.search-container .action-button {
-  padding: 0;
-  background: transparent; /* โปร่งใสเหมือนภาพ */
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-}
-.search-container .action-button:hover {
-  background: #111;
-}
-
-.search-container .action-button img {
-  height: 26px;
-  width: auto;
-  display: block;
-  /*filter: invert(100%) brightness(200%); /* ไอคอนเป็นสีขาว */
-}
-
-/* Mobile Responsive */
-@media screen and (max-width: 768px) {
-  ul {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
+@media (max-width: 768px){
+  .search-container{ gap:10px; }
+  .search-group{
+    width:calc(100% - 56px);      /* เผื่อพื้นที่ให้ปุ่ม/ไอคอนด้านขวา */
+    max-width:100%;
   }
-
-  .search-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-container input[type="text"],
-  .search-container button,
-  .search-container .icon-buttons {
-    width: 100%;
-    margin: 0;
-    padding: 12px 0;
-    justify-content: center;
-  }
-
-  .search-container input[type="text"] {
-    border: 1px solid #ccc;
-  }
-
-  .search-container .icon-buttons {
-    justify-content: center;
-  }
+  .search-group input[type="text"]{ font-size:15px; }
 }
+@media (max-width: 400px){
+  .search-group{
+    width:100%;
+    height:42px;
+  }
+  .search-group .search-button{ width:46px; }
+  .search-group input[type="text"]{ font-size:14.5px; padding:0 12px; }
+}
+
+
 
 /* โฆษณา / หมวดหมู่ / หน้า login / แนะนำสินค้า */
 .ad-banner {
@@ -618,3 +583,73 @@ a{text-decoration:none;color:inherit}
 @media (max-width:900px){
   .footer-grid{grid-template-columns:1fr}
 }
+/* --- จัดตำแหน่ง & การแสดงผลของ hamburger / icons เมื่อจอเล็ก --- */
+
+/* ให้ header วาง absolute ได้ */
+.header-wrapper{ position: relative; }
+
+/* ค่าเริ่มต้น: เดสก์ท็อป */
+.hamburger{ display:none; }
+
+/* ไอคอน 4 ตัวบนเดสก์ท็อปยังคงใช้กฎเดิมได้ */
+.desktop-icons{ display:flex; }
+
+/* จอเล็ก */
+@media (max-width: 900px){
+
+  /* ซ่อนไอคอน 4 ตัวด้วย selector ที่ "ชนะ" ตัวเดิมแน่ๆ */
+  .search-container .desktop-icons{
+    display: none !important;
+  }
+
+  /* โชว์ปุ่มสามขีด และวาง absolute ชิดขวา-กึ่งกลางแนวตั้ง */
+  .hamburger{
+    display:flex;
+    align-items:center; justify-content:center;
+    width:40px; height:40px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#111; cursor:pointer;
+
+    position:absolute;
+    right:24px; top:50%; transform: translateY(-50%);
+    z-index: 5;
+  }
+  .hamburger span{ width:20px; height:2px; background:#fff; display:block; }
+  .hamburger span + span{ margin-top:4px; }
+
+  /* กันไม่ให้ปุ่มทับกล่องค้นหา: เว้นที่ด้านขวาของ search */
+  .search-container{ padding-right:56px; }
+
+  /* กล่องค้นหาเต็มพื้นที่สวย ๆ */
+  .search-group{ max-width: 100%; width:100%; }
+}
+
+/* ลิ้นชักเมนูมือถือ (จากคำตอบก่อนหน้า) */
+.icons-drawer{
+  position: fixed; top:0; right:0; width:82vw; max-width:360px;
+  height:100dvh; background:#000; color:#fff; z-index:1100;
+  transform: translateX(100%); transition: transform .25s ease;
+  padding: 16px; display:grid; gap:12px; align-content:start;
+  border-left:1px solid #222;
+}
+.icons-drawer.open{ transform: translateX(0); }
+.icons-drawer[hidden]{ display:block; }
+
+.icons-drawer a{
+  display:flex; align-items:center; gap:10px;
+  padding:12px; border:1px solid #222; border-radius:10px;
+  background:#0c0c0c; color:#fff; font-weight:600;
+}
+.icons-drawer a img{ width:22px; height:22px; }
+
+.icons-drawer__close{
+  justify-self:end; background:#111; color:#fff; border:1px solid #333;
+  border-radius:8px; padding:6px 10px; cursor:pointer; margin-bottom:4px;
+}
+.icons-backdrop{
+  position: fixed; inset:0; background: rgba(0,0,0,.45); z-index:1000;
+}
+.icons-backdrop[hidden]{ display:none; }
+
+
