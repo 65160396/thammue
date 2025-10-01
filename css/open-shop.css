@@ -218,7 +218,6 @@
 }
 
 /*ปุ่มเลือกตอนบุคคล สเต็ป2 */
-/* ให้ label กับตัวเลือกอยู่บรรทัดเดียว */
 .field.inline {
   display: flex;
   align-items: center;
@@ -251,6 +250,31 @@
 .field .radio-row input[type="radio"] {
   margin: 0;
   /* accent-color: #000;  <-- อยากให้สีปุ่มวิทยุตรงธีม เปิดบรรทัดนี้ได้ */
+}
+
+/* จัดหัวข้อ section ของฟอร์มให้ align เท่ากับกล่อง input */
+.form-section {
+  margin: 30px 0 10px; /* ระยะบน/ล่าง */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2b3648;
+
+  /* ให้ตรงกับระยะของ field */
+  padding-left: 2px;
+}
+
+/* จัดหัวข้อให้ชิดเส้นเดียวกับกล่องกรอก */
+.open-shop .wizard-card .form-section {
+  max-width: 520px;
+  margin: 30px auto 10px; /* auto ทำให้กึ่งกลางเท่ากับ .field */
+  padding-left: 2px;
+}
+
+/* ให้ข้อความ hint ใต้หัวข้อชิดเส้นเดียวกันด้วย */
+.open-shop .wizard-card .form-section + .hint {
+  max-width: 520px;
+  margin: 6px auto 16px;
+  padding-left: 2px;
 }
 
 /* มือถือให้ยอมตัดบรรทัด */
