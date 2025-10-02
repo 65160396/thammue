@@ -5,6 +5,17 @@
     "Helvetica Neue", Arial;
   background: #fff;
 }
+
+/* ---------- Radius Tokens (ใช้ทุกหน้า) ---------- */
+/* RADIUS >>> */
+:root {
+  --radius-sm: 10px;
+  --radius-md: 14px; /* โค้งกลาง โทนเดียวกับรูปตัวอย่าง */
+  --radius-lg: 20px; /* โค้งการ์ดใหญ่ */
+  --stepper-width: 360px;
+}
+/* RADIUS <<< */
+
 /* Top brand bar */
 .auth .auth-topbar {
   background: #000;
@@ -21,6 +32,7 @@
   letter-spacing: 0.35em;
   font-weight: 600;
 }
+
 /* Layout */
 .auth .auth-page {
   max-width: 1080px;
@@ -28,22 +40,18 @@
   padding: 40px 24px 72px;
 }
 
-:root {
-  --stepper-width: 360px; /* อยากสั้น/ยาวกว่านี้ก็เพิ่ม-ลดเลขนี้ได้ */
-}
-
 /* ===== Stepper (จุด+เส้น แบบรูปแรก) ===== */
 .auth .auth-steps {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* จุดอยู่ปลายซ้าย-ขวา */
+  justify-content: space-between;
   max-width: 650px;
   width: 100%;
   margin: 0 auto 12px;
 
-  --dot: 14px; /* เส้นผ่านศูนย์กลางจุด */
-  --gap: 34px; /* ระยะจากขอบจุดถึงต้น/ปลายเส้น */
+  --dot: 14px;
+  --gap: 34px;
 }
 /* เส้นกลาง (ไม่ชนจุด) */
 .auth .auth-steps::before {
@@ -64,11 +72,12 @@
   border-radius: 50%;
   background: #d9d9d9;
   position: relative;
-  z-index: 1; /* ให้อยู่เหนือเส้น */
+  z-index: 1;
 }
 .auth .auth-dot.is-active {
   background: #000;
 }
+
 /* ถ้ามี <span class="auth-line"> ใน HTML ให้ซ่อนไว้ */
 .auth .auth-line {
   display: none !important;
@@ -77,7 +86,7 @@
 /* ข้อความใต้จุด */
 .auth .auth-step-labels {
   display: grid;
-  grid-template-columns: var(--dot) 1fr var(--dot); /* จุด-เส้น-จุด */
+  grid-template-columns: var(--dot) 1fr var(--dot);
   align-items: center;
   justify-items: center;
   max-width: 880px;
@@ -93,10 +102,10 @@
 }
 .auth .auth-step-labels span:first-child {
   grid-column: 1;
-} /* ใต้จุดซ้าย */
+}
 .auth .auth-step-labels span:last-child {
   grid-column: 3;
-} /* ใต้จุดขวา */
+}
 .auth .auth-step-labels .is-active {
   color: #000;
   font-weight: 600;
@@ -109,6 +118,7 @@
   font-weight: 600;
   margin: 8px 0 24px;
 }
+
 /* Form */
 .auth .auth-form {
   max-width: 520px;
@@ -129,14 +139,23 @@
   font-size: 14px;
   margin: -4px 0 10px;
 }
+
+/* ช่องกรอก */
+/* RADIUS >>> */
 .auth .auth-input {
   width: 100%;
   height: 40px;
   padding: 8px 10px;
   border: 1px solid #9e9e9e;
-  border-radius: 2px;
+  border-radius: var(--radius-md); /* เดิม 2px */
   outline: none;
 }
+.auth .auth-input:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+/* RADIUS <<< */
+
 .auth .auth-btn {
   display: block;
   width: 240px;
@@ -147,6 +166,7 @@
   border: none;
   font-size: 18px;
   cursor: pointer;
+  border-radius: var(--radius-md); /* RADIUS >>> */
 }
 .auth .auth-btn:disabled {
   opacity: 0.5;
@@ -182,6 +202,7 @@
   font-size: 18px;
   text-align: center;
   text-decoration: none;
+  border-radius: var(--radius-md); /* RADIUS >>> */
 }
 
 /* ข้อความใต้ช่องกรอก + สถานะ */
@@ -218,7 +239,6 @@
 
 /* ====== Login (เพิ่มใหม่) ====== */
 
-/* ให้ทั้งหน้า login ใช้ wrapper .auth */
 .auth a {
   color: #000;
   text-decoration: none;
@@ -227,7 +247,7 @@
   text-decoration: underline;
 }
 
-/* เฮดเดอร์แบรนด์ (ถ้าใช้ .auth-header/.brand แทน .auth-topbar/.auth-brand) */
+/* เฮดเดอร์แบรนด์ (ทางเลือก) */
 .auth .auth-header {
   background: #000;
   color: #fff;
@@ -244,7 +264,7 @@
   font-weight: 600;
 }
 
-/* การ์ดกลาง (หุ้มฟอร์มให้คล้าย addmember) */
+/* การ์ดกลาง */
 .auth .auth-container {
   max-width: 1080px;
   margin: 0 auto;
@@ -255,9 +275,10 @@
   margin: 24px auto;
   background: #fff;
   border: 1px solid #e5e5e5;
-  border-radius: 8px;
+  border-radius: var(--radius-lg); /* RADIUS >>> เดิม 8px */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
   padding: 32px 28px;
+  overflow: hidden; /* ให้มุมในโค้งตาม */
 }
 
 /* ไตเติล */
@@ -268,7 +289,7 @@
   margin: 8px 0 24px;
 }
 
-/* ฟอร์ม (ใช้ของเดิมได้) */
+/* ฟอร์ม (ใช้ของเดิม) */
 .auth .auth-form {
   max-width: 520px;
   margin: 0 auto;
@@ -279,41 +300,46 @@
   color: #222;
   margin: 16px 0 8px;
 }
-.auth .auth-input {
-  width: 100%;
-  height: 40px;
-  padding: 8px 10px;
+
+/* รหัสผ่าน + ปุ่มตา (ให้โค้งเป็นกลุ่ม) */
+.auth .auth-password {
+  display: flex;
+  align-items: center;
   border: 1px solid #9e9e9e;
-  border-radius: 2px;
-  outline: none;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #fff;
 }
-.auth .auth-input:focus {
+
+/* ตัดเส้นขอบของ input ออก ให้ใช้ขอบจากกรอบนอกแทน */
+.auth .auth-password .auth-input {
+  flex: 1;
+  height: 42px;
+  padding: 10px 44px 10px 12px; /* เผื่อที่ให้ปุ่มตา */
+  border: 0;
+  outline: none;
+  border-radius: 0; /* มุมใช้จากกรอบนอก */
+  box-shadow: none;
+}
+
+/* เอฟเฟกต์เวลาโฟกัสทั้งกรุ๊ป */
+.auth .auth-password:focus-within {
   border-color: #000;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-/* รหัสผ่าน + ปุ่มตา */
-.auth .auth-password {
-  position: relative;
-}
-.auth .auth-password .auth-input {
-  padding-right: 44px;
-}
+/* ปุ่มไอคอนตา อยู่ใน flow ไม่ต้อง absolute */
 .auth .auth-eye {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0; /* มุมใช้จากกรอบนอก */
 }
 .auth .auth-eye:hover {
   background: #f3f3f3;
@@ -323,11 +349,11 @@
   height: 20px;
 }
 
-/* ปุ่ม submit (แมพให้ตรงกับสไตล์ .auth-btn เดิม) */
+/* ปุ่มเข้าสู่ระบบ */
 .auth .auth-button,
 .auth .auth-btn {
   display: block;
-  width: 240px;
+  width: 200px;
   margin: 28px auto 0;
   padding: 14px 18px;
   background: #000;
@@ -335,13 +361,14 @@
   border: none;
   font-size: 18px;
   cursor: pointer;
+  border-radius: var(--radius-md); 
 }
 .auth .auth-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* เส้นคั่นคำว่า “หรือ” */
+/*อันนี้ส่วนตรงคำว่า “หรือ” */
 .auth .auth-divider {
   display: flex;
   align-items: center;
@@ -360,7 +387,7 @@
   display: block;
 }
 
-/* ปุ่มโซเชียล */
+/*ปุ่มโซเชียล*/
 .auth .auth-social {
   display: flex;
   align-items: center;
@@ -372,7 +399,7 @@
   width: 44px;
   height: 44px;
   border: 1px solid #e5e5e5;
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -396,7 +423,7 @@
   text-decoration: underline;
 }
 
-/* Flash message จาก PHP: ?type=success|error&msg=... */
+/* Flash message */
 .auth .auth-flash {
   max-width: 520px;
   margin: 0 auto 16px;
@@ -459,4 +486,11 @@
 /*ลบลิงค์ปุ่มกลับไปหน้า main */
 .auth .auth-link-btn:hover {
   text-decoration: none;
+}
+
+/* เสริม: ให้ select โค้งจริงในบางเบราว์เซอร์ */
+.auth select {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: var(--radius-md);
 }
