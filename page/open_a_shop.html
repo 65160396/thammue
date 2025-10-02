@@ -6,11 +6,7 @@
         <title>Thammue – เปิดร้านค้า</title>
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/open-shop.css" />
-        <style>
-    .open-shop .field.required > label::before{content:"* ";color:#d0342c;font-weight:600;}
-    .open-shop .field label:has(+ .dob-row select[required]){position:relative;padding-left:12px;}
-    .open-shop .field label:has(+ .dob-row select[required])::before{content:"*";position:absolute;left:0;top:0;color:#d0342c;font-weight:600;}
-  </style>
+
     </head>
     <body class="open-shop">
 
@@ -717,6 +713,7 @@ document.querySelectorAll('.field').forEach(f => {
         dd.innerHTML = `
           <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
           <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
+          <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
           <hr>
           <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
         `;
