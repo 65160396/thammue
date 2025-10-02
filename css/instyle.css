@@ -52,14 +52,17 @@ body.login-page {
   font-family: "Cinzel", "Times New Roman", serif;
 }
 /*จอเล็ก ซ่อนไว้หรือย่อขนาด*/
-@media (max-width: 768px) {
-  .brand-text {
-    font-size: 18px;
-    letter-spacing: 0.35em;
-  }
-}
+@media screen and (max-width: 768px){
+  .search-container{ flex-direction: column; align-items: stretch; }
 
-/* แถบบนสุด (Top bar) */
+  /* จับเฉพาะส่วนค้นหา */
+  .search-container .search-group{ width:100%; }
+  .search-container .search-group input[type="text"]{ width:100%; }
+  .search-container .search-group .search-button{ width:100%; }
+
+  /* แถวไอคอน (ถ้ายังอยู่ในมือถือบางขนาดที่ไม่ถึง 900px) */
+  .search-container .icon-buttons{ width:100%; justify-content:center; }
+}
 ul {
   list-style-type: none;
   margin: 0;
@@ -590,6 +593,8 @@ a{text-decoration:none;color:inherit}
 
 /* ค่าเริ่มต้น: เดสก์ท็อป */
 .hamburger{ display:none; }
+.hamburger span{ width:20px; height:2px; background:#fff; display:block; }
+.hamburger span + span{ margin-top:4px; }
 
 /* ไอคอน 4 ตัวบนเดสก์ท็อปยังคงใช้กฎเดิมได้ */
 .desktop-icons{ display:flex; }
@@ -653,3 +658,19 @@ a{text-decoration:none;color:inherit}
 .icons-backdrop[hidden]{ display:none; }
 
 
+/* ปิดผลกระทบเส้นสามขีดเดิม (span) */
+.hamburger span { display: none !important; }
+
+/* ขนาดปุ่ม */
+.hamburger{
+  display:flex; align-items:center; justify-content:center;
+  width:40px; height:40px; padding:0;
+  border-radius:8px; border:1px solid #333; background:#111; cursor:pointer;
+}
+
+/* ขนาดรูปไอคอนในปุ่ม */
+.hamburger img{
+  width:20px; height:20px; display:block;
+  /* ถ้ารูปเป็นสีดำบนพื้นดำให้เปิดบรรทัดนี้ */
+  /* filter: invert(100%); */
+}

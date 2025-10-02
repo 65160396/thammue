@@ -8,24 +8,65 @@
     <link rel="stylesheet" href="/css/instyle.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <style>
-      /* flash fade in/out */
-      #flash{opacity:0;transform:translateY(-4px);transition:opacity .35s ease,transform .35s ease}
-      #flash.show{opacity:1;transform:translateY(0)}
-      #flash.hide{opacity:0;transform:translateY(-4px)}
+        /* flash fade in/out */
+        #flash {
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: opacity .35s ease, transform .35s ease
+        }
 
-      /* ชื่อผู้ใช้ถัดจากไอคอน */
-      .icon-buttons .user-area{
-        display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none
-      }
-      .icon-buttons .user-area img{height:26px;width:auto;display:block}
-      .icon-buttons .user-chip{
-        color:#fff;font-size:14px;opacity:.9;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-      }
-      .icon-buttons .user-area:hover .user-chip{opacity:1}
-      @media (max-width:640px){ .icon-buttons .user-chip{display:none} }
-      .logout-btn img{height:22px;width:auto;filter:invert(100%)}
+        #flash.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        #flash.hide {
+            opacity: 0;
+            transform: translateY(-4px)
+        }
+
+        /* ชื่อผู้ใช้ถัดจากไอคอน */
+        .icon-buttons .user-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none
+        }
+
+        .icon-buttons .user-area img {
+            height: 26px;
+            width: auto;
+            display: block
+        }
+
+        .icon-buttons .user-chip {
+            color: #fff;
+            font-size: 14px;
+            opacity: .9;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .icon-buttons .user-area:hover .user-chip {
+            opacity: 1
+        }
+
+        @media (max-width:640px) {
+            .icon-buttons .user-chip {
+                display: none
+            }
+        }
+
+        .logout-btn img {
+            height: 22px;
+            width: auto;
+            filter: invert(100%)
+        }
     </style>
-    
+
 </head>
 
 <body>
@@ -45,54 +86,57 @@
     </ul>
     <!-- Header หลัก -->
     <div class="header-wrapper">
-      <div class="logo-container">
-        <a href="/page/main.html" class="brand-text">THAMMUE</a>
-      </div>
-
-      <div class="search-container">
-        <div class="search-group">
-          <input type="text" placeholder="ค้นหาสินค้า" />
-          <button class="search-button" aria-label="ค้นหา">
-            <img src="/img/Icon/search.png" alt="ค้นหา" />
-          </button>
+        <div class="logo-container">
+            <a href="/exchangepage/index.html" class="brand-text">THAMMUE</a>
         </div>
 
-        <div class="icon-buttons">
-          <button class="action-button"><img src="/img/Icon/heart.png"
-              alt="รายการโปรด" /></button>
-          <button class="action-button"><img
-              src="/img/Icon/shopping-cart.png"
-              alt="ตะกร้า" /></button>
-          <button class="action-button"><img src="/img/Icon/chat.png"
-              alt="แชท" /></button>
-
-          <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
-          <div class="user-menu" id="userMenu">
-            <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
-
-            <button class="user-area" id="userArea" aria-haspopup="true"
-              aria-expanded="false"> <!---userArea ที่ไว้ เปิด ปิดเมนู-->
-
-              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-              <span class="user-chip" id="userChip" hidden></span>
-              <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
-              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
-                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
-                  stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </button>
-
-            <div class="user-dropdown" id="userDropdown"
-              role="menu">
-              <!-- JS จะเติมรายการให้หลังจาก login/logout -->
+        <div class="search-container">
+            <div class="search-group">
+                <input type="text" placeholder="ค้นหาสินค้า" />
+                <button class="search-button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search.png" alt="ค้นหา" />
+                </button>
             </div>
-          </div>
-        </div>
 
-      </div>
+            <div class="icon-buttons desktop-icons">
+                <a class="action-button" href="/exchangepage/Request.html" aria-label="คำขอแลกเปลี่ยน">
+                    <img src="/img/Icon/exchange.png" alt="">
+                </a>
+
+                <a class="action-button" href="/exchangepage/fav.html" aria-label="รายการโปรด">
+                    <img src="/img/Icon/heart.png" alt="">
+                </a>
+
+                <a class="action-button" href="/exchangepage/chat.html" aria-label="แชท">
+                    <img src="/img/Icon/chat.png" alt="">
+                </a>
+
+                <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
+                <div class="user-menu" id="userMenu">
+                    <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
+
+                    <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+                        <!---userArea ที่ไว้ เปิด ปิดเมนู-->
+
+                        <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                        <span class="user-chip" id="userChip" hidden></span>
+                        <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
+                        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                            <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
+                            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <div class="user-dropdown" id="userDropdown" role="menu">
+                        <!-- JS จะเติมรายการให้หลังจาก login/logout -->
+                    </div>
+                </div>
+            </div>
+            <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
+                <img src="/img/Icon/menu.png" alt="" aria-hidden="true">
+            </button>
+        </div>
     </div>
 
 
@@ -345,81 +389,83 @@
         backdrop?.addEventListener('click', closeIcons);
         window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeIcons(); });
     </script>
-<!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
+    <!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
     <script>
-      //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
-      (function () {
-        const chip = document.getElementById('userChip');
-        const userArea = document.getElementById('userArea');
-        if (!chip || !userArea) return;
+        //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
+        (function () {
+            const chip = document.getElementById('userChip');
+            const userArea = document.getElementById('userArea');
+            if (!chip || !userArea) return;
 
-        fetch('/page/backend/me.php', { cache: 'no-store' })
-          .then(r => r.ok ? r.json() : { ok:false })
-          .then(d => {
-            if (!d || !d.ok) { // ไม่ล็อกอิน
-              chip.hidden = true; //    ซ่อนชื่อ
-              userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
-              return;
-            }
-              //กรณี “ล็อกอินแล้ว”
-            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
-            if (name) { 
-              chip.textContent = name; // เติมชื่อ
-              chip.hidden = false; }  // โชว์ชื่อ
-          })
-          .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
-      })();
+            fetch('/page/backend/me.php', { cache: 'no-store' })
+                .then(r => r.ok ? r.json() : { ok: false })
+                .then(d => {
+                    if (!d || !d.ok) { // ไม่ล็อกอิน
+                        chip.hidden = true; //    ซ่อนชื่อ
+                        userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
+                        return;
+                    }
+                    //กรณี “ล็อกอินแล้ว”
+                    const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
+                    if (name) {
+                        chip.textContent = name; // เติมชื่อ
+                        chip.hidden = false;
+                    }  // โชว์ชื่อ
+                })
+                .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
+        })();
     </script>
 
     <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
     <script>
-(() => {
-  const menu = document.getElementById('userMenu');
-  const btn  = document.getElementById('userArea');
-  const chip = document.getElementById('userChip');
-  const dd   = document.getElementById('userDropdown');
-  if (!menu || !btn || !chip || !dd) return;
+        (() => {
+            const menu = document.getElementById('userMenu');
+            const btn = document.getElementById('userArea');
+            const chip = document.getElementById('userChip');
+            const dd = document.getElementById('userDropdown');
+            if (!menu || !btn || !chip || !dd) return;
 
-  // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
-  dd.innerHTML = `
+            // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
+            dd.innerHTML = `
     <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
     <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
   `;
 
-  // ดึงชื่อผู้ใช้จาก PHP
-  fetch('/page/backend/me.php', { cache:'no-store' })
-    .then(r => r.ok ? r.json() : {ok:false})
-    .then(d => {
-      if (d && d.ok) {
-        const name = (d.user.display_name || d.user.name || '').trim();
-        if (name) { chip.textContent = name; chip.hidden = false; }
-        dd.innerHTML = `
+            // ดึงชื่อผู้ใช้จาก PHP
+            fetch('/page/backend/me.php', { cache: 'no-store' })
+                .then(r => r.ok ? r.json() : { ok: false })
+                .then(d => {
+                    if (d && d.ok) {
+                        const name = (d.user.display_name || d.user.name || '').trim();
+                        if (name) { chip.textContent = name; chip.hidden = false; }
+                        dd.innerHTML = `
           <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
           <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
           <hr>
           <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
         `;
-      } else {
-        chip.hidden = true; // guest
-      }
-    })
-    .catch(() => { chip.hidden = true; });
+                    } else {
+                        chip.hidden = true; // guest
+                    }
+                })
+                .catch(() => { chip.hidden = true; });
 
-  // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
+            // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                const open = menu.classList.toggle('open');
+                btn.setAttribute('aria-expanded', open);
+            });
 
-  // ปิดเมื่อคลิกข้างนอกหรือกด Esc
-  document.addEventListener('click', e => {
-    if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
-  });
-})();
-</script>
+            // ปิดเมื่อคลิกข้างนอกหรือกด Esc
+            document.addEventListener('click', e => {
+                if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.blur(); }
+            });
+        })();
+    </script>
 </body>
+
 </html>
