@@ -74,7 +74,7 @@
                 </div>
                 <div class="step" data-step="3">
                     <span class="dot" aria-hidden="true"></span>
-                    <span class="label">สถานที่จัดส่ง</span>
+                    <span class="label">สถานที่นัดรับ</span>
                 </div>
             </div>
 
@@ -128,6 +128,7 @@
                     <legend>สินค้าที่ต้องการ</legend>
 
                     <div class="field">
+                        <label>หากไม่มีสินค้าที่ต้องการกดต่อไปได้เลย</label>
                         <label for="w_name">ชื่อสินค้าที่ต้องการแลก</label>
                         <input id="w_name" name="w_name" type="text" placeholder="เช่น เสื้อยืดลายการ์ตูน ไซส์ M" />
                     </div>
@@ -168,7 +169,7 @@
 
                 <!-- STEP 3: สถานที่จัดส่ง -->
                 <fieldset class="panel" data-step="3" hidden>
-                    <legend>สถานที่จัดส่ง</legend>
+                    <legend>สถานที่นัดรับ</legend>
 
                     <div class="grid-2">
                         <div class="field">
@@ -201,13 +202,13 @@
                     </div>
 
                     <div class="field">
-                        <label for="address">รายละเอียดสถานที่จัดส่ง</label>
+                        <label for="address">รายละเอียดสถานที่</label>
                         <input id="address" name="address" type="text" placeholder="บ้านเลขที่/หมู่/ซอย/ถนน" />
                     </div>
 
                     <div class="actions">
                         <button type="button" class="btn ghost back">ย้อนกลับ</button>
-                        <button type="submit" class="btn primary">ยืนยันการแลกเปลี่ยน</button>
+                        <button type="submit" class="btn primary">ยืนยันการอัพโหลดสินค้า</button>
                     </div>
                 </fieldset>
             </form>
