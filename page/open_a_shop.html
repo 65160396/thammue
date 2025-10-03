@@ -670,7 +670,7 @@ document.querySelectorAll('.field').forEach(f => {
         const userArea = document.getElementById('userArea');
         if (!chip || !userArea) return;
 
-        fetch('/page/backend/me.php', { cache: 'no-store' })
+        fetch('/page/backend/me_profile.php', {cache:'no-store'})
           .then(r => r.ok ? r.json() : { ok:false })
           .then(d => {
             if (!d || !d.ok) { // ไม่ล็อกอิน
