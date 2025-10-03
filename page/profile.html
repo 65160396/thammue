@@ -189,7 +189,7 @@
     </main>
 
     <!-- ใช้ตัวช่วยจังหวัด/อำเภอ/ตำบล (ถ้าไฟล์นี้ยังไม่ได้ include ให้เพิ่มบรรทัดด้านล่าง) -->
-    <script src="/exchangepage/js/address.js"></script>
+    <script src="/js/address.js"></script>
 
     <!-- สคริปต์สั้น ๆ สำหรับหน้านี้ (ไม่ทับของเดิม) -->
     <script>
@@ -317,28 +317,29 @@
 
     <!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
     <script>
-(function () {
-  const chip = document.getElementById('userChip');
-  const userArea = document.getElementById('userArea');
-  if (!chip || !userArea) return;
+      //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
+      (function () {
+        const chip = document.getElementById('userChip');
+        const userArea = document.getElementById('userArea');
+        if (!chip || !userArea) return;
 
-  fetch('/page/backend/me.php', { cache: 'no-store' })
-    .then(r => r.ok ? r.json() : { ok:false })
-    .then(d => {
-      if (!d || !d.ok) {
-        chip.hidden = true;
-        userArea.href = '/page/login.html';
-        return;
-      }
-      const u = d.user || {};
-      const display = (u.first_name && u.last_name)
-        ? `${u.first_name} ${u.last_name}`
-        : ((u.display_name || u.name || '').trim());
-      if (display) { chip.textContent = display; chip.hidden = false; }
-    })
-    .catch(() => { chip.hidden = true; });
-})();
-</script>
+        fetch('/page/backend/me.php', { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : { ok:false })
+          .then(d => {
+            if (!d || !d.ok) { // ไม่ล็อกอิน
+              chip.hidden = true; //    ซ่อนชื่อ
+              userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
+              return;
+            }
+              //กรณี “ล็อกอินแล้ว”
+            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
+            if (name) { 
+              chip.textContent = name; // เติมชื่อ
+              chip.hidden = false; }  // โชว์ชื่อ
+          })
+          .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
+      })();
+    </script>
 
     <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
     <script>
