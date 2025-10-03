@@ -269,7 +269,7 @@
   }
 
   // เติมข้อมูลจาก me.php (ถ้ามี) โดยไม่ทับค่าที่ผู้ใช้กรอกอยู่
-  fetch('/page/backend/me.php', {cache:'no-store'})
+  fetch('/page/backend/me_profile.php', {cache:'no-store'})
     .then(r=>r.ok?r.json():{ok:false})
     .then(d=>{
       if(!d || !d.ok) return;
@@ -323,7 +323,7 @@
         const userArea = document.getElementById('userArea');
         if (!chip || !userArea) return;
 
-        fetch('/page/backend/me.php', { cache: 'no-store' })
+        fetch('/page/backend/me_profile.php', { cache: 'no-store' })
           .then(r => r.ok ? r.json() : { ok:false })
           .then(d => {
             if (!d || !d.ok) { // ไม่ล็อกอิน
@@ -341,7 +341,7 @@
       })();
     </script>
 
-    <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
+    <!-- เมนูดรอปดาวน์ และควบคุมเปิด/ปิด -->
     <script>
 (() => {
   const menu = document.getElementById('userMenu');
@@ -350,45 +350,71 @@
   const dd   = document.getElementById('userDropdown');
   if (!menu || !btn || !chip || !dd) return;
 
-  // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
-  dd.innerHTML = `
-    <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
-    <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
-  `;
+  // ค่าเริ่มต้น: guest
+  function setGuestMenu() {
+    chip.hidden = true;
+    btn.removeAttribute('href'); // ปุ่มเป็นตัวเปิดเมนู
+    btn.setAttribute('aria-expanded', 'false');
+    dd.innerHTML = `
+      <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
+      <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
+    `;
+    // ให้กดที่ปุ่มพาไป login ด้วย (สะดวกบนมือถือ)
+    btn.onclick = (e) => { e.preventDefault(); location.href = '/page/login.html'; };
+  }
 
-  // ดึงชื่อผู้ใช้จาก PHP
-  fetch('/page/backend/me.php', { cache:'no-store' })
-    .then(r => r.ok ? r.json() : {ok:false})
+  // เมนูเมื่อผู้ใช้ล็อกอิน
+  function setUserMenu(nameText='') {
+    if (nameText) { chip.textContent = nameText; chip.hidden = false; }
+    btn.onclick = null;                    // กลับมาเป็นปุ่มเปิด/ปิดเมนู
+    btn.setAttribute('aria-expanded', 'false');
+    btn.href = '/page/profile.html';       // เผื่อผู้ใช้คลิกที่ไอคอน
+    dd.innerHTML = `
+      <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
+      <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
+      <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
+      <hr>
+      <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
+    `;
+  }
+
+  // ดึงข้อมูลผู้ใช้ (ใช้ไฟล์ใหม่ me_profile.php)
+  fetch('/page/backend/me_profile.php?t=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
       if (d && d.ok) {
-        const name = (d.user.display_name || d.user.name || '').trim();
-        if (name) { chip.textContent = name; chip.hidden = false; }
-        dd.innerHTML = `
-          <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
-          <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
-          <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
-          <hr>
-          <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
-        `;
+        const u = d.user || {};
+        const name = (u.display_name || u.name || '').trim();
+        setUserMenu(name);
       } else {
-        chip.hidden = true; // guest
+        setGuestMenu();
       }
     })
-    .catch(() => { chip.hidden = true; });
+    .catch(() => setGuestMenu());
 
-  // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
-  btn.addEventListener('click', e => {
+  // เปิด/ปิดเมนูด้วยคลิก
+  btn.addEventListener('click', (e) => {
+    // ถ้ามี href (โปรไฟล์) ให้กดอีกทีเพื่อเปิด/ปิดเมนู
     e.preventDefault();
     const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
-  // ปิดเมื่อคลิกข้างนอกหรือกด Esc
-  document.addEventListener('click', e => {
-    if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  // ปิดเมื่อคลิกข้างนอก
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
   });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
+
+  // ปิดเมื่อกด Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.blur();
+    }
   });
 })();
 </script>
