@@ -323,7 +323,7 @@
         const userArea = document.getElementById('userArea');
         if (!chip || !userArea) return;
 
-        fetch('/page/backend/me_profile.php', { cache: 'no-store' })
+        fetch('/page/backend/me.php', { cache: 'no-store' })
           .then(r => r.ok ? r.json() : { ok:false })
           .then(d => {
             if (!d || !d.ok) { // ไม่ล็อกอิน
@@ -332,7 +332,7 @@
               return;
             }
               //กรณี “ล็อกอินแล้ว”
-            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
+            const name = (d.user.display_name || d.user.name || '').trim();
             if (name) { 
               chip.textContent = name; // เติมชื่อ
               chip.hidden = false; }  // โชว์ชื่อ

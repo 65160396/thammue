@@ -157,7 +157,7 @@
               return;
             }
               //กรณี “ล็อกอินแล้ว”
-            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
+            const name = (d.user.display_name || d.user.name || '').trim();
             if (name) { 
               chip.textContent = name; // เติมชื่อ
               chip.hidden = false; }  // โชว์ชื่อ
