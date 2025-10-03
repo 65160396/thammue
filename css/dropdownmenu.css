@@ -1,0 +1,131 @@
+/* เลย์เอาต์หลักของหน้าโปรไฟล์ */
+.account-wrap {
+  max-width: 1080px;
+  margin: 32px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+}
+
+/* เมนูด้านซ้าย */
+.account-sidenav {
+  background: #fff;
+  border: 1px solid #fff;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* สไตล์ตัวหนังสือปกติของเมนู (เหมือนรูปที่ 2) */
+.account-nav a {
+  display: block;
+  padding: 0; /* ไม่ต้องมีพื้นหลัง/กรอบ */
+  margin: 0 0 18px;
+  border-radius: 0;
+  background: transparent;
+  color: #111; /* สีตัวหนังสือหลัก */
+  font-size: 18px;
+  font-weight: 400; /* ปกติ */
+  text-decoration: none;
+}
+
+/* hover = แค่เข้มขึ้นเล็กน้อย ไม่ต้องเปลี่ยนพื้นหลัง */
+.account-nav a:hover {
+  background: transparent;
+  color: #111;
+  font-weight: 600;
+}
+
+/* active = เข้ม/หนา แบบหัวข้อบนสุดในรูป */
+.account-nav a.is-active {
+  background: transparent; /* ไม่มีพื้นหลัง */
+  color: #111;
+  font-weight: 800; /* หนาชัด */
+}
+
+/* เนื้อหาด้านขวา */
+.account-content {
+  min-width: 0;
+}
+.account-title {
+  margin: 4px 0 12px;
+  font-size: 22px;
+}
+.account-card {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ฟอร์ม */
+.form-v2 .grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-v2 .field {
+  margin: 10px 0;
+}
+.form-v2 label {
+  display: block;
+  margin-bottom: 6px;
+}
+.form-v2 input,
+.form-v2 select,
+.form-v2 textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* ปุ่ม */
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #3a6cf4;
+  color: #fff;
+  cursor: pointer;
+}
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #f3f3f3;
+}
+
+/* * สำหรับ required */
+.field.required > label::before {
+  content: "*";
+  color: #ff5c5c;
+  margin-right: 6px;
+}
+
+/* วัน/เดือน/ปี */
+.dob-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+/* responsive */
+@media (max-width: 920px) {
+  .account-wrap {
+    grid-template-columns: 1fr;
+  }
+  .account-sidenav {
+    position: relative;
+    top: auto;
+  }
+  .form-v2 .grid2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,5 +1,4 @@
 <?php
-// page/backend/login.php
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /page/login.html');
     exit;

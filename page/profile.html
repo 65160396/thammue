@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue – บัญชีของฉัน</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+    <link rel="stylesheet" href="/css/dropdownmenu.css" />
+
+  </head>
+
+  <body class="open-shop">
+
+    <!-- topbar -->
+    <ul class="top-nav">
+      <li><a href="/page/upload_product.html">อัพโหลดสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+
+      <div class="search-container">
+        <div class="search-group">
+          <input type="text" placeholder="ค้นหาสินค้า" />
+          <button class="search-button" aria-label="ค้นหา">
+            <img src="/img/Icon/search.png" alt="ค้นหา" />
+          </button>
+        </div>
+
+        <div class="icon-buttons">
+          <button class="action-button"><img src="/img/Icon/heart.png"
+              alt="รายการโปรด" /></button>
+          <button class="action-button"><img
+              src="/img/Icon/shopping-cart.png"
+              alt="ตะกร้า" /></button>
+          <button class="action-button"><img src="/img/Icon/chat.png"
+              alt="แชท" /></button>
+
+          <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea"
+              aria-haspopup="true" aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                  stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+
+            <div class="user-dropdown" id="userDropdown"
+              role="menu">
+              <!-- JS จะเติมรายการให้ (guest: login/register, user: account/orders/logout) -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="account-wrap">
+      <!-- เมนูซ้าย -->
+      <aside class="account-sidenav">
+        <nav class="account-nav" aria-label="เมนูบัญชี">
+          <a href="/page/profile.html" data-path="profile.html">บัญชีของฉัน</a>
+          <a href="/page/change_password.html"
+            data-path="change_password.html">เปลี่ยนรหัสผ่าน</a>
+          <a href="/page/my_order.html"
+            data-path="my_order.html">การซื้อของฉัน</a>
+          <a href="/page/favorites.html"
+            data-path="favorites.html">รายการโปรด</a>
+          <a href="/page/privacy_settings.html"
+            data-path="privacy_settings.html">การตั้งค่าความเป็นส่วนตัว</a>
+        </nav>
+
+      </aside>
+
+      <!-- เนื้อหาขวา -->
+      <section class="account-content">
+
+        <form id="profileForm" class="account-card form-v2"
+          action="/page/backend/save_profile.php" method="post"
+          autocomplete="off">
+          <h1 class="account-title">รายละเอียดของฉัน</h1>
+          <div class="grid2">
+            <div class="field">
+              <label for="first_name">ชื่อ</label>
+              <input id="first_name" name="first_name" type="text"
+                required />
+            </div>
+            <div class="field">
+              <label for="last_name">นามสกุล</label>
+              <input id="last_name" name="last_name" type="text"
+                required />
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label>วันเกิด</label>
+              <div class="dob-row">
+                <select id="dobDay" aria-label="วัน" required></select>
+                <select id="dobMonth" aria-label="เดือน" required></select>
+                <select id="dobYear" aria-label="ปี (ค.ศ.)" required></select>
+              </div>
+              <!-- ส่งวันเกิดเป็น YYYY-MM-DD ไป PHP -->
+              <input type="hidden" name="dob" id="dobIso" />
+
+            </div>
+            <div class="field">
+              <label for="gender">เพศ</label>
+              <select id="gender" name="gender" required>
+                <option value selected disabled>— เลือก
+                  —</option>
+                <option value="male">ชาย</option>
+                <option value="female">หญิง</option>
+                <option value="other">อื่น ๆ</option>
+                <option value="prefer_not">ไม่ระบุ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="phone">หมายเลขโทรศัพท์</label>
+            <input id="phone" name="phone" type="tel"
+              inputmode="numeric" maxlength="10"
+              pattern="[0-9]{9,10}" required />
+          </div>
+
+          <h3 class="form-section">ที่อยู่</h3>
+          <div class="grid2">
+            <div class="field">
+              <label for="addr_province">จังหวัด</label>
+              <select id="addr_province" name="addr_province"
+                required></select>
+            </div>
+            <div class="field">
+              <label for="addr_district">อำเภอ/เขต</label>
+              <select id="addr_district" name="addr_district"
+                required disabled>
+                <option value selected disabled>— เลือกอำเภอ/เขต
+                  —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="addr_subdistrict">ตำบล/แขวง</label>
+              <select id="addr_subdistrict"
+                name="addr_subdistrict" required disabled>
+                <option value selected disabled>— เลือกตำบล/แขวง
+                  —</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="addr_postcode">รหัสไปรษณีย์</label>
+              <input id="addr_postcode" name="addr_postcode"
+                type="text"
+                inputmode="numeric" maxlength="5" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="addr_line">รายละเอียดที่อยู่ตามบัตร</label>
+            <input id="addr_line" name="addr_line"
+              type="text" placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
+              required />
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn">บันทึก</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- ใช้ตัวช่วยจังหวัด/อำเภอ/ตำบล (ถ้าไฟล์นี้ยังไม่ได้ include ให้เพิ่มบรรทัดด้านล่าง) -->
+    <script src="/js/address.js"></script>
+
+    <!-- สคริปต์สั้น ๆ สำหรับหน้านี้ (ไม่ทับของเดิม) -->
+    <script>
+(function () {
+  // ไฮไลต์เมนูซ้ายตามไฟล์ปัจจุบัน
+  const path = location.pathname.split('/').pop();
+  document.querySelectorAll('.account-nav a').forEach(a=>{
+    if (a.dataset.path === path) a.classList.add('is-active');
+  });
+
+  // เติม * อัตโนมัติให้ label ที่มี required
+  document.querySelectorAll('.field').forEach(f=>{
+    if (f.querySelector('input[required],select[required],textarea[required]')) {
+      f.classList.add('required');
+    }
+  });
+
+  // วัน/เดือน/ปี (ค.ศ.)
+  const $d = document.getElementById('dobDay');
+  const $m = document.getElementById('dobMonth');
+  const $y = document.getElementById('dobYear');
+  function fillDOB(){
+    if(!$d||!$m||!$y) return;
+    $d.innerHTML = '<option value="">วัน</option>';
+    for(let i=1;i<=31;i++){
+      $d.insertAdjacentHTML('beforeend', `<option value="${String(i).padStart(2,'0')}">${i}</option>`);
+    }
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    $m.innerHTML = '<option value="">เดือน</option>';
+    months.forEach((t,i)=> $m.insertAdjacentHTML('beforeend', `<option value="${String(i+1).padStart(2,'0')}">${t}</option>`));
+    const now = new Date().getFullYear();
+    $y.innerHTML = '<option value="">ปี (ค.ศ.)</option>';
+    for(let yy=now-16; yy>=now-100; yy--){
+      $y.insertAdjacentHTML('beforeend', `<option value="${yy}">${yy}</option>`);
+    }
+  }
+  fillDOB();
+
+  // อัปเดต hidden DOB เป็น YYYY-MM-DD
+  function updateDobIso(){
+    const d = $d?.value || '';
+    const m = $m?.value || '';
+    const y = $y?.value || '';
+    const iso = (d && m && y) ? `${y}-${m}-${d}` : '';
+    const h = document.getElementById('dobIso');
+    if (h) h.value = iso;
+  }
+  [$d,$m,$y].forEach(el=> el?.addEventListener('change', updateDobIso));
+
+  // จำกัดเลขเบอร์/ไปรษณีย์
+  const phone = document.getElementById('phone');
+  const post  = document.getElementById('addr_postcode');
+  phone?.addEventListener('input', ()=> phone.value = phone.value.replace(/\D/g,'').slice(0,10));
+  post ?.addEventListener('input',  ()=> post .value = post .value.replace(/\D/g,'').slice(0,5));
+
+  // โหลดตัวเลือกจังหวัด/อำเภอ/ตำบล
+  if (typeof initThaiAddress === 'function') {
+    initThaiAddress({
+      province:    '#addr_province',
+      district:    '#addr_district',
+      subdistrict: '#addr_subdistrict',
+      postcode:    '#addr_postcode'
+    });
+  }
+
+  // helper: set value ให้ <select> หลังตัวเลือกถูกโหลด
+  function setSelectValue(sel, val){
+    if (!sel || !val) return;
+    const t = setInterval(()=>{
+      if ([...sel.options].some(o=>o.value == val)) {
+        sel.value = val;
+        sel.dispatchEvent(new Event('change'));
+        clearInterval(t);
+      }
+    }, 120);
+    setTimeout(()=> clearInterval(t), 3000);
+  }
+
+  // เติมข้อมูลจาก me.php (ถ้ามี) โดยไม่ทับค่าที่ผู้ใช้กรอกอยู่
+  fetch('/page/backend/me.php', {cache:'no-store'})
+    .then(r=>r.ok?r.json():{ok:false})
+    .then(d=>{
+      if(!d || !d.ok) return;
+      const u = d.user || {};
+      const set = (id,v)=>{ const el=document.getElementById(id); if(el && !el.value && v!=null && v!==''){ el.value=v; } };
+
+      // ชื่อ–นามสกุล
+      set('first_name', u.first_name || (u.name||'').split(' ')[0]);
+      set('last_name',  u.last_name);
+
+      // อื่น ๆ
+      set('phone',      u.phone);
+      set('addr_line',  u.addr_line);
+      set('addr_postcode', u.addr_postcode);
+
+      // เพศ
+      if (u.gender && !document.getElementById('gender').value) {
+        document.getElementById('gender').value = u.gender;
+      }
+
+      // DOB
+      if (u.dob){ 
+        const [yy,mm,dd]=(u.dob+'').split('-'); 
+        if(yy&&mm&&dd){ $y.value=yy; $m.value=mm; $d.value=dd; updateDobIso(); }
+      } else {
+        updateDobIso();
+      }
+
+      // จังหวัด/อำเภอ/ตำบล (รอ options โหลด)
+      const $prov = document.getElementById('addr_province');
+      const $dist = document.getElementById('addr_district');
+      const $subd = document.getElementById('addr_subdistrict');
+      setSelectValue($prov, u.addr_province);
+      setTimeout(()=> setSelectValue($dist, u.addr_district), 250);
+      setTimeout(()=> setSelectValue($subd, u.addr_subdistrict), 500);
+    })
+    .catch(()=>{});
+
+  // คำนวณ dobIso ก่อนส่งฟอร์ม
+  document.getElementById('profileForm')?.addEventListener('submit', ()=>{
+    updateDobIso();
+  });
+})();
+</script>
+
+    <!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
+    <script>
+      //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
+      (function () {
+        const chip = document.getElementById('userChip');
+        const userArea = document.getElementById('userArea');
+        if (!chip || !userArea) return;
+
+        fetch('/page/backend/me.php', { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : { ok:false })
+          .then(d => {
+            if (!d || !d.ok) { // ไม่ล็อกอิน
+              chip.hidden = true; //    ซ่อนชื่อ
+              userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
+              return;
+            }
+              //กรณี “ล็อกอินแล้ว”
+            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
+            if (name) { 
+              chip.textContent = name; // เติมชื่อ
+              chip.hidden = false; }  // โชว์ชื่อ
+          })
+          .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
+      })();
+    </script>
+
+    <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
+    <script>
+(() => {
+  const menu = document.getElementById('userMenu');
+  const btn  = document.getElementById('userArea');
+  const chip = document.getElementById('userChip');
+  const dd   = document.getElementById('userDropdown');
+  if (!menu || !btn || !chip || !dd) return;
+
+  // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
+  dd.innerHTML = `
+    <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
+    <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
+  `;
+
+  // ดึงชื่อผู้ใช้จาก PHP
+  fetch('/page/backend/me.php', { cache:'no-store' })
+    .then(r => r.ok ? r.json() : {ok:false})
+    .then(d => {
+      if (d && d.ok) {
+        const name = (d.user.display_name || d.user.name || '').trim();
+        if (name) { chip.textContent = name; chip.hidden = false; }
+        dd.innerHTML = `
+          <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
+          <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
+          <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
+          <hr>
+          <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
+        `;
+      } else {
+        chip.hidden = true; // guest
+      }
+    })
+    .catch(() => { chip.hidden = true; });
+
+  // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+
+  // ปิดเมื่อคลิกข้างนอกหรือกด Esc
+  document.addEventListener('click', e => {
+    if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
+  });
+})();
+</script>
+
+  </body>
+</html>

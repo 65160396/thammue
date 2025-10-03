@@ -46,8 +46,6 @@
                             alt="ตะกร้า" /></button>
                     <button class="action-button"><img src="/img/Icon/chat.png"
                             alt="แชท" /></button>
-                    <!-- <button class="action-button"><img src="/img/Icon/user (1).png"
-                            alt="โปรไฟล์" /></button> -->
                 </div>
             </div>
         </div>
@@ -131,10 +129,12 @@
 
         <script>
 (function () {
+  //ดึง path ปัจจุบันจาก URL"
   var path = location.pathname.replace(/\/+/g,'/').toLowerCase();
   document.querySelectorAll('.category-buttons a.category-button').forEach(function (a) {
     var href = a.getAttribute('href').replace(/\/+/g,'/').toLowerCase();
     if (path.endsWith(href)) {
+      // 5. เติม class "active" ให้ปุ่มนั้น
       a.classList.add('active');
     }
   });

@@ -1,6 +1,4 @@
-/* ===== Open Shop – clean/dedup ===== */
 
-/* Page / Card */
 .open-shop {
   background: #fff;
 }
@@ -317,6 +315,8 @@
   color: #d0342c;
   font-weight: 600;
 }
+
+
 
 /* Responsive */
 @media (max-width: 768px) {
