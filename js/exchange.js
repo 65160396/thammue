@@ -4,16 +4,16 @@
  * - เลือกไฟล์ครั้งละ 1 รูป (input ไม่มี multiple)
  * - กด/ลากวางซ้ำเพื่อสะสมรูปได้
  * - ลบรายรูปได้
- * - ไม่ตรวจรูปซ้ำตามที่ผู้ใช้ต้องการ
- * - ปล่อยให้ form submit ไป PHP ตาม action ได้จริง (no preventDefault)
+ * - ไม่ตรวจรูปซ้ำ (ตามที่ต้องการ)
+ * - ปล่อยให้ form submit ไป PHP ตาม action ได้จริง (no preventDefault เว้นแต่ invalid)
  * ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
   // ---------- Grab Elements ----------
-  const form = document.getElementById('exchangeForm');
+  const form   = document.getElementById('exchangeForm');
   const panels = Array.from(document.querySelectorAll('.panel'));
-  const fill = document.querySelector('.stepper-fill');
-  const dots = Array.from(document.querySelectorAll('.step .dot'));
+  const fill   = document.querySelector('.stepper-fill');
+  const dots   = Array.from(document.querySelectorAll('.step .dot'));
 
   // ---------- Wizard ----------
   let step = 0;
@@ -25,64 +25,49 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
- // 1) firstInvalidIn: เพิ่ม phase ให้ข้าม file ตอน nav
-const firstInvalidIn = (el, opts = {}) => {
-  const phase = opts.phase || 'nav'; // 'nav' | 'submit'
-  const controls = el.querySelectorAll('input, select, textarea');
-  for (const c of controls) {
-    if (phase === 'nav' && c.type === 'file') continue; // ข้ามไฟล์ตอนกด Next/Back
-    if (!c.checkValidity()) return c;
-  }
-  return null;
-};
+  // แยก phase = 'nav' (ตอน next/back) กับ 'submit' (ตอนส่งฟอร์ม)
+  const firstInvalidIn = (el, opts = {}) => {
+    const phase = opts.phase || 'nav';
+    const controls = el.querySelectorAll('input, select, textarea');
+    for (const c of controls) {
+      if (phase === 'nav' && c.type === 'file') continue; // ข้ามไฟล์ตอน next/back
+      if (!c.checkValidity()) return c;
+    }
+    return null;
+  };
 
-// 2) ตอนกด Next ใช้ phase='nav'
-document.querySelectorAll('.next').forEach(b => b.addEventListener('click', () => {
-  const current = panels[step];
-  const invalid = firstInvalidIn(current, { phase: 'nav' });
-  if (invalid) { invalid.reportValidity(); return; }
-  showStep(step + 1);
-}));
+  document.querySelectorAll('.next').forEach(b => b.addEventListener('click', () => {
+    const current = panels[step];
+    const invalid = firstInvalidIn(current, { phase: 'nav' });
+    if (invalid) { invalid.reportValidity(); return; }
+    showStep(step + 1);
+  }));
 
-// 3) ตอน submit ใช้ phase='submit' และบังคับให้มีรูป
-form?.addEventListener('submit', (e) => {
-  for (let s = 0; s < panels.length; s++) {
-    const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
-    if (invalid) { e.preventDefault(); showStep(s); invalid.reportValidity(); return; }
-  }
-  // บังคับรูปสินค้าอย่างน้อย 1 รูป
-  const imgInput = document.getElementById('images');
-  if (imgInput && imgInput.files.length === 0) {
-    e.preventDefault();
-    showStep(0);
-    alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
-    return;
-  }
-  // ผ่าน -> ปล่อย submit ตาม action
-});
+  document.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => {
+    showStep(step - 1);
+  }));
 
   showStep(0);
 
   // ---------- Uploader (single-pick per add, accumulate many) ----------
   function bindUploader(inputId, thumbsId, opts = {}) {
-    const input = document.getElementById(inputId);
-    const thumbs = document.getElementById(thumbsId);
+    const input   = document.getElementById(inputId);
+    const thumbs  = document.getElementById(thumbsId);
     const trigger = document.querySelector(`.upload-box[data-for="${inputId}"]`);
     if (!input || !thumbs || !trigger) return;
 
-    // ป้องกันถูก bind ซ้ำ (กรณีไฟล์ถูกโหลด 2 รอบโดยไม่ตั้งใจ)
+    // กัน bind ซ้ำ
     if (input.dataset.bound === '1') return;
     input.dataset.bound = '1';
 
     // ตั้งค่า
     input.removeAttribute('multiple'); // เลือกครั้งละ 1 รูป
-    const MAX_FILES = opts.maxFiles ?? 10;
-    const MAX_MB = opts.maxMB ?? 8;
+    const MAX_FILES   = opts.maxFiles ?? 10;
+    const MAX_MB      = opts.maxMB ?? 8;
     const ACCEPT_LIST = (input.accept || 'image/*').split(',').map(s => s.trim().toLowerCase());
 
-    // แหล่งความจริงของไฟล์ที่เลือก (ไม่ง้อ input.files ตรง ๆ)
     /** @type {File[]} */
-    const store = [];
+    const store = []; // แหล่งความจริง
 
     const isAccept = (file) =>
       ACCEPT_LIST.some(acc => acc === 'image/*' ? file.type.startsWith('image/') : file.type.toLowerCase() === acc);
@@ -96,10 +81,10 @@ form?.addEventListener('submit', (e) => {
     });
 
     // drag & drop
-    ['dragenter', 'dragover'].forEach(evt =>
+    ['dragenter','dragover'].forEach(evt =>
       trigger.addEventListener(evt, e => { e.preventDefault(); trigger.classList.add('drag'); })
     );
-    ['dragleave', 'drop'].forEach(evt =>
+    ['dragleave','drop'].forEach(evt =>
       trigger.addEventListener(evt, e => { e.preventDefault(); trigger.classList.remove('drag'); })
     );
     trigger.addEventListener('drop', (e) => {
@@ -112,16 +97,13 @@ form?.addEventListener('submit', (e) => {
     input.addEventListener('change', (e) => {
       const f = e.target.files?.[0];
       if (f) addOne(f);
-      // อย่าลืมล้างค่าเพื่อให้เลือกไฟล์เดิมซ้ำได้ในอนาคต
-      input.value = '';
+      input.value = ''; // ให้เลือกไฟล์เดิมซ้ำได้
     });
 
     function addOne(file) {
       if (!isAccept(file)) return alert('ไฟล์ไม่ใช่รูปภาพที่ระบบรองรับ');
       if (file.size > MAX_MB * 1024 * 1024) return alert(`ไฟล์ใหญ่เกิน ${MAX_MB} MB`);
       if (store.length >= MAX_FILES) return alert(`อัปโหลดได้สูงสุด ${MAX_FILES} รูป`);
-
-      // เพิ่มเข้า store (ไม่เช็คซ้ำตามที่กำหนด)
       store.push(file);
       syncInputFromStore();
       renderThumbs();
@@ -133,7 +115,6 @@ form?.addEventListener('submit', (e) => {
       renderThumbs();
     }
 
-    // สร้าง FileList ใหม่จาก store ทุกครั้ง (กันปัญหา “กดสองรอบ/รูปซ้ำ”)
     function syncInputFromStore() {
       const dt = new DataTransfer();
       store.forEach(f => dt.items.add(f));
@@ -145,14 +126,13 @@ form?.addEventListener('submit', (e) => {
       store.forEach((file, idx) => {
         const item = document.createElement('div');
         item.className = 'thumb-item';
-
         const reader = new FileReader();
         reader.onload = () => {
           item.innerHTML = `
-          <img src="${reader.result}" alt="preview ${idx + 1}">
-          <button type="button" class="thumb-remove" aria-label="ลบรูป">&times;</button>
-          <div class="thumb-caption" title="${file.name}">${file.name}</div>
-        `;
+            <img src="${reader.result}" alt="preview ${idx + 1}">
+            <button type="button" class="thumb-remove" aria-label="ลบรูป">&times;</button>
+            <div class="thumb-caption" title="${file.name}">${file.name}</div>
+          `;
           item.querySelector('.thumb-remove').addEventListener('click', () => removeAt(idx));
         };
         reader.readAsDataURL(file);
@@ -161,21 +141,26 @@ form?.addEventListener('submit', (e) => {
     }
   }
 
-
   // ให้ตรงกับ HTML ปัจจุบัน
-  bindUploader('images', 'thumbs1', { maxFiles: 10, maxMB: 8 });
+  bindUploader('images',      'thumbs1', { maxFiles: 10, maxMB: 8 });
   bindUploader('want_images', 'thumbs2', { maxFiles: 10, maxMB: 8 });
 
   // ---------- Form Submit ----------
-  // ไม่ใส่ e.preventDefault(); ปล่อยให้ส่งเข้า PHP ตาม action ได้จริง
-  // ถ้าต้องการตรวจทุกสเต็ปก่อน submit เพิ่มเช็คเล็กน้อยด้านล่างได้
   form?.addEventListener('submit', (e) => {
-    // ตรวจสอบสเต็ปสุดท้ายอีกครั้ง (ถ้าต้องการ)
+    // ตรวจทุกสเต็ปแบบจริงจัง (รวมไฟล์)
     for (let s = 0; s < panels.length; s++) {
-      const invalid = firstInvalidIn(panels[s]);
+      const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
       if (invalid) { e.preventDefault(); showStep(s); invalid.reportValidity(); return; }
     }
-    // ผ่าน -> ปล่อย submit
+    // บังคับต้องมีรูปอย่างน้อย 1 รูป
+    const imgInput = document.getElementById('images');
+    if (imgInput && imgInput.files.length === 0) {
+      e.preventDefault();
+      showStep(0);
+      alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
+      return;
+    }
+    // ผ่าน -> ปล่อย submit ไปตาม action (PHP)
   });
 });
 
