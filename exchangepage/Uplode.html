@@ -110,7 +110,8 @@
                     <div class="field">
                         <label>รูปสินค้า</label>
                         <div class="upload">
-                            <input id="p_images" name="p_images" type="file" accept="image/*" multiple hidden />
+                            <!-- ไม่มี multiple เพื่อบังคับเลือกครั้งละ 1 รูป -->
+                            <input id="p_images" name="p_images" type="file" accept="image/*" hidden />
                             <button type="button" class="upload-box" data-for="p_images" aria-label="เพิ่มรูปสินค้า">
                                 <span class="plus">+</span>
                             </button>
@@ -153,7 +154,7 @@
                     <div class="field">
                         <label>รูปอ้างอิง (ถ้ามี)</label>
                         <div class="upload">
-                            <input id="w_images" name="w_images" type="file" accept="image/*" multiple hidden />
+                            <input id="w_images" name="w_images" type="file" accept="image/*" hidden />
                             <button type="button" class="upload-box" data-for="w_images" aria-label="เพิ่มรูปอ้างอิง">
                                 <span class="plus">+</span>
                             </button>
@@ -210,6 +211,7 @@
                         <button type="button" class="btn ghost back">ย้อนกลับ</button>
                         <button type="submit" class="btn primary">ยืนยันการอัพโหลดสินค้า</button>
                     </div>
+
                 </fieldset>
             </form>
         </section>
