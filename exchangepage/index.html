@@ -7,65 +7,7 @@
     <title>Thammue</title>
     <link rel="stylesheet" href="/css/instyle.css" />
     <link rel="stylesheet" href="/css/style.css" />
-    <style>
-        /* flash fade in/out */
-        #flash {
-            opacity: 0;
-            transform: translateY(-4px);
-            transition: opacity .35s ease, transform .35s ease
-        }
 
-        #flash.show {
-            opacity: 1;
-            transform: translateY(0)
-        }
-
-        #flash.hide {
-            opacity: 0;
-            transform: translateY(-4px)
-        }
-
-        /* ชื่อผู้ใช้ถัดจากไอคอน */
-        .icon-buttons .user-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-            text-decoration: none
-        }
-
-        .icon-buttons .user-area img {
-            height: 26px;
-            width: auto;
-            display: block
-        }
-
-        .icon-buttons .user-chip {
-            color: #fff;
-            font-size: 14px;
-            opacity: .9;
-            max-width: 140px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis
-        }
-
-        .icon-buttons .user-area:hover .user-chip {
-            opacity: 1
-        }
-
-        @media (max-width:640px) {
-            .icon-buttons .user-chip {
-                display: none
-            }
-        }
-
-        .logout-btn img {
-            height: 22px;
-            width: auto;
-            filter: invert(100%)
-        }
-    </style>
 
 </head>
 

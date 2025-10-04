@@ -1,302 +1,255 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thammue</title>
 
-        <!-- ของเดิม -->
-        <link rel="stylesheet" href="/css/instyle.css" />
-        <link rel="stylesheet" href="/css/exuplode.css" />
-    </head>
-    <body>
-        <!-- แถบบนสุด -->
-        <ul class="top-nav">
-            <li><a
-                    href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="/page/index.html">ซื้อสินค้า</a></li>
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/instyle.css" />
+  <link rel="stylesheet" href="/css/exuplode.css" />
+</head>
+<body>
+  <!-- แถบบนสุด -->
+  <ul class="top-nav">
+    <li><a href="/exchangepage/Uplode.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="/page/index.html">ซื้อสินค้า</a></li>
 
-            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
+    <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#help">ช่วยเหลือ</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#lang">ไทย</a></li>
+  </ul>
 
-        <!-- Header -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/exchangepage/index.html"
-                    class="brand-text">THAMMUE</a>
+  <!-- Header -->
+  <div class="header-wrapper">
+    <div class="logo-container">
+      <a href="/exchangepage/index.html" class="brand-text">THAMMUE</a>
+    </div>
+    <div class="search-container">
+      <div class="search-group">
+        <input type="text" placeholder="ค้นหาสินค้า" />
+        <button class="search-button" aria-label="ค้นหา">
+          <img src="/img/Icon/search.png" alt="ค้นหา" />
+        </button>
+      </div>
+      <div class="icon-buttons">
+        <button class="action-button"><img src="/img/Icon/exchange.png" alt="คำขอแลกเปลี่ยน" /></button>
+        <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+        <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+        <button class="action-button"><img src="/img/Icon/user.png" alt="โปรไฟล์" /></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-buttons">
+    <a href="/exchangepage/category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
+    <a href="/exchangepage/category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
+    <a href="/exchangepage/category/children's.html" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="/exchangepage/category/clothing.html" class="category-button">เสื้อผ้า</a>
+    <a href="/exchangepage/category/books.html" class="category-button">หนังสือ</a>
+    <a href="/exchangepage/category/collectibles.html" class="category-button">ของสะสม</a>
+  </div>
+
+  <main class="container">
+    <section class="card">
+      <h2 class="page-title">อัปโหลดข้อมูลสินค้า</h2>
+
+      <!-- Stepper -->
+      <div class="stepper" aria-label="ขั้นตอนการกรอกฟอร์ม">
+        <div class="stepper-line"><span class="stepper-fill" style="width:0%"></span></div>
+        <div class="step" data-step="1"><span class="dot"></span><span class="label">ข้อมูลสินค้า</span></div>
+        <div class="step" data-step="2"><span class="dot"></span><span class="label">สินค้าที่ต้องการ</span></div>
+        <div class="step" data-step="3"><span class="dot"></span><span class="label">สถานที่นัดรับ</span></div>
+      </div>
+
+      <!-- ฟอร์ม -->
+      <form id="exchangeForm"
+            action="/backend/exchange/exchange_item_store.php"
+            method="post"
+            enctype="multipart/form-data"
+            novalidate>
+        <!-- STEP 1: ข้อมูลสินค้า -->
+        <fieldset class="panel" data-step="1">
+          <legend>ข้อมูลสินค้า</legend>
+
+          <div class="field">
+            <label for="title">* ชื่อสินค้า</label>
+            <!-- name ให้ตรงหลังบ้าน -->
+            <input id="title" name="title" type="text" required placeholder="เช่น เสื้อยืดมือสอง ไซส์ M" />
+          </div>
+
+          <div class="field">
+            <label for="category_id">* หมวดหมู่</label>
+            <select id="category_id" name="category_id" required>
+              <option value="" selected disabled>— เลือกหมวดหมู่ —</option>
+              <option value="1">เสื้อผ้า</option>
+              <option value="2">รองเท้า</option>
+              <option value="3">กระเป๋า</option>
+              <option value="4">อุปกรณ์อิเล็กทรอนิกส์</option>
+              <option value="5">ของใช้ในบ้าน</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="description">รายละเอียดสินค้า</label>
+            <textarea id="description" name="description" rows="3" placeholder="สภาพสินค้า / ปีที่ซื้อ / ตำหนิ"></textarea>
+          </div>
+
+          <div class="field">
+            <label>รูปสินค้า *</label>
+            <div class="upload">
+              <!-- รองรับหลายรูป: images[] -->
+              <input id="images" name="images[]" type="file" accept="image/*" multiple required hidden />
+              <button type="button" class="upload-box" data-for="images" aria-label="เพิ่มรูปสินค้า">
+                <span class="plus">+</span>
+              </button>
+              <div class="thumbs" id="thumbs1"></div>
             </div>
-            <div class="search-container">
-                <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
-                        <img src="/img/Icon/search.png" alt="ค้นหา" />
-                    </button>
-                </div>
-                <div class="icon-buttons">
-                    <button class="action-button"><img
-                            src="/img/Icon/exchange.png"
-                            alt="คำขอแลกเปลี่ยน" /></button>
-                    <button class="action-button"><img src="/img/Icon/heart.png"
-                            alt="รายการโปรด" /></button>
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
-                    <button class="action-button"><img src="/img/Icon/user.png"
-                            alt="โปรไฟล์" /></button>
-                </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn primary next">ต่อไป</button>
+          </div>
+        </fieldset>
+
+        <!-- STEP 2: สินค้าที่ต้องการ -->
+        <fieldset class="panel" data-step="2" hidden>
+          <legend>สินค้าที่ต้องการ</legend>
+
+          <div class="field">
+            <label>หากไม่มีสินค้าที่ต้องการกดต่อไปได้เลย</label>
+            <label for="want_title">ชื่อสินค้าที่ต้องการแลก</label>
+            <input id="want_title" name="want_title" type="text" placeholder="เช่น เสื้อยืดลายการ์ตูน ไซส์ M" />
+          </div>
+
+          <div class="field">
+            <label for="want_category_id">หมวดหมู่</label>
+            <select id="want_category_id" name="want_category_id">
+              <option value="">— ไม่ระบุ —</option>
+              <option value="1">เสื้อผ้า</option>
+              <option value="2">รองเท้า</option>
+              <option value="3">กระเป๋า</option>
+              <option value="4">อุปกรณ์อิเล็กทรอนิกส์</option>
+              <option value="5">ของใช้ในบ้าน</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="want_note">รายละเอียดเพิ่มเติม</label>
+            <textarea id="want_note" name="want_note" rows="3" placeholder="สี/สไตล์/เงื่อนไขการแลก"></textarea>
+          </div>
+
+          <div class="field">
+            <label>รูปอ้างอิง (ถ้ามี)</label>
+            <div class="upload">
+              <input id="want_images" name="want_images[]" type="file" accept="image/*" multiple hidden />
+              <button type="button" class="upload-box" data-for="want_images" aria-label="เพิ่มรูปอ้างอิง">
+                <span class="plus">+</span>
+              </button>
+              <div class="thumbs" id="thumbs2"></div>
             </div>
-        </div>
+          </div>
 
-        <div class="category-buttons">
-            <a href="/exchangepage/category/Electronics.html"
-                class="category-button">อิเล็กทรอนิกส์</a>
-            <a href="/exchangepage/category/homeappliances.html"
-                class="category-button">เครื่องใช้ภายในบ้าน</a>
-            <a href="/exchangepage/category/children's.html"
-                class="category-button">อุปกรณ์เด็ก</a>
-            <a href="/exchangepage/category/clothing.html"
-                class="category-button">เสื้อผ้า</a>
-            <a href="/exchangepage/category/books.html"
-                class="category-button">หนังสือ</a>
-            <a href="/exchangepage/category/collectibles.html"
-                class="category-button">ของสะสม</a>
-        </div>
+          <div class="actions">
+            <button type="button" class="btn ghost back">ย้อนกลับ</button>
+            <button type="button" class="btn primary next">ต่อไป</button>
+          </div>
+        </fieldset>
 
-        <main class="container">
-            <section class="card">
-                <h2 class="page-title">อัปโหลดข้อมูลสินค้า</h2>
+        <!-- STEP 3: สถานที่นัดรับ -->
+        <fieldset class="panel" data-step="3" hidden>
+          <legend>สถานที่นัดรับ</legend>
 
-                <!-- Stepper -->
-                <div class="stepper" aria-label="ขั้นตอนการกรอกฟอร์ม">
-                    <div class="stepper-line"><span class="stepper-fill"
-                            style="width:0%"></span></div>
-                    <div class="step" data-step="1"><span
-                            class="dot"></span><span
-                            class="label">ข้อมูลสินค้า</span></div>
-                    <div class="step" data-step="2"><span
-                            class="dot"></span><span
-                            class="label">สินค้าที่ต้องการ</span></div>
-                    <div class="step" data-step="3"><span
-                            class="dot"></span><span
-                            class="label">สถานที่นัดรับ</span></div>
-                </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="province">* จังหวัด</label>
+              <select id="province" name="province" required>
+                <option value="" selected disabled>— เลือกจังหวัด —</option>
+              </select>
+            </div>
 
-                <!-- ✅ สำคัญ: ฟอร์มต้องยิงไปที่ PHP ตัวรับ -->
-                <form id="exchangeForm"
-                    action="/backend/exchange/exchange_item_store.php"
-                    method="post"
-                    enctype="multipart/form-data"
-                    novalidate>
+            <div class="field">
+              <label for="district">* อำเภอ/เขต</label>
+              <select id="district" name="district" required disabled>
+                <option value="" selected disabled>— เลือกอำเภอ/เขต —</option>
+              </select>
+            </div>
+          </div>
 
-                    <!-- STEP 1: ข้อมูลสินค้า -->
-                    <fieldset class="panel" data-step="1">
-                        <legend>ข้อมูลสินค้า</legend>
+          <div class="grid-2">
+            <div class="field">
+              <label for="subdistrict">* ตำบล/แขวง</label>
+              <select id="subdistrict" name="subdistrict" required disabled>
+                <option value="" selected disabled>— เลือกตำบล/แขวง —</option>
+              </select>
+            </div>
 
-                        <div class="field">
-                            <label for="title">* ชื่อสินค้า</label>
-                            <!-- เปลี่ยน name: p_name -> title -->
-                            <input id="title" name="title" type="text" required
-                                placeholder="เช่น เสื้อยืดมือสอง ไซส์ M" />
-                        </div>
+            <div class="field">
+              <label for="zipcode">รหัสไปรษณีย์</label>
+              <!-- เปลี่ยน name ให้ตรง: postcode -> zipcode -->
+              <input id="zipcode" name="zipcode" type="text" placeholder="ใส่รหัสไปรษณีย์" />
+            </div>
+          </div>
 
-                        <div class="field">
-                            <label for="category_id">* หมวดหมู่</label>
-                            <!-- เปลี่ยน name: p_cat -> category_id -->
-                            <select id="category_id" name="category_id"
-                                required>
-                                <option value selected disabled>— เลือกหมวดหมู่
-                                    —</option>
-                                <!-- ใส่ value เป็น id จริง (แก้ตามฐานข้อมูลของคุณ) -->
-                                <option value="1">เสื้อผ้า</option>
-                                <option value="2">รองเท้า</option>
-                                <option value="3">กระเป๋า</option>
-                                <option value="4">อุปกรณ์อิเล็กทรอนิกส์</option>
-                                <option value="5">ของใช้ในบ้าน</option>
-                            </select>
-                        </div>
+          <div class="field">
+            <label for="place_detail">รายละเอียดสถานที่</label>
+            <!-- เปลี่ยน name: address -> place_detail -->
+            <input id="place_detail" name="place_detail" type="text" placeholder="บ้านเลขที่/หมู่/ซอย/ถนน" />
+          </div>
 
-                        <div class="field">
-                            <label for="description">รายละเอียดสินค้า</label>
-                            <!-- เปลี่ยน name: p_desc -> description -->
-                            <textarea id="description" name="description"
-                                rows="3"
-                                placeholder="สภาพสินค้า / ปีที่ซื้อ / ตำหนิ"></textarea>
-                        </div>
+          <div class="actions">
+            <button type="button" class="btn ghost back">ย้อนกลับ</button>
+            <!-- submit ฟอร์มเข้า PHP ตาม action -->
+            <button type="submit" class="btn primary">ยืนยันการอัพโหลดสินค้า</button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  </main>
 
-                        <div class="field">
-                            <label>รูปสินค้า *</label>
-                            <div class="upload">
-                                <!-- เปลี่ยน name: p_images -> images[] -->
-                                <input id="images" name="images[]" type="file"
-                                    accept="image/*" multiple required hidden />
-                                <button type="button" class="upload-box"
-                                    data-for="images"
-                                    aria-label="เพิ่มรูปสินค้า">
-                                    <span class="plus">+</span>
-                                </button>
-                                <div class="thumbs" id="thumbs1"></div>
-                            </div>
-                        </div>
+  <!-- JS -->
+  <script src="/js/exchange.js"></script>
+  <script src="/js/address.js"></script>
 
-                        <div class="actions">
-                            <button type="button"
-                                class="btn primary next">ต่อไป</button>
-                        </div>
-                    </fieldset>
-
-                    <!-- STEP 2: สินค้าที่ต้องการ -->
-                    <fieldset class="panel" data-step="2" hidden>
-                        <legend>สินค้าที่ต้องการ</legend>
-
-                        <div class="field">
-                            <label>หากไม่มีสินค้าที่ต้องการกดต่อไปได้เลย</label>
-                            <label
-                                for="want_title">ชื่อสินค้าที่ต้องการแลก</label>
-                            <!-- เปลี่ยน name: w_name -> want_title -->
-                            <input id="want_title" name="want_title" type="text"
-                                placeholder="เช่น เสื้อยืดลายการ์ตูน ไซส์ M" />
-                        </div>
-
-                        <div class="field">
-                            <label for="want_category_id">หมวดหมู่</label>
-                            <!-- เปลี่ยน name: w_cat -> want_category_id -->
-                            <select id="want_category_id"
-                                name="want_category_id">
-                                <option value>— ไม่ระบุ —</option>
-                                <option value="1">เสื้อผ้า</option>
-                                <option value="2">รองเท้า</option>
-                                <option value="3">กระเป๋า</option>
-                                <option value="4">อุปกรณ์อิเล็กทรอนิกส์</option>
-                                <option value="5">ของใช้ในบ้าน</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="want_note">รายละเอียดเพิ่มเติม</label>
-                            <!-- เปลี่ยน name: w_desc -> want_note -->
-                            <textarea id="want_note" name="want_note" rows="3"
-                                placeholder="สี/สไตล์/เงื่อนไขการแลก"></textarea>
-                        </div>
-
-                        <div class="field">
-                            <label>รูปอ้างอิง (ถ้ามี)</label>
-                            <div class="upload">
-                                <!-- เปลี่ยน name: w_images -> want_images[] (รองรับหลายรูป ถ้าจะใช้ในอนาคต) -->
-                                <input id="want_images" name="want_images[]"
-                                    type="file" accept="image/*" multiple
-                                    hidden />
-                                <button type="button" class="upload-box"
-                                    data-for="want_images"
-                                    aria-label="เพิ่มรูปอ้างอิง">
-                                    <span class="plus">+</span>
-                                </button>
-                                <div class="thumbs" id="thumbs2"></div>
-                            </div>
-                        </div>
-
-                        <div class="actions">
-                            <button type="button"
-                                class="btn ghost back">ย้อนกลับ</button>
-                            <button type="button"
-                                class="btn primary next">ต่อไป</button>
-                        </div>
-                    </fieldset>
-
-                    <!-- STEP 3: สถานที่นัดรับ -->
-                    <fieldset class="panel" data-step="3" hidden>
-                        <legend>สถานที่นัดรับ</legend>
-
-                        <div class="grid-2">
-                            <div class="field">
-                                <label for="province">* จังหวัด</label>
-                                <select id="province" name="province" required>
-                                    <option value selected disabled>—
-                                        เลือกจังหวัด —</option>
-                                </select>
-                            </div>
-
-                            <div class="field">
-                                <label for="district">* อำเภอ/เขต</label>
-                                <select id="district" name="district" required
-                                    disabled>
-                                    <option value selected disabled>—
-                                        เลือกอำเภอ/เขต —</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid-2">
-                            <div class="field">
-                                <label for="subdistrict">* ตำบล/แขวง</label>
-                                <select id="subdistrict" name="subdistrict"
-                                    required disabled>
-                                    <option value selected disabled>—
-                                        เลือกตำบล/แขวง —</option>
-                                </select>
-                            </div>
-
-                            <div class="field">
-                                <label for="zipcode">รหัสไปรษณีย์</label>
-                                <!-- เปลี่ยน name: postcode -> zipcode -->
-                                <input id="zipcode" name="zipcode" type="text"
-                                    placeholder="ใส่รหัสไปรษณีย์" />
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <label for="place_detail">รายละเอียดสถานที่</label>
-                            <!-- เปลี่ยน name: address -> place_detail -->
-                            <input id="place_detail" name="place_detail"
-                                type="text"
-                                placeholder="บ้านเลขที่/หมู่/ซอย/ถนน" />
-                        </div>
-
-                        <div class="actions">
-                            <button type="button"
-                                class="btn ghost back">ย้อนกลับ</button>
-                            <!-- ✅ ปุ่มนี้จะ submit ฟอร์มเข้า PHP -->
-                            <button type="submit"
-                                class="btn primary">ยืนยันการอัพโหลดสินค้า</button>
-                        </div>
-                    </fieldset>
-                </form>
-            </section>
-        </main>
-
-        <!-- JS ของคุณ -->
-        <script src="/js/exchange.js"></script>
-        <script src="/js/address.js"></script>
-
-        <!-- ตัวช่วยกดกล่องอัปโหลดและเปลี่ยนสเตป (กันกรณี JS ภายนอกยังไม่มี) -->
-        <script>
-    // ปุ่มเปิด file picker
-    document.querySelectorAll('.upload-box').forEach(btn=>{
+  <!-- ตัวช่วยกรณีไฟล์ JS ภายนอกยังไม่พร้อม -->
+  <script>
+    // กดกล่องเพื่อเปิด file picker
+    document.querySelectorAll('.upload-box').forEach(btn => {
       const forId = btn.getAttribute('data-for');
-      btn.addEventListener('click', ()=> document.getElementById(forId).click());
+      btn.addEventListener('click', () => {
+        const inp = document.getElementById(forId);
+        if (inp) inp.click();
+      });
     });
 
-    // สลับสเตป
+    // สลับสเต็ป + แถบเติม
     const panels = Array.from(document.querySelectorAll('.panel'));
     const stepperFill = document.querySelector('.stepper-fill');
     let step = 0;
-    function showStep(i){
-      panels.forEach((p,idx)=>p.hidden = idx!==i);
+
+    function showStep(i) {
+      panels.forEach((p, idx) => p.hidden = idx !== i);
       step = i;
-      const percent = (i/(panels.length-1))*100;
-      if(stepperFill) stepperFill.style.width = percent + '%';
+      const percent = (i / (panels.length - 1)) * 100;
+      if (stepperFill) stepperFill.style.width = percent + '%';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    document.querySelectorAll('.next').forEach(b=>b.addEventListener('click', ()=>showStep(Math.min(step+1, panels.length-1))));
-    document.querySelectorAll('.back').forEach(b=>b.addEventListener('click', ()=>showStep(Math.max(step-1, 0))));
+
+    document.querySelectorAll('.next').forEach(b =>
+      b.addEventListener('click', () => showStep(Math.min(step + 1, panels.length - 1)))
+    );
+    document.querySelectorAll('.back').forEach(b =>
+      b.addEventListener('click', () => showStep(Math.max(step - 1, 0)))
+    );
     showStep(0);
 
-    // ปล่อยให้ submit ไป PHP (อย่ามี preventDefault ใน onsubmit)
-    document.getElementById('exchangeForm').addEventListener('submit', function(e){
-      // ที่นี่ไม่ทำ e.preventDefault(); เพื่อให้โพสต์เข้า PHP ตาม action
+    // อย่าขวางการ submit ให้ไปที่ PHP ได้จริง
+    document.getElementById('exchangeForm').addEventListener('submit', function (e) {
+      // ไม่ใส่ e.preventDefault();
     });
   </script>
-    </body>
+</body>
 </html>
