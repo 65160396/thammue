@@ -1,119 +1,156 @@
 <?php
-// /page/backend/exchange/exchange_item_store.php
+// exchange_item_store.php
 session_start();
-require_once __DIR__ . '/../config.php'; // $conn = new mysqli(...)
+require_once __DIR__ . '/../config.php'; // แก้ path ให้ชี้ถึง config ที่สร้าง $conn (mysqli)
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $conn->set_charset('utf8mb4');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  http_response_code(405);
-  exit('Method Not Allowed');
+/* ------------ helpers ------------ */
+function must($cond, $msg)
+{
+  if (!$cond) {
+    throw new RuntimeException($msg);
+  }
 }
 
-function must($cond, $msg){
-  if (!$cond) { throw new RuntimeException($msg); }
-}
-
-function saveImage($file, $dir, $basename){
-  if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) return null;
+function saveImageFile(array $file, string $dir, string $basename)
+{
+  if ($file['error'] === UPLOAD_ERR_NO_FILE) return null;
   must($file['error'] === UPLOAD_ERR_OK, 'อัปโหลดไฟล์ผิดพลาด');
-  must($file['size'] <= 5*1024*1024, 'ไฟล์ภาพเกิน 5MB');
 
-  $finfo = new finfo(FILEINFO_MIME_TYPE);
-  $mime  = $finfo->file($file['tmp_name']);
-  $ext = match($mime){
+  must($file['size'] <= 5 * 1024 * 1024, 'ไฟล์เกิน 5MB');
+
+  $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+  $ext = match ($mime) {
     'image/jpeg' => 'jpg',
     'image/png'  => 'png',
     default      => null
   };
   must($ext !== null, 'รองรับเฉพาะ JPG/PNG');
 
-  if (!is_dir($dir)) { mkdir($dir, 0775, true); }
+  if (!is_dir($dir)) {
+    mkdir($dir, 0775, true);
+  }
   $name = $basename . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(3)) . '.' . $ext;
-  $to   = rtrim($dir,'/') . '/' . $name;
+  $to   = rtrim($dir, '/') . '/' . $name;
   move_uploaded_file($file['tmp_name'], $to);
-  return $to;
+
+  // คืน path แบบ “เว็บ” (relative จาก document root)
+  return str_replace($_SERVER['DOCUMENT_ROOT'], '', $to);
 }
 
+function saveImagesFromField(string $field, string $baseDir, int $item_id, mysqli $conn, string $kind)
+{
+  if (empty($_FILES[$field]) || !is_array($_FILES[$field]['name'])) return 0;
+
+  $count = min(count($_FILES[$field]['name']), 8);
+  $saved = 0;
+  for ($i = 0; $i < $count; $i++) {
+    $file = [
+      'name'     => $_FILES[$field]['name'][$i],
+      'type'     => $_FILES[$field]['type'][$i],
+      'tmp_name' => $_FILES[$field]['tmp_name'][$i],
+      'error'    => $_FILES[$field]['error'][$i],
+      'size'     => $_FILES[$field]['size'][$i],
+    ];
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) continue;
+
+    $dir  = $_SERVER['DOCUMENT_ROOT'] . $baseDir;
+    $path = saveImageFile($file, $dir, $kind . $i);
+    if ($path) {
+      $sort = $i;
+      $st = $conn->prepare("INSERT INTO exchange_item_images (item_id,file_path,sort_order,kind) VALUES (?,?,?,?)");
+      $st->bind_param('isis', $item_id, $path, $sort, $kind);
+      $st->execute();
+      $st->close();
+      $saved++;
+    }
+  }
+  return $saved;
+}
+
+/* ------------ main ------------ */
 try {
-  // ------- รับค่าจากฟอร์ม -------
-  $title       = trim($_POST['title'] ?? '');
-  $category_id = (int)($_POST['category_id'] ?? 0);
-  $description = trim($_POST['description'] ?? '');
-  $wanted      = trim($_POST['wanted'] ?? '');
+  if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method Not Allowed');
+  }
 
-  $province    = trim($_POST['province'] ?? '');
-  $district    = trim($_POST['district'] ?? '');
-  $subdistrict = trim($_POST['subdistrict'] ?? '');
-  $postcode    = trim($_POST['postcode'] ?? '');
-  $addr_line   = trim($_POST['address_line'] ?? '');
-
-  must($title !== '', 'กรุณากรอกชื่อสินค้า');
-  must($category_id > 0, 'กรุณาเลือกหมวดหมู่');
-
-  // ------- หา user_id -------
+  // dev: ถ้าไม่มี session ให้จำลอง user_id = 1
   if (empty($_SESSION['user_id'])) {
-    // (โหมด dev) – ในจริงจัง ให้ redirect ไปหน้า login
     $_SESSION['user_id'] = 1;
   }
   $user_id = (int)$_SESSION['user_id'];
 
+  // ----- รับค่าจากฟอร์ม (ใช้ name ตามหน้าใหม่) -----
+  $title        = trim($_POST['title'] ?? '');
+  $category_id  = (int)($_POST['category_id'] ?? 0);
+  $description  = trim($_POST['description'] ?? '');
+
+  // สเต็ป 2 (สิ่งที่ต้องการ) – เก็บในช่อง wanted เป็น JSON เพื่อไม่ต้องแก้ schema
+  $want_title       = trim($_POST['want_title'] ?? '');
+  $want_category_id = (int)($_POST['want_category_id'] ?? 0) ?: null;
+  $want_note        = trim($_POST['want_note'] ?? '');
+  $wanted_json      = json_encode([
+    'title'       => $want_title,
+    'category_id' => $want_category_id,
+    'note'        => $want_note
+  ], JSON_UNESCAPED_UNICODE);
+
+  // สเต็ป 3 (สถานที่นัดรับ) – map ชื่อใหม่ให้ตรงคอลัมน์เดิม
+  $province    = trim($_POST['province'] ?? '');
+  $district    = trim($_POST['district'] ?? '');
+  $subdistrict = trim($_POST['subdistrict'] ?? '');
+  $postcode    = trim($_POST['zipcode'] ?? '');        // <— ชื่อใหม่ zipcode
+  $addr_line   = trim($_POST['place_detail'] ?? '');   // <— ชื่อใหม่ place_detail
+
+  must($title !== '' && $category_id > 0, 'กรุณากรอกชื่อสินค้าและหมวดหมู่');
+
   $conn->begin_transaction();
 
-  // ------- insert item -------
-  $stmt = $conn->prepare("
+  // ----- สร้างรายการสินค้าแลก -----
+  $st = $conn->prepare("
     INSERT INTO exchange_items
       (user_id,title,category_id,description,wanted,
        province,district,subdistrict,postcode,address_line,status,created_at)
     VALUES (?,?,?,?,?,?,?,?,?,?, 'active', NOW())
   ");
-  $stmt->bind_param(
+  $st->bind_param(
     'isisssssss',
-    $user_id,$title,$category_id,$description,$wanted,
-    $province,$district,$subdistrict,$postcode,$addr_line
+    $user_id,
+    $title,
+    $category_id,
+    $description,
+    $wanted_json,
+    $province,
+    $district,
+    $subdistrict,
+    $postcode,
+    $addr_line
   );
-  $stmt->execute();
-  $item_id = $stmt->insert_id;
-  $stmt->close();
+  $st->execute();
+  $item_id = $st->insert_id;
+  $st->close();
 
-  // ------- บันทึกรูป (photos[] multiple) -------
-  $savedCount = 0;
-  if (!empty($_FILES['photos']) && is_array($_FILES['photos']['name'])) {
-    $max = min(count($_FILES['photos']['name']), 8); // จำกัด 8 รูป
-    for ($i=0; $i<$max; $i++){
-      $file = [
-        'name'     => $_FILES['photos']['name'][$i],
-        'type'     => $_FILES['photos']['type'][$i],
-        'tmp_name' => $_FILES['photos']['tmp_name'][$i],
-        'error'    => $_FILES['photos']['error'][$i],
-        'size'     => $_FILES['photos']['size'][$i],
-      ];
-      if ($file['error'] === UPLOAD_ERR_NO_FILE) continue;
+  // ----- บันทึกรูปภาพ -----
+  // รูปสินค้าจริง: images[]
+  saveImagesFromField('images', "/uploads/exchange/{$item_id}/item", $item_id, $conn, 'item');
 
-      $fullpath = saveImage($file, $_SERVER['DOCUMENT_ROOT']."/uploads/exchange/{$item_id}", "img{$i}");
-      if ($fullpath){
-        // เก็บเป็น path แบบเว็บ
-        $webPath = str_replace($_SERVER['DOCUMENT_ROOT'], '', $fullpath);
-        $insImg = $conn->prepare("INSERT INTO exchange_item_images (item_id,file_path,sort_order) VALUES (?,?,?)");
-        $sort = $i;
-        $insImg->bind_param('isi', $item_id, $webPath, $sort);
-        $insImg->execute();
-        $insImg->close();
-        $savedCount++;
-      }
-    }
-  }
+  // รูปอ้างอิงสิ่งที่อยากได้ (ถ้ามี): want_images[]
+  saveImagesFromField('want_images', "/uploads/exchange/{$item_id}/want", $item_id, $conn, 'want');
 
   $conn->commit();
 
-  // สำเร็จ → กลับหน้าอัปโหลดหรือไปหน้ารายละเอียด
+  // กลับไปหน้าเดิมพร้อม ok
   header('Location: /exchangepage/Uplode.html?ok=1');
   exit;
-
 } catch (Throwable $e) {
-  if ($conn->errno === 0) { /* not from mysqli */ }
-  if ($conn->errno || $conn->sqlstate) { $conn->rollback(); }
+  if ($conn && $conn->errno === 0) { /* not mysqli error */
+  }
+  if ($conn) {
+    $conn->rollback();
+  }
   http_response_code(400);
   echo "❌ " . $e->getMessage();
 }

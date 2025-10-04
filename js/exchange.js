@@ -8,7 +8,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // ---------- Config ----------
-  const API_ENDPOINT = '/api/exchanges';           // <-- แก้ให้ตรงแบ็กเอนด์ของคุณ
+  const API_ENDPOINT = '/page/backend/exchange/exchange_item_store.php';         // <-- แก้ให้ตรงแบ็กเอนด์ของคุณ
   const SUCCESS_PAGE = '/exchangepage/success.html';
 
   // ---------- Grab Elements ----------
@@ -137,8 +137,8 @@ function bindUploader(inputId, thumbsId, opts = {}) {
 }
 
 
-  bindUploader('p_images', 'thumbs1', { maxFiles: 10, maxMB: 8 });
-  bindUploader('w_images', 'thumbs2', { maxFiles: 10, maxMB: 8 });
+  bindUploader('images', 'thumbs1', { maxFiles: 10, maxMB: 8 });
+bindUploader('want_images', 'thumbs2', { maxFiles: 10, maxMB: 8 });
 
   // ---------- Submit ----------
   form.addEventListener('submit', async (e) => {
