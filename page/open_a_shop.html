@@ -6,10 +6,8 @@
         <title>Thammue – เปิดร้านค้า</title>
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/open-shop.css" />
-
     </head>
     <body class="open-shop">
-
         <!-- topbar -->
         <ul class="top-nav">
             <li><a href="/page/upload_product.html">อัพโหลดสินค้า</a></li>
@@ -47,40 +45,28 @@
 
                     <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
                     <div class="user-menu" id="userMenu">
-                        <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
-
                         <button class="user-area" id="userArea"
-                            aria-haspopup="true"
-                            aria-expanded="false">
-                            <!---userArea ที่ไว้ เปิด ปิดเมนู-->
-
+                            aria-haspopup="true" aria-expanded="false">
                             <img src="/img/Icon/user.png" alt="โปรไฟล์" />
                             <span class="user-chip" id="userChip" hidden></span>
-                            <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
                             <svg class="chev" viewBox="0 0 20 20"
                                 aria-hidden="true">
-                                <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
                                 <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
                                     stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round"
                                     stroke-linejoin="round" />
                             </svg>
                         </button>
-
                         <div class="user-dropdown" id="userDropdown"
-                            role="menu">
-                            <!-- JS จะเติมรายการให้หลังจาก login/logout -->
-                        </div>
+                            role="menu"></div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <main class="wizard-page">
             <section class="wizard-card">
-
-                <!-- Stepper (3 สเตป) -->
+                <!-- Stepper -->
                 <nav class="stepper" aria-label="ขั้นตอนการเปิดร้าน">
                     <div class="step is-active" data-step="1"><span
                             class="dot"></span><span
@@ -97,41 +83,39 @@
                 <form id="openShopForm"
                     action="/page/backend/save_open_shop.php" method="post"
                     enctype="multipart/form-data" autocomplete="off">
-
                     <!-- STEP 1 -->
                     <section id="step1" class="panel form-v2">
-
-                        <!-- ชื่อร้านค้า (เต็มการ์ด) -->
                         <div class="field">
                             <label for="shop_name">ชื่อร้านค้า</label>
-                            <input id="shop_name" type="text" required>
+                            <input id="shop_name" name="shop_name" type="text"
+                                required />
                         </div>
 
-                        <!-- จังหวัด / อำเภอ -->
                         <div class="grid2">
                             <div class="field">
                                 <label for="pickup_province">จังหวัด</label>
-                                <select id="pickup_province" required>
+                                <select id="pickup_province"
+                                    name="pickup_province" required>
                                     <option value selected disabled>—
                                         เลือกจังหวัด —</option>
                                 </select>
                             </div>
                             <div class="field">
                                 <label for="pickup_district">อำเภอ/เขต</label>
-                                <select id="pickup_district" required disabled>
+                                <select id="pickup_district"
+                                    name="pickup_district" required disabled>
                                     <option value selected disabled>—
                                         เลือกอำเภอ/เขต —</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- ตำบล / ไปรษณีย์ -->
                         <div class="grid2">
                             <div class="field">
                                 <label
                                     for="pickup_subdistrict">ตำบล/แขวง</label>
-                                <select id="pickup_subdistrict" required
-                                    disabled>
+                                <select id="pickup_subdistrict"
+                                    name="pickup_subdistrict" required disabled>
                                     <option value selected disabled>—
                                         เลือกตำบล/แขวง —</option>
                                 </select>
@@ -140,25 +124,26 @@
                                 <label
                                     for="pickup_postcode">รหัสไปรษณีย์</label>
                                 <input id="pickup_postcode"
-                                    name="pickup_postcode"
-                                    type="text"
-                                    inputmode="numeric"
-                                    maxlength="5" required>
+                                    name="pickup_postcode" type="text"
+                                    inputmode="numeric" maxlength="5"
+                                    required />
                             </div>
                         </div>
 
-                        <!-- รายละเอียดที่เข้ารับพัสดุ-->
                         <div class="field">
                             <label
                                 for="pickup_addr_line">รายละเอียดที่เข้ารับพัสดุ</label>
-                            <input id="pickup_addr_line" type="text" required>
-
+                            <input id="pickup_addr_line" name="pickup_addr_line"
+                                type="text" required />
                         </div>
 
-                        <!-- อีเมล / เบอร์ ตามเดิม -->
+                        <!-- hidden รวม address เพื่อส่งเข้า PHP -->
+                        <input type="hidden" id="pickup_addr"
+                            name="pickup_addr" />
+
                         <div class="field">
                             <label for="email">อีเมล์</label>
-                            <input id="email" type="email" name="email"
+                            <input id="email" name="email" type="email"
                                 required />
                         </div>
                         <div class="field">
@@ -179,12 +164,10 @@
                         <div class="field inline">
                             <label>ประเภทผู้ขาย</label>
                             <div class="radio-row">
-                                <label><input type="radio"
-                                        name="seller_type"
+                                <label><input type="radio" name="seller_type"
                                         value="person" required />
                                     บุคคลธรรมดา</label>
-                                <label><input type="radio"
-                                        name="seller_type"
+                                <label><input type="radio" name="seller_type"
                                         value="company" /> นิติบุคคล</label>
                             </div>
                             <div class="hint" id="typeHint"
@@ -194,8 +177,7 @@
                         <!-- บุคคลธรรมดา -->
                         <div id="personFields" class="type-group" hidden>
                             <div class="field">
-                                <label
-                                    for="citizen_name">ชื่อ-นามสกุล</label>
+                                <label for="citizen_name">ชื่อ-นามสกุล</label>
                                 <input id="citizen_name" name="citizen_name"
                                     type="text" disabled required />
                             </div>
@@ -226,26 +208,21 @@
                                     pattern="\d{13}" disabled required />
                             </div>
 
-                            <!-- ภายใน #personFields แก้เฉพาะลำดับที่อยู่ตามบัตร -->
-
-                            <h3
-                                class="form-section">ที่อยู่ตามบัตรประชาชน</h3>
+                            <h3 class="form-section">ที่อยู่ตามบัตรประชาชน</h3>
 
                             <div class="grid2">
                                 <div class="field">
-                                    <label
-                                        for="cid_province">จังหวัด</label>
-                                    <select id="cid_province" disabled
-                                        required>
+                                    <label for="cid_province">จังหวัด</label>
+                                    <select id="cid_province" name="province"
+                                        disabled required>
                                         <option value selected disabled>—
                                             เลือกจังหวัด —</option>
                                     </select>
                                 </div>
                                 <div class="field">
-                                    <label
-                                        for="cid_district">อำเภอ/เขต</label>
-                                    <select id="cid_district" disabled
-                                        required>
+                                    <label for="cid_district">อำเภอ/เขต</label>
+                                    <select id="cid_district" name="district"
+                                        disabled required>
                                         <option value selected disabled>—
                                             เลือกอำเภอ/เขต —</option>
                                     </select>
@@ -256,18 +233,20 @@
                                 <div class="field">
                                     <label
                                         for="cid_subdistrict">ตำบล/แขวง</label>
-                                    <select id="cid_subdistrict" disabled
-                                        required>
+                                    <select id="cid_subdistrict"
+                                        name="subdistrict" disabled required>
                                         <option value selected disabled>—
                                             เลือกตำบล/แขวง —</option>
                                     </select>
                                 </div>
                                 <div class="field">
-                                    <label
-                                        for="postcode">รหัสไปรษณีย์</label>
+                                    <label for="postcode">รหัสไปรษณีย์</label>
                                     <input id="postcode" name="postcode"
                                         inputmode="numeric" maxlength="5"
-                                        disabled required>
+                                        disabled required />
+                                    <!-- hint กัน error -->
+                                    <div class="hint" id="postcodeHint"
+                                        hidden>รหัสไปรษณีย์ 5 หลัก</div>
                                 </div>
                             </div>
 
@@ -276,7 +255,7 @@
                                     for="addr_line">รายละเอียดที่อยู่ตามบัตร</label>
                                 <input id="addr_line" name="addr_line"
                                     placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
-                                    disabled required>
+                                    disabled required />
                             </div>
 
                             <div class="grid2">
@@ -285,7 +264,7 @@
                                         for="id_front">บัตรประชาชนด้านหน้า</label>
                                     <input type="file" id="id_front"
                                         name="id_front"
-                                        accept="image/*,application/pdf"
+                                        accept="image/jpeg,image/png,application/pdf"
                                         disabled required />
                                 </div>
                             </div>
@@ -293,39 +272,26 @@
 
                         <!-- นิติบุคคล -->
                         <div id="companyFields" class="type-group" hidden>
-
-                            <!-- ประเภทนิติบุคคล (จัดเป็นกริด 3 คอลัมน์) -->
                             <div class="field inline">
                                 <label>ประเภทนิติบุคคล</label>
                                 <div class="radio-row">
-                                    <label>
-                                        <input type="radio" name="corp_kind"
+                                    <label><input type="radio" name="corp_kind"
                                             value="company_limited" required
-                                            disabled />
-                                        บริษัทจำกัด
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="corp_kind"
+                                            disabled /> บริษัทจำกัด</label>
+                                    <label><input type="radio" name="corp_kind"
                                             value="public_company_limited"
-                                            disabled />
-                                        บริษัทจำกัดมหาชน
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="corp_kind"
+                                            disabled /> บริษัทจำกัดมหาชน</label>
+                                    <label><input type="radio" name="corp_kind"
                                             value="partnership_juristic"
                                             disabled />
-                                        ห้างหุ้นส่วนสามัญนิติบุคคล
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="corp_kind"
+                                        ห้างหุ้นส่วนสามัญนิติบุคคล</label>
+                                    <label><input type="radio" name="corp_kind"
                                             value="partnership_limited"
                                             disabled />
-                                        ห้างหุ้นส่วนจำกัด
-                                    </label>
+                                        ห้างหุ้นส่วนจำกัด</label>
                                 </div>
                             </div>
 
-                            <!-- ข้อมูลบริษัทพื้นฐาน -->
                             <div class="field">
                                 <label for="company_name">ชื่อบริษัท</label>
                                 <input id="company_name" name="company_name"
@@ -337,13 +303,11 @@
                                     หลัก)</label>
                                 <input id="tax_id" name="tax_id"
                                     inputmode="numeric" maxlength="13"
-                                    pattern="\d{10,13}"
-                                    disabled required />
+                                    pattern="\d{10,13}" disabled required />
                             </div>
 
                             <h3 class="form-section">ที่อยู่จดทะเบียนบริษัท</h3>
 
-                            <!-- จังหวัด / อำเภอ -->
                             <div class="grid2">
                                 <div class="field">
                                     <label for="co_province">จังหวัด</label>
@@ -361,7 +325,6 @@
                                 </div>
                             </div>
 
-                            <!-- ตำบล / ไปรษณีย์ -->
                             <div class="grid2">
                                 <div class="field">
                                     <label
@@ -389,11 +352,10 @@
                                     disabled required />
                             </div>
 
-                            <!-- เอกสารประกอบ -->
                             <div class="field">
                                 <label for="reg_doc">หนังสือรับรองบริษัท</label>
                                 <input type="file" id="reg_doc" name="reg_doc"
-                                    accept="application/pdf,image/*"
+                                    accept="application/pdf,image/jpeg,image/png"
                                     disabled required />
                             </div>
 
@@ -401,7 +363,7 @@
                                 <label
                                     for="id_rep">บัตรประชาชนผู้มีอำนาจลงนาม</label>
                                 <input type="file" id="id_rep" name="id_rep"
-                                    accept="application/pdf,image/*"
+                                    accept="application/pdf,image/jpeg,image/png"
                                     disabled required />
                             </div>
                         </div>
@@ -423,322 +385,213 @@
                                 class="btn">ส่งแบบฟอร์ม</button>
                         </div>
                     </section>
-
                 </form>
             </section>
         </main>
 
         <script src="/js/address.js"></script>
 
+        <!-- Stepper + Validation -->
         <script>
-(() => {
-  // ⭐ panels = 3 สเตป
-  const steps  = Array.from(document.querySelectorAll('.step'));
-  const panels = ['step1','step2','step3'].map(id => document.getElementById(id));
-  const total  = panels.length;
-  let current  = 1;
+      (() => {
+        // ---------- state & nav ----------
+        const steps  = Array.from(document.querySelectorAll('.step'));
+        const panels = ['step1','step2','step3'].map(id => document.getElementById(id));
+        const total  = panels.length;
+        let current  = 1;
 
-  function goto(n){
-    current = Math.max(1, Math.min(total, n));
-    panels.forEach((p,i)=> p.hidden = (i !== current-1));
-    steps.forEach((s,i)=>{
-      s.classList.toggle('is-active', i === current-1);
-      s.classList.toggle('is-done',   i <  current-1);
-    });
-  }
-
-  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{ if (validateStep(current)) goto(current+1); }));
-  document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
-
-  // Prefill email
-  (function prefillEmail(){
-    const emailInput = document.getElementById('email');
-    if (!emailInput) return;
-    const setIfEmpty = v => { if (v && !emailInput.value) emailInput.value = v; };
-    const sp = new URLSearchParams(location.search);
-    setIfEmpty(sp.get('email'));
-    fetch('/page/backend/me.php', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : {ok:false})
-      .then(d => { if (d && d.ok) setIfEmpty(d.user?.email || ''); })
-      .catch(()=>{});
-  })();
-
-  // phone
-  const phoneInput = document.getElementById('phone');
-  phoneInput?.addEventListener('input', () => {
-    phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
-  });
-
-  // citizen/postcode
-  const citizenIdInput = document.getElementById('citizen_id');
-  citizenIdInput?.addEventListener('input', () => {
-    citizenIdInput.value = citizenIdInput.value.replace(/\D/g,'').slice(0,13);
-  });
-  const postcodeInput = document.getElementById('postcode');
-  postcodeInput?.addEventListener('input', () => {
-    postcodeInput.value = postcodeInput.value.replace(/\D/g,'').slice(0,5);
-  });
-
-  // เพิ่ม: จำกัดตัวเลขให้ pickup_postcode
-  const pickupPostInput = document.getElementById('pickup_postcode');
-  pickupPostInput?.addEventListener('input', () => {
-    pickupPostInput.value = pickupPostInput.value.replace(/\D/g,'').slice(0,5);
-  });
-
-  // DOB
-  const $dobDay   = document.getElementById('dobDay');
-  const $dobMonth = document.getElementById('dobMonth');
-  const $dobYearB = document.getElementById('dobYearBE');
-  const $dobIso   = document.getElementById('dobIso');
-  const $dobHint  = document.getElementById('dobHint');
-
-  function fillDays(){
-    if (!$dobDay) return;
-    $dobDay.innerHTML = '<option value="">วัน</option>';
-    for (let d=1; d<=31; d++){
-      const opt = document.createElement('option');
-      opt.value = String(d).padStart(2,'0');
-      opt.textContent = d;
-      $dobDay.appendChild(opt);
-    }
-  }
-  function fillMonths(){
-    if (!$dobMonth) return;
-    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-    $dobMonth.innerHTML = '<option value="">เดือน</option>';
-    months.forEach((m,i)=>{
-      const opt = document.createElement('option');
-      opt.value = String(i+1).padStart(2,'0');
-      opt.textContent = m;
-      $dobMonth.appendChild(opt);
-    });
-  }
-  function fillYearsBE(){
-    if (!$dobYearB) return;
-    const now = new Date();
-    const thisBE = now.getFullYear()+543;
-    const maxBE = thisBE - 18;
-    const minBE = thisBE - 100;
-    $dobYearB.innerHTML = '<option value="">พ.ศ.</option>';
-    for (let y=maxBE; y>=minBE; y--){
-      const opt = document.createElement('option');
-      opt.value = String(y);
-      opt.textContent = y;
-      $dobYearB.appendChild(opt);
-    }
-  }
-  function updateDobIsoAndValidate(){
-    if (!$dobDay) return true;
-    const d = $dobDay.value, m = $dobMonth.value, yB = $dobYearB.value;
-    $dobHint.hidden = true;
-    if (!d || !m || !yB){ $dobIso.value=''; return false; }
-    const yC = parseInt(yB,10) - 543, mm = parseInt(m,10), dd = parseInt(d,10);
-    const dt = new Date(yC, mm-1, dd);
-    const valid = (dt.getFullYear()===yC && dt.getMonth()===(mm-1) && dt.getDate()===dd);
-    if (!valid){ $dobIso.value=''; $dobHint.hidden=false; return false; }
-    const today=new Date();
-    let age = today.getFullYear()-yC;
-    const beforeBD = (today.getMonth()+1<mm) || (today.getMonth()+1===mm && today.getDate()<dd);
-    if (beforeBD) age--;
-    if (age<18){ $dobIso.value=''; $dobHint.textContent='ผู้สมัครต้องมีอายุอย่างน้อย 18 ปีบริบูรณ์'; $dobHint.hidden=false; return false; }
-    $dobIso.value = `${yC}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
-    return true;
-  }
-  fillDays(); fillMonths(); fillYearsBE();
-  [$dobDay,$dobMonth,$dobYearB].forEach(el=> el && el.addEventListener('change', updateDobIsoAndValidate));
-
-  // Toggle groups
-  const personGroup  = document.getElementById('personFields');
-  const companyGroup = document.getElementById('companyFields');
-  const typeHint     = document.getElementById('typeHint');
-
-  function toggleGroup(group, enable){
-    group.hidden = !enable;
-    group.querySelectorAll('input,textarea,select').forEach(el=>{
-      el.disabled = !enable;
-      el.required = enable && el.hasAttribute('required');
-    });
-  }
-  function onTypeChange(){
-    const val = document.querySelector('input[name="seller_type"]:checked')?.value;
-    if (val === 'person'){ toggleGroup(personGroup, true);  toggleGroup(companyGroup, false); }
-    else if (val === 'company'){ toggleGroup(personGroup, false); toggleGroup(companyGroup, true); }
-    updateDobIsoAndValidate();
-  }
-  document.querySelectorAll('input[name="seller_type"]').forEach(r=>r.addEventListener('change', onTypeChange));
-  onTypeChange();
-
-  const MAX_FILE = 5 * 1024 * 1024;
-  function fileOK(input){
-    const f = input?.files?.[0];
-    if (!f) return false;
-    if (f.size > MAX_FILE){ alert('ไฟล์เกิน 5MB'); return false; }
-    const ok = ['image/jpeg','image/png','application/pdf'];
-    if (!ok.includes(f.type)){ alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
-    return true;
-  }
-
-  // ✅ validate step (อัปเดตให้ตรงกับ id ใหม่ และรวม select)
-  function validateStep(idx){
-    if (idx === 1){
-      const s1 = panels[0];
-      const okRequired = [...s1.querySelectorAll('input[required],textarea[required],select[required]')]
-        .every(el => (el.disabled ? true : (el.value || '').trim() !== ''));
-      if (!okRequired){ alert('กรอกข้อมูลในสเต็ปนี้ให้ครบ'); return false; }
-
-      // เช็คที่อยู่เข้ารับสินค้า
-      const okPickup =
-        ['pickup_addr_line','pickup_province','pickup_district','pickup_subdistrict','pickup_postcode']
-          .every(id => (document.getElementById(id)?.value || '').trim() !== '');
-      if (!okPickup){ alert('กรอกที่อยู่ในการเข้ารับสินค้าให้ครบ'); return false; }
-
-      // โทรศัพท์
-      const phoneVal = document.getElementById('phone').value.trim();
-      if (!/^[0-9]{9,10}$/.test(phoneVal)) {
-        alert('กรุณากรอกหมายเลขโทรศัพท์เป็นตัวเลข 9–10 หลัก'); return false;
-      }
-      return true;
-    }
-
-    if (idx === 2){
-      const type = document.querySelector('input[name="seller_type"]:checked')?.value;
-      const okType = !!type; typeHint.hidden = okType; if (!okType) return false;
-
-      if (type === 'person'){
-        const name = document.getElementById('citizen_name').value.trim();
-        const cid  = document.getElementById('citizen_id').value.trim();
-        if (!name){ alert('กรอกชื่อ-นามสกุล'); return false; }
-        if (!/^\d{13}$/.test(cid)){ alert('เลขบัตรประชาชน 13 หลัก'); return false; }
-        if (!updateDobIsoAndValidate()){ alert('กรุณาเลือกวันเดือนปีเกิดให้ถูกต้อง (อายุ 18+)'); return false; }
-
-        const addrLine = document.getElementById('addr_line').value.trim();
-        const subd = document.getElementById('cid_subdistrict').value.trim();
-        const dist = document.getElementById('cid_district').value.trim();
-        const prov = document.getElementById('cid_province').value.trim();
-        const pc   = document.getElementById('postcode').value.trim();
-        const pcOK = /^\d{5}$/.test(pc);
-        document.getElementById('postcodeHint').hidden = pcOK;
-
-        if (!addrLine || !subd || !dist || !prov || !pcOK){
-          alert('กรอกที่อยู่ตามบัตรให้ครบ และรหัสไปรษณีย์ 5 หลัก'); return false;
+        function goto(n){
+          current = Math.max(1, Math.min(total, n));
+          panels.forEach((p,i)=> p.hidden = (i !== current-1));
+          steps.forEach((s,i)=>{
+            s.classList.toggle('is-active', i === current-1);
+            s.classList.toggle('is-done',   i <  current-1);
+          });
         }
-        if (!fileOK(document.getElementById('id_front'))) return false;
-        return true;
 
-      } else {
-        const cname = document.getElementById('company_name').value.trim();
-        const taxid = document.getElementById('tax_id').value.trim();
-        if (!cname){ alert('กรอกชื่อบริษัท'); return false; }
-        if (!/^\d{10,13}$/.test(taxid)){ alert('เลขผู้เสียภาษี 10–13 หลัก'); return false; }
-        if (!fileOK(document.getElementById('reg_doc')) || !fileOK(document.getElementById('id_rep'))) return false;
-        return true;
-      }
-    }
-    return true;
-  }
+        document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click', ()=>{
+          if (validateStep(current)) goto(current+1);
+        }));
+        document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click', ()=> goto(current-1)));
 
-  // ⭐⭐ เรียกตัวเลือก จ/อ/ต 2 ชุด (step1 + step2 บุคคลธรรมดา)
-  initThaiAddress({
-    province:    '#pickup_province',
-    district:    '#pickup_district',
-    subdistrict: '#pickup_subdistrict',
-    postcode:    '#pickup_postcode'
-  });
-  initThaiAddress({
-    province:    '#cid_province',
-    district:    '#cid_district',
-    subdistrict: '#cid_subdistrict',
-    postcode:    '#postcode'
-  });
+        // ---------- input mask ----------
+        const phoneInput = document.getElementById('phone');
+        phoneInput?.addEventListener('input', ()=> phoneInput.value = phoneInput.value.replace(/\D/g,'').slice(0,10));
+        const citizenIdInput = document.getElementById('citizen_id');
+        citizenIdInput?.addEventListener('input', ()=> citizenIdInput.value = citizenIdInput.value.replace(/\D/g,'').slice(0,13));
+        const postcodeInput = document.getElementById('postcode');
+        postcodeInput?.addEventListener('input', ()=> postcodeInput.value = postcodeInput.value.replace(/\D/g,'').slice(0,5));
+        const pickupPC = document.getElementById('pickup_postcode');
+        pickupPC?.addEventListener('input', ()=> pickupPC.value = pickupPC.value.replace(/\D/g,'').slice(0,5));
 
-  // ทำให้ .field ที่มีช่อง required ข้างใน ถูกเติม class "required" อัตโนมัติ
-document.querySelectorAll('.field').forEach(f => {
-  if (f.querySelector('input[required], select[required], textarea[required]')) {
-    f.classList.add('required');
-  }
-});
+        // ---------- DOB ----------
+        const $dobDay   = document.getElementById('dobDay');
+        const $dobMonth = document.getElementById('dobMonth');
+        const $dobYearB = document.getElementById('dobYearBE');
+        const $dobIso   = document.getElementById('dobIso');
+        const $dobHint  = document.getElementById('dobHint');
 
-  goto(1);
-})();
-</script>
+        function fillDays(){ if(!$dobDay) return; $dobDay.innerHTML='<option value="">วัน</option>'; for(let d=1; d<=31; d++){ const o=document.createElement('option'); o.value=String(d).padStart(2,'0'); o.textContent=d; $dobDay.appendChild(o); } }
+        function fillMonths(){ if(!$dobMonth) return; const m=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']; $dobMonth.innerHTML='<option value="">เดือน</option>'; m.forEach((t,i)=>{ const o=document.createElement('option'); o.value=String(i+1).padStart(2,'0'); o.textContent=t; $dobMonth.appendChild(o); }); }
+        function fillYearsBE(){ if(!$dobYearB) return; const now=new Date(), be=now.getFullYear()+543, max=be-18, min=be-100; $dobYearB.innerHTML='<option value="">พ.ศ.</option>'; for(let y=max; y>=min; y--){ const o=document.createElement('option'); o.value=String(y); o.textContent=y; $dobYearB.appendChild(o); } }
+        function updateDobIsoAndValidate(){
+          if(!$dobDay) return true;
+          const d=$dobDay.value, m=$dobMonth.value, yB=$dobYearB.value;
+          if ($dobHint) $dobHint.hidden=true;
+          if(!d||!m||!yB){ if($dobIso)$dobIso.value=''; return false; }
+          const yC=parseInt(yB,10)-543, mm=parseInt(m,10), dd=parseInt(d,10);
+          const dt=new Date(yC, mm-1, dd);
+          const valid=(dt.getFullYear()===yC && dt.getMonth()===(mm-1) && dt.getDate()===dd);
+          if(!valid){ if($dobIso)$dobIso.value=''; if($dobHint) $dobHint.hidden=false; return false; }
+          const today=new Date();
+          let age=today.getFullYear()-yC;
+          const beforeBD=(today.getMonth()+1<mm)||(today.getMonth()+1===mm&&today.getDate()<dd);
+          if (beforeBD) age--;
+          if (age<18){ if($dobIso)$dobIso.value=''; if($dobHint){$dobHint.textContent='ผู้สมัครต้องมีอายุอย่างน้อย 18 ปีบริบูรณ์'; $dobHint.hidden=false;} return false; }
+          if($dobIso) $dobIso.value=`${yC}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+          return true;
+        }
+        fillDays(); fillMonths(); fillYearsBE();
+        [$dobDay,$dobMonth,$dobYearB].forEach(el=> el && el.addEventListener('change', updateDobIsoAndValidate));
 
-        <!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
-        <script>
-      //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
-      (function () {
-        const chip = document.getElementById('userChip');
-        const userArea = document.getElementById('userArea');
-        if (!chip || !userArea) return;
+        // ---------- toggle person/company ----------
+        const personGroup  = document.getElementById('personFields');
+        const companyGroup = document.getElementById('companyFields');
+        function toggleGroup(g, enable){
+          g.hidden = !enable;
+          g.querySelectorAll('input,textarea,select').forEach(el=>{
+            el.disabled = !enable;
+            el.required = enable && el.hasAttribute('required');
+          });
+        }
+        function onTypeChange(){
+          const val = document.querySelector('input[name="seller_type"]:checked')?.value;
+          if (val === 'person'){ toggleGroup(personGroup, true);  toggleGroup(companyGroup, false); }
+          else if (val === 'company'){ toggleGroup(personGroup, false); toggleGroup(companyGroup, true); }
+          updateDobIsoAndValidate();
+        }
+        document.querySelectorAll('input[name="seller_type"]').forEach(r=>r.addEventListener('change', onTypeChange));
+        onTypeChange();
 
-        fetch('/page/backend/me.php', { cache: 'no-store' })
-          .then(r => r.ok ? r.json() : { ok:false })
-          .then(d => {
-            if (!d || !d.ok) { // ไม่ล็อกอิน
-              chip.hidden = true; //    ซ่อนชื่อ
-              userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
-              return;
+        // ---------- validate ----------
+        function validateStep(idx){
+          const $ = id => document.getElementById(id);
+
+          if (idx === 1){
+            const must = ['shop_name','pickup_province','pickup_district','pickup_subdistrict','pickup_postcode','pickup_addr_line','email','phone'];
+            for (const id of must){
+              const el = $(id);
+              if (el && !el.disabled && !(el.value||'').trim()){
+                alert('กรอกให้ครบ: ' + id); el.focus(); return false;
+              }
             }
-              //กรณี “ล็อกอินแล้ว”
-            const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
-            if (name) { 
-              chip.textContent = name; // เติมชื่อ
-              chip.hidden = false; }  // โชว์ชื่อ
-          })
-          .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
+            const phone = $('phone')?.value.trim()||'';
+            if (!/^\d{9,10}$/.test(phone)){ alert('เบอร์โทรต้องเป็นตัวเลข 9–10 หลัก'); $('phone')?.focus(); return false; }
+
+            // รวม address → hidden pickup_addr
+            const addr = [ $('pickup_addr_line')?.value, $('pickup_subdistrict')?.value, $('pickup_district')?.value, $('pickup_province')?.value, $('pickup_postcode')?.value ]
+              .filter(Boolean).join(' ');
+            const hd = $('pickup_addr'); if (hd) hd.value = addr.trim();
+            return true;
+          }
+
+          if (idx === 2){
+            const type = document.querySelector('input[name="seller_type"]:checked')?.value;
+            const typeHint = document.getElementById('typeHint');
+            if (!type){ if(typeHint) typeHint.hidden=false; alert('กรุณาเลือกประเภทผู้ขาย'); return false; }
+
+            if (!updateDobIsoAndValidate()){ alert('กรุณาเลือกวันเดือนปีเกิดให้ถูกต้อง (อายุ 18+)'); return false; }
+
+            if (type === 'person'){
+              const need = ['citizen_name','citizen_id','cid_province','cid_district','cid_subdistrict','postcode','addr_line'];
+              for (const id of need){
+                const el = $(id);
+                if (!el || el.disabled) continue;
+                if (!(el.value||'').trim()){ alert('กรอกให้ครบ: ' + id); el.focus(); return false; }
+              }
+              if (!/^\d{13}$/.test($('citizen_id').value.trim())){ alert('เลขบัตรประชาชนต้อง 13 หลัก'); $('citizen_id').focus(); return false; }
+              const pcOK = /^\d{5}$/.test(($('postcode')?.value||'').trim());
+              const pcHint = $('postcodeHint'); if (pcHint) pcHint.hidden = pcOK; // null-safe
+              if (!pcOK){ alert('รหัสไปรษณีย์ต้อง 5 หลัก'); $('postcode').focus(); return false; }
+
+              const f = $('id_front')?.files?.[0];
+              if (!f){ alert('กรุณาแนบไฟล์บัตรประชาชนด้านหน้า'); $('id_front')?.focus(); return false; }
+              if (f.size > 5*1024*1024){ alert('ไฟล์เกิน 5MB'); return false; }
+              if (!['image/jpeg','image/png','application/pdf'].includes(f.type)){ alert('ชนิดไฟล์ต้องเป็น JPG/PNG/PDF'); return false; }
+              return true;
+
+            } else {
+              if (!($('company_name')?.value||'').trim()){ alert('กรอกชื่อบริษัท'); $('company_name')?.focus(); return false; }
+              const tax = ($('tax_id')?.value||'').trim();
+              if (!/^\d{10,13}$/.test(tax)){ alert('เลขผู้เสียภาษี 10–13 หลัก'); $('tax_id')?.focus(); return false; }
+              const okFile = input => { const f=input?.files?.[0]; return f && f.size<=5*1024*1024 && ['image/jpeg','image/png','application/pdf'].includes(f.type); };
+              if (!okFile($('reg_doc')) || !okFile($('id_rep'))){ alert('แนบไฟล์บริษัท (PDF/JPG/PNG ≤ 5MB)'); return false; }
+              return true;
+            }
+          }
+          return true;
+        }
+
+        // ---------- โหลดตัวเลือกที่อยู่ ----------
+        if (typeof initThaiAddress === 'function'){
+          initThaiAddress({ province:'#pickup_province', district:'#pickup_district', subdistrict:'#pickup_subdistrict', postcode:'#pickup_postcode' });
+          initThaiAddress({ province:'#cid_province',    district:'#cid_district',    subdistrict:'#cid_subdistrict',    postcode:'#postcode' });
+        }
+
+        // mark fields with required
+        document.querySelectorAll('.field').forEach(f=>{
+          if (f.querySelector('input[required], select[required], textarea[required]')) f.classList.add('required');
+        });
+
+        goto(1);
       })();
     </script>
 
-        <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
+        <!-- เมนูดรอปดาวน์โปรไฟล์ -->
         <script>
-(() => {
-  const menu = document.getElementById('userMenu');
-  const btn  = document.getElementById('userArea');
-  const chip = document.getElementById('userChip');
-  const dd   = document.getElementById('userDropdown');
-  if (!menu || !btn || !chip || !dd) return;
+      (() => {
+        const menu = document.getElementById('userMenu');
+        const btn  = document.getElementById('userArea');
+        const chip = document.getElementById('userChip');
+        const dd   = document.getElementById('userDropdown');
+        if (!menu || !btn || !chip || !dd) return;
 
-  // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
-  dd.innerHTML = `
-    <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
-    <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
-  `;
-
-  // ดึงชื่อผู้ใช้จาก PHP
-  fetch('/page/backend/me.php', { cache:'no-store' })
-    .then(r => r.ok ? r.json() : {ok:false})
-    .then(d => {
-      if (d && d.ok) {
-        const name = (d.user.display_name || d.user.name || '').trim();
-        if (name) { chip.textContent = name; chip.hidden = false; }
         dd.innerHTML = `
-          <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
-          <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
-          <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
-          <hr>
-          <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
+          <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
+          <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
         `;
-      } else {
-        chip.hidden = true; // guest
-      }
-    })
-    .catch(() => { chip.hidden = true; });
 
-  // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
+        fetch('/page/backend/me.php', { cache:'no-store' })
+          .then(r => r.ok ? r.json() : {ok:false})
+          .then(d => {
+            if (d && d.ok) {
+              const name = (d.user.display_name || d.user.name || '').trim();
+              if (name) { chip.textContent = name; chip.hidden = false; }
+              dd.innerHTML = `
+                <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
+                <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
+                <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
+                <hr>
+                <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
+              `;
+            } else {
+              chip.hidden = true;
+            }
+          })
+          .catch(() => { chip.hidden = true; });
 
-  // ปิดเมื่อคลิกข้างนอกหรือกด Esc
-  document.addEventListener('click', e => {
-    if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
-  });
-})();
-</script>
-
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          const open = menu.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open);
+        });
+        document.addEventListener('click', e => {
+          if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+        });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
+        });
+      })();
+    </script>
     </body>
 </html>
