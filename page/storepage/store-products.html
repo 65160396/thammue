@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue – จัดการสินค้า</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/open-shop.css" />
+    </head>
+    <body class="open-shop">
+        <ul class="top-nav">
+            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+        </ul>
+
+        <section class="open-shop">
+            <div class="wizard-page">
+                <div class="wizard-card">
+                    <h2 class="form-section">รายการสินค้าของฉัน</h2>
+                    <table class="product-table"
+                        style="width:100%; border-collapse:collapse">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left">ชื่อสินค้า</th>
+                                <th style="text-align:right">ราคา</th>
+                                <th style="text-align:center">สถานะ</th>
+                                <th style="text-align:center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productList">
+                            <tr><td colspan="4"
+                                    style="text-align:center">กำลังโหลด...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <script>
+  const url = new URL(location.href);
+  const shopId = url.searchParams.get('shop_id'); // สำหรับอนาคต
+
+  (async () => {
+    try {
+      // TODO: เมื่อมี API จริง เปลี่ยน URL ด้านล่าง
+      // const res = await fetch('/page/backend/productsforsale/get_products.php', {credentials:'include'});
+      // const data = await res.json();
+      // const products = data.products || [];
+
+      // ชั่วคราว: mock ให้เห็นโครงหน้า
+      const products = [];
+
+      const list = document.getElementById('productList');
+      if (!products.length) {
+        list.innerHTML = '<tr><td colspan="4" style="text-align:center">ยังไม่มีสินค้า</td></tr>';
+        return;
+      }
+      list.innerHTML = products.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td style="text-align:right">${p.price.toLocaleString()} บาท</td>
+          <td style="text-align:center">${p.status || '-'}</td>
+          <td style="text-align:center">
+            <a href="/page/storepage/edit_product.html?id=${p.id}">แก้ไข</a> |
+            <a href="#" data-id="${p.id}" class="del">ลบ</a>
+          </td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      document.getElementById('productList').innerHTML =
+        '<tr><td colspan="4" style="text-align:center;color:red">โหลดข้อมูลไม่สำเร็จ</td></tr>';
+    }
+  })();
+  </script>
+    </body>
+</html>

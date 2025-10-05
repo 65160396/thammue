@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue – ข้อมูลร้านค้า</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/open-shop.css" />
+    </head>
+    <body class="open-shop">
+        <ul class="top-nav">
+            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+        </ul>
+
+        <section class="open-shop">
+            <div class="wizard-page">
+                <div class="wizard-card">
+                    <h2 class="form-section">ข้อมูลร้านค้า</h2>
+
+                    <div class="field"><label>ชื่อร้าน</label> <div
+                            id="shopName">—</div></div>
+                    <div class="field"><label>อีเมล</label> <div
+                            id="shopEmail">—</div></div>
+                    <div class="field"><label>เบอร์โทร</label> <div
+                            id="shopPhone">—</div></div>
+                    <div class="field"><label>ที่รับของ</label><div
+                            id="shopAddr">—</div></div>
+                    <div class="field"><label>สถานะ</label> <div
+                            id="shopStatus">—</div></div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+  // อ่าน shop_id จาก query (ใช้ไม่ได้ก็ไม่เป็นไร เราจะ fallback จาก API ตาม session)
+  const url = new URL(location.href);
+  const shopId = url.searchParams.get('shop_id');
+
+  (async () => {
+    const res = await fetch('/page/backend/productsforsale/get_shop.php', {credentials:'include'});
+    const data = await res.json();
+    const s = data.shop || {};
+    document.getElementById('shopName').textContent   = s.shop_name || '(ไม่มีชื่อร้าน)';
+    document.getElementById('shopEmail').textContent  = s.email || '-';
+    document.getElementById('shopPhone').textContent  = s.phone || '-';
+    document.getElementById('shopAddr').textContent   = s.pickup_addr || '-';
+    document.getElementById('shopStatus').textContent = s.status || '-';
+  })();
+  </script>
+    </body>
+</html>
