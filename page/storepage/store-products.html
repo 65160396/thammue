@@ -1,43 +1,78 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue – จัดการสินค้า</title>
-        <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/open-shop.css" />
-    </head>
-    <body class="open-shop">
-        <ul class="top-nav">
-            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-        </ul>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue – จัดการสินค้า</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+  </head>
+  <body class="open-shop">
+    <ul class="top-nav">
+      <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
 
-        <section class="open-shop">
-            <div class="wizard-page">
-                <div class="wizard-card">
-                    <h2 class="form-section">รายการสินค้าของฉัน</h2>
-                    <table class="product-table"
-                        style="width:100%; border-collapse:collapse">
-                        <thead>
-                            <tr>
-                                <th style="text-align:left">ชื่อสินค้า</th>
-                                <th style="text-align:right">ราคา</th>
-                                <th style="text-align:center">สถานะ</th>
-                                <th style="text-align:center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productList">
-                            <tr><td colspan="4"
-                                    style="text-align:center">กำลังโหลด...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
 
-        <script>
+    <!-- Header (เหมือนหน้าอัปโหลดสินค้า) -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="icon-buttons">
+          <button class="action-button">
+            <img src="/img/Icon/chat.png" alt="แชท" />
+          </button>
+
+          <!-- โปรไฟล์ -->
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="open-shop">
+      <div class="wizard-page">
+        <div class="wizard-card">
+          <h2 class="form-section">รายการสินค้าของฉัน</h2>
+          <table class="product-table"
+            style="width:100%; border-collapse:collapse">
+            <thead>
+              <tr>
+                <th style="text-align:left">ชื่อสินค้า</th>
+                <th style="text-align:right">ราคา</th>
+                <th style="text-align:center">สถานะ</th>
+                <th style="text-align:center">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="productList">
+              <tr><td colspan="4"
+                  style="text-align:center">กำลังโหลด...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <script>
   const url = new URL(location.href);
   const shopId = url.searchParams.get('shop_id'); // สำหรับอนาคต
 
@@ -73,5 +108,9 @@
     }
   })();
   </script>
-    </body>
+
+    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
+    <script src="/js/store/shop-page.js"></script> <!--จัดการข้อมูลร้านค้า-->
+  </body>
 </html>
