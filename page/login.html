@@ -12,131 +12,97 @@
 
         <ul class="top-nav">
             <li class="right"><li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
+                <li><span class="top-divider">|</span></li>
+                <li><a href="#lang">ไทย</a></li>
+            </ul>
 
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/page/index.html" class="brand-link"
-                    aria-label="กลับหน้าแรก THAMMUE">
-                    <span class="brand-text">THAMMUE</span>
-                </a>
+            <div class="header-wrapper">
+                <div class="logo-container">
+                    <a href="/page/index.html" class="brand-link"
+                        aria-label="กลับหน้าแรก THAMMUE">
+                        <span class="brand-text">THAMMUE</span>
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <main class="auth-container">
-            <section class="auth-card">
-                <h1 class="auth-title">เข้าสู่ระบบ</h1>
+            <main class="auth-container">
+                <section class="auth-card">
+                    <h1 class="auth-title">เข้าสู่ระบบ</h1>
 
-                <div id="flash" class="auth-flash" role="alert"
-                    aria-live="polite"></div>
+                    <div id="flash" class="auth-flash" role="alert"
+                        aria-live="polite"></div>
 
-                <form class="auth-form" action="/page/backend/login.php"
-                    method="POST" novalidate>
-                    <div class="auth-field">
-                        <label for="identifier" class="auth-label">อีเมล /
-                            ชื่อผู้ใช้</label>
-                        <input
-                            id="identifier"
-                            name="identifier"
-                            type="text"
-                            class="auth-input"
-                            required />
-                    </div>
-
-                    <div class="auth-field">
-                        <label for="passwordInput"
-                            class="auth-label">รหัสผ่าน</label>
-                        <div class="auth-password">
+                    <form class="auth-form" action="/page/backend/login.php"
+                        method="POST" novalidate>
+                        <div class="auth-field">
+                            <label for="identifier" class="auth-label">อีเมล /
+                                ชื่อผู้ใช้</label>
                             <input
-                                id="passwordInput"
-                                name="password"
-                                type="password"
+                                id="identifier"
+                                name="identifier"
+                                type="text"
                                 class="auth-input"
-                                minlength="8"
                                 required />
-                            <button
-                                type="button"
-                                class="auth-eye"
-                                aria-label="สลับการแสดงรหัสผ่าน"
-                                onclick="togglePassword()">
-                                <img id="togglePasswordIcon"
-                                    src="/img/Icon/hidden (1).png"
-                                    alt="แสดงรหัสผ่าน" />
-                            </button>
                         </div>
-                        <div class="auth-help">
-                            <a class="auth-link" href="#">ลืมรหัสผ่าน</a>
+
+                        <div class="auth-field">
+                            <label for="passwordInput"
+                                class="auth-label">รหัสผ่าน</label>
+                            <div class="auth-password">
+                                <input
+                                    id="passwordInput"
+                                    name="password"
+                                    type="password"
+                                    class="auth-input"
+                                    minlength="8"
+                                    required />
+                                <button
+                                    type="button"
+                                    class="auth-eye"
+                                    aria-label="สลับการแสดงรหัสผ่าน"
+                                    onclick="togglePassword()">
+                                    <img id="togglePasswordIcon"
+                                        src="/img/Icon/hidden (1).png"
+                                        alt="แสดงรหัสผ่าน" />
+                                </button>
+                            </div>
+                            <div class="auth-help">
+                                <a class="auth-link" href="#">ลืมรหัสผ่าน</a>
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit"
-                        class="auth-button">เข้าสู่ระบบ</button>
+                        <button type="submit"
+                            class="auth-button">เข้าสู่ระบบ</button>
 
-                    <div class="auth-divider"><span>หรือ</span></div>
+                        <div class="auth-divider"><span>หรือ</span></div>
 
-                    <div class="auth-social">
-                        <a class="auth-social-btn" href="#"
-                            aria-label="เข้าสู่ระบบด้วย Facebook">
-                            <img src="/img/Social/facebook.png"
-                                alt="Facebook" />
-                        </a>
-                        <a class="auth-social-btn" href="#"
-                            aria-label="เข้าสู่ระบบด้วย LINE">
-                            <img src="/img/Social/line.png" alt="LINE" />
-                        </a>
-                        <a class="auth-social-btn" href="#"
-                            aria-label="เข้าสู่ระบบด้วย Google">
-                            <img src="/img/Social/google.png" alt="Google" />
-                        </a>
-                    </div>
+                        <div class="auth-social">
+                            <a class="auth-social-btn" href="#"
+                                aria-label="เข้าสู่ระบบด้วย Facebook">
+                                <img src="/img/Social/facebook.png"
+                                    alt="Facebook" />
+                            </a>
+                            <a class="auth-social-btn" href="#"
+                                aria-label="เข้าสู่ระบบด้วย LINE">
+                                <img src="/img/Social/line.png" alt="LINE" />
+                            </a>
+                            <a class="auth-social-btn" href="#"
+                                aria-label="เข้าสู่ระบบด้วย Google">
+                                <img src="/img/Social/google.png"
+                                    alt="Google" />
+                            </a>
+                        </div>
 
-                    <p class="auth-alt">
-                        คุณไม่มีบัญชีหรือไม่?
-                        <a class="auth-link"
-                            href="/page/add_member.html">สมัครสมาชิก</a>
-                    </p>
-                </form>
-            </section>
-        </main>
+                        <p class="auth-alt">
+                            คุณไม่มีบัญชีหรือไม่?
+                            <a class="auth-link"
+                                href="/page/add_member.html">สมัครสมาชิก</a>
+                        </p>
+                    </form>
+                </section>
+            </main>
 
-        <script>
+            <script src="/js/login.js"></script>
 
-      // โชว์/ซ่อนรหัสผ่าน (ใช้ปุ่มวงกลมไอคอนตา เหมือนหน้า addmember)
-      function togglePassword() {
-        const input = document.getElementById('passwordInput');
-        const icon  = document.getElementById('togglePasswordIcon');
-        const showIcon = '/img/Icon/show.png';
-        const hideIcon = '/img/Icon/hidden (1).png';
-
-        if (input.type === 'password') {
-          input.type = 'text';
-          icon.src = hideIcon;
-          icon.alt = 'ซ่อนรหัสผ่าน';
-        } else {
-          input.type = 'password';
-          icon.src = showIcon;
-          icon.alt = 'แสดงรหัสผ่าน';
-        }
-      }
-
-      (function () {
-        const sp   = new URLSearchParams(location.search);
-        const type = sp.get('type');
-        const msg  = sp.get('msg');
-
-        if (msg) {
-          const box = document.getElementById('flash');
-          box.textContent = decodeURIComponent(msg);
-          box.classList.add('show');
-          if (type === 'success') box.classList.add('is-success');
-          else box.classList.add('is-error');
-
-          // ล้าง query เพื่อไม่ให้เด้งซ้ำเมื่อรีเฟรช
-          history.replaceState({}, '', location.pathname);
-        }
-      })();
-    </script>
-    </body>
-</html>
+        </body>
+    </html>
