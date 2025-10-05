@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue – อัพโหลดสินค้า</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+  </head>
+
+  <body class="open-shop">
+    <!-- topbar -->
+    <ul class="top-nav">
+      <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- Header -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="search-group">
+          <input type="text" placeholder="ค้นหาสินค้า" />
+          <button class="search-button" aria-label="ค้นหา">
+            <img src="/img/Icon/search.png" alt="ค้นหา" />
+          </button>
+        </div>
+
+        <div class="icon-buttons">
+          <button class="action-button"><img src="/img/Icon/heart.png"
+              alt="รายการโปรด" /></button>
+          <button class="action-button"><img src="/img/Icon/shopping-cart.png"
+              alt="ตะกร้า" /></button>
+          <button class="action-button"><img src="/img/Icon/chat.png"
+              alt="แชท" /></button>
+
+          <!-- โปรไฟล์ -->
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Upload Product ===== -->
+    <section class="open-shop">
+      <div class="wizard-page">
+        <!-- stepper -->
+        <div class="stepper" aria-label="ขั้นตอนการอัปโหลดสินค้า">
+          <div class="step is-active">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="label">ข้อมูลสินค้า</span>
+          </div>
+          <div class="step">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="label">ส่งแบบฟอร์ม</span>
+          </div>
+        </div>
+
+        <!-- card -->
+        <div class="wizard-card">
+          <h2 class="form-section">ข้อมูลสินค้า</h2>
+
+          <form action="/page/backend/productsforsale/upload_product.php"
+            method="post" enctype="multipart/form-data">
+            <input type="hidden" name="shop_id" id="shopIdHidden" />
+
+            <div class="grid2">
+              <!-- ชื่อสินค้า -->
+              <div class="field field--full">
+                <label for="name">ชื่อสินค้า</label>
+                <input id="name" name="name" type="text" required
+                  placeholder="เช่น รองเท้า ผักผลไม้ ของใช้ ฯลฯ" />
+              </div>
+
+              <!-- หมวดหมู่ -->
+              <div class="field field--full">
+                <label for="category">หมวดหมู่สินค้า</label>
+                <select id="category" name="category_id" required>
+                  <option value disabled selected>เลือกหมวดหมู่</option>
+                  <!-- fallback (กรณีโหลดไม่สำเร็จ) -->
+                  <option value="1">สินค้าแฮนเมด</option>
+                  <option value="2">งานประดิษฐ์</option>
+                  <option value="3">สินค้าท้องถิ่น</option>
+                  <option value="4">สินค้ามือสอง</option>
+                </select>
+              </div>
+
+              <!-- รายละเอียด -->
+              <div class="field field--full">
+                <label for="desc">รายละเอียดสินค้า</label>
+                <input id="desc" name="description" type="text" required
+                  placeholder="สภาพ/ขนาด/จุดเด่น ฯลฯ" />
+              </div>
+
+              <!-- รูปหลัก -->
+              <div class="field field--full">
+                <label for="image_main">รูปสินค้า</label>
+                <input id="image_main" name="image_main" type="file"
+                  accept="image/*" required />
+              </div>
+
+              <!-- รูปเพิ่ม -->
+              <div class="field field--full">
+                <label for="image_extra1">รูปสินค้าเพิ่มเติม <span
+                    class="error-hint">กรณีมีรูปสินค้ามากกว่า 1</span></label>
+                <input id="image_extra1" name="image_extra[]" type="file"
+                  accept="image/*" />
+              </div>
+              <div class="field field--full">
+                <label for="image_extra2">รูปสินค้าเพิ่มเติม <span
+                    class="error-hint">กรณีมีรูปสินค้ามากกว่า 1</span></label>
+                <input id="image_extra2" name="image_extra[]" type="file"
+                  accept="image/*" />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn">ถัดไป</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ยัด shop_id จาก URL -->
+    <script>
+      (function () {
+        const sid = new URLSearchParams(location.search).get('shop_id');
+        if (sid) document.getElementById('shopIdHidden').value = sid;
+      })();
+    </script>
+
+    <!-- โหลดหมวดหมู่จากฐานข้อมูล (พาธถูกต้อง) -->
+    <script>
+      (function () {
+        const sel = document.getElementById('category');
+        if (!sel) return;
+        fetch('/page/backend/productsforsale/categories.php', { cache: 'no-store' })
+          .then(r => {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(items => {
+            if (!Array.isArray(items) || items.length === 0) return;
+            sel.innerHTML = '<option value="" disabled selected>เลือกหมวดหมู่</option>';
+            items.forEach(it => {
+              const opt = document.createElement('option');
+              opt.value = it.id;
+              opt.textContent = it.name;
+              sel.appendChild(opt);
+            });
+          })
+          .catch(err => console.error('Load categories failed:', err));
+      })();
+    </script>
+
+    <!-- me.php → แสดงชื่อผู้ใช้ -->
+    <script>
+      (function () {
+        const chip = document.getElementById('userChip');
+        const userArea = document.getElementById('userArea');
+        if (!chip || !userArea) return;
+
+        fetch('/page/backend/me.php', { cache: 'no-store' })
+          .then(r => (r.ok ? r.json() : { ok: false }))
+          .then(d => {
+            if (!d || !d.ok) {
+              chip.hidden = true;
+              userArea.href = '../login.html';
+              return;
+            }
+            const name = (d.user && (d.user.display_name || d.user.name)) ? (d.user.display_name || d.user.name).trim() : '';
+            if (name) { chip.textContent = name; chip.hidden = false; }
+          })
+          .catch(() => { chip.hidden = true; });
+      })();
+    </script>
+
+    <!-- user dropdown -->
+    <script>
+      (() => {
+        const menu = document.getElementById('userMenu');
+        const btn = document.getElementById('userArea');
+        const chip = document.getElementById('userChip');
+        const dd = document.getElementById('userDropdown');
+        if (!menu || !btn || !chip || !dd) return;
+
+        dd.innerHTML = `
+          <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
+          <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
+        `;
+
+        fetch('../backend/me.php', { cache: 'no-store' })
+          .then(r => (r.ok ? r.json() : { ok: false }))
+          .then(d => {
+            if (d && d.ok) {
+              const name = (d.user.display_name || d.user.name || '').trim();
+              if (name) { chip.textContent = name; chip.hidden = false; }
+              dd.innerHTML = `
+                <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
+                <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
+                <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
+                <hr>
+                <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
+              `;
+            } else {
+              chip.hidden = true;
+            }
+          })
+          .catch(() => { chip.hidden = true; });
+
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          const open = menu.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open);
+        });
+
+        document.addEventListener('click', e => {
+          if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+        });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.blur(); }
+        });
+      })();
+    </script>
+  </body>
+</html>

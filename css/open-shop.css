@@ -1,4 +1,3 @@
-
 .open-shop {
   background: #fff;
 }
@@ -316,7 +315,13 @@
   font-weight: 600;
 }
 
-
+/* ทำให้ <a class="btn"> ดูเป็นปุ่มจริง */
+.open-shop .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
 
 /* Responsive */
 @media (max-width: 768px) {

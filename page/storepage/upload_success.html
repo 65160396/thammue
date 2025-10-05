@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>อัปโหลดสินค้าเสร็จแล้ว</title>
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/open-shop.css">
+    </head>
+    <body class="open-shop">
+        <ul class="top-nav">
+            <li><a href="store.html">ร้านค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="../main.html">ซื้อสินค้า</a></li>
+        </ul>
+
+        <section class="open-shop">
+            <div class="wizard-page">
+                <div class="wizard-card" style="text-align:center">
+                    <h2 class="form-section">อัปโหลดสินค้าเรียบร้อย</h2>
+                    <p id="msg" class="hint">กำลังบันทึกข้อมูล…</p>
+                    <div class="actions">
+                        <a class="btn"
+                            href="upload_product.html">เพิ่มสินค้าอีก</a>
+                        <a class="btn ghost"
+                            href="store.html">กลับหน้าร้านค้า</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+    const pid = new URLSearchParams(location.search).get('product_id');
+    document.getElementById('msg').textContent =
+      pid ? `บันทึกสำเร็จ (รหัสสินค้า #${pid})` : 'บันทึกสำเร็จ';
+  </script>
+    </body>
+</html>

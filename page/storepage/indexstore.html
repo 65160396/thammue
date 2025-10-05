@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Thammue | ร้านค้า</title>
         <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/open-shop.css" />
     </head>
 
     <body>
@@ -13,7 +14,7 @@
             <!-- ซ้าย -->
             <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
             <li><span class="top-divider">|</span></li>
-            <li><a href="/page/login.html">ซื้อสินค้า</a></li>
+            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
 
             <!-- ขวา -->
             <li class="right"><a href="#notification">แจ้งเตือน</a></li>
@@ -64,16 +65,21 @@
         </div>
 
         <!-- ===== Store section ===== -->
-        <section class="store-wrap">
-            <div class="store-head">
-                <div class="store-sub" id="shopMeta"></div>
-            </div>
+        <section class="open-shop">
+            <div class="wizard-page">
+                <h2 class="form-section">
+                    ร้านค้า | <span id="shopName">กำลังโหลด...</span>
+                </h2>
+                <p class="hint" id="shopMeta"></p>
 
-            <div class="store-actions">
-                <a class="btn btn-gray" id="btnStoreInfo"
-                    href="#">ข้อมูลร้านค้า</a>
-                <a class="btn btn-black" id="btnUpload"
-                    href="#">อัพโหลดสินค้า</a>
+                <div class="actions">
+                    <a class="btn ghost" id="btnStoreInfo"
+                        href="#">ข้อมูลร้านค้า</a>
+                    <a class="btn" id="btnUpload"
+                        href="/page/storepage/upload_product.html">
+                        อัพโหลดสินค้า
+                    </a>
+                </div>
             </div>
         </section>
 
