@@ -1,89 +1,89 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue | ร้านค้า</title>
-        <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/open-shop.css" />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue | ร้านค้า</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+  </head>
 
-    <body>
-        <!-- แถบบนสุด -->
-        <ul class="top-nav">
-            <!-- ซ้าย -->
-            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+  <body>
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+      <!-- ซ้าย -->
+      <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
 
-            <!-- ขวา -->
-            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
+      <!-- ขวา -->
+      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
 
-        <!-- Header หลัก -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/page/index.html" class="brand-text">THAMMUE</a>
-            </div>
+    <!-- Header หลัก -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/index.html" class="brand-text">THAMMUE</a>
+      </div>
 
-            <div class="search-container">
-                <div class="icon-buttons">
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
-                </div>
-                <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
-                <div class="user-menu" id="userMenu">
-                    <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
-
-                    <button class="user-area" id="userArea" aria-haspopup="true"
-                        aria-expanded="false">
-                        <!---userArea ที่ไว้ เปิด ปิดเมนู-->
-
-                        <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                        <span class="user-chip" id="userChip" hidden></span>
-                        <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
-                        <svg class="chev" viewBox="0 0 20 20"
-                            aria-hidden="true">
-                            <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
-                            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
-                                stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <div class="user-dropdown" id="userDropdown"
-                        role="menu">
-                        <!-- JS จะเติมรายการให้หลังจาก login/logout -->
-                    </div>
-                </div>
-            </div>
+      <div class="search-container">
+        <div class="icon-buttons">
+          <button class="action-button"><img src="/img/Icon/chat.png"
+              alt="แชท" /></button>
         </div>
+        <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
+        <div class="user-menu" id="userMenu">
+          <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
 
-        <!-- ===== Store section ===== -->
-        <section class="open-shop">
-            <div class="wizard-page">
-                <h2 class="form-section">
-                    ร้านค้า | <span id="shopName">กำลังโหลด...</span>
-                </h2>
-                <p class="hint" id="shopMeta"></p>
+          <button class="user-area" id="userArea" aria-haspopup="true"
+            aria-expanded="false">
+            <!---userArea ที่ไว้ เปิด ปิดเมนู-->
 
-                <div class="actions">
-                    <a class="btn ghost" id="btnStoreInfo"
-                        href="#">ข้อมูลร้านค้า</a>
-                    <a class="btn" id="btnUpload"
-                        href="/page/storepage/upload_product.html">
-                        อัพโหลดสินค้า
-                    </a>
-                </div>
-            </div>
-        </section>
+            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+            <span class="user-chip" id="userChip" hidden></span>
+            <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
+            <svg class="chev" viewBox="0 0 20 20"
+              aria-hidden="true">
+              <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                stroke="currentColor" stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
 
-        <script>
+          <div class="user-dropdown" id="userDropdown"
+            role="menu">
+            <!-- JS จะเติมรายการให้หลังจาก login/logout -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Store section ===== -->
+    <section class="open-shop">
+      <div class="wizard-page">
+        <h2 class="form-section">
+          ร้านค้า | <span id="shopName">กำลังโหลด...</span>
+        </h2>
+        <p class="hint" id="shopMeta"></p>
+
+        <div class="actions">
+          <a class="btn ghost" id="btnStoreInfo"
+            href="#">ข้อมูลร้านค้า</a>
+          <a class="btn" id="btnUpload"
+            href="/page/storepage/upload_product.html">
+            อัพโหลดสินค้า
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <script>
 (function () {
   //ดึง path ปัจจุบันจาก URL"
   var path = location.pathname.replace(/\/+/g,'/').toLowerCase();
@@ -97,173 +97,53 @@
 })();
 </script>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="container footer-grid">
-                <div>
-                    <h5>เราทำเพื่อ</h5>
-                    <p class="muted">
-                        <li>ที่นี่คือพื้นที่แบ่งปัน แลกเปลี่ยน</li>
-                        <li>และสร้างคุณค่าใหม่ให้กับสินค้ามือสอง</li>
-                        <li>งานแฮนเมดและสินค้าท้องถิ่นเพื่อให้ทุกชิ้น</li>
-                        <li>มีเรื่องราวและชีวิตใหม่อีกครั้ง</li>
-                    </p>
-                </div>
-                <div>
-                    <h5>ตรวจสอบสถานะ</h5>
-                    <ul class="list">
-                        <li><a href="#">สถานะการสั่งซื้อ</a></li>
-                        <li><a href="#">ส่งคืน</a></li>
-                        <li><a href="#">ยกเลิกคำสั่งซื้อ</a></li>
-                        <li><a href="#">การชำระเงิน</a></li>
-                        <li><a href="#">คูปองของฉัน</a></li>
-                        <li><a href="#">การจัดส่ง</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5>SUBSCRIBE</h5>
-                    <form class="subscribe" action="#" method="post">
-                        <input type="email" placeholder="อีเมลของคุณ"
-                            required />
-                        <button type="submit"
-                            class="btn btn-sm">ติดตามข่าว</button>
-                    </form>
-                    <div class="social">
-                        <a href="#" aria-label="Facebook">🄵</a>
-                        <a href="#" aria-label="Instagram">🄸</a>
-                        <a href="#" aria-label="YouTube">🅈</a>
-                        <a href="#" aria-label="Line">🄻</a>
-                    </div>
-                </div>
-            </div>
-            <div class="container tiny muted center mt-24">
-                copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน
-            </div>
-        </footer>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <h5>เราทำเพื่อ</h5>
+          <ul class="muted">
+            <li>ที่นี่คือพื้นที่แบ่งปัน แลกเปลี่ยน</li>
+            <li>และสร้างคุณค่าใหม่ให้กับสินค้ามือสอง</li>
+            <li>งานแฮนเมดและสินค้าท้องถิ่นเพื่อให้ทุกชิ้น</li>
+            <li>มีเรื่องราวและชีวิตใหม่อีกครั้ง</li>
+          </ul>
+        </div>
+        <div>
+          <h5>ตรวจสอบสถานะ</h5>
+          <ul class="list">
+            <li><a href="#">สถานะการสั่งซื้อ</a></li>
+            <li><a href="#">ส่งคืน</a></li>
+            <li><a href="#">ยกเลิกคำสั่งซื้อ</a></li>
+            <li><a href="#">การชำระเงิน</a></li>
+            <li><a href="#">คูปองของฉัน</a></li>
+            <li><a href="#">การจัดส่ง</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>SUBSCRIBE</h5>
+          <form class="subscribe" action="#" method="post">
+            <input type="email" placeholder="อีเมลของคุณ"
+              required />
+            <button type="submit"
+              class="btn btn-sm">ติดตามข่าว</button>
+          </form>
+          <div class="social">
+            <a href="#" aria-label="Facebook">🄵</a>
+            <a href="#" aria-label="Instagram">🄸</a>
+            <a href="#" aria-label="YouTube">🅈</a>
+            <a href="#" aria-label="Line">🄻</a>
+          </div>
+        </div>
+      </div>
+      <div class="container tiny muted center mt-24">
+        copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน
+      </div>
+    </footer>
 
-        <!-- ดึงชื่อผู้ใช้จาก me.php และจัดการเมนูดรอปดาวน์ -->
-        <script>
-      //ดึงชื่อผู้ใช้ข้างไอคอนจาก me.php
-      (function () {
-        const chip = document.getElementById('userChip');
-        const userArea = document.getElementById('userArea');
-        if (!chip || !userArea) return;
+    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
+    <script src="/js/store/shop-page.js"></script>
 
-        fetch('/page/backend/me.php', { cache: 'no-store' })
-          .then(r => r.ok ? r.json() : { ok:false })
-          .then(d => {
-            if (!d || !d.ok) { // ไม่ล็อกอิน
-              chip.hidden = true; //    ซ่อนชื่อ
-              userArea.href = '/page/login.html';  // กดปุ่มโปรไฟล์แล้วพาไปหน้า login
-              return;
-            }
-              //กรณี “ล็อกอินแล้ว”
-            const name = (d.user.display_name || d.user.name || '').trim();
-            if (name) { 
-              chip.textContent = name; // เติมชื่อ
-              chip.hidden = false; }  // โชว์ชื่อ
-          })
-          .catch(() => { chip.hidden = true; }); // มี error ก็ซ่อนชื่อไว้
-      })();
-    </script>
-
-        <!---เมนูดรอปดาวน์ และควบคุมเปิด/ปิด---!-->
-        <script>
-(() => {
-  const menu = document.getElementById('userMenu');
-  const btn  = document.getElementById('userArea');
-  const chip = document.getElementById('userChip');
-  const dd   = document.getElementById('userDropdown');
-  if (!menu || !btn || !chip || !dd) return;
-
-  // ค่าเริ่มต้นสำหรับผู้ที่ยังไม่ล็อกอิน
-  dd.innerHTML = `
-    <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
-    <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
-  `;
-
-  // ดึงชื่อผู้ใช้จาก PHP
-  fetch('/page/backend/me.php', { cache:'no-store' })
-    .then(r => r.ok ? r.json() : {ok:false})
-    .then(d => {
-      if (d && d.ok) {
-        const name = (d.user.display_name || d.user.name || '').trim();
-        if (name) { chip.textContent = name; chip.hidden = false; }
-        dd.innerHTML = `
-          <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
-          <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
-          <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
-          <hr>
-          <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
-        `;
-      } else {
-        chip.hidden = true; // guest
-      }
-    })
-    .catch(() => { chip.hidden = true; });
-
-  // เปิด/ปิดด้วยคลิก (สำหรับมือถือ)
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
-
-  // ปิดเมื่อคลิกข้างนอกหรือกด Esc
-  document.addEventListener('click', e => {
-    if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.blur(); }
-  });
-})();
-</script>
-
-        <script>
-/**
- * ดึงข้อมูลร้านจาก PHP แล้วเติมชื่อ/ลิงก์ให้ปุ่ม
- * ปรับ ENDPOINT ให้ตรงกับฝั่งแบ็กเอนด์คุณได้
- * ตัวอย่างนี้ใช้ /page/backend/get_shop.php
- */
-(function () {
-  const ENDPOINT = '/page/backend/get_shop.php';  // << ปรับได้
-  const $name = document.getElementById('shopName');
-  const $meta = document.getElementById('shopMeta');
-  const $btnInfo = document.getElementById('btnStoreInfo');
-  const $btnUpload = document.getElementById('btnUpload');
-
-  if (!$name || !$btnInfo || !$btnUpload) return;
-
-  fetch(ENDPOINT, { credentials: 'include', cache: 'no-store' })
-    .then(r => {
-      if (r.status === 401) {
-        // ยังไม่ล็อกอิน → พาไปหน้า login
-        location.href = '/page/login.html';
-        return Promise.reject();
-      }
-      return r.json();
-    })
-    .then(d => {
-      // รูปแบบข้อมูลที่คาดหวัง:
-      // { user_id: 2, shop_id: 1, shop_name: "นุ่นนุ่นนุ่น" }
-      if (!d || !d.shop_id) {
-        // ยังไม่มีร้าน → พาไปเปิดร้าน
-        location.href = '/page/open-shop.html'; // ปรับลิงก์ได้
-        return;
-      }
-
-      $name.textContent = d.shop_name || 'ร้านค้าของฉัน';
-      $meta.textContent = `รหัสร้าน #${d.shop_id} • ผู้ใช้ #${d.user_id}`;
-
-      // ผูกลิงก์ไปหน้าอื่น พร้อมส่ง shop_id ไปด้วย
-      $btnInfo.href   = `/page/storepage/store-info.php?shop_id=${encodeURIComponent(d.shop_id)}`;
-      $btnUpload.href = `/exchangepage/Upload.html?shop_id=${encodeURIComponent(d.shop_id)}`;
-    })
-    .catch(() => {
-      if ($name) $name.textContent = 'ไม่พบข้อมูลร้าน';
-    });
-})();
-</script>
-
-    </body>
+  </body>
 </html>

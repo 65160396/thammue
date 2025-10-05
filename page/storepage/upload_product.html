@@ -27,18 +27,7 @@
         <a href="/page/main.html" class="brand-text">THAMMUE</a>
       </div>
       <div class="search-container">
-        <div class="search-group">
-          <input type="text" placeholder="ค้นหาสินค้า" />
-          <button class="search-button" aria-label="ค้นหา">
-            <img src="/img/Icon/search.png" alt="ค้นหา" />
-          </button>
-        </div>
-
         <div class="icon-buttons">
-          <button class="action-button"><img src="/img/Icon/heart.png"
-              alt="รายการโปรด" /></button>
-          <button class="action-button"><img src="/img/Icon/shopping-cart.png"
-              alt="ตะกร้า" /></button>
           <button class="action-button"><img src="/img/Icon/chat.png"
               alt="แชท" /></button>
 
@@ -141,106 +130,8 @@
       </div>
     </section>
 
-    <!-- ยัด shop_id จาก URL -->
-    <script>
-      (function () {
-        const sid = new URLSearchParams(location.search).get('shop_id');
-        if (sid) document.getElementById('shopIdHidden').value = sid;
-      })();
-    </script>
-
-    <!-- โหลดหมวดหมู่จากฐานข้อมูล (พาธถูกต้อง) -->
-    <script>
-      (function () {
-        const sel = document.getElementById('category');
-        if (!sel) return;
-        fetch('/page/backend/productsforsale/categories.php', { cache: 'no-store' })
-          .then(r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-          })
-          .then(items => {
-            if (!Array.isArray(items) || items.length === 0) return;
-            sel.innerHTML = '<option value="" disabled selected>เลือกหมวดหมู่</option>';
-            items.forEach(it => {
-              const opt = document.createElement('option');
-              opt.value = it.id;
-              opt.textContent = it.name;
-              sel.appendChild(opt);
-            });
-          })
-          .catch(err => console.error('Load categories failed:', err));
-      })();
-    </script>
-
-    <!-- me.php → แสดงชื่อผู้ใช้ -->
-    <script>
-      (function () {
-        const chip = document.getElementById('userChip');
-        const userArea = document.getElementById('userArea');
-        if (!chip || !userArea) return;
-
-        fetch('/page/backend/me.php', { cache: 'no-store' })
-          .then(r => (r.ok ? r.json() : { ok: false }))
-          .then(d => {
-            if (!d || !d.ok) {
-              chip.hidden = true;
-              userArea.href = '../login.html';
-              return;
-            }
-            const name = (d.user && (d.user.display_name || d.user.name)) ? (d.user.display_name || d.user.name).trim() : '';
-            if (name) { chip.textContent = name; chip.hidden = false; }
-          })
-          .catch(() => { chip.hidden = true; });
-      })();
-    </script>
-
-    <!-- user dropdown -->
-    <script>
-      (() => {
-        const menu = document.getElementById('userMenu');
-        const btn = document.getElementById('userArea');
-        const chip = document.getElementById('userChip');
-        const dd = document.getElementById('userDropdown');
-        if (!menu || !btn || !chip || !dd) return;
-
-        dd.innerHTML = `
-          <a href="/page/login.html" role="menuitem">เข้าสู่ระบบ</a>
-          <a href="/page/add_member.html" role="menuitem">สมัครสมาชิก</a>
-        `;
-
-        fetch('../backend/me.php', { cache: 'no-store' })
-          .then(r => (r.ok ? r.json() : { ok: false }))
-          .then(d => {
-            if (d && d.ok) {
-              const name = (d.user.display_name || d.user.name || '').trim();
-              if (name) { chip.textContent = name; chip.hidden = false; }
-              dd.innerHTML = `
-                <a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>
-                <a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>
-                <a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>
-                <hr>
-                <a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>
-              `;
-            } else {
-              chip.hidden = true;
-            }
-          })
-          .catch(() => { chip.hidden = true; });
-
-        btn.addEventListener('click', e => {
-          e.preventDefault();
-          const open = menu.classList.toggle('open');
-          btn.setAttribute('aria-expanded', open);
-        });
-
-        document.addEventListener('click', e => {
-          if (!menu.contains(e.target)) { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-        });
-        document.addEventListener('keydown', e => {
-          if (e.key === 'Escape') { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.blur(); }
-        });
-      })();
-    </script>
+    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
+    <script src="/js/products/upload-product.js"></script>
   </body>
 </html>
