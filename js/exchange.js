@@ -146,22 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
   bindUploader('want_images', 'thumbs2', { maxFiles: 10, maxMB: 8 });
 
   // ---------- Form Submit ----------
-  form?.addEventListener('submit', (e) => {
-    // ตรวจทุกสเต็ปแบบจริงจัง (รวมไฟล์)
-    for (let s = 0; s < panels.length; s++) {
-      const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
-      if (invalid) { e.preventDefault(); showStep(s); invalid.reportValidity(); return; }
-    }
-    // บังคับต้องมีรูปอย่างน้อย 1 รูป
-    const imgInput = document.getElementById('images');
-    if (imgInput && imgInput.files.length === 0) {
-      e.preventDefault();
-      showStep(0);
-      alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
-      return;
-    }
-    // ผ่าน -> ปล่อย submit ไปตาม action (PHP)
-  });
+  // ---------- Form Submit ----------
+form?.addEventListener('submit', (e) => {
+  // ตรวจทุกสเต็ปแบบจริงจัง (รวมไฟล์)
+  for (let s = 0; s < panels.length; s++) {
+    const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
+    if (invalid) { e.preventDefault(); showStep(s); invalid.reportValidity(); return; }
+  }
+  // ต้องมีรูปอย่างน้อย 1 รูป
+  const imgInput = document.getElementById('images');
+  if (!imgInput || imgInput.files.length === 0) {
+    e.preventDefault(); showStep(0); alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป'); return;
+  }
+
+  // กันสคริปต์อื่น ๆ มาขวาง แล้วบังคับยิง native submit
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  form.submit();             // ← ตรงนี้แหละที่ทำให้ POST ออกแน่ ๆ
+});
+
 });
 
 /* แนะนำ CSS เพิ่ม (ถ้ายังไม่มี)
