@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>THAMMUE | ร้านค้า</title>
+        <link rel="stylesheet" href="/css/instyle.css" />
+        <style>
+    :root{--line:#eaeaea}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Noto Sans Thai",system-ui,sans-serif;color:#111}
+    /* top bar */
+    .top-nav{display:flex;gap:12px;align-items:center;justify-content:center;list-style:none;margin:0;padding:10px 14px;border-bottom:1px solid var(--line);background:#fff}
+    .top-nav a{color:#111;text-decoration:none;padding:6px 10px}
+    .top-divider{color:#aaa}
+    /* brand bar */
+    .brand-bar{background:#000;color:#fff;padding:18px 24px;border-bottom:2px solid #1f1f1f;display:flex;align-items:center;justify-content:space-between}
+    .brand-title{letter-spacing:.4rem;font-size:28px;font-weight:600}
+    .brand-pill{border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 10px;font-size:14px}
+    /* content */
+    .wrap{max-width:1000px;margin:40px auto;padding:0 16px}
+    .store-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;border-bottom:1px dashed var(--line);padding-bottom:14px}
+    .store-title{font-size:20px;font-weight:600}
+    .store-sub{color:#7a7a7a;font-size:14px}
+    .btn-row{display:flex;gap:40px;justify-content:center;margin-top:80px}
+    .btn{min-width:220px;padding:14px 22px;border-radius:12px;border:1px solid #0000;font-size:18px;cursor:pointer;transition:.2s;text-decoration:none;text-align:center;display:inline-block;box-shadow:0 8px 20px rgba(0,0,0,.08)}
+    .btn.gray{background:#e9e9e9;color:#111;border:1px solid #ddd}
+    .btn.gray:hover{filter:brightness(.96)}
+    .btn.black{background:#000;color:#fff}
+    .btn.black:hover{filter:brightness(1.08)}
+  </style>
+    </head>
+    <body>
+        <!-- top bar -->
+        <ul class="top-nav">
+            <li><a href="/page/store.html">ร้านค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/index.html">ซื้อสินค้า</a></li>
+
+            <li style="margin-left:auto"><a href="#notify">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#lang">ไทย</a></li>
+        </ul>
+
+        <!-- black brand bar -->
+        <div class="brand-bar">
+            <div class="brand-title">THAMMUE</div>
+            <div class="brand-pill">💬 แชท</div>
+        </div>
+
+        <!-- main -->
+        <div class="wrap">
+            <div class="store-head">
+                <div>
+                    <!-- ชื่อร้านถูกเติมด้วย JS -->
+                    <div class="store-title">ร้านค้า | <span
+                            id="shopName">กำลังโหลด...</span></div>
+                    <div class="store-sub" id="ids"></div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a class="btn gray" id="infoLink" href="#">ข้อมูลร้านค้า</a>
+                <a class="btn black" id="uploadLink" href="#">อัพโหลดสินค้า</a>
+            </div>
+        </div>
+
+        <script>
+    // ดึงชื่อร้านจาก PHP API
+    fetch('/api/get-shop.php', { credentials: 'include' })
+      .then(res => {
+        if (res.status === 401) { window.location.href = '/page/login.html'; return; }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('shopName').textContent = data.shop_name || 'ร้านค้าของฉัน';
+        document.getElementById('ids').textContent = `รหัสร้าน #${data.shop_id} • ผู้ใช้ #${data.user_id}`;
+        // ผูกลิงก์ไปหน้าต่าง ๆ พร้อมพารามิเตอร์
+        document.getElementById('infoLink').href   = `/page/store-info.php?shop_id=${data.shop_id}`;
+        document.getElementById('uploadLink').href = `/exchangepage/Upload.html?shop_id=${data.shop_id}`;
+      })
+      .catch(() => {
+        document.getElementById('shopName').textContent = 'ไม่พบข้อมูลร้าน';
+      });
+  </script>
+    </body>
+</html>
