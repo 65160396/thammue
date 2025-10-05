@@ -227,8 +227,9 @@
             <div class="actions">
               <button type="button" class="btn ghost back">ย้อนกลับ</button>
               <!-- submit ฟอร์มเข้า PHP ตาม action -->
-              <button type="submit"
-                class="btn primary">ยืนยันการอัพโหลดสินค้า</button>
+              <button type="button" id="submitExchange" class="btn primary">
+                ยืนยันการอัพโหลดสินค้า
+              </button>
             </div>
           </fieldset>
         </form>
@@ -279,24 +280,19 @@
     <script>
 (function () {
   const form = document.getElementById('exchangeForm');
-  if (!form) return;
-  const submitBtn = form.querySelector('button[type="submit"]');
-  if (!submitBtn) return;
+  const btn  = document.getElementById('submitExchange');
+  if (!form || !btn) return;
 
-  submitBtn.addEventListener('click', function (ev) {
-    // ให้เบราว์เซอร์ตรวจ required/pattern ก่อน
-    if (!form.checkValidity()) return;
-
-    // เช็คว่ามีรูปอย่างน้อย 1 รูป
+  btn.addEventListener('click', function (e) {
+    // ตรวจฟอร์มให้ครบก่อน
+    if (!form.checkValidity()) { form.reportValidity(); return; }
     const img = document.getElementById('images');
     if (!img || img.files.length === 0) {
-      alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
+      alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป'); 
       return;
     }
-
-    // กันสคริปต์อื่นๆ มาขวาง แล้วบังคับยิง native submit
-    ev.preventDefault();
-    form.submit(); // ไม่ผ่าน listeners อื่น ๆ -> POST ออกแน่นอน
+    // บังคับยิง native submit -> จะไม่โดน preventDefault จากสคริปต์อื่น
+    form.submit();
   });
 })();
 </script>
