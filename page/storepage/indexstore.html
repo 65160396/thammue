@@ -145,5 +145,18 @@
     <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
     <script src="/js/store/shop-page.js"></script>
 
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const sid = await toggleOpenOrMyShop(); // ได้ shop_id ถ้ามีร้าน
+  if (sid) {
+    document.getElementById('btnStoreInfo').href =
+      `/page/storepage/store-info.html?shop_id=${sid}`;
+    document.getElementById('btnUpload').href =
+      `/page/storepage/upload_product.html?shop_id=${sid}`;
+  }
+});
+</script>
+
   </body>
 </html>
