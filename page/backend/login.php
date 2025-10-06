@@ -18,8 +18,8 @@ if ($identifier === '' || $password === '') {
 // หาได้ทั้งอีเมลหรือชื่อผู้ใช้
 $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
 $sql = $isEmail
-    ? 'SELECT id,name,email,password_hash FROM users WHERE email=? LIMIT 1'
-    : 'SELECT id,name,email,password_hash FROM users WHERE name=?  LIMIT 1';
+  ? 'SELECT id,username AS name,email,password_hash FROM users WHERE email=? LIMIT 1'
+  : 'SELECT id,username AS name,email,password_hash FROM users WHERE username=? LIMIT 1';
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $identifier);
