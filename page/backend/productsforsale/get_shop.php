@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
-// ===== DB (จะย้ายไปใช้ config.php ก็ได้) =====
+// ===== เชื่อมต่อฐานข้อมูล =====
 $dsn  = 'mysql:host=127.0.0.1;dbname=shopdb;charset=utf8mb4';
 $user = 'root';
 $pass = '';
@@ -28,7 +28,10 @@ if (!$userId) {
 
 // ===== หา Shop ของ user นี้ =====
 $stmt = $pdo->prepare("
-    SELECT id, shop_name AS name, status
+    SELECT 
+        id,
+        shop_name AS name,   -- ดึงชื่อร้านจากคอลัมน์ shop_name
+        status
     FROM shops
     WHERE user_id = ?
     LIMIT 1
@@ -37,7 +40,13 @@ $stmt->execute([$userId]);
 $shop = $stmt->fetch();
 
 if ($shop) {
-    echo json_encode(['ok' => true, 'shop' => $shop]);
+    echo json_encode([
+        'ok' => true,
+        'shop' => $shop
+    ]);
 } else {
-    echo json_encode(['ok' => false, 'code' => 'NO_SHOP']);
+    echo json_encode([
+        'ok' => false,
+        'code' => 'NO_SHOP'
+    ]);
 }
