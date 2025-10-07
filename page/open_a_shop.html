@@ -395,5 +395,40 @@
         <script src="/js/open-shop/shop-registration.js"></script>
         <!--จัดการฟอร์มเปิดร้านค้า-->
 
+        <script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1) ซ่อนฟอร์มไว้ก่อนกันกระตุก
+  const form = document.getElementById('openShopForm');
+  if (form) form.style.visibility = 'hidden';
+
+  try {
+    const res = await fetch('/page/backend/productsforsale/get_shop.php', {
+      credentials: 'include', cache: 'no-store'
+    });
+    const data = await res.json();
+
+    if (data.ok && data.shop) {
+      // มีร้านแล้ว → พาไปหน้าร้านของฉัน
+      const sid = encodeURIComponent(data.shop.id);
+      location.href = `/page/storepage/store.html?shop_id=${sid}`;
+      return;
+    }
+
+    if (data.code === 'NOT_LOGIN') {
+      // ยังไม่ล็อกอิน → พาไปหน้า login
+      location.href = '/page/login.html';
+      return;
+    }
+
+    // NO_SHOP → แสดงฟอร์มได้
+    if (form) form.style.visibility = 'visible';
+  } catch (e) {
+    console.error('check shop failed:', e);
+    // เผื่อ API ล่ม ก็ให้แสดงฟอร์มไปก่อน (แบ็กเอนด์จะกันซ้ำเอง)
+    if (form) form.style.visibility = 'visible';
+  }
+});
+</script>
+
     </body>
 </html>

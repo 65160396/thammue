@@ -3,6 +3,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /page/login.html');
     exit;
 }
+
 require_once __DIR__ . '/config.php'; // ต้องมี $conn (mysqli)
 session_start();
 
@@ -15,11 +16,11 @@ if ($identifier === '' || $password === '') {
     exit;
 }
 
-// หาได้ทั้งอีเมลหรือชื่อผู้ใช้
+// ล็อกอินได้ทั้งอีเมลหรือชื่อ (name)
 $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
 $sql = $isEmail
-  ? 'SELECT id,username AS name,email,password_hash FROM users WHERE email=? LIMIT 1'
-  : 'SELECT id,username AS name,email,password_hash FROM users WHERE username=? LIMIT 1';
+    ? 'SELECT id, name, email, password_hash FROM users WHERE email = ? LIMIT 1'
+    : 'SELECT id, name, email, password_hash FROM users WHERE name  = ? LIMIT 1';
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $identifier);
@@ -40,5 +41,5 @@ $_SESSION['user_name']  = $user['name'];
 $_SESSION['user_email'] = $user['email'];
 
 $msg = rawurlencode('เข้าสู่ระบบสำเร็จ!');
-header("Location: /page/main.html?type=success&msg={$msg}"); // กลับหน้า .html ได้
+header("Location: /page/main.html?type=success&msg={$msg}");
 exit;
