@@ -983,6 +983,8 @@ a {
   display: flex; align-items: center; justify-content: center;
 }
 
+
+
 /* Tablet */
 @media (max-width: 1024px){
   .header-wrapper .search-group{
