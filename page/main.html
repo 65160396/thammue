@@ -40,8 +40,13 @@
         </div>
 
         <div class="icon-buttons">
-          <button class="action-button"><img src="/img/Icon/heart.png"
-              alt="รายการโปรด" /></button>
+
+          <a class="action-button" href="/page/favorites/index.php"
+            aria-label="รายการโปรด">
+            <img src="/img/Icon/heart.png" alt="รายการโปรด">
+            <span id="favBadge" class="icon-badge" hidden>0</span>
+          </a>
+
           <button class="action-button"><img
               src="/img/Icon/shopping-cart.png"
               alt="ตะกร้า" /></button>
@@ -123,6 +128,8 @@
     });
   });
 </script>
+
+    <script src="/js/fav-badge.js" defer></script>
 
   </body>
 </html>
