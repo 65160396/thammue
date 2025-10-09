@@ -93,6 +93,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
     <!-- สไตล์หลักของเว็บ -->
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/product-detail.css" />
+
 </head>
 
 <body>
@@ -119,10 +120,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 <!-- ลบก้อน .pd-ship ทั้งหมดออก ถ้าไม่ได้ใช้ -->
 
                 <!-- แถวหัวใจ (เปลี่ยนคลาสให้ตรง CSS) -->
-                <div class="pd-like-row">
-                    <button id="likeBtn" class="pd-like-btn" aria-pressed="false" aria-label="ถูกใจ">🤍</button>
-                    <span id="likeCount" class="pd-like-num">0</span>
+                <div class="fav-row">
+                    <button id="likeBtn" class="fav-btn" aria-pressed="false" aria-label="ถูกใจ">🤍</button>
+                    <span id="likeCount" class="fav-count">0</span>
                 </div>
+
 
                 <!-- ปุ่ม -->
                 <div class="pd-controls">
@@ -215,6 +217,8 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
 
         async function toggleLike() {
             try {
+                const wasLiked = (likeBtn.dataset.liked === '1'); // สถานะเดิมก่อนยิง API
+
                 const res = await fetch('/page/backend/likes_sale/toggle.php', {
                     method: 'POST',
                     headers: {
@@ -234,10 +238,21 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 if (!res.ok) throw new Error('HTTP ' + res.status);
 
                 const data = await res.json(); // { count, liked }
+
+                // อัปเดต UI ภายในหน้ารายละเอียด
                 likeCount.textContent = data.count ?? 0;
                 likeBtn.textContent = data.liked ? '❤️' : '🤍';
                 likeBtn.dataset.liked = data.liked ? '1' : '0';
                 likeBtn.setAttribute('aria-pressed', data.liked ? 'true' : 'false');
+
+                // ===== ส่งสัญญาณให้ header ปรับ badge =====
+                // คำนวณความต่างจากสถานะเดิม -> +1/-1/0
+                const delta = (data.liked === wasLiked) ? 0 : (data.liked ? 1 : -1);
+                window.dispatchEvent(new CustomEvent('favorites:changed', {
+                    detail: {
+                        delta
+                    } // fav-badge.js จะเพิ่ม/ลดเลขจาก delta
+                }));
             } catch (e) {
                 console.error('toggleLike error', e);
             }

@@ -200,17 +200,21 @@ li a:hover {
   }
 
   /* ↓ โฟกัสเฉพาะกรุ๊ปค้นหา ไม่แตะปุ่มอื่นๆ */
-  .search-container .search-group{ width:100%; }
-  .search-container .search-group input[type="text"]{ width:100%; }
-  .search-container .search-group .search-button{
-    width:100%;
-    padding:12px 0;      /* ย้าย padding มาไว้ที่ปุ่มค้นหาแทน */
-    justify-content:center;
+  .search-container .search-group {
+    width: 100%;
+  }
+  .search-container .search-group input[type="text"] {
+    width: 100%;
+  }
+  .search-container .search-group .search-button {
+    width: 100%;
+    padding: 12px 0; /* ย้าย padding มาไว้ที่ปุ่มค้นหาแทน */
+    justify-content: center;
   }
 
-  .search-container .icon-buttons{
-    width:100%;
-    justify-content:center;
+  .search-container .icon-buttons {
+    width: 100%;
+    justify-content: center;
   }
 
   .search-container .search-group input[type="text"] {
@@ -952,20 +956,20 @@ a {
 .user-dropdown a.logout {
   color: #b91c1c;
 }
-@media (max-width: 900px){
-  .search-container .hamburger{
-    width:auto !important;
-    padding:0 !important;
+@media (max-width: 900px) {
+  .search-container .hamburger {
+    width: auto !important;
+    padding: 0 !important;
   }
 }
 /* ---- Search box: ขนาดคงที่ + ยืดอย่างพอดี ---- */
-.header-wrapper .search-container{
+.header-wrapper .search-container {
   flex: 1 1 auto;
   gap: 12px;
 }
 
 /* เดสก์ท็อป: จำกัดความกว้างด้วย clamp (ไม่สั้น/ไม่ยาวเกิน) */
-.header-wrapper .search-group{
+.header-wrapper .search-group {
   flex: 0 1 auto;
   width: clamp(320px, 48vw, 560px);
   height: 44px;
@@ -976,53 +980,98 @@ a {
 }
 
 /* ปุ่มแว่นขยายคงขนาดชัดเจน */
-.header-wrapper .search-group .search-button{
+.header-wrapper .search-group .search-button {
   width: 48px;
   height: 100%;
   border-left: 1px solid #ddd;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
+/* ให้ปุ่มใน header วาง badge ได้ */
+.action-button {
+  position: relative;
+}
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: #ff2d55;
+  border-radius: 999px;
+}
 
 /* Tablet */
-@media (max-width: 1024px){
-  .header-wrapper .search-group{
+@media (max-width: 1024px) {
+  .header-wrapper .search-group {
     width: clamp(300px, 58vw, 520px);
   }
 }
 
 /* มือถือใหญ่ + มีปุ่ม hamburger ทางขวา */
-@media (max-width: 900px){
-  .header-wrapper .search-container{ padding-right: 56px; }
-  .header-wrapper .search-group{ width: min(560px, 100%); }
+@media (max-width: 900px) {
+  .header-wrapper .search-container {
+    padding-right: 56px;
+  }
+  .header-wrapper .search-group {
+    width: min(560px, 100%);
+  }
 }
 
 /* มือถือเล็ก */
-@media (max-width: 600px){
-  .header-wrapper .search-group{ width: 100%; }
+@media (max-width: 600px) {
+  .header-wrapper .search-group {
+    width: 100%;
+  }
 }
 /* เดสก์ท็อป: ซ่อน hamburger เสมอ */
-.hamburger{ display:none !important; }
-.hamburger span{ display:none !important; } /* กันสไตล์เส้น 3 ขีดเดิม */
-.hamburger img{ width:20px; height:20px; display:block; }
+.hamburger {
+  display: none !important;
+}
+.hamburger span {
+  display: none !important;
+} /* กันสไตล์เส้น 3 ขีดเดิม */
+.hamburger img {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
 
 /* มือถือ/จอเล็กเท่านั้นค่อยแสดง */
-@media (max-width: 900px){
-  .header-wrapper{ position:relative; }
+@media (max-width: 900px) {
+  .header-wrapper {
+    position: relative;
+  }
 
-  .hamburger{
-    display:flex !important;               /* โชว์เฉพาะจอเล็ก */
-    align-items:center; justify-content:center;
-    width:40px; height:40px; padding:0;
-    border-radius:8px; border:1px solid #333;
-    background:#111; cursor:pointer;
+  .hamburger {
+    display: flex !important; /* โชว์เฉพาะจอเล็ก */
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #111;
+    cursor: pointer;
 
-    position:absolute; right:24px; top:50%;
-    transform: translateY(-50%); z-index:5;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
   }
 
   /* กันไม่ให้ปุ่มทับช่องค้นหา */
-  .header-wrapper .search-container{ padding-right:56px; }
+  .header-wrapper .search-container {
+    padding-right: 56px;
+  }
 }
-

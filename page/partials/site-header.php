@@ -25,7 +25,12 @@
         </div>
 
         <div class="icon-buttons">
-            <button class="action-button"><img src="/img/Icon/heart.png" alt="รายการโปรด" /></button>
+            <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
+                <img src="/img/Icon/heart.png" alt="รายการโปรด">
+                <span id="favBadge" class="icon-badge" hidden>0</span>
+            </a>
+
+
             <button class="action-button"><img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" /></button>
             <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
 
@@ -50,3 +55,25 @@
     <a href="/page/category/local_products.html" class="category-button">สินค้าท้องถิ่น</a>
     <a href="/page/category/second_hand.html" class="category-button">สินค้ามือสอง</a>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const b = document.getElementById('favBadge');
+        if (!b) return;
+
+        try {
+            const res = await fetch('/page/backend/likes_sale/stats.php?summary=favorites&type=product', {
+                credentials: 'include',
+                cache: 'no-store'
+            });
+            if (!res.ok) return;
+            const data = await res.json(); // { total_favorites: N }
+
+            if (typeof data.total_favorites !== 'undefined') {
+                b.textContent = data.total_favorites;
+                b.hidden = data.total_favorites <= 0;
+            }
+        } catch (e) {}
+    });
+</script>
+<script src="/js/fav-badge.js" defer></script>

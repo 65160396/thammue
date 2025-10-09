@@ -269,6 +269,58 @@ body {
   margin-top: 16px;
 }
 
+/* เฉพาะหัวใจในหน้ารายละเอียด */
+.fav-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 10px 0 6px;
+}
+.fav-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 8px;
+  transition: transform 0.08s ease;
+}
+.fav-btn:hover {
+  transform: scale(1.06);
+}
+.fav-btn.is-active {
+  color: #e11d48;
+} /* สีตอนถูกใจ */
+.fav-count {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ป้ายตัวเลขบนไอคอน (ทุกหน้าใช้ร่วมกัน) */
+.action-button.fav-icon {
+  position: relative;
+}
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff3b5c;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 999px;
+  border: 2px solid #000; /* ขอบดำให้เข้ากับ header */
+}
+
+
+
 /* responsive */
 @media (max-width: 960px) {
   .pd-hero {

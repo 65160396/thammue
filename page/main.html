@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Thammue</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/instyle.css" />
   </head>
 
   <body>
@@ -14,7 +15,7 @@
       <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a id="openOrMyShop"
-          href="/page/storepage/open_shop.php">เปิดร้านค้า</a></li>
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
       <!-- ขวา -->
       <li class="right"><a href="#notification">แจ้งเตือน</a></li>
@@ -114,8 +115,8 @@
     toggleOpenOrMyShop(); // จะสลับเป็น “ร้านของฉัน” อัตโนมัติถ้ามีร้านแล้ว
   });
 </script>
-<script src="/js/productsforsale/products.js"></script>
-        <script>
+    <script src="/js/productsforsale/products.js"></script>
+    <script>
   document.addEventListener('DOMContentLoaded', () => {
     renderProducts({
       endpoint: '/page/backend/productsforsale/get_products.php'
