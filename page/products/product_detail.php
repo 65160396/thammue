@@ -152,8 +152,8 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             <div class="shop-main">
                 <div class="shop-name"><?= $shop ?></div>
                 <div class="shop-actions">
-                    <button class="btn-chip">🤝 แชร์</button>
-                    <button class="btn-chip">💬 ดูร้านค้า</button>
+                    <button class="btn-chip">แชท</button>
+                    <button class="btn-chip">ดูร้านค้า</button>
                 </div>
             </div>
         </section>
@@ -176,6 +176,8 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             });
         });
     </script>
+    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
 
     <script>
         const ITEM_ID = <?= (int)$p['id'] ?>;
