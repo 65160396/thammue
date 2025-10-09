@@ -1,6 +1,16 @@
 <?php
 session_start();
 
+$userId = $_SESSION['user_id'] ?? null;   // ชื่อคีย์ตามระบบล็อกอินของคุณ
+if (!$userId) {
+    // พารามิเตอร์ next เพื่อกลับมาหน้ารายละเอียดเดิมหลังล็อกอินเสร็จ
+    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $next = "/page/products/product_detail.php?id=" . $id;
+    header("Location: /page/login.html?next=" . rawurlencode($next));
+    exit;
+}
+
+
 /* --- DB --- */
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -73,6 +83,7 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
 
     <div class="pd-container">
         <!-- ส่วนบน: รูป + ข้อมูล -->
+        <!-- ส่วนบน: รูป + ข้อมูล -->
         <section class="pd-hero">
             <div class="pd-media">
                 <img src="<?= $img ?>" alt="<?= $name ?>">
@@ -80,29 +91,23 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
 
             <div class="pd-info">
                 <h1 class="pd-title"><?= $name ?></h1>
-                <div class="pd-meta">
-                    <span class="pd-sold">ขายแล้ว 3 ชิ้น</span>
+
+                <!-- ป้ายสรุป -->
+                <div class="pd-badges mt-8">
+                    <span id="soldPill" class="pd-pill">ขายแล้ว <?= (int)($p['sold_count'] ?? 0) ?> ชิ้น</span>
                 </div>
 
                 <div class="pd-price"><?= $price ?></div>
 
-                <div class="pd-ship">
-                    <div class="pd-ship-row">
-                        <span class="label">การจัดส่ง</span>
-                        <span class="value">จะได้รับภายใน 10 ม.ค. - 12 ม.ค.</span>
-                    </div>
-                    <div class="pd-ship-row">
-                        <span class="label">ขนาด</span>
-                        <div class="pd-size-group" role="group" aria-label="เลือกขนาด">
-                            <button class="size-btn is-active">S</button>
-                            <button class="size-btn">M</button>
-                            <button class="size-btn">L</button>
-                        </div>
-                    </div>
+                <!-- ลบก้อน .pd-ship ทั้งหมดออก ถ้าไม่ได้ใช้ -->
+
+                <!-- แถวหัวใจ (เปลี่ยนคลาสให้ตรง CSS) -->
+                <div class="pd-like-row">
+                    <button id="likeBtn" class="pd-like-btn" aria-pressed="false" aria-label="ถูกใจ">🤍</button>
+                    <span id="likeCount" class="pd-like-num">0</span>
                 </div>
 
-                <div class="pd-like">🤍 ถูกใจแล้ว 9 คน</div>
-
+                <!-- ปุ่ม -->
                 <div class="pd-controls">
                     <div class="qty">
                         <label>จำนวน</label>
@@ -114,18 +119,15 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
                     </div>
 
                     <div class="pd-actions">
-                        <button class="btn-outline">
-                            🛒 เพิ่มไปยังรถเข็น
-                        </button>
-                        <button class="btn-primary">
-                            ซื้อสินค้า
-                        </button>
+                        <button class="btn-outline">🛒 เพิ่มไปยังรถเข็น</button>
+                        <button class="btn-primary">ซื้อสินค้า</button>
                     </div>
                 </div>
 
                 <div class="pd-location">จังหวัด<?= $prov ?> · ร้าน: <?= $shop ?></div>
             </div>
         </section>
+
 
         <!-- การ์ดร้านค้า -->
         <section class="pd-shop-card">
@@ -157,6 +159,76 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
             });
         });
     </script>
+
+    <script>
+        const ITEM_ID = <?= (int)$p['id'] ?>;
+
+        const likeBtn = document.getElementById('likeBtn');
+        const likeCount = document.getElementById('likeCount');
+        const soldPill = document.getElementById('soldPill'); // ถ้าจะอัปเดตแบบไดนามิก
+
+        const here = window.location.pathname + window.location.search;
+        const toLogin = () => {
+            location.href = '/page/login.html?next=' + encodeURIComponent(here);
+        };
+
+        async function loadLikeStats() {
+            try {
+                const res = await fetch(`/page/backend/likes_sale/stats.php?type=product&id=${encodeURIComponent(ITEM_ID)}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (!res.ok) return;
+                const data = await res.json(); // { count, liked, sold_count? }
+                likeCount.textContent = data.count ?? 0;
+                likeBtn.textContent = data.liked ? '❤️' : '🤍';
+                likeBtn.dataset.liked = data.liked ? '1' : '0';
+                likeBtn.setAttribute('aria-pressed', data.liked ? 'true' : 'false');
+
+                // ถ้า API ส่ง sold_count มาด้วย จะอัปเดตป้ายได้ (ไม่บังคับ)
+                if (typeof data.sold_count !== 'undefined' && soldPill) {
+                    soldPill.textContent = `ขายแล้ว ${data.sold_count} ชิ้น`;
+                }
+            } catch (e) {
+                console.error('loadLikeStats error', e);
+            }
+        }
+
+        async function toggleLike() {
+            try {
+                const res = await fetch('/page/backend/likes_sale/toggle.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        type: 'product',
+                        id: ITEM_ID
+                    })
+                });
+
+                if (res.status === 401) {
+                    toLogin();
+                    return;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+
+                const data = await res.json(); // { count, liked }
+                likeCount.textContent = data.count ?? 0;
+                likeBtn.textContent = data.liked ? '❤️' : '🤍';
+                likeBtn.dataset.liked = data.liked ? '1' : '0';
+                likeBtn.setAttribute('aria-pressed', data.liked ? 'true' : 'false');
+            } catch (e) {
+                console.error('toggleLike error', e);
+            }
+        }
+
+        likeBtn.addEventListener('click', toggleLike);
+        loadLikeStats();
+    </script>
+
+
 </body>
 
 </html>

@@ -98,3 +98,67 @@
   border-radius: 12px;
   background: #fafafa;
 }
+
+.product-detail-page {
+  max-width: 1080px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.product-media-wrap img.detail-img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  display: block;
+}
+.product-info .product-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.product-price {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.muted {
+  color: #6b7280;
+  font-size: 14px;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+}
+.btn {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+}
+.btn-outline {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+/* ถ้ามีหัวใจในหน้า detail ด้วย ก็ใส่ได้ */
+.like-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.like-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+.like-num {
+  font-size: 14px;
+  opacity: 0.75;
+}

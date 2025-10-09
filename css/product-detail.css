@@ -211,6 +211,64 @@ body {
   color: #333;
 }
 
+/* === Like / Favorite (หัวใจ) === */
+.pd-like-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 10px 0 6px;
+}
+.pd-like-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 8px;
+  transition: transform 0.08s ease;
+}
+.pd-like-btn:hover {
+  transform: scale(1.06);
+}
+.pd-like-btn.is-active {
+  color: #e11d48;
+} /* สีชมพูแดงตอนกดแล้ว */
+.pd-like-num {
+  font-size: 14px;
+  color: var(--pd-muted);
+}
+
+/* === ป้าย/ตัวเลขสรุปเล็ก ๆ (เช่น “ขายแล้ว N ชิ้น”) === */
+.pd-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+.pd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 12px;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid var(--pd-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+/* === Utilities นิดหน่อย === */
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-12 {
+  margin-top: 12px;
+}
+.mt-16 {
+  margin-top: 16px;
+}
+
 /* responsive */
 @media (max-width: 960px) {
   .pd-hero {
