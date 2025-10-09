@@ -114,6 +114,14 @@
     toggleOpenOrMyShop(); // จะสลับเป็น “ร้านของฉัน” อัตโนมัติถ้ามีร้านแล้ว
   });
 </script>
+<script src="/js/productsforsale/products.js"></script>
+        <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderProducts({
+      endpoint: '/page/backend/productsforsale/get_products.php'
+    });
+  });
+</script>
 
   </body>
 </html>

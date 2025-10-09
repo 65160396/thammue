@@ -2,17 +2,17 @@
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-if (empty($_SESSION['user_id'])) {
+$userId = (int)($_SESSION['user_id'] ?? 0);
+if ($userId <= 0) {
     http_response_code(401);
     echo json_encode(['error' => 'ต้องเข้าสู่ระบบก่อน'], JSON_UNESCAPED_UNICODE);
     exit;
 }
-$userId = (int)$_SESSION['user_id'];
 
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
-$type = $input['type'] ?? 'product';
+$payload = json_decode(file_get_contents('php://input'), true) ?: [];
+$type = $payload['type'] ?? 'product';
 if (!in_array($type, ['product', 'exchange'], true)) $type = 'product';
-$id = (int)($input['id'] ?? 0);
+$id = (int)($payload['id'] ?? 0);
 if ($id <= 0) {
     http_response_code(400);
     echo json_encode(['error' => 'bad id']);
@@ -24,22 +24,26 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-$st = $pdo->prepare("SELECT 1 FROM favorites WHERE item_type=? AND item_id=? AND user_id=?");
+// มีอยู่แล้วหรือยัง
+$st = $pdo->prepare("SELECT id FROM favorites WHERE item_type=? AND item_id=? AND user_id=? LIMIT 1");
 $st->execute([$type, $id, $userId]);
-$exists = (bool)$st->fetchColumn();
+$exists = $st->fetchColumn();
 
 if ($exists) {
-    $st = $pdo->prepare("DELETE FROM favorites WHERE item_type=? AND item_id=? AND user_id=?");
-    $st->execute([$type, $id, $userId]);
+    $pdo->prepare("DELETE FROM favorites WHERE id=?")->execute([$exists]);
     $liked = false;
 } else {
-    $st = $pdo->prepare("INSERT INTO favorites(item_type,item_id,user_id) VALUES (?,?,?)");
-    $st->execute([$type, $id, $userId]);
+    $pdo->prepare("INSERT INTO favorites(item_type,item_id,user_id) VALUES (?,?,?)")
+        ->execute([$type, $id, $userId]);
     $liked = true;
 }
 
+// นับใหม่
 $st = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE item_type=? AND item_id=?");
 $st->execute([$type, $id]);
-$likeCount = (int)$st->fetchColumn();
+$count = (int)$st->fetchColumn();
 
-echo json_encode(['liked' => $liked, 'like_count' => $likeCount], JSON_UNESCAPED_UNICODE);
+echo json_encode([
+    'liked' => $liked,  // ตรงกับ JS
+    'count' => $count
+], JSON_UNESCAPED_UNICODE);

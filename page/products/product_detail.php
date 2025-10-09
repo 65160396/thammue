@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-$userId = $_SESSION['user_id'] ?? null;   // ชื่อคีย์ตามระบบล็อกอินของคุณ
-if (!$userId) {
-    // พารามิเตอร์ next เพื่อกลับมาหน้ารายละเอียดเดิมหลังล็อกอินเสร็จ
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-    $next = "/page/products/product_detail.php?id=" . $id;
-    header("Location: /page/login.html?next=" . rawurlencode($next));
-    exit;
-}
+//$userId = $_SESSION['user_id'] ?? null;   // ชื่อคีย์ตามระบบล็อกอินของคุณ
+//if (!$userId) {
+// พารามิเตอร์ next เพื่อกลับมาหน้ารายละเอียดเดิมหลังล็อกอินเสร็จ
+//$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+// $next = "/page/products/product_detail.php?id=" . $id;
+//header("Location: /page/login.html?next=" . rawurlencode($next));
+//exit;
+//}
 
 
 /* --- DB --- */
@@ -44,12 +44,26 @@ function productMainImageWebPath(array $p): string
 
 /* --- ดึงข้อมูลสินค้า + จังหวัดร้าน --- */
 $sql = "SELECT
-          p.id, p.name, p.price, p.description, p.main_image, p.created_at,
-          s.shop_name, s.province AS shop_province
+          p.id,
+          p.name,
+          p.price,
+          p.description,
+          p.main_image,
+          p.created_at,
+          -- รวมยอดขายเฉพาะแถวที่จ่ายเงินแล้ว
+          COALESCE(SUM(CASE WHEN oi.status='paid' THEN oi.qty ELSE 0 END), 0) AS sold_count,
+          s.shop_name,
+          -- ถ้าจังหวัดร้านว่าง ให้ใช้จังหวัดที่บันทึกกับสินค้าแทน
+          COALESCE(s.province, p.province) AS shop_province
         FROM products p
-        LEFT JOIN shops s ON s.id = p.shop_id
+        LEFT JOIN order_items oi ON oi.product_id = p.id
+        LEFT JOIN shops s       ON s.id       = p.shop_id
         WHERE p.id = ?
+        GROUP BY
+          p.id, p.name, p.price, p.description, p.main_image, p.created_at,
+          s.shop_name, s.province, p.province
         LIMIT 1";
+
 $stm = $pdo->prepare($sql);
 $stm->execute([$id]);
 $p = $stm->fetch();
@@ -58,12 +72,15 @@ if (!$p) {
     exit('ไม่พบสินค้า');
 }
 
-$img  = productMainImageWebPath($p);
-$name = htmlspecialchars($p['name'] ?? '');
+$img   = productMainImageWebPath($p);
+$name  = htmlspecialchars($p['name'] ?? '');
 $price = is_numeric($p['price']) ? '$' . number_format((float)$p['price'], 0) : htmlspecialchars($p['price'] ?? '');
-$desc = nl2br(htmlspecialchars($p['description'] ?? ''));
-$prov = htmlspecialchars($p['shop_province'] ?: 'ไม่ระบุจังหวัด');
-$shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน');
+$desc  = nl2br(htmlspecialchars($p['description'] ?? ''));
+
+$sold  = (int)($p['sold_count'] ?? 0);                     // << ใช้ตัวนี้แสดงป้าย “ขายแล้ว … ชิ้น”
+$prov  = htmlspecialchars($p['shop_province'] ?: 'ไม่ระบุจังหวัด');
+$shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน');
+//$shop  = htmlspecialchars($p['shop_name'] ?? 'ไม่ระบุร้าน');
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -80,9 +97,9 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
 </head>
 
 <body>
+    
 
     <div class="pd-container">
-        <!-- ส่วนบน: รูป + ข้อมูล -->
         <!-- ส่วนบน: รูป + ข้อมูล -->
         <section class="pd-hero">
             <div class="pd-media">
@@ -94,8 +111,9 @@ $shop = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน')
 
                 <!-- ป้ายสรุป -->
                 <div class="pd-badges mt-8">
-                    <span id="soldPill" class="pd-pill">ขายแล้ว <?= (int)($p['sold_count'] ?? 0) ?> ชิ้น</span>
+                    <span id="soldPill" class="pd-pill">ขายแล้ว <?= $sold ?> ชิ้น</span>
                 </div>
+
 
                 <div class="pd-price"><?= $price ?></div>
 
