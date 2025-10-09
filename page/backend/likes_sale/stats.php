@@ -2,46 +2,37 @@
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-$pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+$pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4","root","",[
+  PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,
 ]);
 
-$type = $_GET['type'] ?? 'product';
-if (!in_array($type, ['product', 'exchange'], true)) $type = 'product';
-
-$id = (int)($_GET['id'] ?? 0);
-if ($id <= 0) {
-    http_response_code(400);
-    echo json_encode(['error' => 'bad id']);
-    exit;
-}
-
+$type   = $_GET['type'] ?? 'product';
+if(!in_array($type,['product','exchange'],true)) $type='product';
+$id     = (int)($_GET['id'] ?? 0);
 $userId = (int)($_SESSION['user_id'] ?? 0);
+if($id <= 0){ http_response_code(400); echo json_encode(['error'=>'bad id']); exit; }
 
-// นับจำนวนถูกใจทั้งหมด (สาธารณะ)
+// จำนวนคนถูกใจ
 $st = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE item_type=? AND item_id=?");
-$st->execute([$type, $id]);
+$st->execute([$type,$id]);
 $count = (int)$st->fetchColumn();
 
-// ผู้ใช้คนนี้เคยกดไหม (ถ้าล็อกอิน)
+// ฉันถูกใจอยู่ไหม
 $liked = false;
-if ($userId > 0) {
-    $st = $pdo->prepare("SELECT 1 FROM favorites WHERE item_type=? AND item_id=? AND user_id=? LIMIT 1");
-    $st->execute([$type, $id, $userId]);
-    $liked = (bool)$st->fetchColumn();
+if($userId){
+  $st = $pdo->prepare("SELECT 1 FROM favorites WHERE item_type=? AND item_id=? AND user_id=?");
+  $st->execute([$type,$id,$userId]);
+  $liked = (bool)$st->fetchColumn();
 }
 
-// sold_count: อิงสคีมาของคุณ (order_items.qty + status = 'paid')
-$sold = 0;
-if ($type === 'product') {
-    $st = $pdo->prepare("SELECT COALESCE(SUM(qty),0) FROM order_items WHERE product_id=? AND status='paid'");
-    $st->execute([$id]);
-    $sold = (int)$st->fetchColumn();
+// (ออปชัน) นับขายแล้ว
+$sold = null;
+if($type==='product'){
+  $st = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN status='paid' THEN qty ELSE 0 END),0)
+                       FROM order_items WHERE product_id=?");
+  $st->execute([$id]);
+  $sold = (int)$st->fetchColumn();
 }
 
-echo json_encode([
-    'count'      => $count,      // ชื่อคีย์ให้ตรง JS
-    'liked'      => $liked,      // ชื่อคีย์ให้ตรง JS
-    'sold_count' => $sold        // เสริมได้ เผื่ออัปเดต badge ในหน้า
-], JSON_UNESCAPED_UNICODE);
+echo json_encode(['count'=>$count,'liked'=>$liked,'sold_count'=>$sold], JSON_UNESCAPED_UNICODE);

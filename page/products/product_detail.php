@@ -92,12 +92,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
 
     <!-- สไตล์หลักของเว็บ -->
     <link rel="stylesheet" href="/css/style.css" />
-    <!-- สไตล์เฉพาะหน้า Product Detail -->
     <link rel="stylesheet" href="/css/product-detail.css" />
 </head>
 
 <body>
-    
+    <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
     <div class="pd-container">
         <!-- ส่วนบน: รูป + ข้อมูล -->
