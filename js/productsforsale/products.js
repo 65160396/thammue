@@ -1,20 +1,32 @@
 // /js/products.js
 (function () {
-  /** แปลงข้อความให้ปลอดภัย */
   function esc(s) {
     const d = document.createElement("div");
     d.textContent = s ?? "";
     return d.innerHTML;
   }
-  /** ฟอร์แมตราคา */
   function fmtPrice(n) {
     return isFinite(n) ? "$" + Number(n).toLocaleString("en-US") : (n ?? "");
   }
 
-  /** ดึงสินค้าแล้วเรนเดอร์ลงกริด */
+  // ---- retry helper ----
+  async function fetchWithRetry(url, opts = {}, tries = 2, delayMs = 400) {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const res = await fetch(url, { cache: "no-store", credentials: "same-origin", ...opts });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        if (i === tries - 1) throw e;
+        await new Promise(r => setTimeout(r, delayMs));
+      }
+    }
+  }
+
+  // ---- main render ----
   async function renderProducts({
     gridSelector = ".recommended-products .product-grid",
-    endpoint = "/page/backend/public/api/products/get_products.php",
+    endpoint = "/page/backend/productsforsale/get_products.php", // <<<< ปรับให้ตรงของคุณ
     cat = null,
     limit = null,
     page = null,
@@ -26,27 +38,24 @@
 
     grid.innerHTML = '<div class="empty">กำลังโหลดสินค้า...</div>';
 
-    // สร้าง query string
     const qs = new URLSearchParams();
-    if (cat) qs.set("cat", cat);
-    if (limit) qs.set("limit", limit);
+    if (cat)  qs.set("cat",  cat);
+    if (limit)qs.set("limit",limit);
     if (page) qs.set("page", page);
     if (sort) qs.set("sort", sort);
-    if (dir) qs.set("dir", dir);
+    if (dir)  qs.set("dir",  dir);
+    qs.set("_ts", Date.now().toString()); // กันแคชทุกครั้ง
 
     const url = endpoint + (qs.toString() ? `?${qs}` : "");
 
     try {
-      const res = await fetch(url, { credentials: "same-origin" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
+      const data = await fetchWithRetry(url); // ใช้ no-store + retry
       grid.innerHTML = "";
 
       (data.items || []).forEach((item) => {
         const a = document.createElement("a");
         a.className = "product-card";
-        a.href = `/page/product_detail.php?id=${item.id}`;
+        a.href = `/page/products/product_detail.php?id=${item.id}`;
         a.innerHTML = `
           <img src="${item.image}" alt="${esc(item.name)}">
           <h3>${esc(item.name)}</h3>
@@ -61,18 +70,19 @@
       }
     } catch (err) {
       console.error("โหลดสินค้าไม่สำเร็จ:", err);
-      grid.innerHTML =
-        '<div class="empty">โหลดรายการไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>';
+      grid.innerHTML = '<div class="empty">โหลดรายการไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>';
     }
   }
 
-  /** auto-init: อ่านค่า cat จาก URL แล้วเรียก render */
+  // auto-init
   document.addEventListener("DOMContentLoaded", () => {
     const usp = new URLSearchParams(location.search);
-    const cat = usp.get("cat"); // ถ้ามี ?cat= จะกรองให้
-    renderProducts({ cat });
+    const cat = usp.get("cat");
+    renderProducts({
+      cat,
+      endpoint: "/page/backend/productsforsale/get_products.php", // <<<< สำคัญ: ส่ง endpoint ตรงนี้ด้วย
+    });
   });
 
-  // เผื่ออยากเรียกเองภายหลัง (เช่นเปลี่ยนหมวดแบบไม่รีเฟรชหน้า)
   window.initProducts = renderProducts;
 })();

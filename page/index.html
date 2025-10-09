@@ -129,13 +129,14 @@
             </div>
         </footer>
 
-        <script src="/js/productsforsale/products.js?v=1"></script>
+        <script src="/js/productsforsale/products.js"></script>
         <script>
   document.addEventListener('DOMContentLoaded', () => {
-    window.initProducts({
+    renderProducts({
       endpoint: '/page/backend/productsforsale/get_products.php'
     });
   });
 </script>
+
     </body>
 </html>
