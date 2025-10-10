@@ -1,4 +1,5 @@
 <!-- /page/partials/site-header.php -->
+
 <ul class="top-nav">
     <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
     <li><span class="top-divider">|</span></li>
@@ -18,11 +19,12 @@
 
     <div class="search-container">
         <div class="search-group">
-            <input type="text" placeholder="ค้นหาสินค้า" />
+            <input type="text" class="search-input" placeholder="ค้นหาสินค้า" />
             <button class="search-button" aria-label="ค้นหา">
                 <img src="/img/Icon/search.png" alt="ค้นหา" />
             </button>
         </div>
+
 
         <div class="icon-buttons">
             <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
@@ -49,12 +51,13 @@
 </div>
 
 <!-- เอาอันนี้ด้วยถ้าอยากโชว์แถบหมวดหมู่ -->
-<div class="category-buttons">
-    <a href="/page/category/handmade.html" class="category-button">สินค้าแฮนเมด</a>
-    <a href="/page/category/jewelry.html" class="category-button">เครื่องประดับ</a>
-    <a href="/page/category/local_products.html" class="category-button">สินค้าท้องถิ่น</a>
-    <a href="/page/category/second_hand.html" class="category-button">สินค้ามือสอง</a>
+<div class="category-buttons" id="categoryButtons">
+    <a href="/page/category/handmade.html" class="category-button" data-cat="handmade">สินค้าแฮนเมด</a>
+    <a href="/page/category/jewelry.html" class="category-button" data-cat="jewelry">เครื่องประดับ</a>
+    <a href="/page/category/local_products.html" class="category-button" data-cat="local_products">สินค้าท้องถิ่น</a>
+    <a href="/page/category/second_hand.html" class="category-button" data-cat="second_hand">สินค้ามือสอง</a>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
