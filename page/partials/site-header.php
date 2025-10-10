@@ -53,7 +53,7 @@
 <!-- เอาอันนี้ด้วยถ้าอยากโชว์แถบหมวดหมู่ -->
 <div class="category-buttons" id="categoryButtons">
     <a href="/page/category/handmade.html" class="category-button" data-cat="handmade">สินค้าแฮนเมด</a>
-    <a href="/page/category/jewelry.html" class="category-button" data-cat="jewelry">เครื่องประดับ</a>
+    <a href="/page/category/craft.html" class="category-button" data-cat="craft">งานประดิษฐ์</a>
     <a href="/page/category/local_products.html" class="category-button" data-cat="local_products">สินค้าท้องถิ่น</a>
     <a href="/page/category/second_hand.html" class="category-button" data-cat="second_hand">สินค้ามือสอง</a>
 </div>

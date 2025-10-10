@@ -80,3 +80,24 @@
   const first = firstActive?.dataset.cat || document.querySelector('.category-button[data-cat]')?.dataset.cat;
   if (first) load(first);
 })();
+
+function renderProducts(opts = {}) {
+  const container =
+    document.querySelector(opts.container || '.product-grid'); // เพิ่มบรรทัดนี้
+  // ... ที่เหลือคงเดิม
+}
+
+window.API = window.API || {};
+API.products = API.products || {};
+
+API.products.byCategory = async (slug, { limit = 24 } = {}) => {
+  const res = await fetch(
+    `/page/backend/productsforsale/get_by_category.php?slug=${encodeURIComponent(slug)}&limit=${limit}`,
+    { credentials: 'include', cache: 'no-store' }
+  );
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json(); // => { items: [...] }
+};
+
+
+
