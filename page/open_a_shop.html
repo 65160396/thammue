@@ -389,46 +389,51 @@
             </section>
         </main>
 
-        <script src="/js/address.js"></script>
-        <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
-        <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
-        <script src="/js/open-shop/shop-registration.js"></script>
-        <!--จัดการฟอร์มเปิดร้านค้า-->
-
+        <!-- วางตรงนี้ ใต้ </form> หรือก่อนสคริปต์อื่นทั้งหมด -->
         <script>
-document.addEventListener('DOMContentLoaded', async () => {
-  // 1) ซ่อนฟอร์มไว้ก่อนกันกระตุก
+(async () => {
+  // โชว์ฟอร์มทันที
   const form = document.getElementById('openShopForm');
-  if (form) form.style.visibility = 'hidden';
+  if (form) form.style.visibility = 'visible';
 
-  try {
-    const res = await fetch('/page/backend/productsforsale/get_shop.php', {
-      credentials: 'include', cache: 'no-store'
-    });
-    const data = await res.json();
+  const getJSON = (url) =>
+    fetch(url, { credentials: 'include', cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null);
 
-    if (data.ok && data.shop) {
-      // มีร้านแล้ว → พาไปหน้าร้านของฉัน
-      const sid = encodeURIComponent(data.shop.id);
-      location.href = `/page/storepage/store.html?shop_id=${sid}`;
-      return;
+  // ยิงคู่ขนาน
+  const meP   = getJSON('/page/backend/me.php?ts=' + Date.now());
+  const shopP = getJSON('/page/backend/productsforsale/get_shop.php');
+
+  // พรีฟิลทันทีที่ได้ me (ไม่ต้องรออีกตัว)
+  meP.then(ud => {
+    if (!ud || !ud.ok || !ud.user) return;
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && !el.value && val != null) el.value = String(val);
+    };
+    set('email', ud.user.email);
+    set('phone', ud.user.phone);
+    const cn = document.getElementById('citizen_name');
+    if (cn && !cn.value) cn.value = ud.user.display_name || ud.user.name || '';
+  });
+
+  // มีร้าน/ไม่ได้ล็อกอิน → ค่อยรีไดเรกต์เมื่อรู้ผล
+  shopP.then(d => {
+    if (!d) return;
+    if (d.ok && d.shop) {
+      location.href = `/page/storepage/indexstore.html?shop_id=${encodeURIComponent(d.shop.id)}`;
+    } else if (d.code === 'NOT_LOGIN') {
+      location.href = '/page/login.php';
     }
-
-    if (data.code === 'NOT_LOGIN') {
-      // ยังไม่ล็อกอิน → พาไปหน้า login
-      location.href = '/page/login.html';
-      return;
-    }
-
-    // NO_SHOP → แสดงฟอร์มได้
-    if (form) form.style.visibility = 'visible';
-  } catch (e) {
-    console.error('check shop failed:', e);
-    // เผื่อ API ล่ม ก็ให้แสดงฟอร์มไปก่อน (แบ็กเอนด์จะกันซ้ำเอง)
-    if (form) form.style.visibility = 'visible';
-  }
-});
+  });
+})();
 </script>
+
+        <script defer src="/js/me.js"></script>
+        <script defer src="/js/user-menu.js"></script>
+        <script defer src="/js/address.js"></script>
+        <script defer src="/js/open-shop/shop-registration.js"></script>
 
     </body>
 </html>

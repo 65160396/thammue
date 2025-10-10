@@ -178,8 +178,15 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             });
         });
     </script>
-    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
-    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleOpenOrMyShop();
+        });
+    </script>
+
 
     <script>
         const ITEM_ID = <?= (int)$p['id'] ?>;
