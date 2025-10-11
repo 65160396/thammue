@@ -125,11 +125,6 @@
           <h3>${esc(item.name)}</h3>
           <p>${fmtPrice(item.price)}</p>
           <span>จังหวัด${esc(item.province)}</span>
-
-          <div class="like-inline">
-            <button class="like-btn" data-id="${item.id}" aria-label="ถูกใจ">🤍</button>
-            <span class="like-num" data-id="${item.id}">0</span>
-          </div>
         `;
         grid.appendChild(a);
 
