@@ -3,134 +3,50 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue</title>
+        <title>Thammue – หมวดหมู่</title>
         <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/instyle.css" />
     </head>
-
-    <body>
-         <!-- แถบบนสุด -->
+    <body
+        data-slug="craft">
+        <!-- reuse top bar -->
         <ul class="top-nav">
-            <li><a href="#exchange">แลกเปลี่ยนสินค้า</a></li>
+            <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
             <li><span class="top-divider">|</span></li>
-            <li><a href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
-                <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-                <li><span class="top-divider">|</span></li>
-                <li><a href="#help">ช่วยเหลือ</a></li>
-                <li><span class="top-divider">|</span></li>
-                <li><a href="#lang">ไทย</a></li>
-            </div>
+            <li><a id="openOrMyShop"
+                    href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/main.html">หน้าแรก</a></li>
         </ul>
 
-        <!-- Header หลัก -->
         <div class="header-wrapper">
             <div class="logo-container">
-                <span class="brand-text">THAMMUE</span>
-            </div>
-
-            <div class="search-container">
-                <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
-                        <img src="/img/Icon/search.png" alt="ค้นหา" />
-                    </button>
-                </div>
-                <div class="icon-buttons">
-                    <button class="action-button"><img src="/img/Icon/heart.png"
-                            alt="รายการโปรด" /></button>
-                    <button class="action-button"><img
-                            src="/img/Icon/shopping-cart.png"
-                            alt="ตะกร้า" /></button>
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
-                    <button class="action-button"><img src="/img/Icon/user.png"
-                            alt="โปรไฟล์" /></button>
-                </div>
+                <a href="/page/main.html" class="brand-text">THAMMUE</a>
             </div>
         </div>
 
-
-       <div class="category-buttons">
-  <a href="/page/category/handmade.html" class="category-button">สินค้าแฮนเมด</a>
-  <a href="/page/category/craft.html" class="category-button">งานประดิษฐ์</a>
-  <a href="/page/category/local_products.html" class="category-button">สินค้าท้องถิ่น</a>
-  <a href="/page/category/second_hand.html" class="category-button">สินค้ามือสอง</a>
-</div>
-
-
-<script>
-(function () {
-  var path = window.location.pathname.toLowerCase();
-  document.querySelectorAll('.category-buttons a').forEach(function (a) {
-    var href = a.getAttribute('href').toLowerCase();
-    if (path.endsWith(href)) {
-      a.classList.add('active');
-    }
-  });
-})();
-</script>
-
-<footer class="site-footer">
-            <div class="footer-inner">
-                <!-- คอลัมน์ซ้าย -->
-                <div class="footer-col">
-                    <h4>เราคือทัมมือ</h4>
-                    <p>
-                        ที่นี่คือพื้นที่สำหรับ แฮนเมด งานประดิษฐ์<br>
-                        และสินค้าท้องถิ่น/มือสองคุณภาพดีจากชุมชน<br>
-                        บนแพลตฟอร์มช้อปปิ้งใช้งานง่าย<br>
-                        เพื่อให้คุณได้ของดีและสร้างรายได้ให้คนท้องถิ่น
-                    </p>
-                </div>
-
-                <!-- คอลัมน์กลาง -->
-                <div class="footer-col">
-                    <h4>ตรวจสอบสถานะ</h4>
-                    <ul class="footer-menu">
-                        <li><a href="#">สถานะการสั่งซื้อ</a></li>
-                        <li><a href="#">ส่งคืน</a></li>
-                        <li><a href="#">ยกเลิกคำสั่งซื้อ</a></li>
-                        <li><a href="#">การชำระเงิน</a></li>
-                        <li><a href="#">คูปองของฉัน</a></li>
-                        <li><a href="#">การจัดส่ง</a></li>
-                    </ul>
-                </div>
-
-                <!-- คอลัมน์ขวา -->
-                <div class="footer-col">
-                    <h4>Subscribe</h4>
-                    <form class="subscribe-form"
-                        onsubmit="event.preventDefault(); alert('ขอบคุณที่ติดตาม!');">
-                        <input type="email" placeholder="Email" required>
-                        <button type="submit">Subscribe</button>
-                    </form>
-
-                    <div class="footer-social">
-                        <!-- ใช้ SVG ในตัว ไม่ต้องพึ่งไฟล์ไอคอน -->
-                        <a href="#" aria-label="Facebook" class="icon">
-                            <svg viewBox="0 0 24 24"><path
-                                    d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0 0 22 12z" /></svg>
-                        </a>
-                        <a href="#" aria-label="Instagram" class="icon">
-                            <svg viewBox="0 0 24 24"><path
-                                    d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zM17.8 6.2a1 1 0 1 1-1.4 1.4 1 1 0 0 1 1.4-1.4z" /></svg>
-                        </a>
-                        <a href="#" aria-label="YouTube" class="icon">
-                            <svg viewBox="0 0 24 24"><path
-                                    d="M23.5 7.6a3 3 0 0 0-2.1-2.1C19.3 5 12 5 12 5s-7.3 0-9.4.5A3 3 0 0 0 .5 7.6 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 4.4 3 3 0 0 0 2.1 2.1C4.7 19 12 19 12 19s7.3 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-4.4ZM9.7 15.3V8.7L15.8 12z" /></svg>
-                        </a>
-                        <a href="#" aria-label="Line" class="icon">
-                            <svg viewBox="0 0 24 24"><path
-                                    d="M12 3c-5 0-9 3.1-9 7 0 3.3 2.9 6.1 6.8 6.8-.2.6-.9 2.5-1 2.9-.2.6.2.6.5.4.2-.1 2.5-1.7 3.5-2.4.4 0 .9.1 1.3.1 5 0 9-3.1 9-7s-4-7-9-7zM8 12V9h1v3H8zm3 0V9h1v3h-1zm3 0h-1V9h1v3zm3 0h-1V9h1v3z" /></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <div class="footer-bottom">
-            <p>@2025ขอบคุณที่มาเป็นส่วนหนึ่งของทัมมือ</p>
+        <!-- ปุ่มหมวด -->
+        <div class="category-buttons">
+            <a href="/page/category/handmade.html" data-slug="handmade"
+                class="category-button">สินค้าแฮนเมด</a>
+            <a href="/page/category/craft.html" data-slug="craft"
+                class="category-button">งานประดิษฐ์</a>
+            <a href="/page/category/local_products.html"
+                data-slug="local_products"
+                class="category-button">สินค้าท้องถิ่น</a>
+            <a href="/page/category/second_hand.html" data-slug="second_hand"
+                class="category-button">สินค้ามือสอง</a>
         </div>
 
+        <section class="recommended-products">
+            <h2 id="catTitle">กำลังโหลด...</h2>
+            <div id="catGrid" class="product-grid"></div>
+        </section>
 
+        <script src="/js/productsforsale/products.js"></script>
+        <script src="/js/category/category-feed.js" defer></script>
     </body>
 </html>

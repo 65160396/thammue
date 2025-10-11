@@ -1004,3 +1004,8 @@ a {
   background: #ff2d55;
   border-radius: 999px;
 }
+.category-button.active,
+.category-button.is-active {
+  background: #000 !important;
+  color: #fff !important;
+}

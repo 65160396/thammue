@@ -85,13 +85,15 @@
         style="display:none;padding:12px;border-radius:8px;margin:12px 0;font-size:14px"></div>
 
       <!-- ปุ่มหมวด -->
-      <div class="category-buttons" id="categoryButtons">
-        <a href="#" class="category-button" data-cat="handmade">สินค้าแฮนเมด</a>
-        <a href="#" class="category-button" data-cat="craft">งานประดิษฐ์</a>
-        <a href="#" class="category-button"
-          data-cat="local_products">สินค้าท้องถิ่น</a>
-        <a href="#" class="category-button"
-          data-cat="second_hand">สินค้ามือสอง</a>
+      <div class="category-buttons">
+        <a href="/page/category/handmade.html"
+          class="category-button">สินค้าแฮนเมด</a>
+        <a href="/page/category/craft.html"
+          class="category-button">งานประดิษฐ์</a>
+        <a href="/page/category/local_products.html"
+          class="category-button">สินค้าท้องถิ่น</a>
+        <a href="/page/category/second_hand.html"
+          class="category-button">สินค้ามือสอง</a>
       </div>
 
       <div class="ad-banner">
@@ -102,16 +104,6 @@
       <section class="recommended-products">
         <h2>แนะนำสำหรับคุณ</h2>
         <div id="homeGrid" class="product-grid"></div>
-      </section>
-
-      <!-- กริด “ผลลัพธ์ตามหมวด” (ซ่อนไว้ก่อน) -->
-      <section class="recommended-products" id="catSection" hidden>
-        <h2 id="catTitle">ผลลัพธ์ตามหมวด</h2>
-        <div id="catGrid" class="product-grid"></div>
-        <div class="center mt-24">
-          <button id="clearCat"
-            class="btn btn-ghost btn-sm">กลับไปดูทั้งหมด</button>
-        </div>
       </section>
 
       <script src="/js/nav-active.js"></script>
