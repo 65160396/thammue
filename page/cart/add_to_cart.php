@@ -36,7 +36,8 @@ if ($stm->fetchColumn()) {
 }
 
 // นับจำนวนทั้งหมดในตะกร้า
-$stm2 = $pdo->prepare("SELECT COALESCE(SUM(quantity),0) AS cnt FROM cart WHERE user_id=?");
+$stm2 = $pdo->prepare("SELECT COUNT(*) AS cnt FROM cart WHERE user_id=?");
+
 $stm2->execute([$userId]);
 $cartCount = (int)$stm2->fetchColumn();
 

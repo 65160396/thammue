@@ -33,9 +33,9 @@
             </a>
 
 
-            <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า">
+            <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า" style="position:relative">
                 <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
-                <span id="cartBadge" class="badge" style="display:none"></span>
+                <span id="cartBadge" class="icon-badge" hidden>0</span>
             </a>
 
             <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>

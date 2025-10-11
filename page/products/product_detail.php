@@ -127,6 +127,8 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 </div>
 
 
+
+
                 <!-- ปุ่ม -->
                 <div class="pd-controls">
                     <div class="qty">
@@ -292,13 +294,16 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                         id
                     })
                 });
+
                 if (res.status === 401) {
                     location.href = '/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
                     return;
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
 
+                const data = await res.json(); // { in_cart: bool, cart_count: number }
+
+                // อัปเดตปุ่ม
                 if (data.in_cart) {
                     btn.textContent = 'อยู่ในตะกร้า';
                     btn.classList.add('is-in-cart');
@@ -306,6 +311,17 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     btn.textContent = '🛒 เพิ่มไปยังรถเข็น';
                     btn.classList.remove('is-in-cart');
                 }
+
+                // 🔴 สำคัญ: แจ้ง header ให้เปลี่ยนเลข badge ตะกร้า
+                window.dispatchEvent(new CustomEvent('cart:set', {
+                    detail: {
+                        count: data.cart_count || 0
+                    }
+                }));
+
+                // ถ้าต้องการให้กดแล้วเด้งไปหน้าตะกร้า ให้เปิดบรรทัดนี้
+                // location.href = '/page/cart/index.php';
+
             } catch (err) {
                 console.error(err);
                 alert('เพิ่ม/ลบจากตะกร้าไม่สำเร็จ');
@@ -313,8 +329,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         });
     </script>
 
-
-
+    <script src="/js/cart-badge.js" defer></script>
 
 </body>
 
