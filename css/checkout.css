@@ -1,31 +1,35 @@
 /* /css/checkout.css */
 
-.wrap {
+/* ครอบทุกอย่างให้ทำงานเฉพาะหน้า checkout */
+.checkout-page .wrap {
   max-width: 980px;
   margin: 24px auto;
   padding: 0 16px;
 }
 
-.section {
+.checkout-page .section {
   background: #fff;
   border: 1px solid #eee;
-  border-radius: 8px;
+  border-radius: 14px;
+  padding: 0;
   margin-bottom: 16px;
+  transition: box-shadow 0.12s ease, transform 0.12s ease;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
 }
 
-.section h3 {
+.checkout-page .section h3 {
   margin: 0;
   padding: 14px 16px;
   border-bottom: 1px solid #eee;
   font-size: 18px;
 }
 
-.section .body {
+.checkout-page .section .body {
   padding: 16px;
 }
 
 /* ที่อยู่จัดส่ง */
-.addr-box {
+.checkout-page .addr-box {
   border: 1px solid #f1d2d2;
   background: #fff;
   padding: 16px;
@@ -33,26 +37,15 @@
   position: relative;
 }
 
-.addr-box::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10px;
-  height: 10px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    #ff6b6b 0 16px,
-    #9ec5ff 16px 32px,
-    #ffd166 32px 48px
-  );
-}
+/* แถบลายซอง จดคอมเมนต์ทิ้งไว้
+.checkout-page .addr-box::before { ... }
+*/
 
-.addr-name {
+.checkout-page .addr-name {
   font-weight: 700;
 }
 
-.addr-actions a {
+.checkout-page .addr-actions a {
   font-size: 12px;
   border: 1px solid #f00;
   color: #f00;
@@ -61,29 +54,29 @@
   margin-left: 8px;
 }
 
-.addr-line {
+.checkout-page .addr-line {
   margin-top: 4px;
 }
 
 /* ตารางสินค้า */
-.table {
+.checkout-page .table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table th,
-.table td {
+.checkout-page .table th,
+.checkout-page .table td {
   padding: 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
 }
 
-.price {
+.checkout-page .price {
   text-align: right;
   white-space: nowrap;
 }
 
-.thumb {
+.checkout-page .thumb {
   width: 64px;
   height: 64px;
   object-fit: cover;
@@ -91,21 +84,21 @@
   border: 1px solid #eee;
 }
 
-.item {
+.checkout-page .item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 /* ชำระเงิน */
-.pay-methods {
+.checkout-page .pay-methods {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
-.pay-chip {
+.checkout-page .pay-chip {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -117,31 +110,31 @@
   transition: background 0.2s;
 }
 
-.pay-chip:hover {
+.checkout-page .pay-chip:hover {
   background: #efefef;
 }
 
 /* สรุปยอด */
-.summary {
+.checkout-page .summary {
   margin-top: 12px;
 }
 
-.summary .row {
+.checkout-page .summary .row {
   display: flex;
   justify-content: space-between;
   margin: 6px 0;
 }
 
-.summary .total {
+.checkout-page .summary .total {
   border-top: 1px solid #eee;
   padding-top: 8px;
   font-weight: 700;
 }
 
-/* ปุ่มหลัก */
-.btn-primary {
+/* ปุ่มหลัก (อยู่เฉพาะหน้า checkout) */
+.checkout-page .btn-primary {
   display: inline-block;
-  background: #000;
+  background: #000000; /* เปลี่ยนสีปุ่มได้ที่นี่ */
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -150,16 +143,20 @@
   margin-top: 12px;
 }
 
-.btn-primary:disabled {
+.checkout-page .btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.checkout-page .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.muted {
+.checkout-page .muted {
   color: #888;
 }
 
-.empty {
+.checkout-page .empty {
   text-align: center;
   color: #888;
   padding: 24px 0;

@@ -93,7 +93,8 @@ function full_addr($p)
     <link rel="stylesheet" href="/css/checkout.css" />
 </head>
 
-<body>
+<body class="checkout-page">
+
     <div class="wrap">
         <h2>ทำการสั่งซื้อ</h2>
 
