@@ -1,7 +1,7 @@
 // /js/store/shop-toggle.js
 
 const OPEN_SHOP_URL = '/page/open_a_shop.html'; // ← หน้าแบบฟอร์มที่คุณมีจริง
-const MY_STORE_URL  = (id) => `/page/storepage/indexstore.html?shop_id=${encodeURIComponent(id)}`; // ← ชื่อไฟล์จริง
+const MY_STORE_URL  = (id) => `/page/storepage/store.html?shop_id=${encodeURIComponent(id)}`; // ← ชื่อไฟล์จริง
 
 async function toggleOpenOrMyShop(linkId = 'openOrMyShop') {
   const link = document.getElementById(linkId);
