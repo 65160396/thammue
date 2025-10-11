@@ -102,3 +102,32 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.qty-input {
+  width: 46px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  height: 28px;
+}
+.qty-btn:active {
+  transform: scale(0.98);
+}
+.cart-info {
+  display: flex;
+  flex-direction: column;
+}

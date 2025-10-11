@@ -74,7 +74,7 @@ function imgPath($row)
                     $price = is_numeric($r['price']) ? (float)$r['price'] : 0;
                     $line  = $price * $qty;
                 ?>
-                    <div class="cart-item">
+                    <div class="cart-item" data-id="<?= (int)$r['product_id'] ?>">
                         <!-- เช็คบ็อกซ์เลือกรายการ -->
                         <label class="cart-check">
                             <input
@@ -86,13 +86,22 @@ function imgPath($row)
 
                         <img src="<?= imgPath($r) ?>" alt="<?= h($r['name']) ?>">
 
-                        <div>
+                        <div class="cart-info">
                             <div class="cart-title"><?= h($r['name']) ?></div>
-                            <div>จำนวน: <?= $qty ?></div>
+
+                            <!-- คอนโทรลจำนวน -->
+                            <div class="qty">
+                                <button class="qty-btn minus" type="button">−</button>
+                                <input class="qty-input" type="text" value="<?= (int)$qty ?>" inputmode="numeric">
+                                <button class="qty-btn plus" type="button">+</button>
+                            </div>
                         </div>
 
-                        <div class="cart-price">$<?= number_format($line, 2) ?></div>
+                        <div class="cart-price">
+                            $<span class="line-total"><?= number_format($line, 2) ?></span>
+                        </div>
                     </div>
+
                 <?php endforeach; ?>
             </div>
 
@@ -159,6 +168,8 @@ function imgPath($row)
 
     <script src="/js/fav-badge.js" defer></script>
     <script src="/js/cart-badge.js" defer></script>
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script> <!-- เมนูโปรไฟล์ dropdown -->
 
     <script src="/js/store/shop-toggle.js"></script>
     <script>
@@ -166,6 +177,86 @@ function imgPath($row)
             toggleOpenOrMyShop();
         });
     </script>
+
+    <script>
+        const list = document.querySelector('.cart-list');
+        const money = n => Number(n).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        // อัปเดต badge ที่ header
+        function setCartBadge(n) {
+            window.dispatchEvent(new CustomEvent('cart:set', {
+                detail: {
+                    count: n
+                }
+            }));
+        }
+
+        // ยิง API ไปแก้จำนวนใน DB + อัปเดต UI แถวนี้ + recalculation
+        async function updateQty(productId, qty, rowEl) {
+            try {
+                const res = await fetch('/page/cart/update_qty.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        id: productId,
+                        qty
+                    })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json(); // {qty, line_total, cart_count}
+
+                if (data.qty === 0) {
+                    rowEl.remove();
+                } else {
+                    rowEl.querySelector('.qty-input').value = data.qty;
+                    rowEl.querySelector('.line-total').textContent = money(data.line_total);
+                    const cb = rowEl.querySelector('.ci');
+                    if (cb) cb.dataset.price = data.line_total.toFixed(2);
+                }
+                setCartBadge(data.cart_count);
+                recalc();
+            } catch (e) {
+                console.error(e);
+                alert('อัปเดตจำนวนไม่สำเร็จ');
+            }
+        }
+
+        // คลิก +/–
+        list?.addEventListener('click', e => {
+            const btn = e.target.closest('.qty-btn');
+            if (!btn) return;
+
+            const row = e.target.closest('.cart-item');
+            const id = Number(row.dataset.id);
+            const input = row.querySelector('.qty-input');
+
+            let qty = parseInt(input.value || '1', 10) || 1;
+            if (btn.classList.contains('plus')) qty++;
+            if (btn.classList.contains('minus')) qty = Math.max(0, qty - 1); // 0 = ลบรายการ
+
+            updateQty(id, qty, row);
+        });
+
+        // พิมพ์จำนวนเอง -> หลุดโฟกัสหรือกด Enter ให้ส่งอัปเดต
+        list?.addEventListener('change', e => {
+            const inp = e.target.closest('.qty-input');
+            if (!inp) return;
+
+            const row = e.target.closest('.cart-item');
+            const id = Number(row.dataset.id);
+            let qty = parseInt(inp.value || '1', 10);
+            if (isNaN(qty) || qty < 0) qty = 1;
+
+            updateQty(id, qty, row);
+        });
+    </script>
+
 
 
 

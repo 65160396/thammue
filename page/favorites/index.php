@@ -53,6 +53,8 @@ function h($s)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/products.css" />
+
+
     <style>
         .fav-header {
             max-width: 1100px;
@@ -102,6 +104,7 @@ function h($s)
 
     <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
+
     <div class="fav-header">
         <h1>รายการโปรด</h1>
     </div>
@@ -118,6 +121,9 @@ function h($s)
             <?php endif; ?>
         </div>
     </div>
+
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script> <!-- เมนูโปรไฟล์ dropdown -->
 
     <!-- สคริปต์: เอาออกจากรายการโปรด -->
     <script>
@@ -156,7 +162,8 @@ function h($s)
 
     <!-- สคริปต์: ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
     <script src="/page/js/cart.js"></script>
-    
+
+
 
 
 </body>
