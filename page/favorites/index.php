@@ -12,15 +12,19 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-/* ดึงสินค้าที่ถูกใจ (เฉพาะ type=product) */
-$sql = "SELECT p.id, p.name, p.price, p.main_image, s.shop_name, s.province
+/* ดึงสินค้าที่ถูกใจ + สถานะในตะกร้า (in_cart) */
+$sql = "SELECT
+          p.id, p.name, p.price, p.main_image,
+          s.shop_name, s.province,
+          IF(c.product_id IS NULL, 0, 1) AS in_cart
         FROM favorites f
         JOIN products p ON p.id = f.item_id AND f.item_type = 'product'
         LEFT JOIN shops s ON s.id = p.shop_id
+        LEFT JOIN cart  c ON c.user_id = ? AND c.product_id = p.id
         WHERE f.user_id = ?
         ORDER BY f.created_at DESC";
 $stm = $pdo->prepare($sql);
-$stm->execute([$userId]);
+$stm->execute([$userId, $userId]); // ← ส่ง $userId สองครั้งให้ JOIN cart ทำงาน
 $items = $stm->fetchAll();
 
 /* helper */
@@ -62,19 +66,16 @@ function h($s)
             margin: 0 0 8px;
         }
 
-        /* เผื่อ products.css ไม่มี display:grid */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
         }
 
-        /* ให้การ์ดเป็นกรอบอ้างอิงตำแหน่ง */
         .product-card {
             position: relative;
         }
 
-        /* ปุ่มหัวใจลอยมุมขวาบน */
         .remove-like {
             position: absolute;
             top: 10px;
@@ -111,29 +112,20 @@ function h($s)
                 <div class="empty" style="grid-column:1 / -1;">ยังไม่มีรายการโปรด</div>
             <?php else: ?>
                 <?php foreach ($items as $it): ?>
-                    <div class="product-card">
-                        <a class="product-link" href="/page/products/product_detail.php?id=<?= (int)$it['id'] ?>">
-                            <img src="<?= productImg($it) ?>" alt="<?= h($it['name']) ?>">
-                            <h3><?= h($it['name']) ?></h3>
-                            <p><?= is_numeric($it['price']) ? '$' . number_format((float)$it['price'], 0) : h($it['price']) ?></p>
-                            <span>จังหวัด<?= h($it['province'] ?: 'ไม่ระบุ') ?></span>
-                        </a>
-                        <button type="button"
-                            class="remove-like"
-                            data-id="<?= (int)$it['id'] ?>"
-                            title="เอาออกจากรายการโปรด">❤️</button>
-                    </div>
+                    <?php $opts = ['showRemoveLike' => true]; ?>
+                    <?php include __DIR__ . '/../partials/product_card.php'; ?>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
 
+    <!-- สคริปต์: เอาออกจากรายการโปรด -->
     <script>
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-like');
             if (!btn) return;
             e.preventDefault();
-            e.stopPropagation(); // กันคลิกลิงก์การ์ดทำงาน
+            e.stopPropagation();
 
             const id = btn.dataset.id;
             try {
@@ -154,7 +146,6 @@ function h($s)
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
-                // ถ้ากลายเป็นไม่ได้ถูกใจแล้ว -> ลบการ์ด
                 if (!data.liked) btn.closest('.product-card')?.remove();
             } catch (err) {
                 console.error(err);
@@ -162,6 +153,9 @@ function h($s)
             }
         });
     </script>
+
+    <!-- สคริปต์: ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
+    <script src="/page/js/cart.js"></script>
 </body>
 
 </html>

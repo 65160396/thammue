@@ -99,6 +99,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
 <body>
     <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
+
     <div class="pd-container">
         <!-- ส่วนบน: รูป + ข้อมูล -->
         <section class="pd-hero">
@@ -138,9 +139,12 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     </div>
 
                     <div class="pd-actions">
-                        <button class="btn-outline">🛒 เพิ่มไปยังรถเข็น</button>
+                        <button id="addToCartDetail" class="btn-outline" data-id="<?= (int)$p['id'] ?>">
+                            🛒 เพิ่มไปยังรถเข็น
+                        </button>
                         <button class="btn-primary">ซื้อสินค้า</button>
                     </div>
+
                 </div>
 
                 <div class="pd-location">จังหวัด<?= $prov ?> · ร้าน: <?= $shop ?></div>
@@ -268,6 +272,48 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         likeBtn.addEventListener('click', toggleLike);
         loadLikeStats();
     </script>
+
+    <script src="/js/cart.js"></script>
+
+    <script>
+        document.getElementById('addToCartDetail')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const btn = e.currentTarget;
+            const id = btn.dataset.id;
+
+            try {
+                const res = await fetch('/page/cart/add_to_cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        id
+                    })
+                });
+                if (res.status === 401) {
+                    location.href = '/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
+                    return;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                if (data.in_cart) {
+                    btn.textContent = 'อยู่ในตะกร้า';
+                    btn.classList.add('is-in-cart');
+                } else {
+                    btn.textContent = '🛒 เพิ่มไปยังรถเข็น';
+                    btn.classList.remove('is-in-cart');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('เพิ่ม/ลบจากตะกร้าไม่สำเร็จ');
+            }
+        });
+    </script>
+
+
 
 
 </body>

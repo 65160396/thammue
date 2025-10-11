@@ -33,7 +33,11 @@
             </a>
 
 
-            <button class="action-button"><img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" /></button>
+            <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า">
+                <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+                <span id="cartBadge" class="badge" style="display:none"></span>
+            </a>
+
             <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
 
             <div class="user-menu" id="userMenu">
@@ -80,3 +84,34 @@
     });
 </script>
 <script src="/js/fav-badge.js" defer></script>
+
+<script>
+    function setCartBadge(n) {
+        const el = document.getElementById('cartBadge');
+        if (!el) return;
+        n = parseInt(n || 0, 10);
+        if (n > 0) {
+            el.textContent = n;
+            el.style.display = 'inline-flex';
+        } else {
+            el.textContent = '';
+            el.style.display = 'none';
+        }
+    }
+
+    (async () => {
+        try {
+            const res = await fetch('/page/cart/get_cart.php', {
+                credentials: 'include',
+                cache: 'no-store'
+            });
+            if (!res.ok) return;
+            const data = await res.json(); // ให้ get_cart.php ตอบ {count: ...}
+            setCartBadge(data.count || 0);
+        } catch (e) {
+            console.error(e);
+        }
+    })();
+
+    window.addEventListener('cart:set', e => setCartBadge(e.detail?.count ?? 0));
+</script>

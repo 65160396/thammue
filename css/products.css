@@ -162,3 +162,43 @@
   font-size: 14px;
   opacity: 0.75;
 }
+
+.product-card {
+  position: relative;
+}
+.add-cart-bottom {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 10px auto 0;
+  height: 40px;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #fff;
+  border: 1px solid #0ea5e9;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.add-cart-bottom.is-in-cart {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+
+/* ถ้าจะใช้แบบลอยมุมขวาบน ให้เปลี่ยน class เป็น .add-cart */
+.add-cart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #0ea5e9;
+  color: #fff;
+  border: 1px solid #0ea5e9;
+  cursor: pointer;
+}
+.add-cart.is-in-cart {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #e5e7eb;
+}
