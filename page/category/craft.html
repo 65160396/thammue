@@ -22,9 +22,50 @@
             <li><a href="/page/main.html">หน้าแรก</a></li>
         </ul>
 
+        <!-- Header หลัก -->
         <div class="header-wrapper">
             <div class="logo-container">
                 <a href="/page/main.html" class="brand-text">THAMMUE</a>
+            </div>
+
+            <div class="search-container">
+                <div class="search-group">
+                    <input type="text" placeholder="ค้นหาสินค้า" />
+                    <button class="search-button" aria-label="ค้นหา">
+                        <img src="/img/Icon/search.png" alt="ค้นหา" />
+                    </button>
+                </div>
+
+                <div class="icon-buttons">
+                    <a class="action-button" href="/page/favorites/index.php"
+                        aria-label="รายการโปรด">
+                        <img src="/img/Icon/heart.png" alt="รายการโปรด">
+                        <span id="favBadge" class="icon-badge" hidden>0</span>
+                    </a>
+                    <button class="action-button"><img
+                            src="/img/Icon/shopping-cart.png"
+                            alt="ตะกร้า" /></button>
+                    <button class="action-button"><img src="/img/Icon/chat.png"
+                            alt="แชท" /></button>
+
+                    <!-- โปรไฟล์ + ชื่อ + เมนู -->
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-area" id="userArea"
+                            aria-haspopup="true" aria-expanded="false">
+                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                            <span class="user-chip" id="userChip" hidden></span>
+                            <svg class="chev" viewBox="0 0 20 20"
+                                aria-hidden="true">
+                                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                                    stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown"
+                            role="menu"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -37,7 +78,8 @@
             <a href="/page/category/local_products.html"
                 data-slug="local_products"
                 class="category-button">สินค้าท้องถิ่น</a>
-            <a href="/page/category/second_hand.html" data-slug="second_hand"
+            <a href="/page/category/second_hand.html"
+                data-slug="second_hand"
                 class="category-button">สินค้ามือสอง</a>
         </div>
 
@@ -45,8 +87,19 @@
             <h2 id="catTitle">กำลังโหลด...</h2>
             <div id="catGrid" class="product-grid"></div>
         </section>
+        <!-- สคริปต์ระบบแกนกลางของ header -->
+        <script src="/js/nav-active.js"></script>
+        <!-- ไฮไลต์เมนูบนสุด (ถ้าใช้) -->
+        <script src="/js/flashmessage.js"></script> <!-- แสดง flash message -->
+        <script src="/js/me.js"></script> <!-- ดึงข้อมูลผู้ใช้ปัจจุบัน -->
+        <script src="/js/user-menu.js"></script> <!-- เมนูโปรไฟล์ dropdown -->
+        <script src="/js/store/shop-toggle.js"></script>
+        <!-- ปุ่ม 'เปิดร้านค้า/ร้านของฉัน' -->
+        <script src="/js/fav-badge.js" defer></script> <!-- ตรามุมหัวใจ -->
 
+        <!-- โหลดสินค้าของหมวด (ต้องมี) -->
         <script src="/js/productsforsale/products.js"></script>
         <script src="/js/category/category-feed.js" defer></script>
+
     </body>
 </html>
