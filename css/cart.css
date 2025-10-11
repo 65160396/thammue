@@ -1,0 +1,104 @@
+/* ===== โครงหน้า cart (ไม่ไปชนหน้าอื่น) ===== */
+.cart-page .cart-wrap {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.cart-page .cart-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 10px;
+  color: #111;
+}
+
+.cart-page .cart-list {
+  display: grid;
+  gap: 12px;
+}
+
+/* ===== การ์ดสินค้าแบบเดิม ===== */
+.cart-page .cart-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px 1fr auto; /* รูป | รายละเอียด | ราคา(ขวา) */
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  padding-left: 48px; /* เผื่อที่ให้ติ๊กซ้าย */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* เช็คบ็อกซ์ลอยซ้าย ไม่ดันเลย์เอาต์ */
+.cart-page .cart-item .cart-check {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
+}
+.cart-page .cart-item .cart-check input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #111; /* สีติ๊ก */
+}
+
+/* รูปสินค้า */
+.cart-page .cart-item img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* ชื่อ/จำนวน */
+.cart-page .cart-title {
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 4px;
+}
+.cart-page .cart-item > div:nth-of-type(2) {
+  /* บล็อกรายละเอียดกลาง */
+  color: #333;
+  line-height: 1.25;
+}
+
+/* ราคาอยู่ขวาสุด เรียงบรรทัดเดียว */
+.cart-page .cart-price {
+  justify-self: end; /* ชิดขวาในกริด */
+  text-align: right;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #111;
+}
+
+/* สรุปด้านล่างเหมือนเดิม */
+.cart-page .cart-summary {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.cart-page .cart-summary #sum {
+  font-weight: 800;
+}
+
+/* ปุ่มจ่ายเงิน */
+.cart-page .cart-btn-primary {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.cart-page .cart-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
