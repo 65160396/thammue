@@ -16,7 +16,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
 ]);
 
 // ดึงรายการตะกร้า + ข้อมูลสินค้า
-$sql = "SELECT c.product_id, c.quantity, p.name, p.price, p.main_image
+$sql = "SELECT c.id AS cart_id,  c.product_id, c.quantity, p.name, p.price, p.main_image
         FROM cart c
         JOIN products p ON p.id = c.product_id
         WHERE c.user_id = ?
@@ -80,9 +80,12 @@ function imgPath($row)
                             <input
                                 type="checkbox"
                                 class="ci"
-                                data-id="<?= (int)$r['product_id'] ?>"
+                                name="selected[]"
+                                value="<?= (int)$r['cart_id'] ?>"
+                                form="payForm"
                                 data-price="<?= number_format($line, 2, '.', '') ?>">
                         </label>
+
 
                         <img src="<?= imgPath($r) ?>" alt="<?= h($r['name']) ?>">
 
@@ -111,9 +114,9 @@ function imgPath($row)
 
                 <!-- ฟอร์มส่งเฉพาะรายการที่เลือก -->
                 <form id="payForm" action="/page/checkout/checkout.php" method="post">
-                    <input type="hidden" name="ids" id="ids"> <!-- product_id ที่เลือก (คอมมาเซป) -->
                     <button id="payBtn" class="cart-btn-primary" disabled>ชำระเงิน</button>
                 </form>
+
             </div>
 
         <?php endif; ?>
@@ -134,37 +137,42 @@ function imgPath($row)
         });
         const sumEl = document.getElementById('sum');
         const payBtn = document.getElementById('payBtn');
-        const idsInp = document.getElementById('ids');
         const allBox = document.getElementById('checkAll');
-        const boxes = Array.from(document.querySelectorAll('.ci'));
+        const BOX_SEL = '.ci';
 
         function recalc() {
             let total = 0;
             const picked = [];
+            const boxes = Array.from(document.querySelectorAll(BOX_SEL)); // query สดทุกครั้ง
             boxes.forEach(b => {
                 if (b.checked) {
                     total += parseFloat(b.dataset.price || 0);
-                    picked.push(b.dataset.id);
+                    picked.push(b.value); // ใช้ value = cart_id
                 }
             });
             sumEl.textContent = fmt(total);
             payBtn.disabled = picked.length === 0;
-            idsInp.value = picked.join(',');
-            // sync select-all
-            allBox.checked = picked.length > 0 && picked.length === boxes.length;
+            if (allBox) allBox.checked = picked.length > 0 && picked.length === boxes.length;
         }
 
-        boxes.forEach(b => b.addEventListener('change', recalc));
+        // change รายการย่อย
+        document.querySelectorAll(BOX_SEL).forEach(b => b.addEventListener('change', recalc));
+
+        // check-all
         allBox?.addEventListener('change', () => {
-            boxes.forEach(b => b.checked = allBox.checked);
+            document.querySelectorAll(BOX_SEL).forEach(b => b.checked = allBox.checked);
             recalc();
         });
+
+        // กันกดส่งโดยไม่ได้เลือก
         document.getElementById('payForm')?.addEventListener('submit', e => {
-            if (!idsInp.value) e.preventDefault();
+            const anyChecked = Array.from(document.querySelectorAll(BOX_SEL)).some(b => b.checked);
+            if (!anyChecked) e.preventDefault();
         });
 
         recalc(); // เริ่มต้น
     </script>
+
 
     <script src="/js/fav-badge.js" defer></script>
     <script src="/js/cart-badge.js" defer></script>

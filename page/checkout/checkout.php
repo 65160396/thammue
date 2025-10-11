@@ -24,9 +24,34 @@ $stmt = $pdo->prepare("
 $stmt->execute([$userId]);
 $profile = $stmt->fetch();
 
-// --- ดึงสินค้าในตะกร้า ---
-$stmt = $pdo->prepare("
+// รับรายการที่เลือกจากหน้า cart
+$selected = isset($_POST['selected']) && is_array($_POST['selected'])
+    ? array_values(array_unique(array_map('intval', $_POST['selected'])))
+    : [];
+
+// เก็บไว้ใน session เผื่อ refresh/กลับมา
+if ($selected) {
+    $_SESSION['checkout_selected_ids'] = $selected;
+} elseif (isset($_SESSION['checkout_selected_ids'])) {
+    $selected = $_SESSION['checkout_selected_ids'];
+}
+
+// --- ดึงสินค้าในตะกร้า (เฉพาะที่เลือก ถ้าไม่มีเลือกจะว่าง) ---
+$whereIn  = '';
+$params   = [$userId];
+
+if (!empty($selected)) {
+    $ph      = implode(',', array_fill(0, count($selected), '?'));
+    $whereIn = " AND c.id IN ($ph) ";
+    $params  = array_merge($params, $selected);
+} else {
+    // ถ้าไม่เลือกอะไรเลย จะไม่ดึงอะไร (หรือจะ fallback เป็นทั้งตะกร้าก็ได้ ตามที่ต้องการ)
+    $whereIn = " AND 1=0 ";
+}
+
+$sql = "
   SELECT
+    c.id AS cart_id,
     c.product_id,
     c.quantity AS qty,
     p.name, p.price,
@@ -37,9 +62,10 @@ $stmt = $pdo->prepare("
        LIMIT 1) AS image
   FROM cart c
   JOIN products p ON p.id = c.product_id
-  WHERE c.user_id = ?
-");
-$stmt->execute([$userId]);
+  WHERE c.user_id = ? $whereIn
+";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $items = $stmt->fetchAll();
 
 
