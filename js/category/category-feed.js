@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       elGrid.innerHTML = items.map(p => `
-        <a class="product-card" href="/page/product/detail.html?id=${p.id}">
+        <a class="product-card" href="/page/products/product_detail.php?id=${p.id}">
           <img src="${String(p.image).replaceAll('\\','/')}" alt="${p.name}">
           <div class="name" style="margin-top:8px;font-weight:600">${p.name}</div>
           <div class="price">${Number(p.price).toLocaleString()} บาท</div>

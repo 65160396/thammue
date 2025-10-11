@@ -193,6 +193,17 @@ body {
   border-color: #bbb;
 }
 
+/* เฉพาะหน้ารายละเอียด */
+.pd-actions .btn-primary {
+  background: #000000;
+  border: 1px solid #ffffff;
+  color: #fff;
+}
+.pd-actions .btn-primary:hover {
+  opacity: 0.92; /* หรือจะเปลี่ยนเป็นสีอื่นตอน hover ก็ได้ */
+  /* background:#0b5f58; border-color:#0b5f58; */
+}
+
 /* section */
 .pd-section {
   background: var(--pd-card);
@@ -318,8 +329,6 @@ body {
   border-radius: 999px;
   border: 2px solid #000; /* ขอบดำให้เข้ากับ header */
 }
-
-
 
 /* responsive */
 @media (max-width: 960px) {
