@@ -27,125 +27,149 @@ $items = $stm->fetchAll();
 
 // helper
 $WEB_PREFIX = '/page';
-function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
-function imgPath($row){
-  global $WEB_PREFIX;
-  if (!empty($row['main_image'])) {
-    return (strpos($row['main_image'],'/uploads/')===0) ? $WEB_PREFIX.$row['main_image'] : $row['main_image'];
-  }
-  return $WEB_PREFIX.'/img/placeholder.png';
+function h($s)
+{
+    return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+}
+function imgPath($row)
+{
+    global $WEB_PREFIX;
+    if (!empty($row['main_image'])) {
+        return (strpos($row['main_image'], '/uploads/') === 0) ? $WEB_PREFIX . $row['main_image'] : $row['main_image'];
+    }
+    return $WEB_PREFIX . '/img/placeholder.png';
 }
 ?>
 <!doctype html>
 <html lang="th">
+
 <head>
-  <meta charset="utf-8" />
-  <title>ตะกร้าสินค้า | Thammue</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/cart.css" />
+    <meta charset="utf-8" />
+    <title>ตะกร้าสินค้า | Thammue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/cart.css" />
 </head>
+
 <body class="cart-page">
-<?php include __DIR__ . '/../partials/site-header.php'; ?>
+    <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
-<div class="cart-wrap">
-  <h1>ตะกร้าสินค้า</h1>
+    <div class="cart-wrap">
+        <h1>ตะกร้าสินค้า</h1>
 
-  <?php if (!$items): ?>
-    <p>ตะกร้าว่างเปล่า</p>
-  <?php else: ?>
+        <?php if (!$items): ?>
+            <p>ตะกร้าว่างเปล่า</p>
+        <?php else: ?>
 
-    <!-- แถบเลือกทั้งหมด -->
-    <div class="cart-toolbar">
-      <label class="cart-check">
-        <input type="checkbox" id="checkAll"> เลือกทั้งหมด
-      </label>
+            <!-- แถบเลือกทั้งหมด -->
+            <div class="cart-toolbar">
+                <label class="cart-check">
+                    <input type="checkbox" id="checkAll"> เลือกทั้งหมด
+                </label>
+            </div>
+
+            <div class="cart-list">
+                <?php foreach ($items as $r):
+                    $qty   = max(1, (int)$r['quantity']);
+                    $price = is_numeric($r['price']) ? (float)$r['price'] : 0;
+                    $line  = $price * $qty;
+                ?>
+                    <div class="cart-item">
+                        <!-- เช็คบ็อกซ์เลือกรายการ -->
+                        <label class="cart-check">
+                            <input
+                                type="checkbox"
+                                class="ci"
+                                data-id="<?= (int)$r['product_id'] ?>"
+                                data-price="<?= number_format($line, 2, '.', '') ?>">
+                        </label>
+
+                        <img src="<?= imgPath($r) ?>" alt="<?= h($r['name']) ?>">
+
+                        <div>
+                            <div class="cart-title"><?= h($r['name']) ?></div>
+                            <div>จำนวน: <?= $qty ?></div>
+                        </div>
+
+                        <div class="cart-price">$<?= number_format($line, 2) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- สรุป + ปุ่มชำระเงิน -->
+            <div class="cart-summary">
+                <div><strong>รวมที่เลือก:</strong> <span id="sum">$0.00</span></div>
+
+                <!-- ฟอร์มส่งเฉพาะรายการที่เลือก -->
+                <form id="payForm" action="/page/checkout/index.php" method="post">
+                    <input type="hidden" name="ids" id="ids"> <!-- product_id ที่เลือก (คอมมาเซป) -->
+                    <button id="payBtn" class="cart-btn-primary" disabled>ชำระเงิน</button>
+                </form>
+            </div>
+
+        <?php endif; ?>
     </div>
 
-    <div class="cart-list">
-      <?php foreach ($items as $r):
-        $qty   = max(1, (int)$r['quantity']);
-        $price = is_numeric($r['price']) ? (float)$r['price'] : 0;
-        $line  = $price * $qty;
-      ?>
-        <div class="cart-item">
-          <!-- เช็คบ็อกซ์เลือกรายการ -->
-          <label class="cart-check">
-            <input
-              type="checkbox"
-              class="ci"
-              data-id="<?= (int)$r['product_id'] ?>"
-              data-price="<?= number_format($line, 2, '.', '') ?>"
-            >
-          </label>
+    <script>
+        // อัปเดต badge จำนวนชิ้นใน cart เมื่อเข้าหน้านี้
+        window.dispatchEvent(new CustomEvent('cart:set', {
+            detail: {
+                count: <?= count($items) ?>
+            }
+        }));
 
-          <img src="<?= imgPath($r) ?>" alt="<?= h($r['name']) ?>">
+        // ===== เลือกบางชิ้น/ทั้งหมด + คำนวณยอดรวมที่เลือก =====
+        const fmt = n => '$' + Number(n).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        const sumEl = document.getElementById('sum');
+        const payBtn = document.getElementById('payBtn');
+        const idsInp = document.getElementById('ids');
+        const allBox = document.getElementById('checkAll');
+        const boxes = Array.from(document.querySelectorAll('.ci'));
 
-          <div>
-            <div class="cart-title"><?= h($r['name']) ?></div>
-            <div>จำนวน: <?= $qty ?></div>
-          </div>
+        function recalc() {
+            let total = 0;
+            const picked = [];
+            boxes.forEach(b => {
+                if (b.checked) {
+                    total += parseFloat(b.dataset.price || 0);
+                    picked.push(b.dataset.id);
+                }
+            });
+            sumEl.textContent = fmt(total);
+            payBtn.disabled = picked.length === 0;
+            idsInp.value = picked.join(',');
+            // sync select-all
+            allBox.checked = picked.length > 0 && picked.length === boxes.length;
+        }
 
-          <div class="cart-price">$<?= number_format($line, 2) ?></div>
-        </div>
-      <?php endforeach; ?>
-    </div>
+        boxes.forEach(b => b.addEventListener('change', recalc));
+        allBox?.addEventListener('change', () => {
+            boxes.forEach(b => b.checked = allBox.checked);
+            recalc();
+        });
+        document.getElementById('payForm')?.addEventListener('submit', e => {
+            if (!idsInp.value) e.preventDefault();
+        });
 
-    <!-- สรุป + ปุ่มชำระเงิน -->
-    <div class="cart-summary">
-      <div><strong>รวมที่เลือก:</strong> <span id="sum">$0.00</span></div>
+        recalc(); // เริ่มต้น
+    </script>
 
-      <!-- ฟอร์มส่งเฉพาะรายการที่เลือก -->
-      <form id="payForm" action="/page/checkout/index.php" method="post">
-        <input type="hidden" name="ids" id="ids"> <!-- product_id ที่เลือก (คอมมาเซป) -->
-        <button id="payBtn" class="cart-btn-primary" disabled>ชำระเงิน</button>
-      </form>
-    </div>
+    <script src="/js/fav-badge.js" defer></script>
+    <script src="/js/cart-badge.js" defer></script>
 
-  <?php endif; ?>
-</div>
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleOpenOrMyShop();
+        });
+    </script>
 
-<script>
-  // อัปเดต badge จำนวนชิ้นใน cart เมื่อเข้าหน้านี้
-  window.dispatchEvent(new CustomEvent('cart:set', { detail: { count: <?= count($items) ?> }}));
 
-  // ===== เลือกบางชิ้น/ทั้งหมด + คำนวณยอดรวมที่เลือก =====
-  const fmt    = n => '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
-  const sumEl  = document.getElementById('sum');
-  const payBtn = document.getElementById('payBtn');
-  const idsInp = document.getElementById('ids');
-  const allBox = document.getElementById('checkAll');
-  const boxes  = Array.from(document.querySelectorAll('.ci'));
 
-  function recalc(){
-    let total = 0;
-    const picked = [];
-    boxes.forEach(b=>{
-      if(b.checked){
-        total += parseFloat(b.dataset.price || 0);
-        picked.push(b.dataset.id);
-      }
-    });
-    sumEl.textContent = fmt(total);
-    payBtn.disabled = picked.length === 0;
-    idsInp.value = picked.join(',');
-    // sync select-all
-    allBox.checked = picked.length>0 && picked.length===boxes.length;
-  }
 
-  boxes.forEach(b=>b.addEventListener('change', recalc));
-  allBox?.addEventListener('change', ()=>{
-    boxes.forEach(b=>b.checked = allBox.checked);
-    recalc();
-  });
-  document.getElementById('payForm')?.addEventListener('submit', e=>{
-    if(!idsInp.value) e.preventDefault();
-  });
-
-  recalc(); // เริ่มต้น
-</script>
-
-<script src="/js/store/shop-toggle.js"></script>
-<script>document.addEventListener('DOMContentLoaded', ()=>{ toggleOpenOrMyShop(); });</script>
 </body>
+
 </html>

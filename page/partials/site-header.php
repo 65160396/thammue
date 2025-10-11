@@ -101,7 +101,7 @@
 
     (async () => {
         try {
-            const res = await fetch('/page/cart/get_cart.php', {
+            const res = await fetch('/page/cart/get_cart_count.php', {
                 credentials: 'include',
                 cache: 'no-store'
             });
