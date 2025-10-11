@@ -95,6 +95,12 @@ function full_addr($p)
 
 <body class="checkout-page">
 
+    <?php
+    // ให้ header แสดงเฉพาะแถบบน (โลโก้/ค้นหา/ไอคอน) และซ่อนเมนูหมวดหมู่
+    $HEADER_NO_CATS = true;
+    include __DIR__ . '/../partials/site-header.php';
+    ?>
+
     <div class="wrap">
         <h2>ทำการสั่งซื้อ</h2>
 
@@ -181,6 +187,11 @@ function full_addr($p)
             </div>
         </form>
     </div>
+
+
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+
 </body>
 
 </html>

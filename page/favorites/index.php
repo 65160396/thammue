@@ -57,7 +57,11 @@ function h($s)
 </head>
 
 <body>
-    <?php include __DIR__ . '/../partials/site-header.php'; ?>
+    <?php
+    // ให้ header แสดงเฉพาะแถบบน (โลโก้/ค้นหา/ไอคอน) และซ่อนเมนูหมวดหมู่
+    $HEADER_NO_CATS = true;
+    include __DIR__ . '/../partials/site-header.php';
+    ?>
 
 
     <div class="fav-header">

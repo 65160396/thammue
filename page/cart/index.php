@@ -52,7 +52,11 @@ function imgPath($row)
 </head>
 
 <body class="cart-page">
-    <?php include __DIR__ . '/../partials/site-header.php'; ?>
+    <?php
+    // ให้ header แสดงเฉพาะแถบบน (โลโก้/ค้นหา/ไอคอน) และซ่อนเมนูหมวดหมู่
+    $HEADER_NO_CATS = true;
+    include __DIR__ . '/../partials/site-header.php';
+    ?>
 
     <div class="cart-wrap">
         <h1>ตะกร้าสินค้า</h1>
