@@ -53,55 +53,10 @@ function h($s)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/products.css" />
-
-
-    <style>
-        .fav-header {
-            max-width: 1100px;
-            margin: 24px auto 8px;
-            padding: 0 16px;
-        }
-
-        .fav-header h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin: 0 0 8px;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .product-card {
-            position: relative;
-        }
-
-        .remove-like {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 2;
-            width: 36px;
-            height: 36px;
-            display: grid;
-            place-items: center;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 999px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
-            cursor: pointer;
-        }
-
-        .remove-like:hover {
-            filter: brightness(.96);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/favorites.css" />
 </head>
 
 <body>
-
     <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
 

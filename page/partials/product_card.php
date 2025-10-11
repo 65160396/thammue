@@ -10,12 +10,6 @@ $inCart = !empty($it['in_cart']);
         <span>จังหวัด<?= h($it['province'] ?: 'ไม่ระบุ') ?></span>
     </a>
 
-    <!-- ปุ่มตะกร้า -->
-    <button type="button"
-        class="add-cart-bottom <?= $inCart ? 'is-in-cart' : '' ?>"
-        data-id="<?= (int)$it['id'] ?>">
-        <?= $inCart ? 'อยู่ในตะกร้า' : 'เพิ่มใส่ตะกร้า' ?>
-    </button>
 
     <?php if (!empty($opts['showRemoveLike'])): ?>
         <button type="button"
