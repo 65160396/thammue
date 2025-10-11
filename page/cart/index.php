@@ -110,7 +110,7 @@ function imgPath($row)
                 <div><strong>รวมที่เลือก:</strong> <span id="sum">$0.00</span></div>
 
                 <!-- ฟอร์มส่งเฉพาะรายการที่เลือก -->
-                <form id="payForm" action="/page/checkout/index.php" method="post">
+                <form id="payForm" action="/page/checkout/checkout.php" method="post">
                     <input type="hidden" name="ids" id="ids"> <!-- product_id ที่เลือก (คอมมาเซป) -->
                     <button id="payBtn" class="cart-btn-primary" disabled>ชำระเงิน</button>
                 </form>

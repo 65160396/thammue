@@ -1,0 +1,166 @@
+/* /css/checkout.css */
+
+.wrap {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.section {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.section h3 {
+  margin: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 18px;
+}
+
+.section .body {
+  padding: 16px;
+}
+
+/* ที่อยู่จัดส่ง */
+.addr-box {
+  border: 1px solid #f1d2d2;
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.addr-box::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #ff6b6b 0 16px,
+    #9ec5ff 16px 32px,
+    #ffd166 32px 48px
+  );
+}
+
+.addr-name {
+  font-weight: 700;
+}
+
+.addr-actions a {
+  font-size: 12px;
+  border: 1px solid #f00;
+  color: #f00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.addr-line {
+  margin-top: 4px;
+}
+
+/* ตารางสินค้า */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.price {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ชำระเงิน */
+.pay-methods {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.pay-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #f9f9f9;
+  transition: background 0.2s;
+}
+
+.pay-chip:hover {
+  background: #efefef;
+}
+
+/* สรุปยอด */
+.summary {
+  margin-top: 12px;
+}
+
+.summary .row {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.summary .total {
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+  font-weight: 700;
+}
+
+/* ปุ่มหลัก */
+.btn-primary {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.muted {
+  color: #888;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 24px 0;
+}
