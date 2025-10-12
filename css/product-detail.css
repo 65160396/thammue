@@ -305,6 +305,46 @@ body {
   padding: 4px 10px;
 }
 
+/* Gallery */
+.pd-media {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pd-media #pdMain {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 16px;
+}
+.pd-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.pd-thumb {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  opacity: 0.7;
+  border-radius: 10px;
+}
+.pd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+.pd-thumb.is-active {
+  outline: 2px solid var(--primary, #000000);
+  opacity: 1;
+}
+
 /* === Utilities นิดหน่อย === */
 .mt-8 {
   margin-top: 8px;

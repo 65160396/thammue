@@ -1,16 +1,6 @@
 <?php
 session_start();
 
-//$userId = $_SESSION['user_id'] ?? null;   // ชื่อคีย์ตามระบบล็อกอินของคุณ
-//if (!$userId) {
-// พารามิเตอร์ next เพื่อกลับมาหน้ารายละเอียดเดิมหลังล็อกอินเสร็จ
-//$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-// $next = "/page/products/product_detail.php?id=" . $id;
-//header("Location: /page/login.html?next=" . rawurlencode($next));
-//exit;
-//}
-
-
 /* --- DB --- */
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -26,6 +16,7 @@ if ($id <= 0) {
 
 /* --- web path รูป --- */
 $WEB_PREFIX = '/page';
+
 function productMainImageWebPath(array $p): string
 {
     global $WEB_PREFIX;
@@ -42,6 +33,45 @@ function productMainImageWebPath(array $p): string
     return $WEB_PREFIX . "/img/placeholder.png";
 }
 
+/* === NEW: คืนลิสต์รูปทั้งหมดของสินค้า (เอา main ก่อน ตามด้วยไฟล์อื่นในโฟลเดอร์) === */
+function productAllImagesWeb(array $p): array
+{
+    global $WEB_PREFIX;
+    $out = [];
+
+    // main จาก DB
+    if (!empty($p['main_image'])) {
+        $out[] = (strpos($p['main_image'], '/uploads/') === 0)
+            ? $WEB_PREFIX . $p['main_image']
+            : $p['main_image'];
+    } else {
+        // main_* ในโฟลเดอร์
+        $dirFs = realpath(__DIR__ . "/../uploads/products/" . $p['id']);
+        if ($dirFs && is_dir($dirFs)) {
+            $foundMain = glob($dirFs . "/main_*.*");
+            if ($foundMain) {
+                $out[] = $WEB_PREFIX . "/uploads/products/{$p['id']}/" . basename($foundMain[0]);
+            }
+        }
+    }
+
+    // ไฟล์อื่นๆ ในโฟลเดอร์ (เรียงตามชื่อไฟล์)
+    $dirFs = realpath(__DIR__ . "/../uploads/products/" . $p['id']);
+    if ($dirFs && is_dir($dirFs)) {
+        $all = glob($dirFs . "/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}", GLOB_BRACE);
+        natcasesort($all);
+        $main = $out[0] ?? null;
+        foreach ($all as $abs) {
+            $web = $WEB_PREFIX . "/uploads/products/{$p['id']}/" . basename($abs);
+            if ($web === $main) continue;
+            $out[] = $web;
+        }
+    }
+
+    if (!$out) $out[] = $WEB_PREFIX . "/img/placeholder.png";
+    return array_values($out);
+}
+
 /* --- ดึงข้อมูลสินค้า + จังหวัดร้าน --- */
 $sql = "SELECT
           p.id,
@@ -50,10 +80,8 @@ $sql = "SELECT
           p.description,
           p.main_image,
           p.created_at,
-          -- รวมยอดขายเฉพาะแถวที่จ่ายเงินแล้ว
           COALESCE(SUM(CASE WHEN oi.status='paid' THEN oi.qty ELSE 0 END), 0) AS sold_count,
           s.shop_name,
-          -- ถ้าจังหวัดร้านว่าง ให้ใช้จังหวัดที่บันทึกกับสินค้าแทน
           COALESCE(s.province, p.province) AS shop_province
         FROM products p
         LEFT JOIN order_items oi ON oi.product_id = p.id
@@ -72,15 +100,15 @@ if (!$p) {
     exit('ไม่พบสินค้า');
 }
 
-$img   = productMainImageWebPath($p);
+$img     = productMainImageWebPath($p);
+$gallery = productAllImagesWeb($p);   // <<< ใช้รูปทั้งหมดที่หาได้
 $name  = htmlspecialchars($p['name'] ?? '');
 $price = is_numeric($p['price']) ? '$' . number_format((float)$p['price'], 0) : htmlspecialchars($p['price'] ?? '');
 $desc  = nl2br(htmlspecialchars($p['description'] ?? ''));
 
-$sold  = (int)($p['sold_count'] ?? 0);                     // << ใช้ตัวนี้แสดงป้าย “ขายแล้ว … ชิ้น”
+$sold  = (int)($p['sold_count'] ?? 0);
 $prov  = htmlspecialchars($p['shop_province'] ?: 'ไม่ระบุจังหวัด');
 $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน');
-//$shop  = htmlspecialchars($p['shop_name'] ?? 'ไม่ระบุร้าน');
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -90,46 +118,50 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><?= $name ?> | Thammue</title>
 
-    <!-- สไตล์หลักของเว็บ -->
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/product-detail.css" />
-
 </head>
 
 <body>
     <?php include __DIR__ . '/../partials/site-header.php'; ?>
 
-
     <div class="pd-container">
         <!-- ส่วนบน: รูป + ข้อมูล -->
         <section class="pd-hero">
+            <!-- === NEW: แกลเลอรีรูป === -->
             <div class="pd-media">
-                <img src="<?= $img ?>" alt="<?= $name ?>">
+                <img id="pdMain" src="<?= htmlspecialchars($gallery[0]) ?>" alt="<?= $name ?>">
+
+                <?php if (count($gallery) > 1): ?>
+                    <div class="pd-thumbs" role="list">
+                        <?php foreach ($gallery as $i => $g): ?>
+                            <button
+                                class="pd-thumb<?= $i === 0 ? ' is-active' : '' ?>"
+                                data-index="<?= $i ?>"
+                                data-src="<?= htmlspecialchars($g) ?>"
+                                aria-label="ดูรูปที่ <?= $i + 1 ?>"
+                                role="listitem">
+                                <img src="<?= htmlspecialchars($g) ?>" alt="รูปที่ <?= $i + 1 ?>">
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="pd-info">
                 <h1 class="pd-title"><?= $name ?></h1>
 
-                <!-- ป้ายสรุป -->
                 <div class="pd-badges mt-8">
                     <span id="soldPill" class="pd-pill">ขายแล้ว <?= $sold ?> ชิ้น</span>
                 </div>
 
-
                 <div class="pd-price"><?= $price ?></div>
 
-                <!-- ลบก้อน .pd-ship ทั้งหมดออก ถ้าไม่ได้ใช้ -->
-
-                <!-- แถวหัวใจ (เปลี่ยนคลาสให้ตรง CSS) -->
                 <div class="fav-row">
                     <button id="likeBtn" class="fav-btn" aria-pressed="false" aria-label="ถูกใจ">🤍</button>
                     <span id="likeCount" class="fav-count">0</span>
                 </div>
 
-
-
-
-                <!-- ปุ่ม -->
                 <div class="pd-controls">
                     <div class="qty">
                         <label>จำนวน</label>
@@ -146,13 +178,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                         </button>
                         <button class="btn btn-primary">ซื้อสินค้า</button>
                     </div>
-
                 </div>
 
                 <div class="pd-location">จังหวัด<?= $prov ?> · ร้าน: <?= $shop ?></div>
             </div>
         </section>
-
 
         <!-- การ์ดร้านค้า -->
         <section class="pd-shop-card">
@@ -175,15 +205,6 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         </section>
     </div>
 
-    <script>
-        // toggle ปุ่มขนาด
-        document.querySelectorAll('.size-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
-                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('is-active'));
-                btn.classList.add('is-active');
-            });
-        });
-    </script>
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
     <script src="/js/store/shop-toggle.js"></script>
@@ -193,13 +214,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         });
     </script>
 
-
     <script>
         const ITEM_ID = <?= (int)$p['id'] ?>;
-
         const likeBtn = document.getElementById('likeBtn');
         const likeCount = document.getElementById('likeCount');
-        const soldPill = document.getElementById('soldPill'); // ถ้าจะอัปเดตแบบไดนามิก
+        const soldPill = document.getElementById('soldPill');
 
         const here = window.location.pathname + window.location.search;
         const toLogin = () => {
@@ -213,13 +232,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     cache: 'no-store'
                 });
                 if (!res.ok) return;
-                const data = await res.json(); // { count, liked, sold_count? }
+                const data = await res.json();
                 likeCount.textContent = data.count ?? 0;
                 likeBtn.textContent = data.liked ? '❤️' : '🤍';
                 likeBtn.dataset.liked = data.liked ? '1' : '0';
                 likeBtn.setAttribute('aria-pressed', data.liked ? 'true' : 'false');
-
-                // ถ้า API ส่ง sold_count มาด้วย จะอัปเดตป้ายได้ (ไม่บังคับ)
                 if (typeof data.sold_count !== 'undefined' && soldPill) {
                     soldPill.textContent = `ขายแล้ว ${data.sold_count} ชิ้น`;
                 }
@@ -230,8 +247,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
 
         async function toggleLike() {
             try {
-                const wasLiked = (likeBtn.dataset.liked === '1'); // สถานะเดิมก่อนยิง API
-
+                const wasLiked = (likeBtn.dataset.liked === '1');
                 const res = await fetch('/page/backend/likes_sale/toggle.php', {
                     method: 'POST',
                     headers: {
@@ -243,46 +259,37 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                         id: ITEM_ID
                     })
                 });
-
                 if (res.status === 401) {
                     toLogin();
                     return;
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
-
-                const data = await res.json(); // { count, liked }
-
-                // อัปเดต UI ภายในหน้ารายละเอียด
+                const data = await res.json();
                 likeCount.textContent = data.count ?? 0;
                 likeBtn.textContent = data.liked ? '❤️' : '🤍';
                 likeBtn.dataset.liked = data.liked ? '1' : '0';
                 likeBtn.setAttribute('aria-pressed', data.liked ? 'true' : 'false');
 
-                // ===== ส่งสัญญาณให้ header ปรับ badge =====
-                // คำนวณความต่างจากสถานะเดิม -> +1/-1/0
                 const delta = (data.liked === wasLiked) ? 0 : (data.liked ? 1 : -1);
                 window.dispatchEvent(new CustomEvent('favorites:changed', {
                     detail: {
                         delta
-                    } // fav-badge.js จะเพิ่ม/ลดเลขจาก delta
+                    }
                 }));
             } catch (e) {
                 console.error('toggleLike error', e);
             }
         }
-
         likeBtn.addEventListener('click', toggleLike);
         loadLikeStats();
     </script>
 
     <script src="/js/cart.js"></script>
-
     <script>
         document.getElementById('addToCartDetail')?.addEventListener('click', async (e) => {
             e.preventDefault();
             const btn = e.currentTarget;
             const id = btn.dataset.id;
-
             try {
                 const res = await fetch('/page/cart/add_to_cart.php', {
                     method: 'POST',
@@ -294,16 +301,13 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                         id
                     })
                 });
-
                 if (res.status === 401) {
                     location.href = '/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
                     return;
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
 
-                const data = await res.json(); // { in_cart: bool, cart_count: number }
-
-                // อัปเดตปุ่ม
                 if (data.in_cart) {
                     btn.textContent = 'อยู่ในตะกร้า';
                     btn.classList.add('is-in-cart');
@@ -312,16 +316,11 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     btn.classList.remove('is-in-cart');
                 }
 
-                // 🔴 สำคัญ: แจ้ง header ให้เปลี่ยนเลข badge ตะกร้า
                 window.dispatchEvent(new CustomEvent('cart:set', {
                     detail: {
                         count: data.cart_count || 0
                     }
                 }));
-
-                // ถ้าต้องการให้กดแล้วเด้งไปหน้าตะกร้า ให้เปิดบรรทัดนี้
-                // location.href = '/page/cart/index.php';
-
             } catch (err) {
                 console.error(err);
                 alert('เพิ่ม/ลบจากตะกร้าไม่สำเร็จ');
@@ -329,8 +328,33 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         });
     </script>
 
-    <script src="/js/cart-badge.js" defer></script>
+    <!-- === NEW: สคริปต์สลับรูปตาม thumbnail === -->
+    <script>
+        (function() {
+            const main = document.getElementById('pdMain');
+            const thumbs = Array.from(document.querySelectorAll('.pd-thumb'));
+            if (!main || thumbs.length === 0) return;
 
+            let current = 0;
+
+            function setActive(i) {
+                current = i;
+                main.src = thumbs[i].dataset.src;
+                thumbs.forEach(b => b.classList.remove('is-active'));
+                thumbs[i].classList.add('is-active');
+            }
+
+            thumbs.forEach((btn, i) => btn.addEventListener('click', () => setActive(i)));
+
+            // รองรับปุ่มลูกศรซ้าย/ขวา
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' && thumbs.length > 1) setActive((current + 1) % thumbs.length);
+                else if (e.key === 'ArrowLeft' && thumbs.length > 1) setActive((current - 1 + thumbs.length) % thumbs.length);
+            });
+        })();
+    </script>
+
+    <script src="/js/cart-badge.js" defer></script>
 </body>
 
 </html>
