@@ -853,18 +853,34 @@ a {
 }
 
 /* เอฟเฟกต์โชว์/ซ่อนสำหรับ flash */
-#flash {
+.flash-toast {
+  position: fixed;
+  top: 80px; /* ขยับให้พ้นแถบหัว */
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background: #0a7a3d;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
   opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 1100;
 }
-#flash.show {
+.flash-toast.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
-#flash.hide {
-  opacity: 0;
-  transform: translateY(-4px);
+/* สีสำเร็จ/ผิดพลาด (เลือกใช้ได้) */
+.flash-toast.ok {
+  background: #e6fff0;
+  color: #0a7a3d;
+}
+.flash-toast.err {
+  background: #ffecec;
+  color: #b50000;
 }
 
 /* ชื่อผู้ใช้ถัดจากไอคอน + เมนูผู้ใช้ */
