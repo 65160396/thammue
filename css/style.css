@@ -424,40 +424,6 @@ li a:hover {
   text-decoration: none;
 }
 
-/* หน้าแนะนำสินค้า */
-.recommended-products {
-  background: #f9f9f9;
-  padding: 20px;
-  margin: 30px auto;
-  border-radius: 8px;
-  max-width: 1200px;
-}
-.recommended-products h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-}
-.product-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-}
-.product-card img {
-  max-width: 100%;
-  height: 180px;
-  width: 98%;
-  border-radius: 6px;
-  margin-bottom: 10px;
-}
-
 /* พื้นหลัง footer */
 .site-footer {
   background: #1a1a1a;
@@ -853,6 +819,7 @@ a {
 }
 
 /* เอฟเฟกต์โชว์/ซ่อนสำหรับ flash */
+/* ===== Flash Toast ===== */
 .flash-toast {
   position: fixed;
   top: 80px; /* ขยับให้พ้นแถบหัว */
@@ -881,6 +848,17 @@ a {
 .flash-toast.err {
   background: #ffecec;
   color: #b50000;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ชื่อผู้ใช้ถัดจากไอคอน + เมนูผู้ใช้ */
