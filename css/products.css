@@ -98,10 +98,14 @@
   margin: 8px 0 4px;
   line-height: 1.3;
 }
+
 .product-price {
   margin: 0;
-  font-weight: 700;
+  font-size: 15px; /* ขนาดเล็กลงจากเดิม (เคย 24px หรือใหญ่กว่า) */
+  font-weight: 500; /* น้ำหนักเบาลง */
+  color: #333; /* สีเทาเข้มหน่อย แทนดำสนิท */
 }
+
 .product-province {
   display: block;
   color: #666;
