@@ -1,0 +1,133 @@
+/* เฉพาะหน้า /page/orders/view.php */
+.order-view-page .wrap {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+.order-view-page .btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1px solid #e5e7eb;
+}
+.order-view-page .btn.ghost {
+  background: #fff;
+}
+.order-view-page .btn.primary {
+  border-color: #6d28d9;
+  background: #6d28d9;
+  color: #fff;
+}
+.order-view-page .btn.back {
+  margin-bottom: 12px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.order-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.order-summary .oid {
+  font-weight: 700;
+  font-size: 18px;
+}
+.order-summary .meta .label {
+  color: #64748b;
+}
+.order-summary .total {
+  margin-top: 6px;
+}
+.order-summary .paymethod {
+  color: #475569;
+  font-size: 13px;
+}
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+.badge.st-pending {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+.badge.st-paid {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+.badge.st-shipped {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+.badge.st-completed {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.badge.st-cancelled {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.order-items .item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.order-items .item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.order-items .thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+.order-items .name {
+  font-weight: 600;
+}
+.order-items .meta {
+  color: #475569;
+  font-size: 13px;
+}
+
+.shipping .addr > div {
+  margin: 2px 0;
+}
+.tracking .muted,
+.payment-proof .muted {
+  color: #64748b;
+}
+
+.payment-proof .slip {
+  max-width: 240px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}

@@ -1,0 +1,179 @@
+/* ใช้เฉพาะหน้า orders */
+.orders-page .wrap {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.orders-page h1 {
+  font-size: 24px;
+  margin: 12px 0 16px;
+}
+
+/* ---------- Filters ---------- */
+.order-filters {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 16px;
+  flex-wrap: wrap;
+}
+.order-filters .tab {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+}
+.order-filters .tab.active {
+  background: #000; /* พื้นหลังดำ */
+  color: #fff; /* ตัวอักษรขาว */
+  border-color: #000; /* กรอบดำ */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); /* เงาดำอ่อนๆ */
+  transition: all 0.2s ease; /* เพิ่มเอฟเฟกต์นุ่มเวลาเปลี่ยน */
+}
+
+/* ---------- List container ---------- */
+.order-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* =========================
+   NEW: Header row (grey) + data rows (4 columns)
+   ========================= */
+.order-header-row,
+.order-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 140px 200px; /* [ชื่อ | ยอดรวม | สถานะ | ลิงก์] */
+  align-items: center;
+  gap: 16px;
+}
+
+/* หัวตารางเทาอ่อน */
+.order-header-row {
+  background: #000000;
+  border-radius: 8px;
+  padding: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.order-header-row .hint {
+  font-weight: 400;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* แถวข้อมูล */
+.order-row {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* คอลัมน์ชื่อ + วันที่เวลาใต้ */
+.c-name .title {
+  font-weight: 700;
+}
+.c-name .sub {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ยอดรวมให้เด่น */
+.c-total {
+  font-weight: 600;
+}
+
+/* สถานะ (badge) */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+.badge.st-pending,
+.badge.st-pending_payment,
+.badge.st-cod_pending {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.badge.st-paid {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+.badge.st-shipped {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+.badge.st-completed {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.badge.st-cancelled {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* ลิงก์ดูรายละเอียดเป็นข้อความขวาสุด */
+.ta-right {
+  text-align: right;
+}
+.view-link {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 500;
+}
+.view-link:hover,
+.view-link:focus {
+  text-decoration: underline;
+}
+
+/* ---------- Empty state ---------- */
+.empty {
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+@media (max-width: 800px) {
+  .order-header-row,
+  .order-row {
+    grid-template-columns: 1fr 120px 120px 1fr;
+  }
+}
+@media (max-width: 640px) {
+  /* ซ่อนหัวตารางบนจอเล็ก แล้วจัดแถวเป็น 2 แถว */
+  .order-header-row {
+    display: none;
+  }
+  .order-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "name view"
+      "total status";
+    row-gap: 8px;
+  }
+  .c-name {
+    grid-area: name;
+  }
+  .c-view {
+    grid-area: view;
+    text-align: right;
+  }
+  .c-total {
+    grid-area: total;
+  }
+  .c-status {
+    grid-area: status;
+  }
+}

@@ -18,7 +18,7 @@ var guestLinks = [
 
 var userLinks = [
 '<a href="/page/profile.html" role="menuitem">บัญชีของฉัน</a>',
-'<a href="/page/my_order.html" role="menuitem">การซื้อของฉัน</a>',
+'<a href="/page/orders/index.php" role="menuitem">การซื้อของฉัน</a>',
 '<a href="/page/change_password.html" role="menuitem">เปลี่ยนรหัสผ่าน</a>',
 '<hr>',
 '<a href="/page/backend/logout.php" role="menuitem" class="logout">ออกจากระบบ</a>'

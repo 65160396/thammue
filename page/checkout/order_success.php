@@ -37,7 +37,7 @@ $method = htmlspecialchars($_GET['m'] ?? '');
                         ระบบได้รับข้อมูลการชำระเงินแล้ว ขอบคุณที่ใช้บริการ
                     <?php endif; ?>
                 </p>
-                <a class="btn btn-primary" href="/page/orders.php">ดูคำสั่งซื้อของฉัน</a>
+                <a class="btn btn-primary" href="/page/orders/index.php">ดูคำสั่งซื้อของฉัน</a>
             </div>
         </div>
     </div>
