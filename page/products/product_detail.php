@@ -163,14 +163,6 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 </div>
 
                 <div class="pd-controls">
-                    <div class="qty">
-                        <label>จำนวน</label>
-                        <select>
-                            <?php for ($i = 1; $i <= 10; $i++): ?>
-                                <option value="<?= $i ?>"><?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
 
                     <div class="pd-actions">
                         <button id="addToCartDetail" class="btn btn-outline" data-id="<?= (int)$p['id'] ?>">
