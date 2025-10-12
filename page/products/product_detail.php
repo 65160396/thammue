@@ -141,10 +141,10 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     </div>
 
                     <div class="pd-actions">
-                        <button id="addToCartDetail" class="btn-outline" data-id="<?= (int)$p['id'] ?>">
+                        <button id="addToCartDetail" class="btn btn-outline" data-id="<?= (int)$p['id'] ?>">
                             🛒 เพิ่มไปยังรถเข็น
                         </button>
-                        <button class="btn-primary">ซื้อสินค้า</button>
+                        <button class="btn btn-primary">ซื้อสินค้า</button>
                     </div>
 
                 </div>

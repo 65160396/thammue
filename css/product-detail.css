@@ -121,6 +121,42 @@ body {
   display: flex;
   gap: 10px;
 }
+
+/* base button (ทุกปุ่มใช้ร่วมกัน) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.2s ease,
+    color 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+}
+.btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12), 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
+
 .btn-primary,
 .btn-outline,
 .btn-chip {
@@ -138,6 +174,7 @@ body {
 .btn-primary:hover {
   opacity: 0.9;
 }
+
 .btn-outline {
   background: #fff;
   color: #111;
@@ -147,7 +184,6 @@ body {
   background: #111;
   color: #fff;
 }
-
 .pd-location {
   color: var(--pd-muted);
   margin-top: 10px;

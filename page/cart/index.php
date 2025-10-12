@@ -118,7 +118,7 @@ function imgPath($row)
 
                 <!-- ฟอร์มส่งเฉพาะรายการที่เลือก -->
                 <form id="payForm" action="/page/checkout/checkout.php" method="post">
-                    <button id="payBtn" class="cart-btn-primary" disabled>ชำระเงิน</button>
+                    <button id="payBtn" class="cart-btn-primary is-attention" disabled>ชำระเงิน</button>
                 </form>
 
             </div>
@@ -268,10 +268,6 @@ function imgPath($row)
             updateQty(id, qty, row);
         });
     </script>
-
-
-
-
 
 </body>
 

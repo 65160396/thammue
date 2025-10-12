@@ -97,10 +97,25 @@
   border-radius: 10px;
   padding: 10px 16px;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform-origin: center;
 }
+
+.cart-page .cart-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cart-page .cart-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
 .cart-page .cart-btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none; /* กันไม่ให้เด้งตอน disabled */
+  box-shadow: none;
 }
 
 .qty {

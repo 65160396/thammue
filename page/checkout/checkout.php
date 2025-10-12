@@ -172,8 +172,6 @@ function full_addr($p)
                 <div class="pay-methods">
                     <label class="pay-chip"><input type="radio" name="pay_method" value="qr" checked> QR พร้อมเพย์</label>
                     <label class="pay-chip"><input type="radio" name="pay_method" value="cod"> เก็บเงินปลายทาง</label>
-                    <label class="pay-chip"><input type="radio" name="pay_method" value="kbank"> KBank</label>
-                    <label class="pay-chip"><input type="radio" name="pay_method" value="ktb"> Krungthai</label>
                 </div>
 
                 <div class="summary">

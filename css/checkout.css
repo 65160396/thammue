@@ -134,22 +134,33 @@
 /* ปุ่มหลัก (อยู่เฉพาะหน้า checkout) */
 .checkout-page .btn-primary {
   display: inline-block;
-  background: #000000; /* เปลี่ยนสีปุ่มได้ที่นี่ */
+  background: #000;
   color: #fff;
   border: none;
   border-radius: 6px;
   padding: 10px 16px;
   cursor: pointer;
   margin-top: 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  transform-origin: center;
 }
 
-.checkout-page .btn-primary:hover {
-  filter: brightness(0.95);
+.checkout-page .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  filter: brightness(0.98);
+}
+
+.checkout-page .btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
 .checkout-page .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .checkout-page .muted {
