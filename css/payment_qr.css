@@ -1,0 +1,141 @@
+/* /css/payment_qr.css */
+/* หน้าชำระเงินด้วยพร้อมเพย์ (PromptPay QR) */
+
+body {
+  background: #f6f7fb;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh; /* ✅ ให้สูงเต็มจอเกือบสุด แล้วจัดกลางแนวตั้ง */
+  text-align: center; /* ✅ ทุกอย่างในกล่องกลาง */
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.card .hd {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.card .bd {
+  padding: 24px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column; /* ✅ เรียงจากบนลงล่าง */
+  align-items: center; /* ✅ จัดทุกอย่างให้อยู่กลาง */
+  justify-content: center;
+  gap: 16px;
+}
+
+.qr-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #ddd;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.qr-box img {
+  width: 260px;
+  max-width: 100%;
+  height: auto;
+}
+
+.meta {
+  line-height: 1.8;
+  text-align: center; /* ✅ ให้ข้อความอยู่ตรงกลาง */
+  width: 100%; /* ✅ บังคับเต็มความกว้าง เพื่อให้ text-align มีผล */
+}
+
+.meta b {
+  font-weight: 700;
+}
+
+.amt {
+  font-size: 28px;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  justify-content: center; /* ✅ จัดปุ่มให้อยู่ตรงกลางแนวนอน */
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px; /* ✅ ทำให้กว้างเท่ากัน */
+  height: 44px; /* ✅ ความสูงเท่ากัน */
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none; /* ✅ เอาเส้นใต้ลิงก์ออก */
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  background: #000000; /* สีฟ้า */
+  color: #fff; /* ตัวอักษรขาว */
+}
+
+.btn-primary:hover {
+  background: #000000; /* ฟ้าเข้มเมื่อ hover */
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 2px solid #000000;
+  color: #000000;
+}
+
+.btn-ghost:hover {
+  background: #000000;
+  color: #fff;
+}
+
+.note {
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .qr-box img {
+    width: 200px;
+    margin: 0 auto;
+  }
+
+  .amt {
+    font-size: 24px;
+  }
+}

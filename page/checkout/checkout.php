@@ -190,6 +190,15 @@ function full_addr($p)
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
 
+    <script src="/page/js/cart.js"></script>
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleOpenOrMyShop();
+        });
+    </script>
+
+
 </body>
 
 </html>
