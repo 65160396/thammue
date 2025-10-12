@@ -1,4 +1,4 @@
-// /js/products.js
+
 (function () {
   // --- utility: escape text ปลอดภัย ---
   function esc(s) {

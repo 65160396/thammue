@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Thammue</title>
-    <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/instyle.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
 
   <body>
@@ -30,6 +30,10 @@
           <a href="/page/main.html" class="brand-text">THAMMUE</a>
         </div>
 
+        <button class="hamburger" id="hamburgerBtn" aria-label="เมนู">
+          <img src="/img/Icon/menu.png" alt>
+        </button>
+
         <div class="search-container">
           <div class="search-group">
             <input type="text" placeholder="ค้นหาสินค้า" />
@@ -38,8 +42,7 @@
             </button>
           </div>
 
-          <div class="icon-buttons">
-
+          <div class="icon-buttons desktop-icons">
             <a class="action-button" href="/page/favorites/index.php"
               aria-label="รายการโปรด">
               <img src="/img/Icon/heart.png" alt="รายการโปรด">
@@ -125,7 +128,7 @@
   });
 </script>
 
-      <script src="/js/productsforsale/products.js"></script>
+      <script src="/js/productsforsale/products-list.js"></script>
       <script>
   document.addEventListener('DOMContentLoaded', () => {
     renderProducts({
@@ -134,9 +137,20 @@
     });
   });
 </script>
+      <script src="/js/nav/hamburger.js"></script>
 
       <script src="/js/fav-badge.js" defer></script>
       <script src="/js/cart-badge.js" defer></script>
+
+      <div class="icons-drawer" id="iconsDrawer" hidden>
+        <button class="icons-drawer__close" id="iconsClose">ปิด</button>
+        <a href="/page/favorites/index.php"><img src="/img/Icon/heart.png" alt>
+          รายการโปรด</a>
+        <a href="/page/cart/index.php"><img src="/img/Icon/shopping-cart.png"
+            alt> ตะกร้า</a>
+        <a href="#"><img src="/img/Icon/chat.png" alt> แชท</a>
+      </div>
+      <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
 
     </body>
   </html>
