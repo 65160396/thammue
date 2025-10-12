@@ -103,14 +103,18 @@
   align-items: center;
   gap: 6px;
   border: 1px solid #ccc;
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
   background: #f9f9f9;
-  transition: background 0.2s;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease,
+    border-color 0.16s ease;
+  transform-origin: center;
 }
 
 .checkout-page .pay-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
   background: #efefef;
 }
 
