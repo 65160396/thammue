@@ -12,6 +12,47 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ]);
 
+/* --- helper: สร้าง web path ของรูปสินค้าให้ถูกต้อง --- */
+$WEB_PREFIX = '/page';
+function productImageWeb(int $productId, ?string $imagePath): string
+{
+    global $WEB_PREFIX;
+
+    // URL แบบเต็ม
+    if ($imagePath && preg_match('~^https?://~i', $imagePath)) {
+        return $imagePath;
+    }
+    // พาธที่ขึ้นต้น /uploads/ → เติม /page ข้างหน้า
+    if ($imagePath && strpos($imagePath, '/uploads/') === 0) {
+        return $WEB_PREFIX . $imagePath;
+    }
+    // เก็บมาเป็นพาธสัมพัทธ์อื่นๆ (เช่น uploads/... หรือ img/...) → เติม /page/ ข้างหน้า
+    if ($imagePath && strpos($imagePath, '/') !== false) {
+        $imagePath = ltrim($imagePath, '/');
+        return $WEB_PREFIX . '/' . $imagePath;
+    }
+    // เก็บมาเป็น "ชื่อไฟล์" ล้วนๆ → ประกอบพาธโฟลเดอร์ของ product นั้น
+    if ($imagePath) {
+        return $WEB_PREFIX . "/uploads/products/{$productId}/" . $imagePath;
+    }
+
+    // Fallback: หา main_* ในโฟลเดอร์อัปโหลด
+    $dirFs = realpath(__DIR__ . "/../uploads/products/" . $productId);
+    if ($dirFs && is_dir($dirFs)) {
+        $found = glob($dirFs . "/main_*.*");
+        if ($found) {
+            return $WEB_PREFIX . "/uploads/products/{$productId}/" . basename($found[0]);
+        }
+        // ถ้าไม่มี main_* ก็ลองหยิบไฟล์แรกๆ ในโฟลเดอร์
+        $any = glob($dirFs . "/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}", GLOB_BRACE);
+        if ($any) {
+            return $WEB_PREFIX . "/uploads/products/{$productId}/" . basename($any[0]);
+        }
+    }
+    // รูปสำรอง
+    return $WEB_PREFIX . "/img/placeholder.png";
+}
+
 /* --- ดึงข้อมูลโปรไฟล์ --- */
 $stmt = $pdo->prepare("
   SELECT u.email,
@@ -68,8 +109,6 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $items = $stmt->fetchAll();
 
-
-
 /* --- คำนวณยอดรวม --- */
 $subtotal = 0;
 foreach ($items as $it) $subtotal += ((float)$it['price'] * (int)$it['qty']);
@@ -96,7 +135,6 @@ function full_addr($p)
 <body class="checkout-page">
 
     <?php
-    // ให้ header แสดงเฉพาะแถบบน (โลโก้/ค้นหา/ไอคอน) และซ่อนเมนูหมวดหมู่
     $HEADER_NO_CATS = true;
     include __DIR__ . '/../partials/site-header.php';
     ?>
@@ -144,13 +182,14 @@ function full_addr($p)
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($items as $it): ?>
+                            <?php foreach ($items as $it):
+                                // คำนวณ web path ของรูปให้ถูกต้องทุกกรณี
+                                $imgWeb = productImageWeb((int)$it['product_id'], $it['image'] ?? null);
+                            ?>
                                 <tr>
                                     <td>
                                         <div class="item">
-                                            <?php if ($it['image']): ?>
-                                                <img src="<?= htmlspecialchars($it['image']) ?>" class="thumb">
-                                            <?php endif; ?>
+                                            <img src="<?= htmlspecialchars($imgWeb) ?>" class="thumb" alt="<?= htmlspecialchars($it['name']) ?>">
                                             <span><?= htmlspecialchars($it['name']) ?></span>
                                         </div>
                                     </td>
@@ -186,10 +225,8 @@ function full_addr($p)
         </form>
     </div>
 
-
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
-
     <script src="/page/js/cart.js"></script>
     <script src="/js/store/shop-toggle.js"></script>
     <script>
@@ -197,7 +234,6 @@ function full_addr($p)
             toggleOpenOrMyShop();
         });
     </script>
-
 
 </body>
 
