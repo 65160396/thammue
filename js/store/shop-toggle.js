@@ -19,7 +19,7 @@ async function toggleOpenOrMyShop(linkId = 'openOrMyShop') {
       link.href = MY_STORE_URL(data.shop.id);     // << เปลี่ยนมาใช้ indexstore.html
     } else if (data.code === 'NOT_LOGIN') {
       link.textContent = 'เข้าสู่ระบบ';
-      link.href = '/page/login.php';              // ถ้าคุณใช้ .php
+      link.href = '/page/login.html';              // ถ้าคุณใช้ .php
     } else { // NO_SHOP
       link.textContent = 'เปิดร้านค้า';
       link.href = OPEN_SHOP_URL;                  // << เปลี่ยนมาใช้ open_a_shop.html

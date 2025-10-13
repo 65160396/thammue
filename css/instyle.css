@@ -921,3 +921,8 @@ a {
   /* ถ้ารูปเป็นสีดำบนพื้นดำให้เปิดบรรทัดนี้ */
   /* filter: invert(100%); */
 }
+
+/* ให้ badge หายเมื่อมี hidden */
+.icon-badge[hidden] {
+  display: none !important;
+}

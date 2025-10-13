@@ -105,7 +105,6 @@ body {
   margin: 12px 0 8px;
 }
 
-
 .pd-actions {
   display: flex;
   gap: 10px;
@@ -406,4 +405,9 @@ body {
   .pd-controls {
     flex-wrap: wrap;
   }
+}
+
+/* ให้ badge หายเมื่อมี hidden */
+.icon-badge[hidden] {
+  display: none !important;
 }

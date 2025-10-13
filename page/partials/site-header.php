@@ -88,32 +88,36 @@
 <script src="/js/fav-badge.js" defer></script>
 
 <script>
-    function setCartBadge(n) {
+    (function() {
         const el = document.getElementById('cartBadge');
         if (!el) return;
-        n = parseInt(n || 0, 10);
-        if (n > 0) {
+
+        const show = (n) => {
+            n = Math.max(0, Number(n) || 0);
             el.textContent = n;
-            el.style.display = 'inline-flex';
-        } else {
-            el.textContent = '';
-            el.style.display = 'none';
-        }
-    }
+            el.hidden = n <= 0;
+        };
 
-    (async () => {
-        try {
-            const res = await fetch('/page/cart/get_cart_count.php', {
-                credentials: 'include',
-                cache: 'no-store'
-            });
-            if (!res.ok) return;
-            const data = await res.json(); // ให้ get_cart.php ตอบ {count: ...}
-            setCartBadge(data.count || 0);
-        } catch (e) {
-            console.error(e);
+        async function refresh() {
+            try {
+                const r = await fetch('/page/backend/cart/count.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (!r.ok) return;
+                const {
+                    count = 0
+                } = await r.json();
+                show(count);
+            } catch {}
         }
+
+        document.addEventListener('DOMContentLoaded', refresh);
+
+        // ใช้ set เป็นมาตรฐานเดียว
+        window.addEventListener('cart:set', (e) => show(e.detail?.count));
+
+        // เผื่อหน้าเก่าที่ยังยิง cart:changed มา → รีเฟรชจากเซิร์ฟเวอร์แทน (กันเลขเพี้ยน)
+        window.addEventListener('cart:changed', () => refresh());
     })();
-
-    window.addEventListener('cart:set', e => setCartBadge(e.detail?.count ?? 0));
 </script>

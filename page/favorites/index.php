@@ -24,7 +24,7 @@ $sql = "SELECT
         WHERE f.user_id = ?
         ORDER BY f.created_at DESC";
 $stm = $pdo->prepare($sql);
-$stm->execute([$userId, $userId]); // ← ส่ง $userId สองครั้งให้ JOIN cart ทำงาน
+$stm->execute([$userId, $userId]); // ส่ง $userId สองครั้งให้ JOIN cart ทำงาน
 $items = $stm->fetchAll();
 
 /* helper */
@@ -63,13 +63,12 @@ function h($s)
     include __DIR__ . '/../partials/site-header.php';
     ?>
 
-
     <div class="fav-header">
         <h1>รายการโปรด</h1>
     </div>
 
     <div class="recommended-products" style="padding-top:0">
-        <div class="product-grid">
+        <div id="favGrid" class="product-grid">
             <?php if (!$items): ?>
                 <div class="empty" style="grid-column:1 / -1;">ยังไม่มีรายการโปรด</div>
             <?php else: ?>
@@ -84,7 +83,10 @@ function h($s)
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script> <!-- เมนูโปรไฟล์ dropdown -->
 
-    <!-- สคริปต์: เอาออกจากรายการโปรด -->
+    <!-- ให้ badge ทั้งสองทำงานทุกหน้า -->
+    <script src="/js/cart-badge.js" defer></script>
+
+    <!-- เอาออกจากรายการโปรด -->
     <script>
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-like');
@@ -111,7 +113,29 @@ function h($s)
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
-                if (!data.liked) btn.closest('.product-card')?.remove();
+
+                if (!data.liked) {
+                    // ลบการ์ดออกจาก DOM
+                    const card = btn.closest('.product-card');
+                    card?.remove();
+
+                    // ลด badge รายการโปรดทันที
+                    window.dispatchEvent(new CustomEvent('favorites:changed', {
+                        detail: {
+                            delta: -1
+                        }
+                    }));
+
+                    // ถ้าเหลือ 0 ชิ้น แสดงกล่องว่าง
+                    const grid = document.getElementById('favGrid');
+                    if (grid && !grid.querySelector('.product-card')) {
+                        const empty = document.createElement('div');
+                        empty.className = 'empty';
+                        empty.style.gridColumn = '1 / -1';
+                        empty.textContent = 'ยังไม่มีรายการโปรด';
+                        grid.appendChild(empty);
+                    }
+                }
             } catch (err) {
                 console.error(err);
                 alert('เอาออกไม่สำเร็จ');
@@ -119,19 +143,15 @@ function h($s)
         });
     </script>
 
-    <!-- สคริปต์: ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
+    <!-- ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
     <script src="/page/js/cart.js"></script>
+
     <script src="/js/store/shop-toggle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             toggleOpenOrMyShop();
         });
     </script>
-
-
-
-
-
 </body>
 
 </html>
