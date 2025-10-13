@@ -69,10 +69,12 @@
 /* แถวข้อมูล */
 .order-row {
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 0; /* ตัดความโค้ง */
   padding: 14px 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: none; /* ลบเงาออก */
+  margin: 0; /* ลบช่องว่างรอบนอก */
+  border-bottom: 1px solid #eee; /* ให้มีเส้นคั่นบางๆ ระหว่างแต่ละแถว */
 }
 
 /* คอลัมน์ชื่อ + วันที่เวลาใต้ */
@@ -176,4 +178,9 @@
   .c-status {
     grid-area: status;
   }
+}
+
+/* ให้ badge หายเมื่อมี hidden */
+.icon-badge[hidden] {
+  display: none !important;
 }

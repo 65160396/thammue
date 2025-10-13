@@ -1004,3 +1004,6 @@ a {
   color: #fff !important;
 }
 
+.icon-badge[hidden] {
+  display: none !important;
+}
