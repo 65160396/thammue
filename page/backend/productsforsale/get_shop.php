@@ -33,6 +33,7 @@ $stmt = $pdo->prepare("
     email,
     phone,
     pickup_addr,
+    COALESCE(province,'') AS province,
     status
   FROM shops
   WHERE user_id = ?
