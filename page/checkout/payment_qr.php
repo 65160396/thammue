@@ -61,11 +61,12 @@ $qrUrl = "https://promptpay.io/{$ppId}.png?amount={$amountStr}";
                 </div>
 
                 <div class="btns">
+
+                    <a class="btn btn-ghost" href="/page/checkout/checkout.php">ย้อนกลับ</a>
                     <form action="/page/checkout/confirm_paid.php" method="post" style="display:inline">
                         <input type="hidden" name="order_id" value="<?= htmlspecialchars($orderId ?? '') ?>">
                         <button class="btn btn-primary" type="submit">ชำระเงินแล้ว</button>
                     </form>
-                    <a class="btn btn-ghost" href="/page/checkout/checkout.php">ย้อนกลับ</a>
                 </div>
 
                 <div class="note">

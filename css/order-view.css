@@ -131,3 +131,57 @@
   gap: 8px;
   margin-top: 8px;
 }
+
+.order-view-page .btn.back {
+  background: #e5e5e5;
+  color: #111;
+  border-color: #e5e5e5;
+}
+.order-view-page .btn.back:hover {
+  background: #dcdcdc;
+}
+
+/* ระยะห่างและพื้นฐานของปุ่มในแอคชันบาร์ */
+.order-view-page .actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: flex-start;
+}
+
+/* ปุ่มพื้นฐาน */
+.order-view-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px; /* ✅ ทำให้ความกว้างเท่ากัน */
+  height: 42px; /* ✅ ความสูงคงที่ */
+  padding: 0 16px; /* ภายในแนวนอน */
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: background 0.15s, color 0.15s, filter 0.15s;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ย้อนกลับ: เทาอ่อน */
+.order-view-page .btn.back {
+  background: #e6e6e6;
+  color: #111;
+  border-color: #e6e6e6;
+}
+.order-view-page .btn.back:hover {
+  background: #dcdcdc;
+}
+
+/* ไปหน้าหลัก: ดำ */
+.order-view-page .btn.btn-dark {
+  background: #111; /* ดำ */
+  color: #fff;
+  border-color: #111;
+}
+.order-view-page .btn.btn-dark:hover {
+  filter: brightness(1.1);
+}
