@@ -188,8 +188,6 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
             <?php endif; ?>
         </section>
 
-
-
         <?php
         $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
             && empty($order['paid_at'])

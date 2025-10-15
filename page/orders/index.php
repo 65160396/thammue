@@ -59,12 +59,13 @@ $orders = $stmt->fetchAll();
 
         <div class="order-filters" role="tablist">
             <button data-st="all" class="tab active" aria-selected="true">ทั้งหมด</button>
-            <button data-st="pending" class="tab">รอชำระ</button>
+            <button data-st="awaiting" class="tab">รอชำระ</button>
             <button data-st="paid" class="tab">ชำระแล้ว</button>
             <button data-st="shipped" class="tab">จัดส่งแล้ว</button>
             <button data-st="completed" class="tab">สำเร็จ</button>
             <button data-st="cancelled" class="tab">ยกเลิก</button>
         </div>
+
 
         <?php if (!$orders): ?>
             <div class="empty">
@@ -123,15 +124,22 @@ $orders = $stmt->fetchAll();
         const tabs = document.querySelectorAll('.order-filters .tab');
         const rows = Array.from(document.querySelectorAll('.order-row'));
 
-        function applyFilter(st) {
+        // กลุ่มสถานะที่ตรงกับ DB
+        const groups = {
+            all: null,
+            awaiting: ['pending_payment', 'cod_pending'], // รอจ่ายทุกแบบ
+            paid: ['paid'],
+            shipped: ['shipped'],
+            completed: ['completed'],
+            cancelled: ['cancelled'] // ถ้าคุณใช้ชื่ออื่น เช่น auto_cancelled ก็เติมเพิ่มได้
+        };
+
+        function applyFilter(key) {
+            const allowed = groups[key] || null; // null = ไม่กรอง
             rows.forEach(row => {
                 const s = (row.dataset.status || '').toLowerCase();
-                const match =
-                    st === 'all' ||
-                    s === st ||
-                    // ถ้าอยากให้ปุ่ม "รอชำระ" จับทุกสถานะที่ขึ้นต้นด้วย pending_*
-                    (st === 'pending_payment' && s.startsWith('pending'));
-                row.style.display = match ? '' : 'none';
+                const ok = !allowed || allowed.includes(s);
+                row.style.display = ok ? '' : 'none';
             });
         }
 
@@ -144,16 +152,22 @@ $orders = $stmt->fetchAll();
             });
         });
 
-        // เริ่มต้นตามปุ่มที่ active
+        // เริ่มต้นด้วยแท็บที่ active
         const current = document.querySelector('.order-filters .tab.active');
         applyFilter(current ? current.dataset.st : 'all');
     </script>
+
 
     </script>
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
     <script src="/js/store/shop-toggle.js"></script>
-
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleOpenOrMyShop();
+        });
+    </script>
     <script src="/js/cart-badge.js" defer></script>
 </body>
 
