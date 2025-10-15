@@ -26,7 +26,7 @@ function productImageWeb(int $productId, ?string $imagePath): string
     if ($imagePath && strpos($imagePath, '/uploads/') === 0) {
         return $WEB_PREFIX . $imagePath;
     }
-    // เก็บมาเป็นพาธสัมพัทธ์อื่นๆ (เช่น uploads/... หรือ img/...) → เติม /page/ ข้างหน้า
+    // พาธสัมพัทธ์อื่นๆ (เช่น uploads/... หรือ img/...) → เติม /page/ ข้างหน้า
     if ($imagePath && strpos($imagePath, '/') !== false) {
         $imagePath = ltrim($imagePath, '/');
         return $WEB_PREFIX . '/' . $imagePath;
@@ -43,13 +43,11 @@ function productImageWeb(int $productId, ?string $imagePath): string
         if ($found) {
             return $WEB_PREFIX . "/uploads/products/{$productId}/" . basename($found[0]);
         }
-        // ถ้าไม่มี main_* ก็ลองหยิบไฟล์แรกๆ ในโฟลเดอร์
         $any = glob($dirFs . "/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}", GLOB_BRACE);
         if ($any) {
             return $WEB_PREFIX . "/uploads/products/{$productId}/" . basename($any[0]);
         }
     }
-    // รูปสำรอง
     return $WEB_PREFIX . "/img/placeholder.png";
 }
 
@@ -65,54 +63,88 @@ $stmt = $pdo->prepare("
 $stmt->execute([$userId]);
 $profile = $stmt->fetch();
 
-// รับรายการที่เลือกจากหน้า cart
-$selected = isset($_POST['selected']) && is_array($_POST['selected'])
-    ? array_values(array_unique(array_map('intval', $_POST['selected'])))
-    : [];
-
-// เก็บไว้ใน session เผื่อ refresh/กลับมา
-if ($selected) {
-    $_SESSION['checkout_selected_ids'] = $selected;
-} elseif (isset($_SESSION['checkout_selected_ids'])) {
-    $selected = $_SESSION['checkout_selected_ids'];
-}
-
-// --- ดึงสินค้าในตะกร้า (เฉพาะที่เลือก ถ้าไม่มีเลือกจะว่าง) ---
-$whereIn  = '';
-$params   = [$userId];
-
-if (!empty($selected)) {
-    $ph      = implode(',', array_fill(0, count($selected), '?'));
-    $whereIn = " AND c.id IN ($ph) ";
-    $params  = array_merge($params, $selected);
-} else {
-    // ถ้าไม่เลือกอะไรเลย จะไม่ดึงอะไร (หรือจะ fallback เป็นทั้งตะกร้าก็ได้ ตามที่ต้องการ)
-    $whereIn = " AND 1=0 ";
-}
-
-$sql = "
-  SELECT
-    c.id AS cart_id,
-    c.product_id,
-    c.quantity AS qty,
-    p.name, p.price,
-    (SELECT pi.image_path
-       FROM product_images pi
-       WHERE pi.product_id = p.id
-       ORDER BY pi.id ASC
-       LIMIT 1) AS image
-  FROM cart c
-  JOIN products p ON p.id = c.product_id
-  WHERE c.user_id = ? $whereIn
-";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$items = $stmt->fetchAll();
-
-/* --- คำนวณยอดรวม --- */
+/* ====== สลับโหมด: buy-now หรือ cart ====== */
+$mode = $_GET['mode'] ?? '';  // ถ้ามี ?mode=buy-now จะใช้สินค้าจาก session buy_now
+$items = [];
 $subtotal = 0;
-foreach ($items as $it) $subtotal += ((float)$it['price'] * (int)$it['qty']);
-$shipping = count($items) ? 50 : 0;
+$shipping = 0;
+
+/* ---------- โหมด BUY NOW: ไม่ยุ่งกับตะกร้า ---------- */
+if ($mode === 'buy-now' && !empty($_SESSION['buy_now'])) {
+    $bn  = $_SESSION['buy_now'];
+    $pid = (int)($bn['product_id'] ?? 0);
+    $qty = max(1, (int)($bn['qty'] ?? 1));
+
+    if ($pid > 0) {
+        $q = "
+          SELECT
+            p.id AS product_id, p.name, p.price,
+            (SELECT pi.image_path
+               FROM product_images pi
+               WHERE pi.product_id = p.id
+               ORDER BY pi.id ASC
+               LIMIT 1) AS image
+          FROM products p
+          WHERE p.id = ?
+          LIMIT 1
+        ";
+        $s = $pdo->prepare($q);
+        $s->execute([$pid]);
+        if ($row = $s->fetch()) {
+            $row['qty'] = $qty;
+            $items[]    = $row;
+        }
+    }
+
+    foreach ($items as $it) $subtotal += ((float)$it['price'] * (int)$it['qty']);
+    $shipping = count($items) ? 50 : 0;
+
+    /* ---------- โหมด CART: ของเดิม ดึงเฉพาะที่เลือก ---------- */
+} else {
+    // รับรายการที่เลือกจากหน้า cart
+    $selected = isset($_POST['selected']) && is_array($_POST['selected'])
+        ? array_values(array_unique(array_map('intval', $_POST['selected'])))
+        : [];
+
+    // เก็บไว้ใน session เผื่อ refresh/กลับมา
+    if ($selected) {
+        $_SESSION['checkout_selected_ids'] = $selected;
+    } elseif (isset($_SESSION['checkout_selected_ids'])) {
+        $selected = $_SESSION['checkout_selected_ids'];
+    }
+
+    // ดึงสินค้าในตะกร้า (เฉพาะที่เลือก)
+    $whereIn = " AND 1=0 ";
+    $params  = [$userId];
+    if (!empty($selected)) {
+        $ph      = implode(',', array_fill(0, count($selected), '?'));
+        $whereIn = " AND c.id IN ($ph) ";
+        $params  = array_merge($params, $selected);
+    }
+
+    $sql = "
+      SELECT
+        c.id AS cart_id,
+        c.product_id,
+        c.quantity AS qty,
+        p.name, p.price,
+        (SELECT pi.image_path
+           FROM product_images pi
+           WHERE pi.product_id = p.id
+           ORDER BY pi.id ASC
+           LIMIT 1) AS image
+      FROM cart c
+      JOIN products p ON p.id = c.product_id
+      WHERE c.user_id = ? $whereIn
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $items = $stmt->fetchAll();
+
+    foreach ($items as $it) $subtotal += ((float)$it['price'] * (int)$it['qty']);
+    $shipping = count($items) ? 50 : 0;
+}
+
 $total = $subtotal + $shipping;
 
 function full_addr($p)
@@ -167,10 +199,15 @@ function full_addr($p)
 
         <!-- รายการสินค้า -->
         <div class="section">
-            <h3>สั่งซื้อสินค้าแล้ว</h3>
+            <h3><?= $mode === 'buy-now' ? 'สินค้า (ซื้อทันที)' : 'สั่งซื้อสินค้าแล้ว' ?></h3>
             <div class="body">
                 <?php if (!count($items)): ?>
-                    <div class="empty">ยังไม่มีสินค้าในตะกร้า</div>
+                    <div class="empty">
+                        <?= $mode === 'buy-now'
+                            ? 'ไม่พบรายการซื้อทันที กรุณากลับไปหน้าสินค้า'
+                            : 'ยังไม่มีสินค้าในตะกร้า'
+                        ?>
+                    </div>
                 <?php else: ?>
                     <table class="table">
                         <thead>
@@ -183,7 +220,6 @@ function full_addr($p)
                         </thead>
                         <tbody>
                             <?php foreach ($items as $it):
-                                // คำนวณ web path ของรูปให้ถูกต้องทุกกรณี
                                 $imgWeb = productImageWeb((int)$it['product_id'], $it['image'] ?? null);
                             ?>
                                 <tr>
@@ -216,10 +252,11 @@ function full_addr($p)
                 <div class="summary">
                     <div class="row"><span>การสั่งซื้อ</span><strong><?= number_format($subtotal, 0) ?></strong></div>
                     <div class="row"><span>การจัดส่ง</span><strong><?= number_format($shipping, 0) ?></strong></div>
-                    <div class="row total"><span>ยอดชำระทั้งหมด</span><strong><?= number_format($total, 0) ?></strong></div>
+                    <div class="row total"><span>ยอดชำระทั้งหมด</span><strong><?= number_format($subtotal + $shipping, 0) ?></strong></div>
                 </div>
 
                 <input type="hidden" name="total" value="<?= $total ?>">
+                <input type="hidden" name="mode" value="<?= htmlspecialchars($mode) ?>">
                 <button type="submit" class="btn-primary" <?= count($items) === 0 ? 'disabled' : '' ?>>สั่งสินค้า</button>
             </div>
         </form>
@@ -227,14 +264,13 @@ function full_addr($p)
 
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
-    <script src="/page/js/cart.js"></script>
     <script src="/js/store/shop-toggle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            toggleOpenOrMyShop();
+            toggleOpenOrMyShop?.();
         });
     </script>
-
+    <script src="/js/cart-badge.js" defer></script>
 </body>
 
 </html>

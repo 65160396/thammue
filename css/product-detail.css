@@ -104,7 +104,6 @@ body {
   align-items: flex-end;
   margin: 12px 0 8px;
 }
-
 .pd-actions {
   display: flex;
   gap: 10px;
@@ -146,13 +145,12 @@ body {
 }
 
 .btn-primary,
-.btn-outline,
-.btn-chip {
+.btn-outline {
   padding: 10px 16px;
   border-radius: 12px;
   cursor: pointer;
   transition: 0.15s;
-  font-weight: 600;
+  font-weight: 700;
 }
 .btn-primary {
   background: #111;
@@ -162,7 +160,6 @@ body {
 .btn-primary:hover {
   opacity: 0.9;
 }
-
 .btn-outline {
   background: #fff;
   color: #111;
@@ -172,6 +169,7 @@ body {
   background: #111;
   color: #fff;
 }
+
 .pd-location {
   color: var(--pd-muted);
   margin-top: 10px;
@@ -208,24 +206,51 @@ body {
 .shop-name {
   font-weight: 700;
 }
-.btn-chip {
+
+/* === ปุ่มชิปใน "การ์ดร้านค้า" — ให้แชท/ดูร้านเหมือนกันทุกอย่าง === */
+.pd-shop-card .btn-chip,
+.pd-shop-card a.btn-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 8px 16px; /* ความสูง/กว้างเท่ากัน */
+  font-size: 14px; /* ขนาดเท่ากัน */
+  font-weight: 600; /* น้ำหนักเท่ากัน */
+  line-height: 1; /* จัดกลางแนวตั้ง */
+  color: #111;
   background: #fff;
   border: 1px solid var(--pd-border);
-  color: #333;
+  border-radius: 999px; /* pill */
+  text-decoration: none; /* ลบเส้นใต้ของ <a> */
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.btn-chip:hover {
-  border-color: #bbb;
+.pd-shop-card .btn-chip:hover,
+.pd-shop-card a.btn-chip:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* จัดปุ่มให้อยู่แถวเดียว */
+.shop-actions {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
 }
 
 /* เฉพาะหน้ารายละเอียด */
 .pd-actions .btn-primary {
-  background: #000000;
-  border: 1px solid #ffffff;
+  background: #000;
+  border: 1px solid #fff;
   color: #fff;
 }
 .pd-actions .btn-primary:hover {
-  opacity: 0.92; /* หรือจะเปลี่ยนเป็นสีอื่นตอน hover ก็ได้ */
-  /* background:#0b5f58; border-color:#0b5f58; */
+  opacity: 0.92;
 }
 
 /* section */
@@ -246,7 +271,7 @@ body {
   color: #333;
 }
 
-/* === Like / Favorite (หัวใจ) === */
+/* === Like / Favorite === */
 .pd-like-row {
   display: flex;
   align-items: center;
@@ -268,13 +293,13 @@ body {
 }
 .pd-like-btn.is-active {
   color: #e11d48;
-} /* สีชมพูแดงตอนกดแล้ว */
+}
 .pd-like-num {
   font-size: 14px;
   color: var(--pd-muted);
 }
 
-/* === ป้าย/ตัวเลขสรุปเล็ก ๆ (เช่น “ขายแล้ว N ชิ้น”) === */
+/* === ป้าย/ตัวเลขสรุปเล็ก ๆ === */
 .pd-badges {
   display: flex;
   gap: 8px;
@@ -329,11 +354,11 @@ body {
   display: block;
 }
 .pd-thumb.is-active {
-  outline: 2px solid var(--primary, #000000);
+  outline: 2px solid var(--primary, #000);
   opacity: 1;
 }
 
-/* === Utilities นิดหน่อย === */
+/* === Utilities === */
 .mt-8 {
   margin-top: 8px;
 }
@@ -366,7 +391,7 @@ body {
 }
 .fav-btn.is-active {
   color: #e11d48;
-} /* สีตอนถูกใจ */
+}
 .fav-count {
   font-size: 14px;
   color: #6b7280;
@@ -391,7 +416,7 @@ body {
   font-size: 11px;
   line-height: 1;
   border-radius: 999px;
-  border: 2px solid #000; /* ขอบดำให้เข้ากับ header */
+  border: 2px solid #000;
 }
 
 /* responsive */

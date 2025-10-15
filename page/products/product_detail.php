@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 /* --- DB --- */
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -33,7 +31,7 @@ function productMainImageWebPath(array $p): string
     return $WEB_PREFIX . "/img/placeholder.png";
 }
 
-/* === NEW: คืนลิสต์รูปทั้งหมดของสินค้า (เอา main ก่อน ตามด้วยไฟล์อื่นในโฟลเดอร์) === */
+/* === รวมลิสต์รูปทั้งหมดของสินค้า (เอา main ก่อน ตามด้วยไฟล์อื่นในโฟลเดอร์) === */
 function productAllImagesWeb(array $p): array
 {
     global $WEB_PREFIX;
@@ -72,7 +70,7 @@ function productAllImagesWeb(array $p): array
     return array_values($out);
 }
 
-/* --- ดึงข้อมูลสินค้า + จังหวัดร้าน --- */
+/* --- ดึงข้อมูลสินค้า + ข้อมูลร้าน --- */
 $sql = "SELECT
           p.id,
           p.name,
@@ -80,8 +78,9 @@ $sql = "SELECT
           p.description,
           p.main_image,
           p.created_at,
+          p.shop_id,
           COALESCE(SUM(CASE WHEN oi.status='paid' THEN oi.qty ELSE 0 END), 0) AS sold_count,
-          s.shop_name,
+          s.shop_name AS shop_name,                         -- แก้ตรงนี้
           COALESCE(s.province, p.province) AS shop_province
         FROM products p
         LEFT JOIN order_items oi ON oi.product_id = p.id
@@ -89,8 +88,9 @@ $sql = "SELECT
         WHERE p.id = ?
         GROUP BY
           p.id, p.name, p.price, p.description, p.main_image, p.created_at,
-          s.shop_name, s.province, p.province
+          p.shop_id, s.shop_name, s.province, p.province     -- แก้ตรงนี้
         LIMIT 1";
+
 
 $stm = $pdo->prepare($sql);
 $stm->execute([$id]);
@@ -100,10 +100,12 @@ if (!$p) {
     exit('ไม่พบสินค้า');
 }
 
-$img     = productMainImageWebPath($p);
-$gallery = productAllImagesWeb($p);   // <<< ใช้รูปทั้งหมดที่หาได้
+/* --- เตรียมตัวแปรสำหรับแสดงผล --- */
+$gallery = productAllImagesWeb($p);
+$firstImg = $gallery[0] ?? ($WEB_PREFIX . "/img/placeholder.png");
+
 $name  = htmlspecialchars($p['name'] ?? '');
-$price = is_numeric($p['price']) ? '$' . number_format((float)$p['price'], 0) : htmlspecialchars($p['price'] ?? '');
+$price = is_numeric($p['price']) ? '฿' . number_format((float)$p['price'], 0) : htmlspecialchars($p['price'] ?? '');
 $desc  = nl2br(htmlspecialchars($p['description'] ?? ''));
 
 $sold  = (int)($p['sold_count'] ?? 0);
@@ -128,9 +130,9 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
     <div class="pd-container">
         <!-- ส่วนบน: รูป + ข้อมูล -->
         <section class="pd-hero">
-            <!-- === NEW: แกลเลอรีรูป === -->
+            <!-- แกลเลอรีรูป -->
             <div class="pd-media">
-                <img id="pdMain" src="<?= htmlspecialchars($gallery[0]) ?>" alt="<?= $name ?>">
+                <img id="pdMain" src="<?= htmlspecialchars($firstImg) ?>" alt="<?= $name ?>">
 
                 <?php if (count($gallery) > 1): ?>
                     <div class="pd-thumbs" role="list">
@@ -163,14 +165,51 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 </div>
 
                 <div class="pd-controls">
-
                     <div class="pd-actions">
                         <button id="addToCartDetail" class="btn btn-outline" data-id="<?= (int)$p['id'] ?>">
                             🛒 เพิ่มไปยังรถเข็น
                         </button>
-                        <button class="btn btn-primary">ซื้อสินค้า</button>
+                        <a href="#" id="buyNow" class="btn btn-primary" data-id="<?= (int)$p['id'] ?>">
+                            ซื้อสินค้า
+                        </a>
                     </div>
                 </div>
+                <script>
+                    // ซื้อทันที (ไม่เข้าตะกร้า)
+                    document.getElementById('buyNow')?.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const id = e.currentTarget.dataset.id;
+
+                        try {
+                            const res = await fetch('/page/checkout/buy_now.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify({
+                                    id: Number(id),
+                                    qty: 1
+                                }) // บังคับ 1 ชิ้น
+                            });
+
+                            if (res.status === 401) {
+                                location.href = '/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
+                                return;
+                            }
+                            if (!res.ok) throw new Error('HTTP ' + res.status);
+
+                            const data = await res.json();
+                            // ไปหน้า checkout โหมด buy-now
+                            location.href = data.checkout || '/page/checkout/checkout.php?mode=buy-now';
+                        } catch (err) {
+                            console.error(err);
+                            alert('ไม่สามารถดำเนินการซื้อได้ ลองอีกครั้ง');
+                        }
+                    });
+                </script>
+
+
 
                 <div class="pd-location">จังหวัด<?= $prov ?> · ร้าน: <?= $shop ?></div>
             </div>
@@ -183,8 +222,16 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 <div class="shop-name"><?= $shop ?></div>
                 <div class="shop-actions">
                     <button class="btn-chip">แชท</button>
-                    <button class="btn-chip">ดูร้านค้า</button>
+                    <?php if (!empty($p['shop_id'])): ?>
+                        <a class="btn-chip" href="/page/store/store_public.php?id=<?= (int)$p['shop_id'] ?>">
+                            เข้าไปดูหน้าร้าน
+                        </a>
+                    <?php else: ?>
+                        <span class="seller-link" style="opacity:.7;cursor:not-allowed">ไม่ระบุร้าน</span>
+                    <?php endif; ?>
                 </div>
+
+
             </div>
         </section>
 
@@ -320,7 +367,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
         });
     </script>
 
-    <!-- === NEW: สคริปต์สลับรูปตาม thumbnail === -->
+    <!-- สคริปต์สลับรูปตาม thumbnail -->
     <script>
         (function() {
             const main = document.getElementById('pdMain');
@@ -335,10 +382,9 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                 thumbs.forEach(b => b.classList.remove('is-active'));
                 thumbs[i].classList.add('is-active');
             }
-
             thumbs.forEach((btn, i) => btn.addEventListener('click', () => setActive(i)));
 
-            // รองรับปุ่มลูกศรซ้าย/ขวา
+            // ลูกศรซ้าย/ขวา
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' && thumbs.length > 1) setActive((current + 1) % thumbs.length);
                 else if (e.key === 'ArrowLeft' && thumbs.length > 1) setActive((current - 1 + thumbs.length) % thumbs.length);
