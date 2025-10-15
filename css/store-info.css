@@ -1,0 +1,58 @@
+/* จัด hero แบบรูปตัวอย่าง: รูปซ้าย ข้อความขวา ปุ่มอยู่กลาง */
+.store-info-card {
+  max-width: 960px;
+}
+.page-title {
+  font-size: 28px;
+  margin-bottom: 18px;
+}
+
+.store-hero {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 28px;
+  align-items: start;
+  margin: 10px 0 22px;
+}
+
+.shop-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #eee;
+  border: 1px solid #e5e7eb;
+}
+
+.shop-meta .field {
+  margin: 0 0 12px;
+}
+.shop-meta .field > label {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.actions {
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+.btn {
+  min-width: 180px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .store-hero {
+    grid-template-columns: 1fr;
+  }
+  .shop-avatar {
+    width: 120px;
+    height: 120px;
+  }
+}

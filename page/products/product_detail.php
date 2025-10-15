@@ -224,7 +224,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                     <button class="btn-chip">แชท</button>
                     <?php if (!empty($p['shop_id'])): ?>
                         <a class="btn-chip" href="/page/store/store_public.php?id=<?= (int)$p['shop_id'] ?>">
-                            เข้าไปดูหน้าร้าน
+                            ดูร้านค้า
                         </a>
                     <?php else: ?>
                         <span class="seller-link" style="opacity:.7;cursor:not-allowed">ไม่ระบุร้าน</span>

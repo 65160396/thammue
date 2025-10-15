@@ -83,8 +83,26 @@
                 <form id="openShopForm"
                     action="/page/backend/save_open_shop.php" method="post"
                     enctype="multipart/form-data" autocomplete="off">
+
                     <!-- STEP 1 -->
+
                     <section id="step1" class="panel form-v2">
+                        <!-- รูปโปรไฟล์ร้าน (แนะนำอัตราส่วน 1:1) -->
+                        <div class="field">
+
+                            <label for="shop_avatar">รูปโปรไฟล์ร้าน</label>
+                            <div
+                                style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                                <img id="avatarPreview" class="avatar-preview"
+                                    alt
+                                    hidden>
+                                <input id="shop_avatar" name="shop_avatar"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp">
+                            </div>
+                            <div class="hint">แนะนำขนาด 512×512 หรือมากกว่า
+                                อัตราส่วน 1:1</div>
+                        </div>
                         <div class="field">
                             <label for="shop_name">ชื่อร้านค้า</label>
                             <input id="shop_name" name="shop_name" type="text"
@@ -434,6 +452,27 @@
         <script defer src="/js/user-menu.js"></script>
         <script defer src="/js/address.js"></script>
         <script defer src="/js/open-shop/shop-registration.js"></script>
+        <script>
+(function(){
+  const input = document.getElementById('shop_avatar');
+  const img   = document.getElementById('avatarPreview');
+
+  if (!input || !img) return;
+
+  const MAX_MB = 3;
+  const ok = ['image/jpeg','image/png','image/webp'];
+
+  input.addEventListener('change', () => {
+    const f = input.files?.[0];
+    if (!f) return clearPreview();
+    if (!ok.includes(f.type)) { alert('กรุณาอัปโหลด JPG/PNG/WEBP'); input.value=''; return clearPreview(); }
+    if (f.size > MAX_MB*1024*1024) { alert('ไฟล์ใหญ่เกิน '+MAX_MB+'MB'); input.value=''; return clearPreview(); }
+    img.src = URL.createObjectURL(f);
+    img.hidden = false;
+  });
+  function clearPreview(){ img.hidden = true; img.removeAttribute('src'); }
+})();
+</script>
 
     </body>
 </html>

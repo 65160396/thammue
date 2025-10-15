@@ -162,7 +162,6 @@ $orders = $stmt->fetchAll();
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
     <script src="/js/store/shop-toggle.js"></script>
-    <script src="/js/store/shop-toggle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             toggleOpenOrMyShop();

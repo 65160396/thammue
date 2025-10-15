@@ -70,25 +70,50 @@
                     <div class="field"><label>สถานะ</label> <div
                             id="shopStatus">—</div></div>
                 </div>
+
             </div>
         </section>
 
         <script>
-  // อ่าน shop_id จาก query (ใช้ไม่ได้ก็ไม่เป็นไร เราจะ fallback จาก API ตาม session)
+  // อ่าน shop_id จาก query (สำรองไว้ใช้ถ้า API ไม่ส่ง id กลับมา)
   const url = new URL(location.href);
-  const shopId = url.searchParams.get('shop_id');
+  const shopIdQuery = url.searchParams.get('shop_id');
 
   (async () => {
-    const res = await fetch('/page/backend/productsforsale/get_shop.php', {credentials:'include'});
+    const res = await fetch('/page/backend/productsforsale/get_shop.php', { credentials: 'include' });
     const data = await res.json();
     const s = data.shop || {};
+
+    // แสดงข้อมูลร้าน
     document.getElementById('shopName').textContent   = s.shop_name || '(ไม่มีชื่อร้าน)';
     document.getElementById('shopEmail').textContent  = s.email || '-';
     document.getElementById('shopPhone').textContent  = s.phone || '-';
     document.getElementById('shopAddr').textContent   = s.pickup_addr || '-';
     document.getElementById('shopStatus').textContent = s.status || '-';
+
+    // เก็บ id ของร้าน
+    const id = s.id || shopIdQuery || '';
+
+    // ✅ ปุ่มแก้ไข → ไปหน้า store-edit.html?id=<id>
+    const btnEdit = document.getElementById('btnEdit');
+    btnEdit.addEventListener('click', () => {
+      const target = id
+        ? `/page/storepage/store-edit.html?id=${encodeURIComponent(id)}`
+        : `/page/storepage/store-edit.html`;
+      location.href = target;
+    });
+
+    // ✅ ปุ่มดูหน้าร้าน → ไปหน้า store_public.php?id=<id>
+    const btnView = document.getElementById('btnView');
+    btnView.addEventListener('click', () => {
+      if (!id) {
+        alert('ยังไม่ทราบรหัสร้าน');
+        return;
+      }
+      location.href = `/page/storepage/store_public.php?id=${encodeURIComponent(id)}`;
+    });
   })();
-  </script>
+</script>
 
         <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
         <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->

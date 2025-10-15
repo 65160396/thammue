@@ -348,3 +348,47 @@
     gap: 12px 24px;
   }
 }
+
+/* Store-info additions */
+.open-shop .store-header {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.open-shop .store-avatar img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+.open-shop .store-avatar {
+  text-align: center;
+}
+.open-shop .store-avatar input[type="file"] {
+  display: none;
+}
+.open-shop .store-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.open-shop .store-actions .primary {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #111;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.open-shop .store-actions .secondary {
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  background: #f3f3f3;
+  color: #111;
+}
+
+
