@@ -185,3 +185,15 @@
 .order-view-page .btn.btn-dark:hover {
   filter: brightness(1.1);
 }
+.order-view-page .btn.danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+.order-view-page .btn.danger:hover {
+  filter: brightness(1.08);
+}
+.order-view-page .actions .same-w {
+  min-width: 140px;
+  text-align: center;
+}

@@ -188,20 +188,15 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
             <?php endif; ?>
         </section>
 
-        <!-- ไม่มีสลิป (โปรเจ็กต์เดโม่) -->
-        <!-- <section class="card payment-proof"> ... ตัดออก ... </section> -->
 
-        <!-- ปุ่ม -->
-        <section class="actions">
-            <a class="btn back same-w" href="/page/orders">ย้อนกลับ</a>
 
-            <?php if ($canPay): ?>
-                <a class="btn btn-dark same-w" href="/page/checkout/payment_qr.php?order_id=<?= (int)$order['order_id'] ?>">ชำระเงินด้วย QR</a>
+        <?php
+        $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
+            && empty($order['paid_at'])
+            && (!empty($order['payment_deadline']) ? strtotime($order['payment_deadline']) > time() : true);
 
-            <?php else: ?>
-                <a class="btn btn-dark same-w" href="/">ไปหน้าหลัก</a>
-            <?php endif; ?>
-        </section>
+        $canCancel = in_array($order['status'], ['pending_payment', 'cod_pending']) && empty($order['paid_at']);
+        ?>
 
         <?php if (
             !empty($order['payment_deadline']) &&
@@ -249,6 +244,28 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
                 })();
             </script>
         <?php endif; ?>
+
+        <!-- ปุ่ม -->
+        <section class="actions">
+            <a class="btn back same-w" href="/page/orders">ย้อนกลับ</a>
+
+            <?php if ($canPay): ?>
+                <a class="btn btn-dark same-w"
+                    href="/page/checkout/payment_qr.php?order_id=<?= (int)$order['order_id'] ?>">ชำระเงินด้วย QR</a>
+            <?php else: ?>
+                <a class="btn btn-dark same-w" href="/">ไปหน้าหลัก</a>
+            <?php endif; ?>
+
+            <?php if ($canCancel): ?>
+                <form method="post"
+                    action="/page/orders/cancel_order.php"
+                    style="margin-left:auto"
+                    onsubmit="return confirm('ยืนยันยกเลิกคำสั่งซื้อนี้ใช่ไหม?');">
+                    <input type="hidden" name="id" value="<?= (int)$order['order_id'] ?>">
+                    <button type="submit" class="btn danger same-w">ยกเลิกคำสั่งซื้อ</button>
+                </form>
+            <?php endif; ?>
+        </section>
 
     </div>
 
