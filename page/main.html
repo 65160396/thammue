@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/instyle.css" />
     <link rel="stylesheet" href="/css/products.css" />
+    <link rel="stylesheet" href="/css/search.css">
   </head>
 
   <body>
@@ -35,12 +36,20 @@
           <img src="/img/Icon/menu.png" alt>
         </button>
 
+        <!--ค้นหา-->
         <div class="search-container">
           <div class="search-group">
-            <input id="q" type="text" placeholder="ค้นหาสินค้า" />
+            <input id="q" type="text" placeholder="ค้นหาสินค้า"
+              autocomplete="off" autocapitalize="off" spellcheck="false"
+              role="combobox" aria-autocomplete="list" aria-expanded="false"
+              aria-controls="qSuggest" aria-haspopup="listbox" />
+
             <button id="btnSearch" class="search-button" aria-label="ค้นหา">
               <img src="/img/Icon/search.png" alt="ค้นหา" />
             </button>
+
+            <!-- เอา hidden ออก -->
+            <div id="qSuggest" class="search-suggest"></div>
           </div>
 
           <div class="icon-buttons desktop-icons">
@@ -107,8 +116,14 @@
       <div class="ad-banner">
         <img src="/img/Illustration/โฆษณา.jpg" alt="โฆษณา" />
       </div>
-
-      <div id="results" class="product-grid"></div>
+      <!-- ผลการค้นหา -->
+      <section id="searchSection" class="search-results" hidden>
+        <div class="search-results__head">
+          <h2>ผลการค้นหา <span id="searchCount"></span></h2>
+          <a href="#" id="clearSearch" class="btn btn-primary">ล้างการค้นหา</a>
+        </div>
+        <div id="results" class="product-grid"></div>
+      </section>
 
       <!-- แนะนำสำหรับคุณ -->
       <section class="recommended-products">
@@ -157,8 +172,14 @@
 
       <!-- ใส่ท้ายหน้า ก่อนปิด </body> -->
       <script src="/js/search/search.js"></script>
+
       <script>
-  // เริ่มใช้งาน
+  if (!localStorage.getItem('searchHistory')) {
+    localStorage.setItem('searchHistory', JSON.stringify(['ทำมือ', 'สร้อยผ้า', 'งานประดิษฐ์']));
+  }
+</script>
+
+      <script>
   Search.init({
     input:   "#q",
     button:  "#btnSearch",
@@ -167,7 +188,21 @@
     per: 24,
     sort: "relevance",
     minLength: 1,
-    debounceMs: 300, // ถ้าอยาก debounce ตอนพิมพ์ ให้เปลี่ยนเป็น bind input 'input' event เพิ่มเองก็ได้
+    debounceMs: 300,
+
+    prefillLastOnLoad: false,   // ✅ เติมคำค้นล่าสุดลงในช่องค้นหาทันทีที่โหลดหน้า
+    autoSearchOnLoad:  false,  // ✅ ไม่ต้องยิงค้นหาอัตโนมัติ (แค่ใส่คำไว้ในช่อง)
+    rememberLast:      true    // ✅ จำคำค้นทุกครั้งที่กดค้นหา
+  });
+</script>
+
+
+      <script>
+  // hotfix: บังคับโชว์เวลาโฟกัส เพื่อกันธีมอื่นที่ใช้ [hidden]{display:none!important}
+  document.getElementById('q').addEventListener('focus', () => {
+    const box = document.getElementById('qSuggest');
+    box.classList.add('show');
+    box.removeAttribute('hidden');
   });
 </script>
 
