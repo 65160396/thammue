@@ -155,7 +155,7 @@ function h($s)
     </script>
 
     <!-- ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
-    <script src="/page/js/cart.js"></script>
+    <script src="/js/cart.js"></script>
 
     <script src="/js/store/shop-toggle.js"></script>
     <script>
@@ -164,25 +164,22 @@ function h($s)
         });
     </script>
     <script src="/js/search/search.js"></script>
+    <script src="/js/search/search.js"></script>
     <script>
         Search.init({
-            input: '#q',
-            button: '#btnSearch',
+            input: "#q",
+            button: "#btnSearch",
+            results: "#results",
+            endpoint: "/page/backend/search/search_favorites.php", // << ใช้ endpoint ใหม่นี้
+            per: 24,
+            sort: "relevance",
             minLength: 1,
-            rememberLast: true,
-            prefillLastOnLoad: false,
-            mode: 'suggest-only',
-            onSubmit: (q) => {
-                // ส่งคำค้นไปให้ตัวกรอง favorites ที่มีอยู่
-                const ev = new CustomEvent('local-fav:search', {
-                    detail: {
-                        q
-                    }
-                });
-                window.dispatchEvent(ev);
-            }
+            debounceMs: 300,
+            rememberLast: true
         });
     </script>
+
+
 
 </body>
 

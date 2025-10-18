@@ -126,7 +126,7 @@
 
         async function refresh() {
             try {
-                const r = await fetch('/page/backend/cart/count.php', {
+                const r = await fetch('/page/cart/get_cart_count.php', {
                     credentials: 'include',
                     cache: 'no-store'
                 });
