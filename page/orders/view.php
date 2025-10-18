@@ -251,7 +251,7 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
                 <a class="btn btn-dark same-w"
                     href="/page/checkout/payment_qr.php?order_id=<?= (int)$order['order_id'] ?>">ชำระเงินด้วย QR</a>
             <?php else: ?>
-                <a class="btn btn-dark same-w" href="/">ไปหน้าหลัก</a>
+                <a class="btn btn-dark same-w" href="/page/main.html">ไปหน้าหลัก</a>
             <?php endif; ?>
 
             <?php if ($canCancel): ?>

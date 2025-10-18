@@ -1,7 +1,7 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /page/login.html');
+if (empty($_SESSION['user_id'])) {
+    header('Location: /page/login.html?next=' . rawurlencode('/page/checkout/index.php'));
     exit;
 }
 $userId = (int)$_SESSION['user_id'];
@@ -11,6 +11,29 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ]);
+
+$st = $pdo->prepare("SELECT first_name,last_name,phone,addr_line,addr_subdistrict,addr_district,addr_province,addr_postcode
+                     FROM user_profiles WHERE user_id=?");
+$st->execute([$userId]);
+$pf = $st->fetch();
+
+
+/* ฟิลด์ที่ต้องครบก่อนสั่งซื้อ */
+$needProfile = (
+    !$pf ||
+    $pf['first_name'] === '' || $pf['last_name'] === '' ||
+    !preg_match('/^\d{9,10}$/', (string)$pf['phone']) ||
+    $pf['addr_line'] === '' || $pf['addr_subdistrict'] === '' ||
+    $pf['addr_district'] === '' || $pf['addr_province'] === '' ||
+    $pf['addr_postcode'] === ''
+);
+
+
+if ($needProfile) {
+    header('Location: /page/profile.html?need=profile&next=' . rawurlencode('/page/checkout/checkout.php'));
+    exit;
+}
+
 
 /* --- helper: สร้าง web path ของรูปสินค้าให้ถูกต้อง --- */
 $WEB_PREFIX = '/page';
@@ -184,7 +207,7 @@ function full_addr($p)
                             <?= htmlspecialchars($profile['first_name'] . ' ' . $profile['last_name']) ?>
                             (<?= htmlspecialchars($profile['phone'] ?: '-') ?>)
                             <span class="addr-actions">
-                                <a href="/page/profile_address.php">แก้ไข</a>
+                                <a href="/page/profile.html?next=/page/checkout/index.php">แก้ไข</a>
                                 <a href="/page/profile_address.php">ตั้งค่า</a>
                             </span>
                         </div>

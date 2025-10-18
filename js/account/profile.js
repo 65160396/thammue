@@ -15,13 +15,16 @@
   const $y = document.getElementById('dobYear');
 
   function updateDobIso() {
-    const d = $d?.value || '';
-    const m = $m?.value || '';
-    const y = $y?.value || '';
-    const h = document.getElementById('dobIso');
-    if (!h) return;
-    h.value = (d && m && y) ? `${y}-${m}-${d}` : '';
-  }
+  const d = $d?.value || '';
+  const m = $m?.value || '';
+  const y = $y?.value || '';
+  const h = document.getElementById('dobIso');
+  if (!h) return;
+  h.value = (d && m && y)
+    ? `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+    : '';
+}
+
   [$d, $m, $y].forEach(el => el && el.addEventListener('change', updateDobIso));
   document.getElementById('profileForm')?.addEventListener('submit', updateDobIso);
 

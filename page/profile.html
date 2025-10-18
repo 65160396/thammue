@@ -102,6 +102,9 @@
         <form id="profileForm" class="account-card form-v2"
           action="/page/backend/save_profile.php" method="post"
           autocomplete="off">
+          <input type="hidden" name="next"
+            value="<?= htmlspecialchars($_GET['next'] ?? '') ?>">
+
           <h1 class="account-title">รายละเอียดของฉัน</h1>
           <div class="grid2">
             <div class="field">
