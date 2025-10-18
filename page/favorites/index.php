@@ -52,8 +52,9 @@ function h($s)
     <title>รายการโปรด | Thammue</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/products.css" />
     <link rel="stylesheet" href="/css/favorites.css" />
+    <link rel="stylesheet" href="/css/search.css" />
+    <link rel="stylesheet" href="/css/products.css" />
 </head>
 
 <body>
@@ -63,11 +64,21 @@ function h($s)
     include __DIR__ . '/../partials/site-header.php';
     ?>
 
+    <!-- กล่องผลการค้นหา (เริ่มซ่อน) -->
+    <section id="searchSection" class="recommended-products" hidden>
+        <div class="search-results__head">
+            <h2>ผลการค้นหา <span id="searchCount"></span></h2>
+            <a href="#" id="clearSearch" class="btn btn-primary">ล้างการค้นหา</a>
+        </div>
+        <div id="results" class="product-grid"></div>
+    </section>
+
+
     <div class="fav-header">
         <h1>รายการโปรด</h1>
     </div>
 
-    <div class="recommended-products" style="padding-top:0">
+    <div id="favWrap" class="recommended-products" style="padding-top:0">
         <div id="favGrid" class="product-grid">
             <?php if (!$items): ?>
                 <div class="empty" style="grid-column:1 / -1;">ยังไม่มีรายการโปรด</div>
@@ -152,6 +163,27 @@ function h($s)
             toggleOpenOrMyShop();
         });
     </script>
+    <script src="/js/search/search.js"></script>
+    <script>
+        Search.init({
+            input: '#q',
+            button: '#btnSearch',
+            minLength: 1,
+            rememberLast: true,
+            prefillLastOnLoad: false,
+            mode: 'suggest-only',
+            onSubmit: (q) => {
+                // ส่งคำค้นไปให้ตัวกรอง favorites ที่มีอยู่
+                const ev = new CustomEvent('local-fav:search', {
+                    detail: {
+                        q
+                    }
+                });
+                window.dispatchEvent(ev);
+            }
+        });
+    </script>
+
 </body>
 
 </html>

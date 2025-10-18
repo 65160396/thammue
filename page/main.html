@@ -6,8 +6,8 @@
     <title>Thammue</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/instyle.css" />
-    <link rel="stylesheet" href="/css/products.css" />
     <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="/css/products.css" />
   </head>
 
   <body>
@@ -182,20 +182,19 @@
 </script>
 
       <script>
-  Search.init({
-    input:   "#q",
-    button:  "#btnSearch",
-    results: "#results",
-    endpoint: "/page/backend/search_products.php",
-    per: 24,
-    sort: "relevance",
-    minLength: 1,
-    debounceMs: 300,
-
-    prefillLastOnLoad: false,   // ✅ เติมคำค้นล่าสุดลงในช่องค้นหาทันทีที่โหลดหน้า
-    autoSearchOnLoad:  false,  // ✅ ไม่ต้องยิงค้นหาอัตโนมัติ (แค่ใส่คำไว้ในช่อง)
-    rememberLast:      true    // ✅ จำคำค้นทุกครั้งที่กดค้นหา
-  });
+Search.init({
+  input:   "#q",
+  button:  "#btnSearch",
+  results: "#results",
+  endpoint: "/page/backend/search_products.php",
+  per: 24,
+  sort: "relevance",
+  minLength: 1,
+  debounceMs: 300,
+  prefillLastOnLoad: false,
+  rememberLast: true,
+  mode: 'full'
+});
 </script>
 
       <script>

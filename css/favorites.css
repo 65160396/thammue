@@ -31,5 +31,19 @@
 .product-card .remove-like:hover {
   filter: brightness(0.96);
 }
+/* ทำปุ่ม "ล้างการค้นหา" ให้เป็นสีดำ */
+#searchSection .search-results__head #clearSearch {
+  display: inline-block; /* เพราะเป็น <a> */
+  background: #111; /* สีดำ */
+  color: #fff;
+  border: 1px solid #111;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
 
-/* ไม่ต้องมีอะไรเกี่ยวกับ .product-grid/.product-card อีกแล้ว */
+#searchSection .search-results__head #clearSearch:hover {
+  background: #000; /* ดำเข้มตอน hover */
+  border-color: #000;
+}

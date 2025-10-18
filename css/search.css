@@ -183,6 +183,24 @@
   color: #64748b;
 }
 
+/* ให้ผลค้นหาอยู่กึ่งกลางและกว้างเท่ากับกล่องแนะนำ */
+.search-results {
+  background: #f9f9f9;
+  padding: 20px;
+  margin: 30px auto;
+  border-radius: 8px;
+  max-width: 1200px; /* เหมือน .recommended-products */
+}
+
+/* หัวผลลัพธ์ */
+.search-results__head {
+  width: min(1100px, 100%);
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
 
 /* =========================
    Responsive

@@ -19,11 +19,27 @@
 
     <div class="search-container">
         <div class="search-group">
-            <input type="text" class="search-input" placeholder="ค้นหาสินค้า" />
-            <button class="search-button" aria-label="ค้นหา">
+            <input
+                id="q"
+                type="text"
+                class="search-input"
+                placeholder="ค้นหาสินค้า"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="qSuggest"
+                aria-haspopup="listbox" />
+            <button id="btnSearch" class="search-button" type="button" aria-label="ค้นหา">
                 <img src="/img/Icon/search.png" alt="ค้นหา" />
             </button>
+
+            <!-- กล่อง suggestion (จะถูกจัดตำแหน่งโดย JS) -->
+            <div id="qSuggest" class="search-suggest" hidden></div>
         </div>
+
 
 
         <div class="icon-buttons">
@@ -53,6 +69,16 @@
         </div>
     </div>
 </div>
+
+
+<!-- ผลการค้นหา -->
+<section id="searchSection" class="recommended-products" hidden>
+    <div class="search-results__head">
+        <h2>ผลการค้นหา <span id="searchCount"></span></h2>
+        <a href="#" id="clearSearch" class="btn btn-primary">ล้างการค้นหา</a>
+    </div>
+    <div id="results" class="product-grid"></div>
+</section>
 
 <!-- เอาอันนี้ด้วยถ้าอยากโชว์แถบหมวดหมู่ -->
 <?php if (empty($HEADER_NO_CATS)): ?>
@@ -121,3 +147,4 @@
         window.addEventListener('cart:changed', () => refresh());
     })();
 </script>
+<script src="/js/search/search.js"></script>

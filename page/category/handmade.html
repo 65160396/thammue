@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/instyle.css" />
         <link rel="stylesheet" href="/css/products.css" />
+        <link rel="stylesheet" href="/css/search.css">
     </head>
     <body
         data-slug="handmade">
@@ -29,11 +30,20 @@
             </div>
 
             <div class="search-container">
+                
+                <!-- ค้นหา-->
                 <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
+                    <input id="q" type="text" placeholder="ค้นหาสินค้า"
+                        autocomplete="off" autocapitalize="off"
+                        spellcheck="false"
+                        role="combobox" aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-controls="qSuggest" aria-haspopup="listbox" />
+                    <button id="btnSearch" class="search-button" type="button"
+                        aria-label="ค้นหา">
                         <img src="/img/Icon/search.png" alt="ค้นหา" />
                     </button>
+                    <div id="qSuggest" class="search-suggest"></div>
                 </div>
 
                 <div class="icon-buttons">
@@ -86,11 +96,21 @@
                 class="category-button">สินค้ามือสอง</a>
         </div>
 
+        <!-- ส่วนผลลัพธ์ที่ค้นหา -->
+        <section id="searchSection" class="search-results" hidden>
+            <div class="search-results__head">
+                <h2>ผลการค้นหา <span id="searchCount"></span></h2>
+                <a href="#" id="clearSearch"
+                    class="btn btn-primary">ล้างการค้นหา</a>
+            </div>
+            <div id="results" class="product-grid"></div>
+        </section>
+
         <section class="recommended-products">
             <h2 id="catTitle">กำลังโหลด...</h2>
             <div id="catGrid" class="product-grid"></div>
         </section>
-        
+
         <!-- สคริปต์ระบบแกนกลางของ header -->
         <script src="/js/nav-active.js"></script>
         <!-- ไฮไลต์เมนูบนสุด (ถ้าใช้) -->
@@ -100,17 +120,17 @@
         <script src="/js/store/shop-toggle.js"></script>
         <!-- ปุ่ม 'เปิดร้านค้า/ร้านของฉัน' -->
         <script src="/js/fav-badge.js" defer></script> <!-- ตรามุมหัวใจ -->
-        <script src="/js/store/shop-toggle.js"></script>
         <script>
   document.addEventListener('DOMContentLoaded', () => {
     toggleOpenOrMyShop();
   });
 </script>
-
-        <!-- โหลดสินค้าของหมวด (ต้องมี) -->
-        <script src="/js/productsforsale/products.js"></script>
         <script src="/js/category/category-feed.js" defer></script>
         <script src="/js/cart-badge.js" defer></script>
+
+        <!-- ค้นหา -->
+        <script src="/js/search/search.js"></script>
+        <script src="/js/search/category-search.js"></script>
 
     </body>
 </html>
