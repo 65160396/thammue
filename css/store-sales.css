@@ -1,0 +1,169 @@
+/* =====================================
+   STORE SALES PAGE (รวมทั้งหมด)
+   ===================================== */
+.store-sales-page .wrap {
+  max-width: 1000px;
+  margin: 28px auto;
+  padding: 0 16px;
+}
+
+.store-sales-page .card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+  padding: 18px;
+  margin-top: 16px;
+}
+
+.store-sales-page h2,
+.store-sales-page h3 {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ตาราง */
+.store-sales-page table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.store-sales-page thead tr {
+  background: #111;
+  color: #fff;
+}
+.store-sales-page th,
+.store-sales-page td {
+  padding: 10px 12px;
+  text-align: left;
+}
+.store-sales-page tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+
+/* ปุ่มพื้นฐาน (ใช้ร่วมกัน) */
+.store-sales-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: background 0.15s, color 0.15s, filter 0.15s;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ดำ */
+.store-sales-page .btn.btn-dark {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+.store-sales-page .btn.btn-dark:hover {
+  filter: brightness(1.1);
+}
+
+/* ย้อนกลับ: เทาอ่อน (เหมือน order-view-page) */
+.store-sales-page .btn.back {
+  background: #e6e6e6;
+  color: #111;
+  border-color: #e6e6e6;
+}
+.store-sales-page .btn.back:hover {
+  background: #dcdcdc;
+}
+
+/* อันตราย */
+.store-sales-page .btn.danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+.store-sales-page .btn.danger:hover {
+  filter: brightness(1.08);
+}
+
+/* แถบปุ่ม/การกระทำ */
+.store-sales-page .actions,
+.store-sales-page .footer-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+/* ================================
+   HIGHLIGHT SUMMARY TOP BAR
+   ================================ */
+.store-sales-page .summary-highlight {
+  text-align: center;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  color: #fff;
+  padding: 40px 20px;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+.store-sales-page .summary-highlight .label {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.store-sales-page .summary-highlight .value {
+  font-size: 58px;
+  font-weight: 800;
+  color: #00ffaa;
+  text-shadow: 0 0 18px rgba(0, 255, 170, 0.35);
+  line-height: 1.2;
+}
+.store-sales-page .summary-highlight .sub {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-top: 8px;
+  color: #e5e7eb;
+}
+
+/* ตารางพื้นฐาน */
+.store-sales-page .table-basic {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.store-sales-page .table-basic thead tr {
+  background: #111;
+  color: #fff;
+}
+.store-sales-page .table-basic th,
+.store-sales-page .table-basic td {
+  padding: 10px 12px;
+}
+.store-sales-page .table-basic tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+
+/* ฟอร์มฟิลเตอร์ */
+.store-sales-page label {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.store-sales-page input[type="date"],
+.store-sales-page select {
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}

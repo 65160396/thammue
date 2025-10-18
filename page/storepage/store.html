@@ -16,7 +16,7 @@
       <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-      
+
       <li class="right"><a href="#notification">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
@@ -84,10 +84,12 @@
           <div class="actions" style="display:flex; gap:16px; flex-wrap:wrap">
             <a id="infoLink" class="btn"
               href="/page/storepage/store-info.html">ข้อมูลร้านค้า</a>
+            <a id="btn-sales" class="btn" href="#">ยอดขาย</a>
             <a id="uploadLink" class="btn"
               href="/page/storepage/upload_product.html">อัพโหลดสินค้า</a>
             <a id="manageProductsLink" class="btn btn-secondary"
               href="/page/storepage/store-products.html">จัดการสินค้า</a>
+
           </div>
 
         </div>
@@ -97,6 +99,32 @@
     <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
     <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
     <script src="/js/store/shop-page.js"></script> <!--จัดการข้อมูลร้านค้า-->
-    <script src="/js/productsforsale/get_shop_info.js"></script> <!--ดึงข้อมูลร้านค้า-->
+    <script src="/js/productsforsale/get_shop_info.js"></script>
+
+    <script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  const shopId = qs.get('shop_id');
+
+  function bind(id, path){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (shopId) {
+      el.href = `${path}?shop_id=${encodeURIComponent(shopId)}`;
+    } else {
+      el.removeAttribute('href');
+      el.style.opacity = .6;
+      el.style.pointerEvents = 'none';
+      el.title = 'ยังไม่มี shop_id';
+    }
+  }
+
+  bind('infoLink',            '/page/storepage/store-info.html');
+  bind('uploadLink',          '/page/storepage/upload_product.html');
+  bind('manageProductsLink',  '/page/storepage/store-products.html');
+  bind('btn-sales',           '/page/storepage/store-sales.html');
+})();
+</script>
+
   </body>
 </html>

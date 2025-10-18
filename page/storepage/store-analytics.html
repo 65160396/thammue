@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue | วิเคราะห์ยอดขาย</title>
+
+        <!-- ใช้สไตล์หลักของระบบ -->
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/open-shop.css" />
+        <link rel="stylesheet" href="/css/store-sales.css" />
+    </head>
+    <body class="open-shop store-sales-page">
+
+        <!-- ===== Top bar (เหมือนทุกหน้า) ===== -->
+        <ul class="top-nav">
+            <li><a id="nav-store"
+                    href="/page/storepage/store.html">ร้านค้า</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+
+            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#lang">ไทย</a></li>
+        </ul>
+
+        <!-- Header -->
+        <div class="header-wrapper">
+            <div class="logo-container">
+                <a href="/page/main.html" class="brand-text">THAMMUE</a>
+            </div>
+            <div class="search-container">
+                <div class="icon-buttons">
+                    <button class="action-button">
+                        <img src="/img/Icon/chat.png" alt="แชท" />
+                    </button>
+
+                    <!-- เมนูโปรไฟล์ -->
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-area" id="userArea"
+                            aria-haspopup="true" aria-expanded="false">
+                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                            <span class="user-chip" id="userChip" hidden></span>
+                            <svg class="chev" viewBox="0 0 20 20"
+                                aria-hidden="true">
+                                <path d="M5.5 7.5l4.5 4 4.5-4"
+                                    fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown"
+                            role="menu"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== เนื้อหาหลัก ===== -->
+        <div class="wrap">
+            <h2>วิเคราะห์ยอดขาย</h2>
+
+            <!-- ฟิลเตอร์ช่วงเวลา -->
+            <div class="card">
+                <div
+                    style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                    <div>
+                        <label for="f-from">ตั้งแต่</label>
+                        <input type="date" id="f-from" />
+                    </div>
+                    <div>
+                        <label for="f-to">ถึง</label>
+                        <input type="date" id="f-to" />
+                    </div>
+                    <div>
+                        <label for="f-group">ระดับการรวม</label>
+                        <select id="f-group">
+                            <option value="day">รายวัน</option>
+                            <option value="week">รายสัปดาห์</option>
+                            <option value="month">รายเดือน</option>
+                            <option value="year">รายปี</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-dark" id="btn-run">ดูรายงาน</button>
+                </div>
+            </div>
+
+            <!-- กราฟรายได้ -->
+            <div class="card">
+                <h3>กราฟรายได้ตามช่วงเวลา</h3>
+                <canvas id="chartRevenue" height="120"></canvas>
+            </div>
+
+            <!-- ตาราง timeseries -->
+            <div class="card">
+                <h3>รายละเอียดตามช่วง</h3>
+                <table class="table-basic">
+                    <thead>
+                        <tr>
+                            <th>ช่วง</th>
+                            <th style="text-align:right">รายได้ (บาท)</th>
+                            <th style="text-align:right">ออเดอร์</th>
+                            <th style="text-align:right">ชิ้น</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ts-body"></tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <a class="btn back" id="btn-back">ย้อนกลับ</a>
+            </div>
+
+            <!-- ===== Scripts ===== -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="/js/me.js"></script>
+            <script src="/js/user-menu.js"></script>
+            <script src="/js/store/shop-analytics.js"></script>
+
+            <script>
+      // ✅ ผูก shop_id จาก URL ให้กับเมนูและปุ่มย้อนกลับ
+      (function(){
+        const qs = new URLSearchParams(location.search);
+        const shopId = qs.get('shop_id');
+        if (!shopId) return;
+        const back = document.getElementById('btn-back');
+        const navStore = document.getElementById('nav-store');
+        if (back) back.href = `/page/storepage/store-sales.html?shop_id=${encodeURIComponent(shopId)}`;
+        if (navStore) navStore.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
+      })();
+    </script>
+        </body>
+    </html>
