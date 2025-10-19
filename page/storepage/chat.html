@@ -9,12 +9,13 @@
         <link rel="stylesheet" href="/css/chat.css" />
     </head>
     <body>
-        <!-- Topbar (ถ้ามีของระบบอยู่แล้ว คงไว้) -->
+        <!-- แถบบนสุด (เหมือนหน้า main) -->
         <ul class="top-nav">
-            <li><a
-                    href="/page/storepage/upload_product.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+            <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
             <li><span class="top-divider">|</span></li>
-            <li><a href="/page/storepage/indexstore.html">ซื้อสินค้า</a></li>
+            <li><a id="openOrMyShop"
+                    href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
             <li class="right"><a href="#notification">แจ้งเตือน</a></li>
             <li><span class="top-divider">|</span></li>
             <li><a href="#help">ช่วยเหลือ</a></li>
@@ -22,6 +23,67 @@
             <li><a href="#lang">ไทย</a></li>
         </ul>
 
+        <!-- Header ดำ (ไม่มีช่องค้นหา) -->
+        <!-- Header ดำ (เหมือนหน้า main แต่ไม่มีช่องค้นหา) -->
+        <div class="header-wrapper">
+            <div class="logo-container">
+                <a href="/page/main.html" class="brand-text">THAMMUE</a>
+            </div>
+
+            <!-- ใส่ .search-container ครอบเฉพาะไอคอน เพื่อ reuse CSS เดิม -->
+            <div class="search-container">
+                <div class="icon-buttons desktop-icons">
+                    <a class="action-button" href="/page/favorites/index.php"
+                        aria-label="รายการโปรด">
+                        <img src="/img/Icon/heart.png" alt="รายการโปรด">
+                        <span id="favBadge" class="icon-badge" hidden>0</span>
+                    </a>
+
+                    <a class="action-button" href="/page/cart/index.php"
+                        aria-label="ตะกร้า" style="position:relative">
+                        <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+                        <span id="cartBadge" class="icon-badge" hidden>0</span>
+                    </a>
+
+                    <a class="action-button" href="/page/storepage/chat.html"
+                        aria-label="แชท" style="position:relative">
+                        <img src="/img/Icon/chat.png" alt="แชท">
+                        <span id="chatBadge" class="icon-badge" hidden>0</span>
+                    </a>
+
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-area" id="userArea"
+                            aria-haspopup="true" aria-expanded="false">
+                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                            <span class="user-chip" id="userChip" hidden></span>
+                            <svg class="chev" viewBox="0 0 20 20"
+                                aria-hidden="true">
+                                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                                    stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown"
+                            role="menu"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถบหมวดหมู่ (เหมือนหน้า main) -->
+        <div class="category-buttons">
+            <a href="/page/category/handmade.html"
+                class="category-button">สินค้าแฮนเมด</a>
+            <a href="/page/category/craft.html"
+                class="category-button">งานประดิษฐ์</a>
+            <a href="/page/category/local_products.html"
+                class="category-button">สินค้าท้องถิ่น</a>
+            <a href="/page/category/second_hand.html"
+                class="category-button">สินค้ามือสอง</a>
+        </div>
+
+        <!-- ตัวแชท -->
         <div class="chat-wrap">
             <div class="chat-grid">
                 <aside class="chat-list">
@@ -45,133 +107,148 @@
             </div>
         </div>
 
+        <!-- สคริปต์ระบบ (เหมือนหน้า main) -->
+        <script src="/js/nav-active.js"></script>
+        <script src="/js/flashmessage.js"></script>
+        <script src="/js/me.js"></script>
+        <script src="/js/user-menu.js"></script>
+        <script src="/js/store/shop-toggle.js"></script>
+        <script src="/js/fav-badge.js" defer></script>
+        <script src="/js/cart-badge.js" defer></script>
+        <script src="/js/notify-poll.js" defer></script>
+
         <script>
-    const API_BASE = '/page/backend/chat'; // << ชี้ไปยังโฟลเดอร์ API ใหม่
-    const listEl = document.getElementById('convList');
-    const headEl = document.getElementById('chatHead');
-    const msgsEl = document.getElementById('msgs');
-    const input = document.getElementById('input');
-    const sendBtn = document.getElementById('sendBtn');
+      document.addEventListener('DOMContentLoaded', () => {
+        toggleOpenOrMyShop();
+      });
+    </script>
 
-    const qs = new URLSearchParams(location.search);
-    let convId = Number(qs.get('c') || 0);
-    const withOwnerOf = Number(qs.get('with_owner_of') || 0);
+        <!-- JS แชท (เดิม) -->
+        <script>
+      const API_BASE = '/page/backend/chat';
+      const listEl = document.getElementById('convList');
+      const headEl = document.getElementById('chatHead');
+      const msgsEl = document.getElementById('msgs');
+      const input = document.getElementById('input');
+      const sendBtn = document.getElementById('sendBtn');
 
-    let lastId = 0;
-    let polling = null;
-    let busy = false;
-    const esc = (s='') => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+      const qs = new URLSearchParams(location.search);
+      let convId = Number(qs.get('c') || 0);
+      const withOwnerOf = Number(qs.get('with_owner_of') || 0);
 
-    async function loadList(){
-      listEl.innerHTML = '<li class="hint">กำลังโหลด...</li>';
-      const r = await fetch(`${API_BASE}/list.php`, {cache:'no-store'});
-      const d = await r.json().catch(() => ({ok:false}));
-      if(!d.ok){ listEl.innerHTML = '<li class="hint">กรุณาเข้าสู่ระบบเพื่อใช้งานแชท</li>'; return; }
-      if(!d.items || !d.items.length){ listEl.innerHTML = '<li class="hint">ยังไม่มีห้องแชท</li>'; return; }
-      listEl.innerHTML = d.items.map(c => `
-        <li>
-          <a href="/page/storepage/chat.html?c=${c.id}">
-            <strong>${esc(c.other_name || 'อีกฝ่าย')}</strong>
-            <span class="meta">${c.item_title ? ' • ' + esc(c.item_title) : ''}</span><br>
-            <span class="meta">${esc(c.last_body || '')}</span>
-          </a>
-        </li>`).join('');
-    }
+      let lastId = 0;
+      let polling = null;
+      let busy = false;
+      const esc = (s='') => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
-    async function ensureFromItem(){
-      if(!withOwnerOf || convId) return;
-      const r = await fetch(`${API_BASE}/open.php?with_owner_of=${withOwnerOf}`, {cache:'no-store'});
-      const d = await r.json().catch(() => ({ok:false}));
-      if(d.ok && d.conv_id){
-        convId = Number(d.conv_id);
-        history.replaceState({}, '', `${location.pathname}?c=${convId}`);
+      async function loadList(){
+        listEl.innerHTML = '<li class="hint">กำลังโหลด...</li>';
+        const r = await fetch(`${API_BASE}/list.php`, {cache:'no-store'});
+        const d = await r.json().catch(() => ({ok:false}));
+        if(!d.ok){ listEl.innerHTML = '<li class="hint">กรุณาเข้าสู่ระบบเพื่อใช้งานแชท</li>'; return; }
+        if(!d.items || !d.items.length){ listEl.innerHTML = '<li class="hint">ยังไม่มีห้องแชท</li>'; return; }
+        listEl.innerHTML = d.items.map(c => `
+  <li class="${c.id == convId ? 'is-active' : ''}">
+    <a href="/page/storepage/chat.html?c=${c.id}">
+      <span class="title">${esc(c.other_name || 'อีกฝ่าย')}</span>
+      ${c.item_title ? `<span class="meta">• ${esc(c.item_title)}</span>` : ''}
+      <span class="meta">${esc(c.last_body || '')}</span>
+    </a>
+  </li>
+`).join('');
+
       }
-    }
 
-    async function loadConv(){
-      if(!convId){
-        headEl.textContent = 'เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย';
-        msgsEl.innerHTML = '<div class="msg you"><div class="bubble">สวัสดี! เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div></div>';
-        input.disabled = true; sendBtn.disabled = true; return;
-      }
-      const rInfo = await fetch(`${API_BASE}/info.php?conv_id=${convId}`, {cache:'no-store'});
-      const i = await rInfo.json().catch(() => ({ok:false}));
-      if(!i.ok){ headEl.textContent = 'ไม่มีสิทธิ์เข้าห้องนี้ หรือห้องไม่พบ'; input.disabled = true; sendBtn.disabled = true; return; }
-      headEl.innerHTML = `${esc(i.other_name || 'อีกฝ่าย')}${i.item_title ? ` <span class="sub">• ${esc(i.item_title)}</span>` : ''}`;
-      input.disabled = false; sendBtn.disabled = false;
-
-      msgsEl.innerHTML = ''; lastId = 0; lastDay = '';
-      await fetchLoop(true);
-      if(polling) clearInterval(polling);
-      polling = setInterval(fetchLoop, 2000);
-    }
-
-    function formatDayLabel(iso){
-      const d = new Date(iso || Date.now());
-      return d.toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'});
-    }
-    let lastDay='';
-
-    function appendMsg(m){
-      const mine = m.is_mine === true;
-      const when = m.created_at || '';
-      const day = formatDayLabel(when);
-      if(day !== lastDay){
-        const sep = document.createElement('div');
-        sep.className = 'day-sep';
-        sep.innerHTML = `<span>${day}</span>`;
-        msgsEl.appendChild(sep);
-        lastDay = day;
-      }
-      const wrap = document.createElement('div');
-      wrap.className = 'msg ' + (mine ? 'me' : 'you');
-      wrap.innerHTML = `<div class="bubble">${esc(m.body || '')}<span class="at">${esc(when)}</span></div>`;
-      msgsEl.appendChild(wrap);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      lastId = Math.max(lastId, Number(m.id || 0));
-    }
-
-    async function fetchLoop(initial=false){
-      if(busy || !convId) return;
-      busy = true;
-      try{
-        const r = await fetch(`${API_BASE}/fetch.php?conv_id=${convId}&after_id=${lastId}`, {cache:'no-store'});
-        if(!r.ok) return;
-        const data = await r.json();
-        if(Array.isArray(data)){
-          if(initial && !data.length){
-            msgsEl.innerHTML = '<div class="msg you"><div class="bubble">เริ่มสนทนาได้เลย</div></div>';
-          }
-          data.forEach(appendMsg);
+      async function ensureFromItem(){
+        if(!withOwnerOf || convId) return;
+        const r = await fetch(`${API_BASE}/open.php?with_owner_of=${withOwnerOf}`, {cache:'no-store'});
+        const d = await r.json().catch(() => ({ok:false}));
+        if(d.ok && d.conv_id){
+          convId = Number(d.conv_id);
+          history.replaceState({}, '', `${location.pathname}?c=${convId}`);
         }
-      } finally { busy = false; }
-    }
+      }
 
-    async function send(){
-      const body = (input.value || '').trim();
-      if(!body || !convId) return;
-      input.value = '';
-      const fd = new FormData();
-      fd.append('conv_id', convId);
-      fd.append('body', body);
-      const r = await fetch(`${API_BASE}/send.php`, {method:'POST', body: fd});
-      if(r.ok) fetchLoop();
-    }
+      async function loadConv(){
+        if(!convId){
+          headEl.textContent = 'เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย';
+          msgsEl.innerHTML = '<div class="msg you"><div class="bubble">สวัสดี! เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div></div>';
+          input.disabled = true; sendBtn.disabled = true; return;
+        }
+        const rInfo = await fetch(`${API_BASE}/info.php?conv_id=${convId}`, {cache:'no-store'});
+        const i = await rInfo.json().catch(() => ({ok:false}));
+        if(!i.ok){ headEl.textContent = 'ไม่มีสิทธิ์เข้าห้องนี้ หรือห้องไม่พบ'; input.disabled = true; sendBtn.disabled = true; return; }
+        headEl.innerHTML = `${esc(i.other_name || 'อีกฝ่าย')}${i.item_title ? ` <span class="sub">• ${esc(i.item_title)}</span>` : ''}`;
+        input.disabled = false; sendBtn.disabled = false;
 
-    sendBtn.addEventListener('click', send);
-    input.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+        msgsEl.innerHTML = ''; lastId = 0; lastDay = '';
+        await fetchLoop(true);
+        if(polling) clearInterval(polling);
+        polling = setInterval(fetchLoop, 2000);
+      }
 
-    (async function boot(){ await loadList(); await ensureFromItem(); await loadConv(); })();
-  </script>
-  
+      function formatDayLabel(iso){
+        const d = new Date(iso || Date.now());
+        return d.toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'});
+      }
+      let lastDay='';
+
+      function appendMsg(m){
+        const mine = m.is_mine === true;
+        const when = m.created_at || '';
+        const day = formatDayLabel(when);
+        if(day !== lastDay){
+          const sep = document.createElement('div');
+          sep.className = 'day-sep';
+          sep.innerHTML = `<span>${day}</span>`;
+          msgsEl.appendChild(sep);
+          lastDay = day;
+        }
+        const wrap = document.createElement('div');
+        wrap.className = 'msg ' + (mine ? 'me' : 'you');
+        wrap.innerHTML = `<div class="bubble">${esc(m.body || '')}<span class="at">${esc(when)}</span></div>`;
+        msgsEl.appendChild(wrap);
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+        lastId = Math.max(lastId, Number(m.id || 0));
+      }
+
+      async function fetchLoop(initial=false){
+        if(busy || !convId) return;
+        busy = true;
+        try{
+          const r = await fetch(`${API_BASE}/fetch.php?conv_id=${convId}&after_id=${lastId}`, {cache:'no-store'});
+          if(!r.ok) return;
+          const data = await r.json();
+          if(Array.isArray(data)){
+            if(initial && !data.length){
+              msgsEl.innerHTML = '<div class="msg you"><div class="bubble">เริ่มสนทนาได้เลย</div></div>';
+            }
+            data.forEach(appendMsg);
+          }
+        } finally { busy = false; }
+      }
+
+      async function send(){
+        const body = (input.value || '').trim();
+        if(!body || !convId) return;
+        input.value = '';
+        const fd = new FormData();
+        fd.append('conv_id', convId);
+        fd.append('body', body);
+        const r = await fetch(`${API_BASE}/send.php`, {method:'POST', body: fd});
+        if(r.ok) fetchLoop();
+      }
+
+      sendBtn.addEventListener('click', send);
+      input.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+
+      (async function boot(){ await loadList(); await ensureFromItem(); await loadConv(); })();
+    </script>
+
+        <!-- เปิดหน้าแชทแล้วให้ mark อ่าน และล้าง badge แชท -->
         <script>
-fetch('/page/backend/notify/mark_all_read.php', {method:'POST', credentials:'include'})
-  .then(()=> {
-    // ล้าง badge บนไอคอนทันที
-    const b = document.getElementById('chatBadge');
-    b?.setAttribute('hidden','');
-  });
-</script>
-
+      fetch('/page/backend/notify/mark_all_read.php', {method:'POST', credentials:'include'})
+        .then(()=> document.getElementById('chatBadge')?.setAttribute('hidden',''));
+    </script>
     </body>
 </html>

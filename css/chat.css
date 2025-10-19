@@ -266,3 +266,40 @@ body {
     order: 2;
   }
 }
+
+/* ===== Chat list: 1 แถว 1 แชท ===== */
+#convList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block; /* กัน grid/columns เดิม */
+}
+#convList li {
+  display: block; /* บังคับเป็นบล็อกแถวเดียว */
+  width: 100%; /* กินเต็มแถว */
+}
+#convList li + li {
+  border-top: 1px solid #eef2f7;
+}
+#convList li a {
+  display: flex; /* จัดข้อความหลายบรรทัดให้เรียบร้อย */
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #111;
+}
+#convList li a:hover {
+  background: #f6f7fb;
+}
+#convList li.is-active a {
+  background: #eef7ff;
+}
+
+#convList .title {
+  font-weight: 600;
+}
+#convList .meta {
+  font-size: 12px;
+  color: #6b7280;
+}
