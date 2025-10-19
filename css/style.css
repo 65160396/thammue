@@ -1007,3 +1007,27 @@ a {
 .icon-badge[hidden] {
   display: none !important;
 }
+
+/* ====== Header click fixes ====== */
+.icon-buttons .action-button {
+  position: relative;
+  z-index: 2;
+}
+.user-menu {
+  position: relative;
+  z-index: 1;
+} /* กัน dropdown คลุมปุ่มแชท */
+#qSuggest {
+  position: absolute;
+  z-index: 10;
+} /* กันกล่องแนะนำคำค้นทับ header */
+
+/* กัน element ที่ซ่อนไว้ยังคลุมคลิก (เช่น backdrop) */
+[hidden] {
+  display: none !important;
+}
+
+/* ป้องกันมีใครเผลอใส่ pointer-events:none; ไว้กับลิงก์ */
+.icon-buttons .action-button {
+  pointer-events: auto;
+}

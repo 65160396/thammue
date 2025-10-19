@@ -434,7 +434,7 @@
   shopP.then(d => {
     if (!d) return;
     if (d.ok && d.shop) {
-      location.href = `/page/storepage/indexstore.html?shop_id=${encodeURIComponent(d.shop.id)}`;
+      location.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(d.shop.id)}`;
     } else if (d.code === 'NOT_LOGIN') {
       location.href = '/page/login.php';
     }

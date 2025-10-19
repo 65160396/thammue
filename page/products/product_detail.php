@@ -220,9 +220,15 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             <div class="shop-avatar" aria-hidden="true"><?= mb_substr($shop, 0, 1, 'UTF-8') ?: 'ร' ?></div>
             <div class="shop-main">
                 <div class="shop-name"><?= $shop ?></div>
+
                 <div class="shop-actions">
-                    <button class="btn-chip">แชท</button>
                     <?php if (!empty($p['shop_id'])): ?>
+                        <!-- ส่งผู้ใช้ไปหน้าแชท พร้อม ITEM_ID -->
+                        <a class="btn-chip" href="/page/storepage/chat.html?with_owner_of=<?= (int)$p['id'] ?>">
+                            แชทกับร้าน
+                        </a>
+
+
                         <a class="btn-chip" href="/page/store/store_public.php?id=<?= (int)$p['shop_id'] ?>">
                             ดูร้านค้า
                         </a>
@@ -230,6 +236,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
                         <span class="seller-link" style="opacity:.7;cursor:not-allowed">ไม่ระบุร้าน</span>
                     <?php endif; ?>
                 </div>
+
 
 
             </div>

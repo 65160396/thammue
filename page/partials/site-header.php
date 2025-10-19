@@ -47,35 +47,36 @@ $HIDE_CATS   = !empty($HEADER_NO_CATS);   // ของเดิมไว้ใ�
                 <!-- กล่อง suggestion (จะถูกจัดตำแหน่งโดย JS) -->
                 <div id="qSuggest" class="search-suggest" hidden></div>
             </div>
-        <?php endif; ?>
+
+              <?php endif; ?>
 
 
 
-        <div class="icon-buttons">
-            <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
-                <img src="/img/Icon/heart.png" alt="รายการโปรด">
-                <span id="favBadge" class="icon-badge" hidden>0</span>
-            </a>
+            <div class="icon-buttons">
+                <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
+                    <img src="/img/Icon/heart.png" alt="รายการโปรด">
+                    <span id="favBadge" class="icon-badge" hidden>0</span>
+                </a>
 
 
-            <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า" style="position:relative">
-                <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
-                <span id="cartBadge" class="icon-badge" hidden>0</span>
-            </a>
+                <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า" style="position:relative">
+                    <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+                    <span id="cartBadge" class="icon-badge" hidden>0</span>
+                </a>
 
-            <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
+                <button class="action-button"><img src="/img/Icon/chat.png" alt="แชท" /></button>
 
-            <div class="user-menu" id="userMenu">
-                <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
-                    <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                    <span class="user-chip" id="userChip" hidden></span>
-                    <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
-                <div class="user-dropdown" id="userDropdown" role="menu"></div>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+                        <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                        <span class="user-chip" id="userChip" hidden></span>
+                        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown" role="menu"></div>
+                </div>
             </div>
-        </div>
     </div>
 </div>
 

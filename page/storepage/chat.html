@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Thammue - แชท</title>
+        <link rel="stylesheet" href="/css/instyle.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/chat.css" />
+    </head>
+    <body>
+        <!-- Topbar (ถ้ามีของระบบอยู่แล้ว คงไว้) -->
+        <ul class="top-nav">
+            <li><a
+                    href="/page/storepage/upload_product.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="/page/storepage/indexstore.html">ซื้อสินค้า</a></li>
+            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#lang">ไทย</a></li>
+        </ul>
+
+        <div class="chat-wrap">
+            <div class="chat-grid">
+                <aside class="chat-list">
+                    <div class="chat-list-head">ห้องแชทของฉัน</div>
+                    <ul id="convList"><li class="hint">กำลังโหลด...</li></ul>
+                </aside>
+
+                <section class="chat-box">
+                    <div class="chat-box-head"><div
+                            id="chatHead">เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย</div></div>
+                    <div id="msgs" class="chat-msgs">
+                        <div class="msg you"><div class="bubble">สวัสดี!
+                                เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div></div>
+                    </div>
+                    <div class="chat-input">
+                        <textarea id="input" placeholder="พิมพ์ข้อความ..."
+                            disabled></textarea>
+                        <button id="sendBtn" disabled>ส่ง</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <script>
+    const API_BASE = '/page/backend/chat'; // << ชี้ไปยังโฟลเดอร์ API ใหม่
+    const listEl = document.getElementById('convList');
+    const headEl = document.getElementById('chatHead');
+    const msgsEl = document.getElementById('msgs');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const qs = new URLSearchParams(location.search);
+    let convId = Number(qs.get('c') || 0);
+    const withOwnerOf = Number(qs.get('with_owner_of') || 0);
+
+    let lastId = 0;
+    let polling = null;
+    let busy = false;
+    const esc = (s='') => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+    async function loadList(){
+      listEl.innerHTML = '<li class="hint">กำลังโหลด...</li>';
+      const r = await fetch(`${API_BASE}/list.php`, {cache:'no-store'});
+      const d = await r.json().catch(() => ({ok:false}));
+      if(!d.ok){ listEl.innerHTML = '<li class="hint">กรุณาเข้าสู่ระบบเพื่อใช้งานแชท</li>'; return; }
+      if(!d.items || !d.items.length){ listEl.innerHTML = '<li class="hint">ยังไม่มีห้องแชท</li>'; return; }
+      listEl.innerHTML = d.items.map(c => `
+        <li>
+          <a href="/page/storepage/chat.html?c=${c.id}">
+            <strong>${esc(c.other_name || 'อีกฝ่าย')}</strong>
+            <span class="meta">${c.item_title ? ' • ' + esc(c.item_title) : ''}</span><br>
+            <span class="meta">${esc(c.last_body || '')}</span>
+          </a>
+        </li>`).join('');
+    }
+
+    async function ensureFromItem(){
+      if(!withOwnerOf || convId) return;
+      const r = await fetch(`${API_BASE}/open.php?with_owner_of=${withOwnerOf}`, {cache:'no-store'});
+      const d = await r.json().catch(() => ({ok:false}));
+      if(d.ok && d.conv_id){
+        convId = Number(d.conv_id);
+        history.replaceState({}, '', `${location.pathname}?c=${convId}`);
+      }
+    }
+
+    async function loadConv(){
+      if(!convId){
+        headEl.textContent = 'เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย';
+        msgsEl.innerHTML = '<div class="msg you"><div class="bubble">สวัสดี! เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div></div>';
+        input.disabled = true; sendBtn.disabled = true; return;
+      }
+      const rInfo = await fetch(`${API_BASE}/info.php?conv_id=${convId}`, {cache:'no-store'});
+      const i = await rInfo.json().catch(() => ({ok:false}));
+      if(!i.ok){ headEl.textContent = 'ไม่มีสิทธิ์เข้าห้องนี้ หรือห้องไม่พบ'; input.disabled = true; sendBtn.disabled = true; return; }
+      headEl.innerHTML = `${esc(i.other_name || 'อีกฝ่าย')}${i.item_title ? ` <span class="sub">• ${esc(i.item_title)}</span>` : ''}`;
+      input.disabled = false; sendBtn.disabled = false;
+
+      msgsEl.innerHTML = ''; lastId = 0; lastDay = '';
+      await fetchLoop(true);
+      if(polling) clearInterval(polling);
+      polling = setInterval(fetchLoop, 2000);
+    }
+
+    function formatDayLabel(iso){
+      const d = new Date(iso || Date.now());
+      return d.toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'});
+    }
+    let lastDay='';
+
+    function appendMsg(m){
+      const mine = m.is_mine === true;
+      const when = m.created_at || '';
+      const day = formatDayLabel(when);
+      if(day !== lastDay){
+        const sep = document.createElement('div');
+        sep.className = 'day-sep';
+        sep.innerHTML = `<span>${day}</span>`;
+        msgsEl.appendChild(sep);
+        lastDay = day;
+      }
+      const wrap = document.createElement('div');
+      wrap.className = 'msg ' + (mine ? 'me' : 'you');
+      wrap.innerHTML = `<div class="bubble">${esc(m.body || '')}<span class="at">${esc(when)}</span></div>`;
+      msgsEl.appendChild(wrap);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      lastId = Math.max(lastId, Number(m.id || 0));
+    }
+
+    async function fetchLoop(initial=false){
+      if(busy || !convId) return;
+      busy = true;
+      try{
+        const r = await fetch(`${API_BASE}/fetch.php?conv_id=${convId}&after_id=${lastId}`, {cache:'no-store'});
+        if(!r.ok) return;
+        const data = await r.json();
+        if(Array.isArray(data)){
+          if(initial && !data.length){
+            msgsEl.innerHTML = '<div class="msg you"><div class="bubble">เริ่มสนทนาได้เลย</div></div>';
+          }
+          data.forEach(appendMsg);
+        }
+      } finally { busy = false; }
+    }
+
+    async function send(){
+      const body = (input.value || '').trim();
+      if(!body || !convId) return;
+      input.value = '';
+      const fd = new FormData();
+      fd.append('conv_id', convId);
+      fd.append('body', body);
+      const r = await fetch(`${API_BASE}/send.php`, {method:'POST', body: fd});
+      if(r.ok) fetchLoop();
+    }
+
+    sendBtn.addEventListener('click', send);
+    input.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+
+    (async function boot(){ await loadList(); await ensureFromItem(); await loadConv(); })();
+  </script>
+  
+        <script>
+fetch('/page/backend/notify/mark_all_read.php', {method:'POST', credentials:'include'})
+  .then(()=> {
+    // ล้าง badge บนไอคอนทันที
+    const b = document.getElementById('chatBadge');
+    b?.setAttribute('hidden','');
+  });
+</script>
+
+    </body>
+</html>
