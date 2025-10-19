@@ -124,6 +124,7 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
 
 <body class="order-view-page">
     <?php $HEADER_NO_CATS = true;
+    $HEADER_NO_SEARCH = true;
     include __DIR__ . '/../partials/site-header.php'; ?>
     <div class="wrap">
 

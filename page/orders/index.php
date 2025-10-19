@@ -51,6 +51,7 @@ $orders = $stmt->fetchAll();
 <body class="orders-page">
     <?php
     $HEADER_NO_CATS = true;
+    $HEADER_NO_SEARCH = true;
     include __DIR__ . '/../partials/site-header.php';
     ?>
 

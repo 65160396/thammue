@@ -1,4 +1,10 @@
 <!-- /page/partials/site-header.php -->
+<?php
+// ตัวแปรควบคุมการแสดงผลจากหน้าหลัก
+$HIDE_SEARCH = !empty($HEADER_NO_SEARCH); // ถ้า true จะไม่แสดงช่องค้นหา
+$HIDE_CATS   = !empty($HEADER_NO_CATS);   // ของเดิมไว้ใช้ได้เหมือนเดิม
+?>
+
 
 <ul class="top-nav">
     <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
@@ -17,28 +23,31 @@
         <a href="/page/main.html" class="brand-text">THAMMUE</a>
     </div>
 
-    <div class="search-container">
-        <div class="search-group">
-            <input
-                id="q"
-                type="text"
-                class="search-input"
-                placeholder="ค้นหาสินค้า"
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-expanded="false"
-                aria-controls="qSuggest"
-                aria-haspopup="listbox" />
-            <button id="btnSearch" class="search-button" type="button" aria-label="ค้นหา">
-                <img src="/img/Icon/search.png" alt="ค้นหา" />
-            </button>
 
-            <!-- กล่อง suggestion (จะถูกจัดตำแหน่งโดย JS) -->
-            <div id="qSuggest" class="search-suggest" hidden></div>
-        </div>
+
+    <div class="search-container">
+        <?php if (!$HIDE_SEARCH): ?>
+            <div class="search-group">
+                <input
+                    id="q"
+                    type="text"
+                    class="search-input"
+                    placeholder="ค้นหาสินค้า"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="qSuggest"
+                    aria-haspopup="listbox" />
+                <button id="btnSearch" class="search-button" type="button" aria-label="ค้นหา">
+                    <img src="/img/Icon/search.png" alt="ค้นหา" />
+                </button>
+                <!-- กล่อง suggestion (จะถูกจัดตำแหน่งโดย JS) -->
+                <div id="qSuggest" class="search-suggest" hidden></div>
+            </div>
+        <?php endif; ?>
 
 
 
@@ -147,4 +156,6 @@
         window.addEventListener('cart:changed', () => refresh());
     })();
 </script>
-<script src="/js/search/search.js"></script>
+<?php if (!$HIDE_SEARCH): ?>
+    <script src="/js/search/search.js"></script>
+<?php endif; ?>
