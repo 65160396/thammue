@@ -536,8 +536,8 @@ li a:hover {
   --card: #ffffff;
   --text: #1b1f24;
   --muted: #6b7280;
-  --brand: #0f766e;
-  --brand-700: #0b5f58;
+  --brand: #000000;
+  --brand-700: #000000;
   --band: #e8f6f4;
   --radius: 16px;
   --shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
@@ -825,7 +825,7 @@ a {
   top: 80px; /* ขยับให้พ้นแถบหัว */
   left: 50%;
   transform: translateX(-50%) translateY(-6px);
-  background: #0a7a3d;
+  background: #000000;
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 10px;
