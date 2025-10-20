@@ -13,14 +13,14 @@ try {
     // 1) ดึงข้อมูลห้อง + ชื่อร้าน + ชื่อไอเท็ม
     $stmt = $conn->prepare(
         "SELECT c.shop_id, c.user_id, c.item_id,
-            s.shop_name,
-            COALESCE(i.title, p.name) AS item_title   -- ดึงจาก exchange_items หรือ products ก็ได้
-     FROM shop_chats c
-     LEFT JOIN shops s          ON s.id=c.shop_id
-     LEFT JOIN exchange_items i ON i.id=c.item_id
-     LEFT JOIN products p       ON p.id=c.item_id
-     WHERE c.id=? LIMIT 1"
+          s.shop_name,
+          p.name AS item_title
+   FROM shop_chats c
+   LEFT JOIN shops s    ON s.id=c.shop_id
+   LEFT JOIN products p ON p.id=c.item_id
+   WHERE c.id=? LIMIT 1"
     );
+
     $stmt->bind_param('i', $convId);
     $stmt->execute();
     $stmt->bind_result($shopId, $userId, $itemId, $shopName, $itemTitle);
