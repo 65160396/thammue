@@ -113,7 +113,7 @@
   font-weight: 600;
 }
 
-/* Inputs (แบบรวม เด็ดขาดว่าเต็มคอลัมน์) */
+/* Inputs (รวม) */
 .open-shop .wizard-card .field input,
 .open-shop .wizard-card .field select,
 .open-shop .wizard-card .field textarea {
@@ -231,88 +231,60 @@
   white-space: nowrap;
 }
 
-/*ปุ่มเลือกไฟล์*/
-/* ให้ช่องอัปโหลดไฟล์หน้าตาเหมือน input ทั่วไป */
-.open-shop .wizard-card input[type="file"] {
+/*ตรงบัตรประชาชน*/
+.open-shop .file-wrap {
+  position: relative;
   width: 100%;
   height: 46px;
+}
+
+/* ซ่อน input จริง แต่ยังคลิกได้ทั้งกล่อง */
+.open-shop .file-wrap input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0; /* ซ่อนของจริง แต่คลิกได้ทั้งกล่อง */
+  cursor: pointer;
+  margin: 0;
+}
+
+/* กล่องปลอมที่โชว์ข้อความ/ชื่อไฟล์ */
+.open-shop .file-wrap .fake-box {
+  position: absolute;
+  inset: 0;
   border: 1px solid #e6e8ec;
   border-radius: 12px;
-  padding: 0.5px 10px; /* เผื่อพื้นที่ชื่อไฟล์ */
   background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* ชิดซ้าย */
+  padding: 0 14px;
   font-size: 16px;
+  color: #111;
+  pointer-events: none; /* คลิกทะลุไปโดน input */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* สไตล์ปุ่ม "เลือกไฟล์" ด้านใน */
-.open-shop .wizard-card input[type="file"]::file-selector-button {
-  margin-right: 12px;
-  padding: 6px 10px;
-  border: 0;
-  border-radius: 10px;
-  background: #000;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
+/* โฮเวอร์/โฟกัส */
+.open-shop .file-wrap:hover .fake-box {
+  border-color: #9bb8ff;
 }
-
-/* โฮเวอร์/โฟกัส/disabled */
-.open-shop .wizard-card input[type="file"]::file-selector-button:hover {
-  filter: brightness(1.1);
-}
-.open-shop .wizard-card input[type="file"]:focus {
+.open-shop .file-wrap.is-focus .fake-box {
   border-color: #9bb8ff;
   box-shadow: 0 0 0 4px rgba(55, 125, 255, 0.16);
 }
-.open-shop .wizard-card input[type="file"]:disabled::file-selector-button {
-  background: #e5e7eb;
-  color: #6b7280;
-  cursor: not-allowed;
-}
 
-/* Fallback สำหรับ WebKit เก่า ๆ (เช่น Safari เก่า) */
-.open-shop .wizard-card input[type="file"]::-webkit-file-upload-button {
-  margin-right: 12px;
-  padding: 10px 5px;
-  border: 0;
-  border-radius: 10px;
-  background: #000;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
+/* สถานะ disabled */
+.open-shop .file-wrap.is-disabled .fake-box {
+  background: #f6f7f9;
+  color: #9aa3ae;
+  border-color: #edf0f3;
 }
-
-/* ดอกจันสำหรับ DOB: label + .dob-row ที่มี select[required] (และไม่ disabled) */
-.open-shop .field:has(.dob-row select[required]:not([disabled])) > label {
-  position: relative;
-  padding-left: 12px;
-}
-.open-shop
-  .field:has(.dob-row select[required]:not([disabled]))
-  > label::before {
-  content: "*";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #d0342c;
-  font-weight: 600;
-}
-
-/* ดอกจันสำหรับกลุ่ม radio: label + .radio-row ที่มี input[required] (และไม่ disabled) */
-.open-shop
-  .field.inline:has(.radio-row input[required]:not([disabled]))
-  > label {
-  position: relative;
-  padding-left: 12px;
-}
-.open-shop
-  .field.inline:has(.radio-row input[required]:not([disabled]))
-  > label::before {
-  content: "*";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #d0342c;
-  font-weight: 600;
+.open-shop .file-wrap.is-disabled:hover .fake-box {
+  border-color: #edf0f3;
 }
 
 /* ทำให้ <a class="btn"> ดูเป็นปุ่มจริง */
