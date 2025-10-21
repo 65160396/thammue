@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>รายละเอียดคำขอแลกเปลี่ยน | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -47,46 +47,38 @@
   </div>
 
   <script>
-  const API_BASE = '/thammue/api';
+  const API_BASE = '/thammue/exchangepage/api';
   const qp = new URLSearchParams(location.search);
-  const nid = +(qp.get('nid') || 0);   // มาจาก notifications.html
-  const ridParam = +(qp.get('id') || 0); // สำรอง: ถ้าส่ง id คำขอมาโดยตรง
+  const nid = +(qp.get('nid') || 0);
+  const ridParam = +(qp.get('id') || 0);
 
   const box = document.getElementById('box');
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const fmt = s => { try{ return new Date(s.replace(' ','T')).toLocaleString('th-TH'); } catch(_) { return s; } };
-  const img = src => src ? (src.startsWith('/thammue/') ? src : '/thammue/'+src.replace(/^\/+/,'')) : '/thammue/img/placeholder.png';
+  const img = src => src ? (src.startsWith('/thammue/') ? src : '/thammue/exchangepage/'+src.replace(/^\/+/,'')) : '/thammue/exchangepage/img/placeholder.png';
 
   async function fetchNotification(nid){
-    // ดึง notification + mark read (ให้ badge ลดแน่ ๆ เมื่อเปิดหน้านี้ตรง ๆ)
     const res = await fetch(`${API_BASE}/notifications/get.php?id=${nid}&mark=1`, {credentials:'include', cache:'no-store'});
     if(!res.ok) return null;
     const {item} = await res.json();
-    // รีเฟรช badge บน header
     window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
     return item;
   }
-
   function extractRequestIdFromLink(link){
     if(!link) return 0;
-    try{
-      const u = new URL(link, location.origin);
-      return +(u.searchParams.get('id') || 0);
-    }catch(_){ return 0; }
+    try{ const u = new URL(link, location.origin); return +(u.searchParams.get('id') || 0); }
+    catch(_){ return 0; }
   }
-
   async function fetchRequestDetail(rid){
     const res = await fetch(`${API_BASE}/requests/get.php?id=${rid}`, {credentials:'include', cache:'no-store'});
     if(!res.ok) return null;
     const d = await res.json().catch(()=>({}));
     return d.item || d.data?.item || null;
   }
-
   function statusPill(s){
     return `<span class="pill ${s}">${({pending:'รอดำเนินการ',accepted:'ยอมรับแล้ว',rejected:'ปฏิเสธแล้ว'})[s] || s}</span>`;
   }
-
   function render(noti, req){
     if(!req){
       box.innerHTML = `
@@ -98,7 +90,6 @@
         </div>`;
       return;
     }
-
     box.innerHTML = `
       <div class="grid">
         <div>
@@ -141,26 +132,19 @@
             <div class="muted" style="margin-top:.5rem">${esc(noti?.type || '')} • ${fmt(noti?.created_at || '')}</div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
-
   async function init(){
     box.textContent = 'กำลังโหลด...';
     let noti = null, rid = ridParam;
-
     if (nid) {
-      noti = await fetchNotification(nid);      // mark read + data
+      noti = await fetchNotification(nid);
       if (noti && !rid) rid = extractRequestIdFromLink(noti.link);
     }
-
-    // เผื่อเรียกตรงแบบ detailreq.html?id=123
     if (!rid && ridParam) rid = ridParam;
-
     const req = rid ? await fetchRequestDetail(rid) : null;
     render(noti, req);
   }
-
   document.addEventListener('DOMContentLoaded', init);
   </script>
 

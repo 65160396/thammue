@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แจ้งเตือน | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -25,8 +25,8 @@
     .empty{padding:36px;text-align:center;color:#64748b;border:1px dashed #e5e7eb;border-radius:12px}
   </style>
 </head>
+</head>
 <body>
-  <!-- header / nav เดิมของโปรเจกต์ -->
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
@@ -50,7 +50,7 @@
   </div>
 
   <script>
-  const API_BASE = '/thammue/api';
+    const API_BASE = '/thammue/exchangepage/api';
   let page = {limit:20, offset:0, done:false};
   const listEl = document.getElementById('notiList');
   const emptyEl = document.getElementById('emptyState');

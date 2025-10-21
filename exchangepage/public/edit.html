@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แก้ไขสินค้า | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -13,7 +13,6 @@
     .field{margin:12px 0}
     .field label{display:block;font-weight:600;margin-bottom:6px}
     .actions{display:flex;gap:10px;margin-top:16px}
-    /* ภาพ */
     .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
     .thumb{position:relative;border-radius:10px;overflow:hidden;border:1px solid #eee}
     .thumb img{width:100%;height:120px;object-fit:cover;display:block}
@@ -82,7 +81,7 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/api';
+    const API_BASE = '/thammue/exchangepage/api';
     const params = new URLSearchParams(location.search);
     const itemId = params.get('id');
 
@@ -116,13 +115,11 @@
         if (!d || !d.ok || !d.item) { showAlert('ไม่พบสินค้า'); return; }
         if (!d.item.is_owner) { showAlert('คุณไม่มีสิทธิ์แก้ไขสินค้านี้'); return; }
 
-        // ฟิลด์พื้นฐาน
         $('#title').value = d.item.title || '';
         $('#category_id').value = String(d.item.category_id || '');
         $('#description').value = d.item.description || '';
         $('#province').value = d.item.province || '';
 
-        // แกลเลอรี
         renderGallery(d.item.images_detail || []);
 
         $('#backDetail').href = `detail.html?id=${encodeURIComponent(itemId)}&view=public`;
@@ -133,7 +130,6 @@
       }
     }
 
-    // อัปโหลดรูป
     filesInput.addEventListener('change', async () => {
       if (!filesInput.files || filesInput.files.length === 0) return;
       const fd = new FormData();
@@ -143,7 +139,6 @@
         const r = await fetch(`${API_BASE}/items/images.upload.php`, { method:'POST', body: fd });
         const d = await r.json().catch(()=> ({}));
         if (d && d.ok) {
-          // reload item to refresh gallery
           await loadItem();
           filesInput.value = '';
         } else {
@@ -154,7 +149,6 @@
       }
     });
 
-    // คลิกในแกลเลอรี: ลบ / ตั้งหน้าปก
     gallery.addEventListener('click', async (e) => {
       const btn = e.target.closest('button');
       if (!btn) return;
@@ -171,14 +165,9 @@
             body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
           });
           const d = await r.json().catch(()=> ({}));
-          if (d && d.ok) {
-            await loadItem();
-          } else {
-            alert('ลบรูปไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
-          }
-        } catch {
-          alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
-        }
+          if (d && d.ok) { await loadItem(); }
+          else { alert('ลบรูปไม่สำเร็จ: ' + (d?.error || 'UNKNOWN')); }
+        } catch { alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'); }
       }
 
       if (action === 'setcover') {
@@ -189,20 +178,13 @@
             body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
           });
           const d = await r.json().catch(()=> ({}));
-          if (d && d.ok) {
-            await loadItem();
-          } else {
-            alert('ตั้งหน้าปกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
-          }
-        } catch {
-          alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
-        }
+          if (d && d.ok) { await loadItem(); }
+          else { alert('ตั้งหน้าปกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN')); }
+        } catch { alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'); }
       }
     });
 
-    // บันทึกข้อมูลพื้นฐาน
-    const formEl = document.getElementById('editForm');
-    formEl.addEventListener('submit', async (e) => {
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new URLSearchParams({
         id: String(itemId),
@@ -219,15 +201,9 @@
           body: fd
         });
         const d = await r.json().catch(()=> ({}));
-        if (d && d.ok) {
-          alert('บันทึกสำเร็จ');
-          // อยู่หน้าเดิมต่อเพื่อแก้รูปต่อ หรือจะพากลับ detail ก็ได้
-        } else {
-          alert('บันทึกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
-        }
-      } catch {
-        alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
-      }
+        if (d && d.ok) { alert('บันทึกสำเร็จ'); }
+        else { alert('บันทึกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN')); }
+      } catch { alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'); }
     });
 
     loadItem();

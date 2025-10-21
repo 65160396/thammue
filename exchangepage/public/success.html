@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>อัปโหลดสำเร็จ • Thammue</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -100,22 +99,12 @@
       border-color: #0ea5e9;
       color: #fff;
     }
-  </style>
+</style>
 </head>
-
 <body>
   <div class="success-wrap">
     <div class="success-card">
-      <div class="success-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M20 7L9 18l-5-5" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-      </div>
-      <h1 class="success-title">อัปโหลดสินค้าเรียบร้อย</h1>
-      <img id="cover" class="cover" alt="" hidden>
-      <p>รหัสอ้างอิง: <code id="ref">#-</code></p>
-      <p>ชื่อสินค้า: <code id="title">—</code></p>
+      <!-- ... เดิม ... -->
       <div class="btn-row">
         <a id="viewBtn" class="btn primary" href="#">ดูสินค้าชิ้นนี้</a>
         <a class="btn" href="upload.html">อัปโหลดสินค้าอีกครั้ง</a>
@@ -125,7 +114,7 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/api';
+    const API_BASE = '/thammue/exchangepage/api';
     const id = new URLSearchParams(location.search).get('id') || '';
     document.getElementById('ref').textContent = id ? `#${id}` : '#-';
     document.getElementById('viewBtn').href = `detail.html?id=${id}&view=public`;
@@ -137,14 +126,11 @@
           if (d && d.ok && d.item) {
             const it = d.item;
             document.getElementById('title').textContent = it.title || '—';
-            // เดิม
-            // const img = it.cover || (it.images && it.images[0]);
-
-            // ใหม่
+            // ทำ path รูปให้เป็น absolute ภายใต้ exchangepage
             const toAbs = p => {
               if (!p) return '';
               if (p.startsWith('http') || p.startsWith('/')) return p;
-              return `/thammue/${p}`;           // เติม prefix ให้พ้นผลของ <base>
+              return `/thammue/exchangepage/${p.replace(/^\/+/, '')}`;
             };
             const imgPath = toAbs(it.cover || (it.images && it.images[0]));
             if (imgPath) {
@@ -152,13 +138,10 @@
               el.src = imgPath;
               el.hidden = false;
             }
-
-
           }
         })
-        .catch(() => { /* เงียบไว้ */ });
+        .catch(() => {});
     }
   </script>
 </body>
-
 </html>

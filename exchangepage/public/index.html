@@ -1,31 +1,24 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Thammue</title>
 
-  <!-- CSS หลัก -->
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
-  <!-- CSS ปุ่ม 3 จุด (แยกไฟล์) -->
   <link rel="stylesheet" href="../css/cards.kebab.css" />
   <link rel="stylesheet" href="../css/verification.css">
 </head>
-
 <body>
-  <!-- แถบบนสุด -->
+  <!-- top bar -->
   <ul class="top-nav">
-    <!--ตรงนี้คือใส่ jjs uplode สำหรับยืนยันตัวตนไว้ -->
     <li><a class="js-upload" href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
-    <li><a href="../page/main.html">ซื้อสินค้า</a></li>
-
-
+    <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
     <li class="right">
-      <a id="notiBtn" href="../public/notifications.html">
+      <a id="notiBtn" href="notifications.html">
         แจ้งเตือน <span id="notiBadge" hidden class="badge"></span>
       </a>
     </li>
@@ -35,10 +28,9 @@
     <li><a href="#lang">ไทย</a></li>
   </ul>
 
-  <!-- Header หลัก -->
   <div class="header-wrapper">
     <div class="logo-container">
-      <a href="../public/index.html" class="brand-text">THAMMUE</a>
+      <a href="index.html" class="brand-text">THAMMUE</a>
     </div>
 
     <div class="search-container">
@@ -50,16 +42,15 @@
       </div>
 
       <div class="icon-buttons desktop-icons">
-        <a class="action-button" href="../public/request.html" aria-label="คำขอแลกเปลี่ยน">
+        <a class="action-button" href="request.html" aria-label="คำขอแลกเปลี่ยน">
           <img src="../img/Icon/exchange.png" alt="">
           <span class="badge" id="reqBadge" hidden>0</span>
         </a>
-        <a class="action-button" href="../public/fav.html" aria-label="รายการโปรด">
+        <a class="action-button" href="fav.html" aria-label="รายการโปรด">
           <img src="../img/Icon/heart.png" alt="">
           <span class="badge" id="favBadge" hidden>0</span>
-
         </a>
-        <a class="action-button" href="../public/chat.html" aria-label="แชท">
+        <a class="action-button" href="chat.html" aria-label="แชท">
           <img src="../img/Icon/chat.png" alt="">
           <span class="badge" id="chatBadge" hidden>0</span>
         </a>
@@ -69,8 +60,7 @@
             <img src="../img/Icon/user.png" alt="โปรไฟล์" />
             <span class="user-chip" id="userChip" hidden></span>
             <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
           <div class="user-dropdown" id="userDropdown" role="menu"></div>
@@ -83,24 +73,24 @@
     </div>
   </div>
 
-  <!-- เมนูมือถือ + หมวดหมู่ -->
   <nav id="mobileIcons" class="icons-drawer" hidden>
     <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
-    <a href="../public/request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
-    <a href="../public/fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
-    <a href="../public/chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
+    <a href="request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
+    <a href="fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
+    <a href="chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
     <a href="profile.html"><img src="../img/Icon/user.png" alt=""> โปรไฟล์</a>
   </nav>
   <div class="icons-backdrop" hidden></div>
 
   <div class="category-buttons">
-    <a href="../public/category.html?category_id=1" class="category-button">แฮนเมด</a>
-    <a href="../public/category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
-    <a href="../public/category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
-    <a href="../public/category.html?category_id=4" class="category-button">เสื้อผ้า</a>
-    <a href="../public/category.html?category_id=5" class="category-button">หนังสือ</a>
-    <a href="../public/category.html?category_id=6" class="category-button">ของสะสม</a>
+    <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+    <a href="category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
+    <a href="category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
+    <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+    <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
+    <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
+
 
   <!-- Hero -->
   <header class="hero">
@@ -216,7 +206,6 @@
     </div>
   </footer>
 
-  <!-- JS: mobile menu -->
   <script>
     const burger = document.querySelector('.hamburger');
     const drawer = document.getElementById('mobileIcons');
@@ -230,6 +219,7 @@
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeIcons(); });
   </script>
 
+
   <!-- JS: me.php chip -->
   <script>
     (function () {
@@ -239,7 +229,7 @@
       fetch('../api/me.php', { cache: 'no-store' })
         .then(r => r.ok ? r.json() : { ok: false })
         .then(d => {
-          if (!d || !d.ok) { chip.hidden = true; userArea.href = '../page/login.html'; return; }
+          if (!d || !d.ok) { chip.hidden = true; userArea.href = '/thammue/page/login.html'; return; }
           const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
           if (name) { chip.textContent = name; chip.hidden = false; }
         })
@@ -247,13 +237,9 @@
     })();
   </script>
 
-  <!-- JS: โหลดการ์ด + ปุ่ม 3 จุด (แยกไฟล์) -->
   <script type="module" src="../js/dot/index.page.js"></script>
   <script src="../js/header-noti.js"></script>
   <script src="../js/app-badges.js?v=2" defer></script>
-  <script src="../public/js/verification.modal.js" defer></script>
-
-
+  <script src="js/verification.modal.js" defer></script>
 </body>
-
 </html>

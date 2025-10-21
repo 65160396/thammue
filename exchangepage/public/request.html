@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>คำขอแลกเปลี่ยน | THAMMUE</title>
 
-  <!-- ใช้สไตล์หลักเดิม -->
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/requests.css" />
   <link rel="stylesheet" href="../css/req.accept.css" />
-
-
-
 </head>
-
 <body>
-  <!-- แถบบน -->
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="index.html">ซื้อสินค้า</a></li>
   </ul>
 
-  <!-- Header เดิม -->
   <div class="header-wrapper">
     <div class="logo-container"><a href="index.html" class="brand-text">THAMMUE</a></div>
     <div class="search-container">
@@ -58,7 +50,7 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/api';
+    const API_BASE = '/thammue/exchangepage/api';
     const host = document.getElementById('list');
 
     // ---------- helpers ----------
@@ -258,8 +250,7 @@
     loadList();
   </script>
   <script src="../js/app-badges.js?v=req" defer></script>
-  <!-- (เพิ่ม) ก่อน </body> -->
-  <script src="../public/js/req.accept.modal.js" defer></script>
+  <script src="js/req.accept.modal.js" defer></script>
 
 
 </body>

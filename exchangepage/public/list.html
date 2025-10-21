@@ -3,20 +3,16 @@
 
 <head>
     <meta charset="utf-8" />
-    <base href="/thammue/public/">
+    <base href="/thammue/exchangepage/public/">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Thammue</title>
-    <!-- CSS เดิม -->
     <link rel="stylesheet" href="../css/instyle.css" />
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/cards.kebab.css" />
-
-
-
 </head>
 
 <body>
-   
+
     <!-- แถบบนสุด (UI เดิม) -->
     <ul class="top-nav">
         <li><a href="../public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
@@ -98,9 +94,7 @@
             <div class="section-head">
                 <h2 id="listTitle">รายการทั้งหมด</h2>
             </div>
-
             <div id="listGrid" class="grid grid-4"></div>
-
             <div class="center mt-16">
                 <button id="loadMore" class="btn" hidden>โหลดเพิ่ม</button>
             </div>
@@ -108,12 +102,12 @@
     </main>
 
     <script>
-        const API_BASE = '/thammue/api';
+        const API_BASE = '/thammue/exchangepage/api';
 
         function getQS() {
             const u = new URL(location.href);
             return {
-                interest: u.searchParams.get('interest'),     // '1' ถ้ามาจากปุ่มดูทั้งหมด
+                interest: u.searchParams.get('interest'),
                 category_id: u.searchParams.get('category_id'),
                 q: u.searchParams.get('q'),
             };
@@ -126,30 +120,24 @@
             const province = it.province || '';
             const catName = it.category_name || it.category || '';
             const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
-
-            const isOwner = it.is_owner === true; // ต้องมีจาก API /items/list.php
+            const isOwner = it.is_owner === true;
 
             const menuHtml = isOwner
-                ? `
-      <button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
-      <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>
-    `
-                : `
-      <button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>
-    `;
+                ? `<button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
+           <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>`
+                : `<button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>`;
 
             return `
-  <article class="card" data-card-id="${id}">
-    <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
-    
-    <div class="card-kebab" data-id="${id}">
-      <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      </button>
-      <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>
-        ${menuHtml}
-      </div>
-    </div>
+      <article class="card" data-card-id="${id}">
+        <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
+        <div class="card-kebab" data-id="${id}">
+          <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </button>
+          <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>
+            ${menuHtml}
+          </div>
+        </div>
         <div class="thumb">${img ? `<img src="${img}" alt="" style="width:100%;height:180px;object-fit:cover;border-radius:12px 12px 0 0;">` : ''}</div>
         <div class="card-body">
           <h3>${title}</h3>
@@ -159,9 +147,8 @@
       </article>`;
         }
 
-        // สะสมสถานะโหลดหน้า (client-side paging แบบง่าย)
         let LIMIT = 24;
-        let loaded = 0;              // ใช้เป็น offset ถ้า API รองรับ
+        let loaded = 0;
         let isLoading = false;
         let lastBatchCount = 0;
 
@@ -171,10 +158,7 @@
             if (params.interest) sp.set('interest', params.interest);
             if (params.category_id) sp.set('category_id', params.category_id);
             if (params.q) sp.set('q', params.q);
-
-            // เผื่อ API รองรับ offset/skip (ถ้าไม่รองรับ ก็แค่ถูกเมิน ไม่พัง)
             if (loaded > 0) sp.set('offset', loaded);
-
             return `?${sp.toString()}`;
         }
 
@@ -188,8 +172,7 @@
 
             document.getElementById('listTitle').textContent =
                 qs.interest ? 'ทั้งหมดจากความสนใจของคุณ' :
-                    qs.category_id ? 'สินค้าตามหมวดหมู่' :
-                        'รายการทั้งหมด';
+                    qs.category_id ? 'สินค้าตามหมวดหมู่' : 'รายการทั้งหมด';
 
             try {
                 const res = await fetch(`${API_BASE}/items/list.php${buildQuery(qs)}`, { cache: 'no-store' });
@@ -201,33 +184,23 @@
 
                     lastBatchCount = data.items.length;
                     loaded += data.items.length;
-
-                    // ถ้าได้ครบพอดีกับ LIMIT ให้โชว์ปุ่มโหลดเพิ่ม (คาดว่ามีต่อ)
                     btn.hidden = !(lastBatchCount === LIMIT);
                 } else {
-                    if (!append) {
-                        host.innerHTML = '<p class="muted">ยังไม่มีรายการในเงื่อนไขนี้</p>';
-                    }
+                    if (!append) host.innerHTML = '<p class="muted">ยังไม่มีรายการในเงื่อนไขนี้</p>';
                     btn.hidden = true;
                 }
             } catch (e) {
-                if (!append) {
-                    host.innerHTML = '<p class="muted">โหลดข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง</p>';
-                }
+                if (!append) host.innerHTML = '<p class="muted">โหลดข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง</p>';
                 btn.hidden = true;
             } finally {
                 isLoading = false;
             }
         }
 
-        // เริ่มต้น
         fetchAndRender(false);
-
-        // ปุ่มโหลดเพิ่ม (จะใช้ได้ถ้า API ส่งกลับมาทีละ LIMIT)
-        document.getElementById('loadMore').addEventListener('click', () => {
-            fetchAndRender(true);
-        });
+        document.getElementById('loadMore').addEventListener('click', () => fetchAndRender(true));
     </script>
+
     <script type="module" src="../js/dot/list.page.js"></script>
 </body>
 

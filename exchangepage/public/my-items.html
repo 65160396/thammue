@@ -3,11 +3,10 @@
 
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/public/">
+  <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>สินค้าของฉัน | THAMMUE</title>
 
-  <!-- CSS หลักของโปรเจกต์ -->
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/cards.kebab.css" />
@@ -135,8 +134,7 @@
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
-    <li><a href="index.html">ซื้อสินค้า</a></li>
-
+    <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
     <li class="right">
       <a id="notiBtn" href="notifications.html">
         แจ้งเตือน <span id="notiBadge" hidden class="badge"></span>
@@ -149,7 +147,7 @@
   </ul>
 
   <!-- Header หลัก -->
-  <div class="header-wrapper">
+ <div class="header-wrapper">
     <div class="logo-container">
       <a href="index.html" class="brand-text">THAMMUE</a>
     </div>
@@ -181,8 +179,7 @@
             <img src="../img/Icon/user.png" alt="โปรไฟล์" />
             <span class="user-chip" id="userChip" hidden></span>
             <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
           <div class="user-dropdown" id="userDropdown" role="menu"></div>
@@ -214,7 +211,7 @@
     <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
 
-  <main class="section">
+    <main class="section">
     <div class="container">
       <div class="page-head">
         <h2>สินค้าของฉัน</h2>
@@ -226,10 +223,8 @@
       </div>
 
       <div id="grid" class="grid grid-4"></div>
-
       <div id="empty" class="empty" style="display:none">ยังไม่มีสินค้า ลองกด “เพิ่มสินค้า” ด้านบนขวา</div>
 
-      <!-- หน้าเพจ -->
       <div class="pager" style="display:flex;gap:8px;justify-content:center;margin:18px 0">
         <button class="btn" id="prevBtn">ก่อนหน้า</button>
         <span id="pageInfo" style="align-self:center"></span>
@@ -238,12 +233,11 @@
     </div>
   </main>
 
-  <!-- โมดูลหลักของหน้า -->
   <script type="module">
-    // ใช้ path ตาม base="/thammue/public/" → ./js/... จะชี้ไป /thammue/public/js/...
-    import { Kebab } from '/thammue/js/cards.kebab.js';
+    // ปรับ import ให้ชี้ไฟล์ใน exchangepage
+    import { Kebab } from '../js/cards.kebab.js';
 
-    const API_BASE = '/thammue/api';
+    const API_BASE = '/thammue/exchangepage/api';
     const state = { page: 1, per_page: 12, total: 0, q: '' };
 
     const grid = document.getElementById('grid');
@@ -371,9 +365,7 @@
     load();
   </script>
 
-  <!-- JS อื่น ๆ ของส่วนหัว/แบดจ์ -->
   <script src="../js/app-badges.js?v=2" defer></script>
   <script src="../js/header-noti.js"></script>
 </body>
-
 </html>
