@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/exchangepage/public/">
+  <base href="/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แชท | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -16,11 +16,11 @@
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="index.html">ซื้อสินค้า</a></li>
-    <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+    <li class="right">
+      <a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a>
+    </li>
     <li><span class="top-divider">|</span></li>
     <li><a href="#help">ช่วยเหลือ</a></li>
-    <li><span class="top-divider">|</span></li>
-    <li><a href="#lang">ไทย</a></li>
   </ul>
 
   <!-- Header -->
@@ -42,14 +42,14 @@
     </div>
   </div>
 
-  <!-- Categories -->
+  <!-- Categories (ลิงก์แบบเดียวกับทุกหน้า) -->
   <div class="category-buttons">
-    <a href="category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
-    <a href="category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
-    <a href="category/children.html" class="category-button">อุปกรณ์เด็ก</a>
-    <a href="category/clothing.html" class="category-button">เสื้อผ้า</a>
-    <a href="category/books.html" class="category-button">หนังสือ</a>
-    <a href="category/collectibles.html" class="category-button">ของสะสม</a>
+    <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+    <a href="category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
+    <a href="category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
+    <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+    <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
+    <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
 
   <div class="chat-wrap">
@@ -79,9 +79,11 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/exchangepage/api';
-    /* ... ส่วน JS เดิมของคุณคงไว้ทั้งหมด ... */
+    // ประกาศ API_BASE แบบ global กันชนกับไฟล์อื่น
+    window.API_BASE = window.API_BASE || '/exchangepage/api';
+    /* ที่เหลือใช้สคริปต์เดิมของคุณต่อได้เลย เช่นเปิด socket / polling ฯลฯ */
   </script>
   <script src="../js/app-badges.js?v=chat" defer></script>
+  <script src="../js/header-noti.js"></script>
 </body>
 </html>

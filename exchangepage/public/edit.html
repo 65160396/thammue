@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/exchangepage/public/">
+  <base href="/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แก้ไขสินค้า | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -43,9 +43,9 @@
       <div class="field">
         <label for="category_id">หมวดหมู่ *</label>
         <select id="category_id" name="category_id" required>
-          <option value="1">อุปกรณ์อิเล็กทรอนิกส์</option>
-          <option value="2">ของใช้ในบ้าน</option>
-          <option value="3">อุปกรณ์เด็ก</option>
+          <option value="1">แฮนเมด</option>
+          <option value="2">ของประดิษฐ์</option>
+          <option value="3">ของใช้ทั่วไป</option>
           <option value="4">เสื้อผ้า</option>
           <option value="5">หนังสือ</option>
           <option value="6">ของสะสม</option>
@@ -81,7 +81,9 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/exchangepage/api';
+    // base API
+    window.API_BASE = window.API_BASE || '/exchangepage/api';
+
     const params = new URLSearchParams(location.search);
     const itemId = params.get('id');
 
@@ -110,7 +112,7 @@
     async function loadItem() {
       if (!itemId) { showAlert('ไม่พบรหัสสินค้า'); return; }
       try {
-        const r = await fetch(`${API_BASE}/items/show.php?id=${encodeURIComponent(itemId)}`, { cache:'no-store' });
+        const r = await fetch(`${window.API_BASE}/items/show.php?id=${encodeURIComponent(itemId)}`, { cache:'no-store', credentials:'include' });
         const d = await r.json();
         if (!d || !d.ok || !d.item) { showAlert('ไม่พบสินค้า'); return; }
         if (!d.item.is_owner) { showAlert('คุณไม่มีสิทธิ์แก้ไขสินค้านี้'); return; }
@@ -136,7 +138,7 @@
       fd.append('item_id', itemId);
       for (const f of filesInput.files) fd.append('files[]', f);
       try {
-        const r = await fetch(`${API_BASE}/items/images.upload.php`, { method:'POST', body: fd });
+        const r = await fetch(`${window.API_BASE}/items/images.upload.php`, { method:'POST', body: fd, credentials:'include' });
         const d = await r.json().catch(()=> ({}));
         if (d && d.ok) {
           await loadItem();
@@ -159,10 +161,11 @@
       if (action === 'del') {
         if (!confirm('ลบรูปนี้หรือไม่?')) return;
         try {
-          const r = await fetch(`${API_BASE}/items/images.delete.php`, {
+          const r = await fetch(`${window.API_BASE}/items/images.delete.php`, {
             method:'POST',
             headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
-            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
+            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) }),
+            credentials:'include'
           });
           const d = await r.json().catch(()=> ({}));
           if (d && d.ok) { await loadItem(); }
@@ -172,10 +175,11 @@
 
       if (action === 'setcover') {
         try {
-          const r = await fetch(`${API_BASE}/items/images.setcover.php`, {
+          const r = await fetch(`${window.API_BASE}/items/images.setcover.php`, {
             method:'POST',
             headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
-            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
+            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) }),
+            credentials:'include'
           });
           const d = await r.json().catch(()=> ({}));
           if (d && d.ok) { await loadItem(); }
@@ -195,10 +199,11 @@
       });
       if (!fd.get('title') || !fd.get('category_id')) { alert('กรอกข้อมูลให้ครบ'); return; }
       try {
-        const r = await fetch(`${API_BASE}/items/update.php`, {
+        const r = await fetch(`${window.API_BASE}/items/update.php`, {
           method:'POST',
           headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
-          body: fd
+          body: fd,
+          credentials:'include'
         });
         const d = await r.json().catch(()=> ({}));
         if (d && d.ok) { alert('บันทึกสำเร็จ'); }

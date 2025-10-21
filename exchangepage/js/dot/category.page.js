@@ -1,7 +1,7 @@
 // /thammue/public/js/dot/category.page.js
 import { Kebab } from '../cards.kebab.js';
 
-const API_BASE = '/thammue/api';
+const API_BASE = '/exchangepage/api';
 
 // อ่านพารามิเตอร์ให้รองรับทั้ง ?cat= และ ?category_id=
 function getQS() {

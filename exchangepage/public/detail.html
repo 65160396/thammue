@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/exchangepage/public/">
+  <base href="/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>รายละเอียดสินค้า | THAMMUE</title>
 
@@ -15,14 +15,10 @@
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
-    <!-- ลิงก์ไปฝั่งร้านค้าเพื่อน ใช้ path เต็มของโปรเจกต์ shop/page -->
     <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
-
-    <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-    <li><span class="top-divider">|</span></li>
-    <li><a href="#help">ช่วยเหลือ</a></li>
-    <li><span class="top-divider">|</span></li>
-    <li><a href="#lang">ไทย</a></li>
+    <li class="right">
+      <a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a>
+    </li>
   </ul>
 
   <!-- Header -->
@@ -55,7 +51,8 @@
             <img src="../img/Icon/user.png" alt="โปรไฟล์" />
             <span class="user-chip" id="userChip" hidden></span>
             <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
           <div class="user-dropdown" id="userDropdown" role="menu"></div>
@@ -79,9 +76,9 @@
   <div class="icons-backdrop" hidden></div>
 
   <div class="category-buttons">
-    <a href="category.html?category_id=1" class="category-button">อุปกรณ์อิเล็กทรอนิกส์</a>
-    <a href="category.html?category_id=2" class="category-button">ของใช้ในบ้าน</a>
-    <a href="category.html?category_id=3" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+    <a href="category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
+    <a href="category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
     <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
     <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
     <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
@@ -134,6 +131,11 @@
     </div>
   </div>
 
+  <script>
+    // base API
+    window.API_BASE = window.API_BASE || '/exchangepage/api';
+  </script>
   <script type="module" src="../js/detail.page.js"></script>
+  <script src="../js/header-noti.js"></script>
 </body>
 </html>

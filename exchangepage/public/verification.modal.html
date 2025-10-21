@@ -1,62 +1,76 @@
 <!-- verification.modal.html -->
-<div id="verifyModal" class="v-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="vTitle">
+<div id="verifyModal" class="v-modal" hidden aria-hidden="true" role="dialog"
+  aria-modal="true" aria-labelledby="vTitle">
   <div class="v-backdrop" data-close></div>
+
   <div class="v-panel" role="document">
     <header class="v-head">
       <h3 id="vTitle">กรุณายืนยันตัวตน</h3>
       <button class="v-x" type="button" data-close aria-label="ปิด">×</button>
     </header>
 
-    <form id="verifyForm" class="v-form" enctype="multipart/form-data" novalidate>
+    <form id="verifyForm" class="v-form" enctype="multipart/form-data"
+      novalidate>
       <div class="v-grid">
         <div class="field required">
           <label for="full_name">ชื่อ-นามสกุล</label>
-          <input id="full_name" name="full_name" required>
+          <input id="full_name" name="full_name" autocomplete="name" required>
         </div>
 
         <div class="field required">
           <label>วันเดือนปีเกิด</label>
           <div class="dob-row">
-            <select id="dob_d" name="dob_d" required><option value="">วัน</option></select>
-            <select id="dob_m" name="dob_m" required><option value="">เดือน</option></select>
-            <select id="dob_y_be" name="dob_y_be" required><option value="">พ.ศ.</option></select>
+            <select id="dob_d" name="dob_d" required><option
+                value>วัน</option></select>
+            <select id="dob_m" name="dob_m" required><option
+                value>เดือน</option></select>
+            <select id="dob_y_be" name="dob_y_be" required><option
+                value>พ.ศ.</option></select>
           </div>
         </div>
 
         <div class="field required">
           <label for="citizen_id">เลขบัตรประชาชน (13 หลัก)</label>
-          <input id="citizen_id" name="citizen_id" maxlength="13" inputmode="numeric" required>
+          <input id="citizen_id" name="citizen_id" maxlength="13"
+            inputmode="numeric" autocomplete="off" required>
           <small class="hint">ระบบจะเก็บแบบปกปิดตัวเลข</small>
         </div>
 
         <div class="field required">
           <label for="addr_line">ที่อยู่ตามบัตร</label>
-          <input id="addr_line" name="addr_line" required>
+          <input id="addr_line" name="addr_line" autocomplete="street-address"
+            required>
         </div>
 
         <div class="field required">
           <label for="province">จังหวัด</label>
-          <select id="province" name="province" required><option value="">— เลือกจังหวัด —</option></select>
+          <select id="province" name="province" required><option value>—
+              เลือกจังหวัด —</option></select>
         </div>
 
         <div class="field required">
           <label for="district">อำเภอ/เขต</label>
-          <select id="district" name="district" required disabled><option value="">— เลือกอำเภอ/เขต —</option></select>
+          <select id="district" name="district" required disabled><option
+              value>— เลือกอำเภอ/เขต —</option></select>
         </div>
 
         <div class="field required">
           <label for="subdistrict">ตำบล/แขวง</label>
-          <select id="subdistrict" name="subdistrict" required disabled><option value="">— เลือกตำบล/แขวง —</option></select>
+          <select id="subdistrict" name="subdistrict" required disabled><option
+              value>— เลือกตำบล/แขวง —</option></select>
         </div>
 
         <div class="field required">
           <label for="postcode">รหัสไปรษณีย์</label>
-          <input id="postcode" name="postcode" maxlength="5" inputmode="numeric" required>
+          <input id="postcode" name="postcode" maxlength="5" inputmode="numeric"
+            required>
         </div>
 
         <div class="field required">
-          <label for="id_front">บัตรประชาชนด้านหน้า (.jpg/.png)</label>
-          <input id="id_front" type="file" name="id_front" accept="image/*,application/pdf" required>
+          <label for="id_front">บัตรประชาชนด้านหน้า (.jpg/.png หรือ
+            .pdf)</label>
+          <input id="id_front" type="file" name="id_front"
+            accept="image/*,application/pdf" required>
         </div>
       </div>
 

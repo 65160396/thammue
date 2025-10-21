@@ -5,7 +5,6 @@
   <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>คำขอแลกเปลี่ยน | THAMMUE</title>
-
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/requests.css" />
@@ -34,11 +33,10 @@
     </div>
   </div>
 
-  <!-- หมวดหมู่ -->
   <div class="category-buttons">
-    <a href="category.html?category_id=1" class="category-button">อิเล็กทรอนิกส์</a>
-    <a href="category.html?category_id=2" class="category-button">เครื่องใช้ภายในบ้าน</a>
-    <a href="category.html?category_id=3" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+    <a href="category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
+    <a href="category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
     <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
     <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
     <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
@@ -50,200 +48,103 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/exchangepage/api';
+    window.API_BASE = '/thammue/exchangepage/api';
     const host = document.getElementById('list');
 
-    // ---------- helpers ----------
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
-    const path = (p) => p ? (p.startsWith('/thammue/') ? p : '/thammue/' + p.replace(/^\/+/, '')) : '/thammue/img/placeholder.png';
-    const badge = (s) => `<span class="chip ${s}">${({ pending: 'รอดำเนินการ', accepted: 'ยอมรับแล้ว', rejected: 'ปฏิเสธแล้ว' })[s] || s}</span>`;
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const path = p => p ? (p.startsWith('/thammue/exchangepage/') ? p : '/thammue/exchangepage/' + p.replace(/^\/+/, '')) : '/thammue/exchangepage/img/placeholder.png';
+    const badge = s => `<span class="chip ${s}">${({pending:'รอดำเนินการ',accepted:'ยอมรับแล้ว',rejected:'ปฏิเสธแล้ว'})[s] || s}</span>`;
 
-    // ปกป้องกรณี API เก่า/ใหม่: พยายาม map ให้ได้สองฝั่ง “ของผู้ขอ” และ “ของของเรา”
-    function normalizeRow(r) {
-      // ของผู้ขอ
-      const req = r.requester_item || r.request_item || {
-        id: r.requester_item_id,
-        title: r.requester_item_title,
-        cover: r.requester_item_cover
-      };
-
-      // ของของเรา (ที่เขาต้องการ) – บาง API ให้มาเป็น item_* เดิม
-      const tgt = r.target_item || r.item || {
-        id: r.item_id,
-        title: r.item_title,
-        cover: r.cover
-      };
-
+    function normalizeRow(r){
+      const req = r.requester_item || r.request_item || { id:r.requester_item_id, title:r.requester_item_title, cover:r.requester_item_cover };
+      const tgt = r.target_item || r.item || { id:r.item_id, title:r.item_title, cover:r.cover };
       return {
-        id: r.id,
-        status: r.status || 'pending',
-        message: r.message || '',
-        created_at: r.created_at || '',
+        id:r.id, status:r.status||'pending', message:r.message||'', created_at:r.created_at||'',
         requester_email: r.requester_email || r.requester_name || '',
-        requester_item: {
-          id: req?.id ?? null,
-          title: req?.title ?? '-',
-          cover: path(req?.cover)
-        },
-        target_item: {
-          id: tgt?.id ?? r.item_id ?? null,
-          title: tgt?.title ?? r.item_title ?? '-',
-          cover: path(tgt?.cover ?? r.cover)
-        }
+        requester_item:{ id:req?.id??null, title:req?.title??'-', cover:path(req?.cover) },
+        target_item:{ id:tgt?.id ?? r.item_id ?? null, title:tgt?.title ?? r.item_title ?? '-', cover:path(tgt?.cover ?? r.cover) }
       };
     }
 
-    // UI ต่อแถวตามแบบตัวอย่าง: ซ้าย=รูป+หัวข้อ “ของผู้ขอ”, ขวา=รูป+หัวข้อ “ของของเรา”
-    function rowHtml(raw) {
+    function rowHtml(raw){
       const r = normalizeRow(raw);
-
-      // ถ้าไม่อยากโชว์รูปของเราเลย ให้ตั้ง showOwnThumb=false
-      const showOwnThumb = true; // <-- ปรับเป็น false ถ้า “ไม่แสดงรูป” ด้านล่าง
-
       const head = `
-    <div class="swap-head">
-      <h3 class="swap-title">
-        ${esc(r.target_item.title)}
-        <small>· ผู้ขอ: ${esc(r.requester_email || '-')}</small>
-      </h3>
-      <div class="swap-actions">
-        ${r.status === 'pending'
-          ? `<button class="btn-pill btn-accept" data-act="accept" data-id="${r.id}">ยอมรับ</button>
-               <button class="btn-pill btn-reject" data-act="reject" data-id="${r.id}">ปฏิเสธ</button>`
-          : `<span class="btn-pill" style="background:#9ca3af;color:#fff;cursor:default">${r.status === 'accepted' ? 'ยอมรับแล้ว' : 'ปฏิเสธแล้ว'}</span>`
-        }
-      </div>
-    </div>`;
-
-      // บล็อกบน: “ของผู้ขอ” — เด่น
+        <div class="swap-head">
+          <h3 class="swap-title">${esc(r.target_item.title)} <small>· ผู้ขอ: ${esc(r.requester_email || '-')}</small></h3>
+          <div class="swap-actions">
+            ${r.status === 'pending'
+              ? `<button class="btn-pill btn-accept" data-act="accept" data-id="${r.id}">ยอมรับ</button>
+                 <button class="btn-pill btn-reject" data-act="reject" data-id="${r.id}">ปฏิเสธ</button>`
+              : `<span class="btn-pill" style="background:#9ca3af;color:#fff;cursor:default">${r.status === 'accepted' ? 'ยอมรับแล้ว' : 'ปฏิเสธแล้ว'}</span>`}
+          </div>
+        </div>`;
       const top = `
-    <div class="swap-top">
-      <div class="thumb-lg"><img src="${r.requester_item.cover}" alt=""></div>
-      <div>
-        <div class="title">สินค้าที่ขอแลกเปลี่ยน: ${esc(r.requester_item.title)}</div>
-        ${r.requester_email ? `<div class="meta">${esc(r.requester_email)}</div>` : ''}
-        ${r.message ? `<div class="note">ข้อความจากผู้ขอ: ${esc(r.message)}</div>` : ''}
-      </div>
-    </div>`;
-
-      // เส้น+คำว่า แลกกับ
+        <div class="swap-top">
+          <div class="thumb-lg"><img src="${r.requester_item.cover}" alt=""></div>
+          <div>
+            <div class="title">สินค้าที่ขอแลกเปลี่ยน: ${esc(r.requester_item.title)}</div>
+            ${r.requester_email ? `<div class="meta">${esc(r.requester_email)}</div>` : ``}
+            ${r.message ? `<div class="note">ข้อความจากผู้ขอ: ${esc(r.message)}</div>` : ``}
+          </div>
+        </div>`;
       const bar = `<div class="swap-with">⇄ แลกกับ</div>`;
-
-      // บล็อกล่าง: “ของของเรา” — ย่อมลง (รูปเล็ก/หรือไม่โชว์)
-      const bottomThumb = showOwnThumb
-        ? `<div class="thumb-sm"><img src="${r.target_item.cover}" alt=""></div>`
-        : `<div></div>`; // เว้นที่คอลัมน์ไว้ให้ grid
-
       const bottom = `
-    <div class="swap-bottom">
-      ${bottomThumb}
-      <div>
-        <div class="title">สินค้าของฉัน: ${esc(r.target_item.title)}</div>
-        <div class="muted">${badge(r.status)}</div>
-      </div>
-      <div></div>
-    </div>`;
-
-      // meta ไทม์ไลน์
-      const meta = `
-    <div class="swap-meta">
-      ${r.created_at ? `วันที่ร้องขอ: ${esc(r.created_at)}` : ''}
-    </div>`;
-
-      return `<article class="swap-card" data-id="${r.id}">${head}${top}${bar}${bottom}${meta}</article>`;
+        <div class="swap-bottom">
+          <div class="thumb-sm"><img src="${r.target_item.cover}" alt=""></div>
+          <div>
+            <div class="title">สินค้าของฉัน: ${esc(r.target_item.title)}</div>
+            <div class="muted">${badge(r.status)}</div>
+          </div>
+          <div></div>
+        </div>`;
+      const meta = `<div class="swap-meta">${r.created_at ? `วันที่ร้องขอ: ${esc(r.created_at)}` : ''}</div>`;
+      return `<article class="swap-card" data-id="${r.id}" data-status="${r.status}">${head}${top}${bar}${bottom}${meta}</article>`;
     }
 
-    // ---------- load & actions ----------
-    async function loadList() {
+    async function loadList(){
       host.innerHTML = `<div class="empty-card">กำลังโหลด...</div>`;
-      try {
-        // ใช้เอ็นพอยต์เดิมของคุณ (list_incoming.php)
-        const res = await fetch(`${API_BASE}/requests/list_incoming.php`, { cache: 'no-store', credentials: 'include' });
-        if (res.status === 401) {
-          host.innerHTML = `<div class="empty-card">กรุณาเข้าสู่ระบบเพื่อดูคำขอ</div>`;
-          return;
-        }
-        const d = await res.json().catch(() => ({ ok: false }));
-        console.log('incoming requests payload:', d);
-        if (!d.ok) throw new Error(d.error || 'โหลดไม่สำเร็จ');
-
+      try{
+        const res = await fetch(`${window.API_BASE}/requests/list_incoming.php`, { cache:'no-store', credentials:'include' });
+        if (res.status === 401){ host.innerHTML = `<div class="empty-card">กรุณาเข้าสู่ระบบเพื่อดูคำขอ</div>`; return; }
+        const d = await res.json().catch(()=>({ok:false}));
         const list = d.data?.items || d.items || [];
-
-        if (!list.length) {
-          host.innerHTML = `<div class="empty-card">ยังไม่มีคำขอเข้ามา</div>`;
-          return;
-        }
-        host.innerHTML = list.map(rowHtml).join('');
-      } catch (err) {
+        host.innerHTML = list.length ? list.map(rowHtml).join('') : `<div class="empty-card">ยังไม่มีคำขอเข้ามา</div>`;
+      }catch(err){
         host.innerHTML = `<div class="empty-card">ผิดพลาด: ${esc(err.message)}</div>`;
       }
     }
 
-    async function updateRequest(id, action, btn) {
-      try {
-        btn?.setAttribute('disabled', 'disabled');
-
-        const fd = new FormData();
-        fd.append('id', id);
-        fd.append('action', action);
-
-        const res = await fetch(`${API_BASE}/requests/update.php`, {
-          method: 'POST',
-          body: fd,
-          credentials: 'include'
-        });
-
-        if (res.status === 401) { alert('กรุณาเข้าสู่ระบบ'); return; }
+    async function updateRequest(id, action, btn){
+      try{
+        btn?.setAttribute('disabled','disabled');
+        const fd = new FormData(); fd.append('id', id); fd.append('action', action);
+        const res = await fetch(`${window.API_BASE}/requests/update.php`, { method:'POST', body:fd, credentials:'include' });
+        if (res.status === 401){ alert('กรุณาเข้าสู่ระบบ'); return; }
         if (!res.ok) throw new Error(await res.text() || 'อัปเดตไม่สำเร็จ');
+        const out = await res.json().catch(()=>({}));
+        const newStatus = out?.status || (action==='accept'?'accepted':'rejected');
 
-        // ==== อ่านผลลัพธ์จริงจากเซิร์ฟเวอร์ ====
-        const out = await res.json().catch(() => ({}));
-        const newStatus = (out && out.status) || (action === 'accept' ? 'accepted' : 'rejected');
-
-        // ==== อัปเดต UI การ์ด ====
         const card = document.querySelector(`.swap-card[data-id="${id}"]`);
-        if (card) {
+        if (card){
           const wasPending = (card.dataset.status === 'pending');
-
-          // เปลี่ยนปุ่มเป็นสถานะสุดท้าย
           card.querySelector('.swap-actions').innerHTML =
-            `<span class="btn-pill" style="background:#9ca3af;color:#fff;cursor:default">${newStatus === 'accepted' ? 'ยอมรับแล้ว' : 'ปฏิเสธแล้ว'}</span>`;
-
-          // อัปเดตชิปสถานะด้านล่างถ้ามี
+            `<span class="btn-pill" style="background:#9ca3af;color:#fff;cursor:default">${newStatus==='accepted'?'ยอมรับแล้ว':'ปฏิเสธแล้ว'}</span>`;
           const badgeSpot = card.querySelector('.swap-bottom .muted');
-          if (badgeSpot) {
-            badgeSpot.innerHTML = `<span class="chip ${newStatus}">${newStatus === 'accepted' ? 'ยอมรับแล้ว' : 'ปฏิเสธแล้ว'}</span>`;
-          }
-
-          // เซ็ตสถานะใหม่ลง DOM
+          if (badgeSpot){ badgeSpot.innerHTML = `<span class="chip ${newStatus}">${newStatus==='accepted'?'ยอมรับแล้ว':'ปฏิเสธแล้ว'}</span>`; }
           card.dataset.status = newStatus;
-
-          // ==== ลดตัวเลขบน badge แบบไม่พลาด ====
-          // ลดเฉพาะกรณี "เดิมเป็น pending" -> "ตอนนี้ไม่ pending"
-          if (wasPending && newStatus !== 'pending') {
-            window.dispatchEvent(new CustomEvent('badge:delta', { detail: { id: 'reqBadge', delta: -1 } }));
+          if (wasPending && newStatus!=='pending'){
+            window.dispatchEvent(new CustomEvent('badge:delta', { detail:{ id:'reqBadge', delta:-1 }}));
           }
-
-          // ตามด้วยรีเฟรชจากเซิร์ฟเวอร์ (นับจาก total pending จริง)
-          window.dispatchEvent(new CustomEvent('badge:refresh', { detail: 'req' }));
+          window.dispatchEvent(new CustomEvent('badge:refresh', { detail:'req' }));
         }
-
-
-
-      } catch (e) {
-        alert('ผิดพลาด: ' + e.message);
-      } finally {
-        btn?.removeAttribute('disabled');
-      }
+      }catch(e){ alert('ผิดพลาด: ' + e.message); }
+      finally{ btn?.removeAttribute('disabled'); }
     }
 
-    host.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-act]');
-      if (!b) return;
-      const id = b.getAttribute('data-id');
-      const act = b.getAttribute('data-act');
-      if (!id) return;
-      if (!confirm(act === 'accept' ? 'ยืนยันการยอมรับคำขอ?' : 'ยืนยันการปฏิเสธคำขอ?')) return;
+    document.getElementById('list').addEventListener('click', (e)=>{
+      const b = e.target.closest('[data-act]'); if (!b) return;
+      const id = b.getAttribute('data-id'); const act = b.getAttribute('data-act'); if (!id) return;
+      if (!confirm(act==='accept' ? 'ยืนยันการยอมรับคำขอ?' : 'ยืนยันการปฏิเสธคำขอ?')) return;
       updateRequest(id, act, b);
     });
 
@@ -251,8 +152,5 @@
   </script>
   <script src="../js/app-badges.js?v=req" defer></script>
   <script src="js/req.accept.modal.js" defer></script>
-
-
 </body>
-
 </html>

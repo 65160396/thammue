@@ -1,7 +1,7 @@
 // /thammue/public/js/dot/list.page.js
 import { Kebab } from '../cards.kebab.js';
 
-const API_BASE = '/thammue/api';
+const API_BASE = '/exchangepage/api';
 
 function getQS() {
   const u = new URL(location.href);
