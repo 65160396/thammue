@@ -31,11 +31,12 @@ $cookie_samesite = 'Lax';
 // ทำ path ให้ตรงกับ base (/thammue/exchangepage) เพื่อให้หน้าเว็บส่งคุกกี้ติดมาถูกที่
 session_set_cookie_params([
   'lifetime' => 0,
-  'path' => '/thammue/exchangepage',
-  'domain' => '',        // localhost
-  'secure' => $cookie_secure,
-  'httponly' => $cookie_httponly,
-  'samesite' => $cookie_samesite
+  // เดิม: 'path' => '/thammue/exchangepage',
+  'path' => '/exchangepage',     // ✅ ให้ครอบคลุมทั้งหน้าและ API
+  'domain' => '',
+  'secure' => false,
+  'httponly' => true,
+  'samesite' => 'Lax'
 ]);
 if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 
@@ -62,7 +63,7 @@ function db(): PDO {
 }
 
 // ---------- Base paths ----------
-define('THAMMUE_BASE', '/thammue/exchangepage');          // public base สำหรับสร้าง URL
+define('THAMMUE_BASE', '/exchangepage');           // public base สำหรับสร้าง URL
 define('PUBLIC_DIR', dirname(__DIR__) . '/public');       // โฟลเดอร์ public ของ exchangepage
 define('UPLOAD_DIR', PUBLIC_DIR . '/uploads');            // เก็บอัปโหลดใน exchangepage/public/uploads
 

@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/exchangepage/public/">
+  <base href="/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>รายละเอียดคำขอแลกเปลี่ยน | THAMMUE</title>
   <link rel="stylesheet" href="../css/instyle.css" />
@@ -38,7 +38,6 @@
     <li class="right">
       <a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a>
     </li>
-    <li><span class="top-divider">|</span></li>
   </ul>
 
   <div class="wrap">
@@ -47,7 +46,8 @@
   </div>
 
   <script>
-  const API_BASE = '/thammue/exchangepage/api';
+  // base API + helper
+  window.API_BASE = window.API_BASE || '/exchangepage/api';
   const qp = new URLSearchParams(location.search);
   const nid = +(qp.get('nid') || 0);
   const ridParam = +(qp.get('id') || 0);
@@ -56,10 +56,10 @@
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const fmt = s => { try{ return new Date(s.replace(' ','T')).toLocaleString('th-TH'); } catch(_) { return s; } };
-  const img = src => src ? (src.startsWith('/thammue/') ? src : '/thammue/exchangepage/'+src.replace(/^\/+/,'')) : '/thammue/exchangepage/img/placeholder.png';
+  const img = src => src ? (src.startsWith('/exchangepage/') ? src : '/exchangepage/'+src.replace(/^\/+/,'')) : '/exchangepage/img/placeholder.png';
 
   async function fetchNotification(nid){
-    const res = await fetch(`${API_BASE}/notifications/get.php?id=${nid}&mark=1`, {credentials:'include', cache:'no-store'});
+    const res = await fetch(`${window.API_BASE}/notifications/get.php?id=${nid}&mark=1`, {credentials:'include', cache:'no-store'});
     if(!res.ok) return null;
     const {item} = await res.json();
     window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
@@ -71,7 +71,7 @@
     catch(_){ return 0; }
   }
   async function fetchRequestDetail(rid){
-    const res = await fetch(`${API_BASE}/requests/get.php?id=${rid}`, {credentials:'include', cache:'no-store'});
+    const res = await fetch(`${window.API_BASE}/requests/get.php?id=${rid}`, {credentials:'include', cache:'no-store'});
     if(!res.ok) return null;
     const d = await res.json().catch(()=>({}));
     return d.item || d.data?.item || null;
@@ -101,8 +101,8 @@
 
           <div class="section-title">ผู้มีส่วนเกี่ยวข้อง</div>
           <div class="box kv">
-            <b>ผู้ยื่นคำขอ</b><div>${esc(req.requester.name || req.requester.email || '—')}</div>
-            <b>เจ้าของสินค้า</b><div>${esc(req.owner.name || req.owner.email || '—')}</div>
+            <b>ผู้ยื่นคำขอ</b><div>${esc(req.requester?.name || req.requester?.email || '—')}</div>
+            <b>เจ้าของสินค้า</b><div>${esc(req.owner?.name || req.owner?.email || '—')}</div>
           </div>
 
           <div class="section-title">สินค้า</div>

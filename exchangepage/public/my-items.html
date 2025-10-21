@@ -1,178 +1,54 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="utf-8" />
   <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>สินค้าของฉัน | THAMMUE</title>
-
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/cards.kebab.css" />
   <style>
-    /* สไตล์เสริมสำหรับหน้านี้ */
-    .page-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 14px 0 4px
-    }
-
-    .page-head h2 {
-      margin: 0;
-      font-size: 1.35rem
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      align-items: center
-    }
-
-    .toolbar input[type="text"] {
-      padding: 10px 12px;
-      border: 1px solid var(--line, #e5e7eb);
-      border-radius: 12px;
-      min-width: 220px
-    }
-
-    .toolbar .btn {
-      padding: 10px 14px;
-      border-radius: 12px;
-      cursor: pointer
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted, #6b7280);
-      padding: 36px 12px
-    }
-
-    .grid.grid-4 {
-      grid-template-columns: repeat(4, 1fr)
-    }
-
-    @media (max-width: 1024px) {
-      .grid.grid-4 {
-        grid-template-columns: repeat(3, 1fr)
-      }
-    }
-
-    @media (max-width: 720px) {
-      .grid.grid-4 {
-        grid-template-columns: repeat(2, 1fr)
-      }
-    }
-
-    @media (max-width: 480px) {
-      .grid.grid-4 {
-        grid-template-columns: 1fr
-      }
-    }
-
-    /* การ์ด */
-    .card {
-      background: var(--card, #fff);
-      border-radius: var(--radius, 14px);
-      box-shadow: var(--shadow, 0 10px 24px rgba(0, 0, 0, .08));
-      overflow: hidden
-    }
-
-    .card-img {
-      aspect-ratio: 4/3;
-      object-fit: cover;
-      width: 100%;
-      display: block;
-      background: #f3f4f6
-    }
-
-    .card-body {
-      padding: 12px
-    }
-
-    .card-title {
-      margin: 0 0 6px;
-      font-weight: 700;
-      line-height: 1.35
-    }
-
-    .card-meta {
-      font-size: .9rem;
-      color: var(--muted, #6b7280);
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap
-    }
-
-    .card-foot {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-top: 1px solid var(--line, #e5e7eb);
-      background: #fafafa
-    }
-
-    .pill {
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #eef2ff;
-      color: #3730a3;
-      font-size: .8rem
-    }
-
-    .kebab-wrap {
-      position: relative
-    }
+    .page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 4px}
+    .page-head h2{margin:0;font-size:1.35rem}
+    .toolbar{display:flex;gap:8px;align-items:center}
+    .toolbar input[type="text"]{padding:10px 12px;border:1px solid var(--line,#e5e7eb);border-radius:12px;min-width:220px}
+    .toolbar .btn{padding:10px 14px;border-radius:12px;cursor:pointer}
+    .empty{text-align:center;color:var(--muted,#6b7280);padding:36px 12px}
+    .grid.grid-4{grid-template-columns:repeat(4,1fr)}
+    @media (max-width:1024px){.grid.grid-4{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width:720px){.grid.grid-4{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:480px){.grid.grid-4{grid-template-columns:1fr}}
+    .card{background:var(--card,#fff);border-radius:var(--radius,14px);box-shadow:var(--shadow,0 10px 24px rgba(0,0,0,.08));overflow:hidden}
+    .card-img{aspect-ratio:4/3;object-fit:cover;width:100%;display:block;background:#f3f4f6}
+    .card-body{padding:12px}
+    .card-title{margin:0 0 6px;font-weight:700;line-height:1.35}
+    .card-meta{font-size:.9rem;color:var(--muted,#6b7280);display:flex;gap:8px;flex-wrap:wrap}
+    .card-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-top:1px solid var(--line,#e5e7eb);background:#fafafa}
+    .pill{padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:.8rem}
+    .kebab-wrap{position:relative}
   </style>
 </head>
-
 <body>
-  <!-- แถบบนสุด -->
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
-    <li class="right">
-      <a id="notiBtn" href="notifications.html">
-        แจ้งเตือน <span id="notiBadge" hidden class="badge"></span>
-      </a>
-    </li>
-    <li><span class="top-divider">|</span></li>
-    <li><a href="#help">ช่วยเหลือ</a></li>
-    <li><span class="top-divider">|</span></li>
-    <li><a href="#lang">ไทย</a></li>
+    <li class="right"><a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a></li>
   </ul>
 
-  <!-- Header หลัก -->
- <div class="header-wrapper">
-    <div class="logo-container">
-      <a href="index.html" class="brand-text">THAMMUE</a>
-    </div>
-
+  <div class="header-wrapper">
+    <div class="logo-container"><a href="index.html" class="brand-text">THAMMUE</a></div>
     <div class="search-container">
       <div class="search-group">
         <input type="text" placeholder="ค้นหาสินค้า" />
-        <button class="search-button" aria-label="ค้นหา">
-          <img src="../img/Icon/search.png" alt="ค้นหา" />
-        </button>
+        <button class="search-button" aria-label="ค้นหา"><img src="../img/Icon/search.png" alt="ค้นหา" /></button>
       </div>
 
       <div class="icon-buttons desktop-icons">
-        <a class="action-button" href="request.html" aria-label="คำขอแลกเปลี่ยน">
-          <img src="../img/Icon/exchange.png" alt="">
-          <span class="badge" id="reqBadge" hidden>0</span>
-        </a>
-        <a class="action-button" href="fav.html" aria-label="รายการโปรด">
-          <img src="../img/Icon/heart.png" alt="">
-          <span class="badge" id="favBadge" hidden>0</span>
-        </a>
-        <a class="action-button" href="chat.html" aria-label="แชท">
-          <img src="../img/Icon/chat.png" alt="">
-          <span class="badge" id="chatBadge" hidden>0</span>
-        </a>
+        <a class="action-button" href="request.html" aria-label="คำขอแลกเปลี่ยน"><img src="../img/Icon/exchange.png" alt><span class="badge" id="reqBadge" hidden>0</span></a>
+        <a class="action-button" href="fav.html" aria-label="รายการโปรด"><img src="../img/Icon/heart.png" alt><span class="badge" id="favBadge" hidden>0</span></a>
+        <a class="action-button" href="chat.html" aria-label="แชท"><img src="../img/Icon/chat.png" alt><span class="badge" id="chatBadge" hidden>0</span></a>
 
         <div class="user-menu" id="userMenu">
           <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
@@ -187,12 +63,11 @@
       </div>
 
       <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
-        <img src="../img/Icon/menu.png" alt="" aria-hidden="true">
+        <img src="../img/Icon/menu.png" alt aria-hidden="true">
       </button>
     </div>
   </div>
 
-  <!-- เมนูมือถือ + หมวดหมู่ -->
   <nav id="mobileIcons" class="icons-drawer" hidden>
     <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
     <a href="request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
@@ -211,7 +86,7 @@
     <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
 
-    <main class="section">
+  <main class="section">
     <div class="container">
       <div class="page-head">
         <h2>สินค้าของฉัน</h2>
@@ -234,11 +109,10 @@
   </main>
 
   <script type="module">
-    // ปรับ import ให้ชี้ไฟล์ใน exchangepage
     import { Kebab } from '../js/cards.kebab.js';
 
-    const API_BASE = '/thammue/exchangepage/api';
-    const state = { page: 1, per_page: 12, total: 0, q: '' };
+    window.API_BASE = '/thammue/exchangepage/api';
+    const state = { page:1, per_page:12, total:0, q:'' };
 
     const grid = document.getElementById('grid');
     const empty = document.getElementById('empty');
@@ -248,48 +122,28 @@
     const q2 = document.getElementById('q2');
     const btnClear = document.getElementById('btnClear');
 
-    // คอนโทรลค้นหา (มีจริงในหน้า)
-    q2.addEventListener('input', (e) => {
-      state.q = e.target.value.trim();
-      state.page = 1; load();
-    });
-    btnClear.addEventListener('click', () => {
-      q2.value = '';
-      state.q = '';
-      state.page = 1; load();
-    });
+    q2.addEventListener('input', (e)=>{ state.q = e.target.value.trim(); state.page = 1; load(); });
+    btnClear.addEventListener('click', ()=>{ q2.value=''; state.q=''; state.page=1; load(); });
+    prevBtn.addEventListener('click', ()=>{ if(state.page>1){ state.page--; load(); } });
+    nextBtn.addEventListener('click', ()=>{ const max = Math.ceil(state.total/state.per_page)||1; if(state.page<max){ state.page++; load(); } });
 
-    prevBtn.addEventListener('click', () => { if (state.page > 1) { state.page--; load(); } });
-    nextBtn.addEventListener('click', () => {
-      const maxPage = Math.ceil(state.total / state.per_page) || 1;
-      if (state.page < maxPage) { state.page++; load(); }
-    });
-
-    // เทมเพลตการ์ด (เมนู 3 จุดให้ตรงกับ cards.kebab.js: ใช้ .card-kebab__menu + hidden)
-    function cardHtml(it) {
-      const img = it.cover || (it.images && it.images[0]) || '../img/placeholder.png';
+    function cardHtml(it){
+      const toAbs = p => (!p ? '../img/placeholder.png' : (p.startsWith('http')||p.startsWith('/')?p:'/thammue/exchangepage/'+p.replace(/^\/+/,'')));
+      const img = toAbs(it.cover || (it.images && it.images[0]));
       const href = `detail.html?id=${encodeURIComponent(it.id)}&view=owner`;
       const kebabId = `kebab-${it.id}`;
       const statusPill = it.status ? `<span class="pill">${it.status}</span>` : '';
       return `
         <article class="card" data-id="${it.id}">
-          <a href="${href}" aria-label="${it.title}">
-            <img class="card-img" src="${img}" alt="${it.title || 'รูปสินค้า'}" loading="lazy" />
-          </a>
+          <a href="${href}" aria-label="${it.title}"><img class="card-img" src="${img}" alt="${it.title||'รูปสินค้า'}" loading="lazy" /></a>
           <div class="card-body">
-            <h3 class="card-title">${it.title || ''}</h3>
-            <div class="card-meta">
-              <span>หมวด: ${it.category_name || it.category || '-'}</span>
-              <span>จังหวัด: ${it.province || '-'}</span>
-            </div>
+            <h3 class="card-title">${it.title||''}</h3>
+            <div class="card-meta"><span>หมวด: ${it.category_name || it.category || '-'}</span><span>จังหวัด: ${it.province || '-'}</span></div>
           </div>
           <div class="card-foot">
             ${statusPill}
             <div class="kebab-wrap card-kebab">
-              <button class="card-kebab__btn"
-                      aria-haspopup="menu"
-                      aria-controls="${kebabId}"
-                      aria-expanded="false">⋮</button>
+              <button class="card-kebab__btn" aria-haspopup="menu" aria-controls="${kebabId}" aria-expanded="false">⋮</button>
               <div class="card-kebab__menu" id="${kebabId}" role="menu" hidden>
                 <button class="card-kebab__item" role="menuitem" data-action="view" data-id="${it.id}">👁️ ดู</button>
                 <button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${it.id}">✏️ แก้ไข</button>
@@ -297,70 +151,32 @@
               </div>
             </div>
           </div>
-        </article>
-      `;
+        </article>`;
     }
 
-    // โหลดข้อมูลจาก API
-    async function load() {
-      const url = `${API_BASE}/items/my.php?page=${state.page}&per_page=${state.per_page}&q=${encodeURIComponent(state.q)}`;
+    async function load(){
+      const url = `${window.API_BASE}/items/my.php?page=${state.page}&per_page=${state.per_page}&q=${encodeURIComponent(state.q)}`;
       let res, bodyText = '';
-      try {
-        res = await fetch(url, { credentials: 'include' });
+      try{
+        res = await fetch(url, { credentials:'include' });
         bodyText = await res.text();
-      } catch (e) {
-        console.error('MY_API -> network error', e);
-        grid.innerHTML = '';
-        empty.style.display = 'block';
-        empty.textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้';
-        pageInfo.textContent = '';
-        return;
+      }catch{
+        grid.innerHTML=''; empty.style.display='block'; empty.textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'; pageInfo.textContent=''; return;
       }
 
-      // log สถานะให้เห็นใน Console
-      console.log('MY_API status:', res.status, res.statusText);
-      console.log('MY_API body:', bodyText);
+      if (res.status === 401){ grid.innerHTML=''; empty.textContent='กรุณาเข้าสู่ระบบก่อนใช้งานหน้านี้ (401)'; empty.style.display='block'; pageInfo.textContent=''; return; }
+      if (!res.ok){ grid.innerHTML=''; empty.textContent=`เกิดข้อผิดพลาด (${res.status})`; empty.style.display='block'; pageInfo.textContent=''; return; }
 
-      // โชว์สถานะคร่าว ๆ บนหน้า
-      empty.style.display = 'block';
-      empty.textContent = `API: ${res.status} ${res.statusText}`;
+      let data; try{ data = JSON.parse(bodyText); }catch{ empty.textContent='รูปแบบข้อมูลจากเซิร์ฟเวอร์ไม่ถูกต้อง'; return; }
 
-      if (res.status === 401) {
-        grid.innerHTML = '';
-        empty.textContent = 'กรุณาเข้าสู่ระบบก่อนใช้งานหน้านี้ (401)';
-        pageInfo.textContent = '';
-        return;
-      }
-
-      if (!res.ok) {
-        grid.innerHTML = '';
-        empty.textContent = `เกิดข้อผิดพลาด (${res.status})`;
-        pageInfo.textContent = '';
-        return;
-      }
-
-      let data;
-      try {
-        data = JSON.parse(bodyText);
-      } catch (e) {
-        console.error('JSON parse error:', e);
-        empty.textContent = 'รูปแบบข้อมูลจากเซิร์ฟเวอร์ไม่ถูกต้อง';
-        return;
-      }
-
-      state.total = data.total || 0;
-      const list = data.items || [];
-
+      state.total = data.total || 0; const list = data.items || [];
       grid.innerHTML = list.map(cardHtml).join('');
-      empty.style.display = list.length ? 'none' : 'block';
-      empty.textContent = 'ยังไม่มีสินค้า ลองกด “เพิ่มสินค้า” ด้านบนขวา';
+      empty.style.display = list.length ? 'none':'block'; empty.textContent = 'ยังไม่มีสินค้า ลองกด “เพิ่มสินค้า” ด้านบนขวา';
 
-      const maxPage = Math.ceil(state.total / state.per_page) || 1;
+      const maxPage = Math.ceil(state.total/state.per_page)||1;
       pageInfo.textContent = `หน้า ${state.page} / ${maxPage}`;
-
       Kebab.bind(grid);
     }
-
 
     load();
   </script>

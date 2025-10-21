@@ -1,207 +1,161 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="utf-8" />
-    <base href="/thammue/exchangepage/public/">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Thammue</title>
-    <link rel="stylesheet" href="../css/instyle.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/cards.kebab.css" />
+  <meta charset="utf-8" />
+  <base href="/thammue/exchangepage/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thammue</title>
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/cards.kebab.css" />
 </head>
-
 <body>
+  <ul class="top-nav">
+    <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
+  </ul>
 
-    <!-- แถบบนสุด (UI เดิม) -->
-    <ul class="top-nav">
-        <li><a href="../public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="../page/main.html">ซื้อสินค้า</a></li>
+  <div class="header-wrapper">
+    <div class="logo-container"><a href="index.html" class="brand-text">THAMMUE</a></div>
+    <div class="search-container">
+      <div class="search-group">
+        <input type="text" placeholder="ค้นหาสินค้า" />
+        <button class="search-button" aria-label="ค้นหา"><img src="../img/Icon/search.png" alt="ค้นหา" /></button>
+      </div>
 
-        <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="#help">ช่วยเหลือ</a></li>
-        <li><span class="top-divider">|</span></li>
-        <li><a href="#lang">ไทย</a></li>
-    </ul>
+      <div class="icon-buttons desktop-icons">
+        <a class="action-button" href="request.html" aria-label="คำขอแลกเปลี่ยน"><img src="../img/Icon/exchange.png" alt=""></a>
+        <a class="action-button" href="fav.html" aria-label="รายการโปรด"><img src="../img/Icon/heart.png" alt=""></a>
+        <a class="action-button" href="chat.html" aria-label="แชท"><img src="../img/Icon/chat.png" alt=""></a>
 
-    <!-- Header หลัก -->
-    <div class="header-wrapper">
-        <div class="logo-container">
-            <a href="../public/index.html" class="brand-text">THAMMUE</a>
-        </div>
-
-        <div class="search-container">
-            <div class="search-group">
-                <input type="text" placeholder="ค้นหาสินค้า" />
-                <button class="search-button" aria-label="ค้นหา">
-                    <img src="../img/Icon/search.png" alt="ค้นหา" />
-                </button>
-            </div>
-
-            <div class="icon-buttons desktop-icons">
-                <a class="action-button" href="../public/request.html" aria-label="คำขอแลกเปลี่ยน">
-                    <img src="../img/Icon/exchange.png" alt="">
-                </a>
-                <a class="action-button" href="../public/fav.html" aria-label="รายการโปรด">
-                    <img src="../img/Icon/heart.png" alt="">
-                </a>
-                <a class="action-button" href="../public/chat.html" aria-label="แชท">
-                    <img src="../img/Icon/chat.png" alt="">
-                </a>
-
-                <div class="user-menu" id="userMenu">
-                    <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
-                        <img src="../img/Icon/user.png" alt="โปรไฟล์" />
-                        <span class="user-chip" id="userChip" hidden></span>
-                        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div class="user-dropdown" id="userDropdown" role="menu"></div>
-                </div>
-            </div>
-
-            <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
-                <img src="../img/Icon/menu.png" alt="" aria-hidden="true">
-            </button>
-        </div>
-    </div>
-
-    <!-- เมนูมือถือ + หมวดหมู่ -->
-    <nav id="mobileIcons" class="icons-drawer" hidden>
-        <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
-        <a href="../public/request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
-        <a href="../public/fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
-        <a href="../public/chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
-        <a href="profile.html"><img src="../img/Icon/user.png" alt=""> โปรไฟล์</a>
-    </nav>
-    <div class="icons-backdrop" hidden></div>
-
-    <div class="category-buttons">
-        <a href="../public/category.html?category_id=1" class="category-button">อุปกรณ์อิเล็กทรอนิกส์</a>
-        <a href="../public/category.html?category_id=2" class="category-button">ของใช้ในบ้าน</a>
-        <a href="../public/category.html?category_id=3" class="category-button">อุปกรณ์เด็ก</a>
-        <a href="../public/category.html?category_id=4" class="category-button">เสื้อผ้า</a>
-        <a href="../public/category.html?category_id=5" class="category-button">หนังสือ</a>
-        <a href="../public/category.html?category_id=6" class="category-button">ของสะสม</a>
-    </div>
-    <!-- โครงร่างใน list.html -->
-    <main class="section">
-        <div class="container">
-            <div class="section-head">
-                <h2 id="listTitle">รายการทั้งหมด</h2>
-            </div>
-            <div id="listGrid" class="grid grid-4"></div>
-            <div class="center mt-16">
-                <button id="loadMore" class="btn" hidden>โหลดเพิ่ม</button>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        const API_BASE = '/thammue/exchangepage/api';
-
-        function getQS() {
-            const u = new URL(location.href);
-            return {
-                interest: u.searchParams.get('interest'),
-                category_id: u.searchParams.get('category_id'),
-                q: u.searchParams.get('q'),
-            };
-        }
-
-        function cardHtml(it) {
-            const img = it.cover || (it.images && it.images[0]) || '../img/placeholder.png';
-            const title = it.title || '';
-            const id = it.id;
-            const province = it.province || '';
-            const catName = it.category_name || it.category || '';
-            const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
-            const isOwner = it.is_owner === true;
-
-            const menuHtml = isOwner
-                ? `<button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
-           <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>`
-                : `<button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>`;
-
-            return `
-      <article class="card" data-card-id="${id}">
-        <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
-        <div class="card-kebab" data-id="${id}">
-          <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <div class="user-menu" id="userMenu">
+          <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+            <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+            <span class="user-chip" id="userChip" hidden></span>
+            <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </button>
-          <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>
-            ${menuHtml}
+          <div class="user-dropdown" id="userDropdown" role="menu"></div>
+        </div>
+      </div>
+
+      <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
+        <img src="../img/Icon/menu.png" alt="" aria-hidden="true">
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobileIcons" class="icons-drawer" hidden>
+    <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
+    <a href="request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
+    <a href="fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
+    <a href="chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
+    <a href="profile.html"><img src="../img/Icon/user.png" alt=""> โปรไฟล์</a>
+  </nav>
+  <div class="icons-backdrop" hidden></div>
+
+  <div class="category-buttons">
+    <a href="category.html?category_id=1" class="category-button">อุปกรณ์อิเล็กทรอนิกส์</a>
+    <a href="category.html?category_id=2" class="category-button">ของใช้ในบ้าน</a>
+    <a href="category.html?category_id=3" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+    <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
+    <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
+  </div>
+
+  <main class="section">
+    <div class="container">
+      <div class="section-head"><h2 id="listTitle">รายการทั้งหมด</h2></div>
+      <div id="listGrid" class="grid grid-4"></div>
+      <div class="center mt-16"><button id="loadMore" class="btn" hidden>โหลดเพิ่ม</button></div>
+    </div>
+  </main>
+
+  <script>
+    window.API_BASE = '/thammue/exchangepage/api';
+
+    function getQS(){
+      const u = new URL(location.href);
+      return { interest:u.searchParams.get('interest'), category_id:u.searchParams.get('category_id'), q:u.searchParams.get('q') };
+    }
+
+    function cardHtml(it){
+      const toAbs = p => (!p ? '../img/placeholder.png' : (p.startsWith('http')||p.startsWith('/')?p:'/thammue/exchangepage/'+p.replace(/^\/+/,'')));
+      const img = toAbs(it.cover || (it.images && it.images[0]));
+      const title = it.title || '';
+      const id = it.id;
+      const province = it.province || '';
+      const catName = it.category_name || it.category || '';
+      const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
+      const isOwner = it.is_owner === true;
+      const menuHtml = isOwner
+        ? `<button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
+           <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>`
+        : `<button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>`;
+
+      return `
+        <article class="card" data-card-id="${id}">
+          <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
+          <div class="card-kebab" data-id="${id}">
+            <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </button>
+            <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>${menuHtml}</div>
           </div>
-        </div>
-        <div class="thumb">${img ? `<img src="${img}" alt="" style="width:100%;height:180px;object-fit:cover;border-radius:12px 12px 0 0;">` : ''}</div>
-        <div class="card-body">
-          <h3>${title}</h3>
-          <p class="muted">หมวด: ${catName || '-'} ${province ? ' · ' + province : ''}</p>
-          <a class="btn btn-sm" href="${href}">ดูรายละเอียด</a>
-        </div>
-      </article>`;
+          <div class="thumb"><img src="${img}" alt="" style="width:100%;height:180px;object-fit:cover;border-radius:12px 12px 0 0;"></div>
+          <div class="card-body">
+            <h3>${title}</h3>
+            <p class="muted">หมวด: ${catName || '-'} ${province ? ' · ' + province : ''}</p>
+            <a class="btn btn-sm" href="${href}">ดูรายละเอียด</a>
+          </div>
+        </article>`;
+    }
+
+    let LIMIT = 24, loaded = 0, isLoading = false, lastBatchCount = 0;
+
+    function buildQuery(params){
+      const sp = new URLSearchParams();
+      sp.set('limit', LIMIT);
+      if (params.interest) sp.set('interest', params.interest);
+      if (params.category_id) sp.set('category_id', params.category_id);
+      if (params.q) sp.set('q', params.q);
+      if (loaded > 0) sp.set('offset', loaded);
+      return `?${sp.toString()}`;
+    }
+
+    async function fetchAndRender(append=false){
+      if (isLoading) return; isLoading = true;
+      const host = document.getElementById('listGrid');
+      const btn = document.getElementById('loadMore');
+      const qs = getQS();
+      document.getElementById('listTitle').textContent =
+        qs.interest ? 'ทั้งหมดจากความสนใจของคุณ' :
+        qs.category_id ? 'สินค้าตามหมวดหมู่' : 'รายการทั้งหมด';
+
+      try{
+        const res = await fetch(`${window.API_BASE}/items/list.php${buildQuery(qs)}`, { cache:'no-store' });
+        const data = await res.json();
+        if (data?.ok && Array.isArray(data.items) && data.items.length){
+          const html = data.items.map(cardHtml).join('');
+          host.innerHTML = append ? (host.innerHTML + html) : html;
+          lastBatchCount = data.items.length;
+          loaded += data.items.length;
+          btn.hidden = !(lastBatchCount === LIMIT);
+        } else {
+          if (!append) host.innerHTML = '<p class="muted">ยังไม่มีรายการในเงื่อนไขนี้</p>';
+          btn.hidden = true;
         }
+      } catch {
+        if (!append) host.innerHTML = '<p class="muted">โหลดข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง</p>';
+        btn.hidden = true;
+      } finally { isLoading = false; }
+    }
 
-        let LIMIT = 24;
-        let loaded = 0;
-        let isLoading = false;
-        let lastBatchCount = 0;
-
-        function buildQuery(params) {
-            const sp = new URLSearchParams();
-            sp.set('limit', LIMIT);
-            if (params.interest) sp.set('interest', params.interest);
-            if (params.category_id) sp.set('category_id', params.category_id);
-            if (params.q) sp.set('q', params.q);
-            if (loaded > 0) sp.set('offset', loaded);
-            return `?${sp.toString()}`;
-        }
-
-        async function fetchAndRender(append = false) {
-            if (isLoading) return;
-            isLoading = true;
-
-            const host = document.getElementById('listGrid');
-            const btn = document.getElementById('loadMore');
-            const qs = getQS();
-
-            document.getElementById('listTitle').textContent =
-                qs.interest ? 'ทั้งหมดจากความสนใจของคุณ' :
-                    qs.category_id ? 'สินค้าตามหมวดหมู่' : 'รายการทั้งหมด';
-
-            try {
-                const res = await fetch(`${API_BASE}/items/list.php${buildQuery(qs)}`, { cache: 'no-store' });
-                const data = await res.json();
-
-                if (data?.ok && Array.isArray(data.items) && data.items.length) {
-                    const html = data.items.map(cardHtml).join('');
-                    host.innerHTML = append ? (host.innerHTML + html) : html;
-
-                    lastBatchCount = data.items.length;
-                    loaded += data.items.length;
-                    btn.hidden = !(lastBatchCount === LIMIT);
-                } else {
-                    if (!append) host.innerHTML = '<p class="muted">ยังไม่มีรายการในเงื่อนไขนี้</p>';
-                    btn.hidden = true;
-                }
-            } catch (e) {
-                if (!append) host.innerHTML = '<p class="muted">โหลดข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง</p>';
-                btn.hidden = true;
-            } finally {
-                isLoading = false;
-            }
-        }
-
-        fetchAndRender(false);
-        document.getElementById('loadMore').addEventListener('click', () => fetchAndRender(true));
-    </script>
-
-    <script type="module" src="../js/dot/list.page.js"></script>
+    fetchAndRender(false);
+    document.getElementById('loadMore').addEventListener('click', ()=>fetchAndRender(true));
+  </script>
 </body>
-
 </html>

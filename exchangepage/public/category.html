@@ -2,11 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <base href="/thammue/exchangepage/public/">
+  <base href="/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>หมวดหมู่ | Thammue</title>
 
-  <!-- ใช้ CSS ของ exchangepage -->
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/cards.kebab.css" />
@@ -21,14 +20,16 @@
       <h2 id="catTitle">รายการสินค้า</h2>
 
       <script>
-        // id → ชื่อหมวด
+        // กำหนดชื่อหมวดหมู่ (ตรงกับ DB)
         const CAT_MAP = {1:'แฮนเมด',2:'ของประดิษฐ์',3:'ของใช้ทั่วไป',4:'เสื้อผ้า',5:'หนังสือ',6:'ของสะสม'};
         const params = new URLSearchParams(location.search);
-        const catId = Number(params.get('cat') || params.get('category_id'));
+        const catId = Number(params.get('category_id') || params.get('cat'));
         const titleEl = document.getElementById('catTitle');
         titleEl.textContent = (catId && CAT_MAP[catId]) ? `สินค้าในหมวด: ${CAT_MAP[catId]}` : 'รายการสินค้า';
         window.__CAT_MAP__ = CAT_MAP;
         window.__CAT_ID__  = catId || null;
+        // base API (กันประกาศซ้ำกับไฟล์อื่น)
+        window.API_BASE = window.API_BASE || '/exchangepage/api';
       </script>
 
       <div id="catGrid" class="grid grid-4"></div>

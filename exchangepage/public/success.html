@@ -7,104 +7,32 @@
   <title>อัปโหลดสำเร็จ • Thammue</title>
   <link rel="stylesheet" href="../css/instyle.css" />
   <style>
-    .success-wrap {
-      max-width: 960px;
-      margin: 24px auto;
-      padding: 24px
-    }
-
-    .success-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px;
-      text-align: center;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .06)
-    }
-
-    .success-icon {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 16px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: #e8f7ef
-    }
-
-    .success-icon svg {
-      width: 44px;
-      height: 44px
-    }
-
-    .success-title {
-      font-size: 1.5rem;
-      margin: 6px 0 4px
-    }
-
-    .btn-row {
-      margin-top: 24px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap
-    }
-
-    .btn {
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      background: #fff;
-      cursor: pointer;
-      text-decoration: none
-    }
-
-    .btn.primary {
-      background: #0ea5e9;
-      border-color: #0ea5e9;
-      color: #fff
-    }
-
-    .cover {
-      width: 160px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 12px;
-      display: block;
-      margin: 10px auto
-    }
-
-    /* ทำให้ปุ่มรองมองเห็นชัด */
-    .success-card .btn {
-      color: #0f172a;
-      /* สีตัวอักษรเข้ม */
-      background: #0ea5e9;
-      border: 1px solid #e5e7eb;
-    }
-
-    /* กันสไตล์ลิงก์ global ทับสี */
-    .success-card .btn:link,
-    .success-card .btn:visited {
-      color: #ffffff;
-    }
-
-    /* โฮเวอร์สวย ๆ */
-    .success-card .btn:hover {
-      background: #f8fafc;
-      border-color: #d1d5db;
-    }
-
-    /* ปุ่มหลักยังขาวบนฟ้าเหมือนเดิม */
-    .success-card .btn.primary {
-      background: #0ea5e9;
-      border-color: #0ea5e9;
-      color: #fff;
-    }
-</style>
+    .success-wrap{max-width:960px;margin:24px auto;padding:24px}
+    .success-card{background:#fff;border-radius:16px;padding:32px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    .success-icon{width:84px;height:84px;margin:0 auto 16px;display:grid;place-items:center;border-radius:50%;background:#e8f7ef}
+    .success-title{font-size:1.5rem;margin:6px 0 4px}
+    .btn-row{margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{padding:10px 16px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;text-decoration:none}
+    .btn.primary{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+    .cover{width:160px;height:160px;object-fit:cover;border-radius:12px;display:block;margin:10px auto}
+    /* ปรับสีปุ่มรองให้อ่านง่าย */
+    .success-card .btn{color:#0f172a;background:#0ea5e9;border:1px solid #e5e7eb}
+    .success-card .btn:link,.success-card .btn:visited{color:#fff}
+    .success-card .btn:hover{background:#f8fafc;border-color:#d1d5db;color:#0f172a}
+    .success-card .btn.primary{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+    .muted{color:#64748b}
+  </style>
 </head>
 <body>
   <div class="success-wrap">
     <div class="success-card">
-      <!-- ... เดิม ... -->
+      <div class="success-icon" aria-hidden="true">✅</div>
+      <div class="success-title">อัปโหลดสำเร็จ</div>
+      <div class="muted">รหัสอ้างอิง <b id="ref">#-</b></div>
+
+      <img id="cover" class="cover" src="" alt="รูปหน้าปกสินค้า" hidden />
+      <div id="title" style="font-weight:700;margin-top:4px">—</div>
+
       <div class="btn-row">
         <a id="viewBtn" class="btn primary" href="#">ดูสินค้าชิ้นนี้</a>
         <a class="btn" href="upload.html">อัปโหลดสินค้าอีกครั้ง</a>
@@ -116,16 +44,19 @@
   <script>
     const API_BASE = '/thammue/exchangepage/api';
     const id = new URLSearchParams(location.search).get('id') || '';
+    // อัปเดตปุ่มและ ref
     document.getElementById('ref').textContent = id ? `#${id}` : '#-';
-    document.getElementById('viewBtn').href = `detail.html?id=${id}&view=public`;
+    document.getElementById('viewBtn').href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
 
+    // โหลดรายละเอียดเพื่อแสดงชื่อ/รูป
     if (id) {
-      fetch(`${API_BASE}/items/show.php?id=${id}`, { cache: 'no-store' })
+      fetch(`${API_BASE}/items/show.php?id=${encodeURIComponent(id)}`, { cache: 'no-store' })
         .then(r => r.json())
         .then(d => {
           if (d && d.ok && d.item) {
             const it = d.item;
             document.getElementById('title').textContent = it.title || '—';
+
             // ทำ path รูปให้เป็น absolute ภายใต้ exchangepage
             const toAbs = p => {
               if (!p) return '';

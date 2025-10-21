@@ -32,12 +32,12 @@
   </div>
 
   <div class="category-buttons">
-    <a href="category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
-    <a href="category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
-    <a href="category/children.html" class="category-button">อุปกรณ์เด็ก</a>
-    <a href="category/clothing.html" class="category-button">เสื้อผ้า</a>
-    <a href="category/books.html" class="category-button">หนังสือ</a>
-    <a href="category/collectibles.html" class="category-button">ของสะสม</a>
+    <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+    <a href="category.html?category_id=2" class="category-button">ของประดิษฐ์</a>
+    <a href="category.html?category_id=3" class="category-button">ของใช้ทั่วไป</a>
+    <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+    <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
+    <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
 
   <main class="section">
@@ -50,8 +50,14 @@
   </main>
 
   <script>
-    const API_BASE = '/thammue/exchangepage/api';
+    window.API_BASE = '/thammue/exchangepage/api';
     const grid = document.getElementById('favGrid');
+
+    const toAbs = (p) => {
+      if (!p) return '';
+      if (p.startsWith('http') || p.startsWith('/')) return p;
+      return '/thammue/exchangepage/' + p.replace(/^\/+/, '');
+    };
 
     function render(items) {
       if (!items || !items.length) {
@@ -59,31 +65,28 @@
         return;
       }
       grid.innerHTML = items.map(it => `
-      <article class="card mini">
-        <a href="detail.html?id=${it.id}&view=public" style="text-decoration:none;color:inherit">
-          <div class="thumb">
-            ${it.cover ? `<img src="${it.cover}" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;">` : ''}
+        <article class="card mini">
+          <a href="detail.html?id=${it.id}&view=public" style="text-decoration:none;color:inherit">
+            <div class="thumb">
+              ${it.cover ? `<img src="${toAbs(it.cover)}" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;">` : ''}
+            </div>
+            <h4>${it.title || ''}</h4>
+            <p class="muted">หมวด: ${it.category_name || '-'}</p>
+          </a>
+          <div style="margin-top:6px;text-align:right">
+            <button class="btn btn-sm" data-remove="${it.id}" style="background:#eee;border:1px solid #ddd">นำออก</button>
           </div>
-          <h4>${it.title}</h4>
-          <p class="muted">หมวด: ${it.category_name || '-'}</p>
-        </a>
-        <div style="margin-top:6px;text-align:right">
-          <button class="btn btn-sm" data-remove="${it.id}" style="background:#eee;border:1px solid #ddd">นำออก</button>
-        </div>
-      </article>
-    `).join('');
+        </article>
+      `).join('');
     }
 
     async function loadFav() {
-      const r = await fetch(`${API_BASE}/favorites/list.php`, {
-        cache: 'no-store',
-        credentials: 'include'
-      });
+      const r = await fetch(`${window.API_BASE}/favorites/list.php`, { cache:'no-store', credentials:'include' });
       if (r.status === 401) {
-        location.href = '/thammue/page/login.html?next=' + encodeURIComponent(location.pathname);
+        location.href = '/thammue/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
         return;
       }
-      const d = await r.json().catch(() => ({ ok: false }));
+      const d = await r.json().catch(() => ({ ok:false }));
       render(d.ok ? d.items : []);
     }
 
@@ -93,11 +96,7 @@
       const fd = new FormData();
       fd.append('item_id', id);
       fd.append('action', 'remove');
-      await fetch(`${API_BASE}/favorites/toggle.php`, {
-        method: 'POST',
-        body: fd,
-        credentials: 'include'
-      });
+      await fetch(`${window.API_BASE}/favorites/toggle.php`, { method:'POST', body:fd, credentials:'include' });
       loadFav();
     });
 

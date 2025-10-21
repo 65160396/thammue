@@ -11,30 +11,23 @@
     .noti-wrap{max-width:900px;margin:24px auto;padding:0 16px}
     .noti-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     .noti-list{display:flex;flex-direction:column;gap:10px}
-    .noti-item{
-      border:1px solid var(--line,#eeeeee); border-radius:12px; background:#fff;
-      padding:12px 14px; display:grid; grid-template-columns:1fr auto; gap:8px; align-items:start;
-    }
-    .noti-item.unread{background:#12375c}
+    .noti-item{border:1px solid var(--line,#eeeeee);border-radius:12px;background:#fff;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+    .noti-item.unread{background:#f8fbff}
     .noti-title{margin:0;font-weight:700}
-    .noti-body{margin:.25rem 0 .5rem; color:#475569}
+    .noti-body{margin:.25rem 0 .5rem;color:#475569}
     .noti-meta{font-size:.85rem;color:#64748b}
     .noti-actions{display:flex;gap:8px}
-    .btn{border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;background:#000000;cursor:pointer}
+    .btn{border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;background:#fff;cursor:pointer}
     .btn.primary{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
     .empty{padding:36px;text-align:center;color:#64748b;border:1px dashed #e5e7eb;border-radius:12px}
   </style>
-</head>
 </head>
 <body>
   <ul class="top-nav">
     <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="index.html">ซื้อสินค้า</a></li>
-    <li class="right">
-      <a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a>
-    </li>
-    <li><span class="top-divider">|</span></li>
+    <li class="right"><a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a></li>
   </ul>
 
   <div class="noti-wrap">
@@ -50,112 +43,94 @@
   </div>
 
   <script>
-    const API_BASE = '/thammue/exchangepage/api';
-  let page = {limit:20, offset:0, done:false};
-  const listEl = document.getElementById('notiList');
-  const emptyEl = document.getElementById('emptyState');
+    window.API_BASE = '/thammue/exchangepage/api';
+    let page = {limit:20, offset:0, done:false};
+    const listEl = document.getElementById('notiList');
+    const emptyEl = document.getElementById('emptyState');
 
-  function fmtTime(s){
-    try{ return new Date(s.replace(' ','T')).toLocaleString('th-TH'); }catch(_){ return s; }
-  }
+    const fmtTime = s => { try{ return new Date(s.replace(' ','T')).toLocaleString('th-TH'); }catch(_){ return s; } };
+    const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
 
-  async function loadNotis(reset=false){
-    if(reset){ page = {limit:20, offset:0, done:false}; listEl.innerHTML=''; }
-    if(page.done) return;
-    const url = `${API_BASE}/notifications/list.php?limit=${page.limit}&offset=${page.offset}`;
-    const res = await fetch(url, {credentials:'include', cache:'no-store'});
-    if(!res.ok) return;
-    const data = await res.json();
-    const items = data.items || [];
-    if(reset && items.length === 0){ emptyEl.hidden = false; } else { emptyEl.hidden = true; }
-    renderItems(items);
-    page.offset += items.length;
-    if(items.length < page.limit) page.done = true;
-  }
-
-  function renderItems(items){
-  const fr = document.createDocumentFragment();
-  for(const it of items){
-    const card = document.createElement('div');
-    card.className = 'noti-item' + (it.is_read ? '' : ' unread');
-    card.setAttribute('data-nid', it.id);            // ไว้คลิกทั้งฟิล
-    card.setAttribute('tabindex', '0');              // เข้าถึงด้วยคีย์บอร์ด
-    card.innerHTML = `
-      <div>
-        <h3 class="noti-title">${escapeHtml(it.title)}</h3>
-        ${it.body ? `<div class="noti-body">${escapeHtml(it.body)}</div>` : ``}
-        <div class="noti-meta">${it.type} • ${fmtTime(it.created_at)}</div>
-      </div>
-      <div class="noti-actions">
-        ${it.is_read ? `` : `<button class="btn" data-mark="${it.id}">ทำเป็นอ่านแล้ว</button>`}
-      </div>`;
-    fr.appendChild(card);
-  }
-  listEl.appendChild(fr);
-}
-
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-
-  async function markRead(ids=[]){
-    const res = await fetch(`${API_BASE}/notifications/mark_read.php`,{
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ids})
-    });
-    if(!res.ok) return;
-    // แจ้ง header ให้รีเฟรช badge
-    window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
-    // รีเฟรชรายการ
-    await loadNotis(true);
-  }
-document.addEventListener('click', async (e)=>{
-  const card = e.target.closest('.noti-item[data-nid]');
-  if(card){
-    const id = +card.getAttribute('data-nid');
-    // ทำเป็นอ่านแล้วแบบ optimistic ก่อน (ลดสี/ลด badge)
-    if(card.classList.contains('unread')) {
-      card.classList.remove('unread');
-      // ลด badge ทันที
-      try{
-        const el = document.getElementById('notiBadge');
-        if(el && !el.hidden){
-          const now = Math.max(0, (+el.textContent||0) - 1);
-          el.textContent = now;
-          el.hidden = now <= 0;
-        }
-      }catch(_) {}
+    async function loadNotis(reset=false){
+      if(reset){ page = {limit:20, offset:0, done:false}; listEl.innerHTML=''; }
+      if(page.done) return;
+      const res = await fetch(`${window.API_BASE}/notifications/list.php?limit=${page.limit}&offset=${page.offset}`, { credentials:'include', cache:'no-store' });
+      if(!res.ok) return;
+      const data = await res.json();
+      const items = data.items || [];
+      emptyEl.hidden = !(reset && items.length === 0);
+      renderItems(items);
+      page.offset += items.length;
+      if(items.length < page.limit) page.done = true;
     }
-    // แจ้งเซิร์ฟเวอร์ + แจ้ง header ให้รีเฟรช
-    await markRead([id]);
-    // ไปหน้า detailreq พร้อม nid
-    window.location.href = `detailreq.html?nid=${id}`;
-    return;
-  }
 
-  // ปุ่ม "ทำเป็นอ่านแล้ว" เฉพาะบางรายการ
-  const btn = e.target.closest('[data-mark]');
-  if(btn){
-    const id = +btn.getAttribute('data-mark');
-    await markRead([id]);
-  }
-});
+    function renderItems(items){
+      const fr = document.createDocumentFragment();
+      for(const it of items){
+        const card = document.createElement('div');
+        card.className = 'noti-item' + (it.is_read ? '' : ' unread');
+        card.setAttribute('data-nid', it.id);
+        card.setAttribute('tabindex', '0');
+        card.innerHTML = `
+          <div>
+            <h3 class="noti-title">${escapeHtml(it.title)}</h3>
+            ${it.body ? `<div class="noti-body">${escapeHtml(it.body)}</div>` : ``}
+            <div class="noti-meta">${it.type} • ${fmtTime(it.created_at)}</div>
+          </div>
+          <div class="noti-actions">
+            ${it.is_read ? `` : `<button class="btn" data-mark="${it.id}">ทำเป็นอ่านแล้ว</button>`}
+          </div>`;
+        fr.appendChild(card);
+      }
+      listEl.appendChild(fr);
+    }
 
-  document.getElementById('markAllBtn').addEventListener('click', ()=>markRead([]));
-  document.getElementById('refreshBtn').addEventListener('click', ()=>loadNotis(true));
+    async function markRead(ids=[]){
+      const res = await fetch(`${window.API_BASE}/notifications/mark_read.php`,{
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ids})
+      });
+      if(!res.ok) return;
+      window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
+      await loadNotis(true);
+    }
 
-  // โหลดครั้งแรก + lazy load เมื่อเลื่อนสุด
-  document.addEventListener('DOMContentLoaded', async ()=>{
-    await loadNotis(true);
-    const io = new IntersectionObserver(async entries=>{
-      if(entries.some(x=>x.isIntersecting)) await loadNotis(false);
-    }, {root:null, rootMargin:'600px', threshold:0});
-    // สร้าง sentinel ไว้ท้ายหน้า
-    const sentinel = document.createElement('div'); sentinel.style.height='1px';
-    listEl.after(sentinel); io.observe(sentinel);
-  });
+    document.addEventListener('click', async (e)=>{
+      const card = e.target.closest('.noti-item[data-nid]');
+      if(card){
+        const id = +card.getAttribute('data-nid');
+        if(card.classList.contains('unread')) {
+          card.classList.remove('unread');
+          try{
+            const el = document.getElementById('notiBadge');
+            if(el && !el.hidden){
+              const now = Math.max(0, (+el.textContent||0) - 1);
+              el.textContent = now; el.hidden = now <= 0;
+            }
+          }catch(_) {}
+        }
+        await markRead([id]);
+        window.location.href = `detailreq.html?nid=${id}`;
+        return;
+      }
+      const btn = e.target.closest('[data-mark]');
+      if(btn){ const id = +btn.getAttribute('data-mark'); await markRead([id]); }
+    });
+
+    document.getElementById('markAllBtn').addEventListener('click', ()=>markRead([]));
+    document.getElementById('refreshBtn').addEventListener('click', ()=>loadNotis(true));
+
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      await loadNotis(true);
+      const io = new IntersectionObserver(async entries=>{
+        if(entries.some(x=>x.isIntersecting)) await loadNotis(false);
+      }, {root:null, rootMargin:'600px', threshold:0});
+      const sentinel = document.createElement('div'); sentinel.style.height='1px';
+      listEl.after(sentinel); io.observe(sentinel);
+    });
   </script>
 
-  <!-- โหลดสคริปต์ badge บนหัวเว็บ -->
   <script src="../js/header-noti.js"></script>
 </body>
 </html>

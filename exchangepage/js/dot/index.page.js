@@ -1,7 +1,7 @@
 // /thammue/public/js/index.page.js
 // ใช้กับหน้า public/index.html
 
-const API_BASE = '/thammue/api';
+const API_BASE = '/exchangepage/api';
 
 let __ME_ID = 0;
 async function fetchMe() {

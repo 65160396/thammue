@@ -174,12 +174,3 @@ form?.addEventListener('submit', (e) => {
 
 });
 
-/* แนะนำ CSS เพิ่ม (ถ้ายังไม่มี)
-.thumb-item{position:relative;display:inline-block;margin:6px}
-.thumb-item img{width:110px;height:110px;object-fit:cover;border-radius:10px;display:block}
-.thumb-item .thumb-remove{position:absolute;right:6px;top:6px;border:none;background:#000a;color:#fff;
-  width:24px;height:24px;border-radius:50%;cursor:pointer}
-.thumb-caption{position:absolute;left:6px;bottom:6px;background:#0008;color:#fff;padding:2px 6px;
-  border-radius:6px;font-size:12px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.upload-box.drag{outline:2px dashed #888; outline-offset:4px}
-*/

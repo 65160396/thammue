@@ -1,5 +1,5 @@
 <?php
-// /thammue/api/items/create.php
+// /thammue/exchangepage/api/items/create.php
 declare(strict_types=1);
 require __DIR__ . '/../_config.php';
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $pdo    = db();
 $userId = (int)($_SESSION['user_id'] ?? 0);
 if ($userId <= 0) {
-  // NOTE: ของจริงควรบังคับล็อกอินเสมอ
   json_err('กรุณาเข้าสู่ระบบ', 401);
 }
 
@@ -33,11 +32,10 @@ if ($title === '' || $categoryId <= 0) {
   json_err('กรุณากรอกชื่อสินค้าและหมวดหมู่ให้ครบ', 422);
 }
 
-// อัปโหลดรูป
-$targetDir = __DIR__ . '/../../uploads/items';
+// อัปโหลดรูป — ใช้ helper ให้ไปเก็บที่ UPLOAD_DIR/items
 $savedFiles = [];
 if (!empty($_FILES['images']['name'][0])) {
-  $savedFiles = save_uploaded_images($_FILES['images'], $targetDir); // ใช้ helper ใน _config.php
+  $savedFiles = save_uploaded_images($_FILES['images'], 'items'); // ✅ เก็บที่ exchangepage/public/uploads/items
 }
 if (!$savedFiles) {
   json_err('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป', 422);
@@ -75,21 +73,19 @@ try {
   // บันทึกภาพ
   $ord = 0;
   $stmtImg = $pdo->prepare("INSERT INTO item_images (item_id, path, sort_order) VALUES (:id, :p, :s)");
-  foreach ($savedFiles as $i => $basename) {
+  foreach ($savedFiles as $basename) {
     $publicPath = 'uploads/items/' . $basename; // เก็บเป็น relative path
     $stmtImg->execute([':id'=>$itemId, ':p'=>$publicPath, ':s'=>$ord++]);
   }
 
   $pdo->commit();
 
-// /thammue/api/items/create.php  (ท้าย try หลัง commit)
-json_ok([
-  'id'         => $itemId,                      // << เพิ่มคีย์นี้
-  'item_id'    => $itemId,                      // คงไว้เพื่อเข้ากันได้ย้อนหลัง
-  'detail_url' => "/thammue/public/detail.html?id={$itemId}&view=public",
-  'success_url'=> "/thammue/public/success.html?id={$itemId}" // ใช้ได้ทันที
-], 201);
-
+  json_ok([
+    'id'          => $itemId,
+    'item_id'     => $itemId,
+    'detail_url'  => THAMMUE_BASE . "/public/detail.html?id={$itemId}&view=public",
+    'success_url' => THAMMUE_BASE . "/public/success.html?id={$itemId}",
+  ], 201);
 
 } catch (Throwable $e) {
   $pdo->rollBack();

@@ -5,23 +5,17 @@
   <base href="/thammue/exchangepage/public/">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Thammue</title>
-
   <link rel="stylesheet" href="../css/instyle.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/cards.kebab.css" />
-  <link rel="stylesheet" href="../css/verification.css">
+  <link rel="stylesheet" href="../css/verification.css" />
 </head>
 <body>
-  <!-- top bar -->
   <ul class="top-nav">
     <li><a class="js-upload" href="/exchangepage/public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
-    <li class="right">
-      <a id="notiBtn" href="notifications.html">
-        แจ้งเตือน <span id="notiBadge" hidden class="badge"></span>
-      </a>
-    </li>
+    <li class="right"><a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a></li>
     <li><span class="top-divider">|</span></li>
     <li><a href="#help">ช่วยเหลือ</a></li>
     <li><span class="top-divider">|</span></li>
@@ -29,30 +23,22 @@
   </ul>
 
   <div class="header-wrapper">
-    <div class="logo-container">
-      <a href="index.html" class="brand-text">THAMMUE</a>
-    </div>
-
+    <div class="logo-container"><a href="index.html" class="brand-text">THAMMUE</a></div>
     <div class="search-container">
       <div class="search-group">
         <input type="text" placeholder="ค้นหาสินค้า" />
-        <button class="search-button" aria-label="ค้นหา">
-          <img src="../img/Icon/search.png" alt="ค้นหา" />
-        </button>
+        <button class="search-button" aria-label="ค้นหา"><img src="../img/Icon/search.png" alt="ค้นหา" /></button>
       </div>
 
       <div class="icon-buttons desktop-icons">
         <a class="action-button" href="request.html" aria-label="คำขอแลกเปลี่ยน">
-          <img src="../img/Icon/exchange.png" alt="">
-          <span class="badge" id="reqBadge" hidden>0</span>
+          <img src="../img/Icon/exchange.png" alt><span class="badge" id="reqBadge" hidden>0</span>
         </a>
         <a class="action-button" href="fav.html" aria-label="รายการโปรด">
-          <img src="../img/Icon/heart.png" alt="">
-          <span class="badge" id="favBadge" hidden>0</span>
+          <img src="../img/Icon/heart.png" alt><span class="badge" id="favBadge" hidden>0</span>
         </a>
         <a class="action-button" href="chat.html" aria-label="แชท">
-          <img src="../img/Icon/chat.png" alt="">
-          <span class="badge" id="chatBadge" hidden>0</span>
+          <img src="../img/Icon/chat.png" alt><span class="badge" id="chatBadge" hidden>0</span>
         </a>
 
         <div class="user-menu" id="userMenu">
@@ -68,17 +54,29 @@
       </div>
 
       <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
-        <img src="../img/Icon/menu.png" alt="" aria-hidden="true">
+        <img src="../img/Icon/menu.png" alt aria-hidden="true">
       </button>
     </div>
   </div>
 
   <nav id="mobileIcons" class="icons-drawer" hidden>
     <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
-    <a href="request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
-    <a href="fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
-    <a href="chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
-    <a href="profile.html"><img src="../img/Icon/user.png" alt=""> โปรไฟล์</a>
+    <a href="request.html"><img src="../img/Icon/exchange.png" alt> คำขอแลกเปลี่ยน</a>
+    <a href="fav.html"><img src="../img/Icon/heart.png" alt> รายการโปรด</a>
+    <a href="chat.html"><img src="../img/Icon/chat.png" alt> แชท</a>
+
+    <div class="user-menu" id="userMenu">
+      <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+        <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+        <span class="user-chip" id="userChip" hidden></span>
+        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <div class="user-dropdown" id="userDropdown" role="menu"></div>
+    </div>
+
+    <a href="profile.html"><img src="../img/Icon/user.png" alt> โปรไฟล์</a>
   </nav>
   <div class="icons-backdrop" hidden></div>
 
@@ -91,14 +89,10 @@
     <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
   </div>
 
-
-  <!-- Hero -->
   <header class="hero">
     <div class="container">
       <h1>เชิญชวนแลกเปลี่ยน</h1>
-      <p class="hero-sub">
-        เปลี่ยนของที่ไม่ได้ใช้ ให้กลายเป็นคุณค่ากับเพื่อนบ้านและชุมชน — ประหยัดเงิน ลดขยะ ช่วยโลกไปด้วยกัน
-      </p>
+      <p class="hero-sub">เปลี่ยนของที่ไม่ได้ใช้ ให้กลายเป็นคุณค่ากับเพื่อนบ้านและชุมชน — ประหยัดเงิน ลดขยะ ช่วยโลกไปด้วยกัน</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#exchange-popular">เริ่มต้นแลกเปลี่ยน</a>
         <a class="btn btn-ghost" href="#why-exchange">ทำไมต้อง THAMMUE?</a>
@@ -107,7 +101,6 @@
   </header>
 
   <main>
-    <!-- สินค้าแลกเปลี่ยนของฉัน -->
     <section class="section" id="exchange-popular">
       <div class="container">
         <div class="section-head">
@@ -118,20 +111,16 @@
       </div>
     </section>
 
-    <!-- แบนเนอร์ -->
     <section class="section section-band">
       <div class="container band">
         <div class="band-content">
           <h2>สินค้าเหลือใช้อย่าทิ้ง ลองมาแลกเปลี่ยนกัน</h2>
-          <p class="muted">
-            อัปโหลดรูปและบอกสิ่งที่อยากได้กลับ เราจะช่วยจับคู่ให้เหมาะทั้งราคา คุณค่า และระยะทาง
-          </p>
+          <p class="muted">อัปโหลดรูปและบอกสิ่งที่อยากได้กลับ เราจะช่วยจับคู่ให้เหมาะทั้งราคา คุณค่า และระยะทาง</p>
           <a class="btn btn-primary" href="upload.html">ดูข้อมูลเพิ่มเติม</a>
         </div>
       </div>
     </section>
 
-    <!-- เพราะคุณชอบหนังสือ -->
     <section class="section">
       <div class="container">
         <h3 class="section-title">เพราะคุณชอบหนังสือ</h3>
@@ -139,7 +128,6 @@
       </div>
     </section>
 
-    <!-- เพราะคุณชอบเสื้อผ้า -->
     <section class="section">
       <div class="container">
         <h3 class="section-title">เพราะคุณชอบเสื้อผ้า</h3>
@@ -147,31 +135,19 @@
       </div>
     </section>
 
-    <!-- ทำไมจึงควรแลกเปลี่ยน -->
     <section class="section section-why" id="why-exchange">
       <div class="container">
         <h2 class="center">การแลกเปลี่ยนสินค้า</h2>
         <h3 class="center muted">ทำไมเราจึงควรแลกเปลี่ยนสินค้า</h3>
-
         <div class="grid grid-3 mt-24">
-          <div class="reason">
-            <h4>ประหยัดค่าใช้จ่าย</h4>
-            <p class="muted">ลดการซื้อของใหม่ ใช้ของที่มีอยู่ให้คุ้มค่า แลกเปลี่ยนกับสิ่งที่ต้องการได้ทันที</p>
-          </div>
-          <div class="reason">
-            <h4>ลดขยะ สร้างคุณค่าใหม่</h4>
-            <p class="muted">สิ่งของที่ไม่ใช้แล้วไม่ต้องทิ้ง สามารถแลกให้คนอื่นนำไปใช้ต่อ เกิดคุณค่าซ้ำ</p>
-          </div>
-          <div class="reason">
-            <h4>ได้ของที่ตรงใจ</h4>
-            <p class="muted">เลือกสิ่งของที่คุณต้องการจริง ๆ จากการแลก ไม่ต้องลงทุนเพิ่ม และยังสนุกกับการแบ่งปัน</p>
-          </div>
+          <div class="reason"><h4>ประหยัดค่าใช้จ่าย</h4><p class="muted">ลดการซื้อของใหม่ ใช้ของที่มีอยู่ให้คุ้มค่า แลกเปลี่ยนกับสิ่งที่ต้องการได้ทันที</p></div>
+          <div class="reason"><h4>ลดขยะ สร้างคุณค่าใหม่</h4><p class="muted">สิ่งของที่ไม่ใช้แล้วไม่ต้องทิ้ง สามารถแลกให้คนอื่นนำไปใช้ต่อ เกิดคุณค่าซ้ำ</p></div>
+          <div class="reason"><h4>ได้ของที่ตรงใจ</h4><p class="muted">เลือกสิ่งของที่คุณต้องการจริง ๆ จากการแลก ไม่ต้องลงทุนเพิ่ม และยังสนุกกับการแบ่งปัน</p></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container footer-grid">
       <div>
@@ -181,8 +157,8 @@
       <div>
         <h5>ตรวจสอบสถานะ</h5>
         <ul class="list">
-          <li><a href="../public/my-items.html">สินค้าของฉัน</a></li>
-          <li><a href="#">สถานะการแลกเปลี่ยน</a></li>
+          <li><a href="my-items.html">สินค้าของฉัน</a></li>
+          <li><a href="request.html">สถานะการแลกเปลี่ยน</a></li>
           <li><a href="#">คู่มือสมาชิก</a></li>
           <li><a href="#">การรับของ</a></li>
         </ul>
@@ -201,9 +177,7 @@
         </div>
       </div>
     </div>
-    <div class="container tiny muted center mt-24">
-      copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน
-    </div>
+    <div class="container tiny muted center mt-24">copy©ขอบคุณทุกคนในชุมชนที่ร่วมแบ่งปัน</div>
   </footer>
 
   <script>
@@ -211,35 +185,32 @@
     const drawer = document.getElementById('mobileIcons');
     const closeBtn = document.querySelector('.icons-drawer__close');
     const backdrop = document.querySelector('.icons-backdrop');
-    function openIcons() { drawer.hidden = false; backdrop.hidden = false; requestAnimationFrame(() => drawer.classList.add('open')); document.body.style.overflow = 'hidden'; }
-    function closeIcons() { drawer.classList.remove('open'); document.body.style.overflow = ''; backdrop.hidden = true; setTimeout(() => { if (!drawer.classList.contains('open')) drawer.hidden = true; }, 250); }
+    function openIcons(){ drawer.hidden=false; backdrop.hidden=false; requestAnimationFrame(()=>drawer.classList.add('open')); document.body.style.overflow='hidden'; }
+    function closeIcons(){ drawer.classList.remove('open'); document.body.style.overflow=''; backdrop.hidden=true; setTimeout(()=>{ if(!drawer.classList.contains('open')) drawer.hidden=true; },250); }
     burger?.addEventListener('click', openIcons);
     closeBtn?.addEventListener('click', closeIcons);
     backdrop?.addEventListener('click', closeIcons);
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeIcons(); });
-  </script>
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeIcons(); });
 
-
-  <!-- JS: me.php chip -->
-  <script>
-    (function () {
-      const chip = document.getElementById('userChip');
-      const userArea = document.getElementById('userArea');
-      if (!chip || !userArea) return;
-      fetch('../api/me.php', { cache: 'no-store' })
-        .then(r => r.ok ? r.json() : { ok: false })
-        .then(d => {
-          if (!d || !d.ok) { chip.hidden = true; userArea.href = '/thammue/page/login.html'; return; }
-          const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
-          if (name) { chip.textContent = name; chip.hidden = false; }
-        })
-        .catch(() => { chip.hidden = true; });
-    })();
+    // chip ชื่อผู้ใช้
+    fetch('../api/me.php', { cache:'no-store', credentials:'include' })
+      .then(r=>r.ok?r.json():{ok:false})
+      .then(d=>{
+        const chip = document.getElementById('userChip');
+        const userArea = document.getElementById('userArea');
+        if(!chip||!userArea) return;
+        if(!d || !d.ok){ chip.hidden=true; userArea.href='/thammue/page/login.html'; return; }
+        const name = (d.user && (d.user.display_name||d.user.name)||'').trim();
+        if(name){ chip.textContent=name; chip.hidden=false; }
+      })
+      .catch(()=>{});
   </script>
 
   <script type="module" src="../js/dot/index.page.js"></script>
   <script src="../js/header-noti.js"></script>
   <script src="../js/app-badges.js?v=2" defer></script>
   <script src="js/verification.modal.js" defer></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/user-menu.js"></script>
 </body>
 </html>
