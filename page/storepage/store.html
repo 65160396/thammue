@@ -95,6 +95,27 @@
         </div>
       </div>
     </section>
+    <!-- วางทันทีหลัง <body> -->
+    <script>
+(function () {
+  const url = new URL(location.href);
+  const sidQ = url.searchParams.get('shop_id');
+
+  // ถ้า URL มี shop_id → เก็บไว้แล้วให้สคริปต์อื่นทำงานต่อ
+  if (sidQ) {
+    sessionStorage.setItem('shop_id', sidQ);
+    return;
+  }
+
+  // ถ้า URL ไม่มี → ลองดึงจาก sessionStorage แล้วรีไดเรกต์เติมให้
+  const sidSS = sessionStorage.getItem('shop_id');
+  if (sidSS) {
+    url.searchParams.set('shop_id', sidSS);
+    // ใช้ replace กันกด Back แล้ววนลูป
+    location.replace(url.toString());
+  }
+})();
+</script>
 
     <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
     <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->

@@ -1,0 +1,89 @@
+:root{
+    --bg:#ffffff; --ink:#0b0f14; --muted:#6b7280; --line:#e5e7eb;
+    --ink-weak:#374151; --chip:#f5f5f5; --ok:#111; --no:#111;
+  }
+
+  /* การ์ดคำขอ */
+  .swap-card{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin:14px 0;
+    box-shadow:0 1px 0 rgba(0,0,0,.045);
+  }
+
+  /* ส่วนหัว: ชื่อไอเท็มที่ถูก “ขอแลก” (ของเรา) + ปุ่มการกระทำ */
+  .swap-head{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px; background:#fafafa; border-bottom:1px solid var(--line);
+  }
+  .swap-head .swap-title{
+    margin:0; font-size:1.05rem; font-weight:800; color:var(--ink);
+  }
+  .swap-head small{ font-weight:600; color:var(--muted); margin-left:.35rem; }
+
+  .swap-actions{ margin-left:auto; display:flex; gap:8px; }
+  .btn-pill{ border:none; border-radius:999px; padding:.55rem .9rem; font-weight:800; cursor:pointer; letter-spacing:.2px; }
+  .btn-accept{ background:#00ff00; color:#fff; }
+  .btn-reject{ background:#ff0000; color:#ffffff;  }
+  .btn-pill[disabled]{ opacity:.6; cursor:not-allowed; }
+
+  /* บล็อกบน: “ของผู้ขอ” — เด่น รูปใหญ่ */
+  .swap-top{
+    display:grid; grid-template-columns:72px 1fr; gap:12px;
+    padding:16px;
+  }
+  .swap-top .thumb-lg{
+    width:72px; height:72px; border-radius:12px; overflow:hidden; background:#f3f4f6; border:1px solid var(--line);
+  }
+  .swap-top .thumb-lg img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .swap-top .title{ font-weight:800; color:var(--ink); line-height:1.35; }
+  .swap-top .meta{ color:var(--muted); font-size:.9rem; margin-top:2px; }
+  .swap-top .note{ color:var(--ink-weak); font-size:.92rem; margin-top:6px; }
+
+  /* ตัวหนังสือ ⇄ แลกกับ (โมโนโครม) */
+  .swap-with{
+    display:flex; align-items:center; gap:8px; padding:0 16px 8px; color:#6b7280;
+    font-size:.9rem; letter-spacing:.3px;
+  }
+  .swap-with::before,
+  .swap-with::after{
+    content:""; height:1px; background:var(--line); flex:1;
+  }
+
+  /* บล็อกล่าง: “ของของเรา” — ย่อมลง รูปเล็ก/หรือจะไม่โชว์รูปก็ได้ */
+  .swap-bottom{
+    display:grid; grid-template-columns:40px 1fr auto; gap:10px;
+    padding:10px 16px 14px; align-items:center;
+  }
+  .swap-bottom .thumb-sm{
+    width:36px; height:36px; border-radius:8px; overflow:hidden; background:#f3f4f6; border:1px solid var(--line);
+  }
+  .swap-bottom .thumb-sm img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .swap-bottom .title{ font-weight:700; color:var(--ink); }
+  .swap-bottom .muted{ color:var(--muted); font-size:.9rem; }
+
+  /* ชิปสถานะ (ขาว-ดำ) */
+  .chip{ display:inline-block; padding:.28rem .7rem; border-radius:999px; background:var(--chip); color:#111; font-size:.82rem; border:1px solid #e5e7eb; }
+  .chip.pending{ opacity:.9; }
+  .chip.accepted{ background:#00ff00; color:#fff; }
+  .chip.rejected{ background:#ff0000; color:#ffffff;  }
+
+  /* บรรทัดล่างสุด: meta */
+  .swap-meta{
+    padding:12px 16px; border-top:1px solid var(--line);
+    color:var(--ink-weak); font-size:.92rem;
+  }
+
+  /* ว่าง/โหลด */
+  .empty-card{
+    background:#fff; border:1px dashed var(--line); color:var(--muted);
+    padding:18px; border-radius:12px; text-align:center;
+  }
+
+  /* เลย์เอาต์เล็ก */
+  @media (max-width: 480px){
+    .swap-top{ grid-template-columns:60px 1fr; }
+    .swap-top .thumb-lg{ width:60px; height:60px; border-radius:10px; }
+  }

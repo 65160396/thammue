@@ -1,0 +1,4 @@
+# ให้ Apache ประมวลผลไฟล์ .html ด้วย PHP ด้วย
+AddType application/x-httpd-php .php .html
+# บางเครื่องใช้รูปแบบนี้แทน (เลือกอย่างใดอย่างหนึ่ง)
+# AddHandler application/x-httpd-php .html .htm

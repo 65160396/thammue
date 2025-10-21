@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>อัปโหลดสำเร็จ • Thammue</title>
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <style>
+    .success-wrap {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 24px
+    }
+
+    .success-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .06)
+    }
+
+    .success-icon {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #e8f7ef
+    }
+
+    .success-icon svg {
+      width: 44px;
+      height: 44px
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      margin: 6px 0 4px
+    }
+
+    .btn-row {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      text-decoration: none
+    }
+
+    .btn.primary {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: #fff
+    }
+
+    .cover {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      margin: 10px auto
+    }
+
+    /* ทำให้ปุ่มรองมองเห็นชัด */
+    .success-card .btn {
+      color: #0f172a;
+      /* สีตัวอักษรเข้ม */
+      background: #0ea5e9;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* กันสไตล์ลิงก์ global ทับสี */
+    .success-card .btn:link,
+    .success-card .btn:visited {
+      color: #ffffff;
+    }
+
+    /* โฮเวอร์สวย ๆ */
+    .success-card .btn:hover {
+      background: #f8fafc;
+      border-color: #d1d5db;
+    }
+
+    /* ปุ่มหลักยังขาวบนฟ้าเหมือนเดิม */
+    .success-card .btn.primary {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="success-wrap">
+    <div class="success-card">
+      <div class="success-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M20 7L9 18l-5-5" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h1 class="success-title">อัปโหลดสินค้าเรียบร้อย</h1>
+      <img id="cover" class="cover" alt="" hidden>
+      <p>รหัสอ้างอิง: <code id="ref">#-</code></p>
+      <p>ชื่อสินค้า: <code id="title">—</code></p>
+      <div class="btn-row">
+        <a id="viewBtn" class="btn primary" href="#">ดูสินค้าชิ้นนี้</a>
+        <a class="btn" href="upload.html">อัปโหลดสินค้าอีกครั้ง</a>
+        <a class="btn" href="index.html">กลับหน้าแรก</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/thammue/api';
+    const id = new URLSearchParams(location.search).get('id') || '';
+    document.getElementById('ref').textContent = id ? `#${id}` : '#-';
+    document.getElementById('viewBtn').href = `detail.html?id=${id}&view=public`;
+
+    if (id) {
+      fetch(`${API_BASE}/items/show.php?id=${id}`, { cache: 'no-store' })
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.ok && d.item) {
+            const it = d.item;
+            document.getElementById('title').textContent = it.title || '—';
+            // เดิม
+            // const img = it.cover || (it.images && it.images[0]);
+
+            // ใหม่
+            const toAbs = p => {
+              if (!p) return '';
+              if (p.startsWith('http') || p.startsWith('/')) return p;
+              return `/thammue/${p}`;           // เติม prefix ให้พ้นผลของ <base>
+            };
+            const imgPath = toAbs(it.cover || (it.images && it.images[0]));
+            if (imgPath) {
+              const el = document.getElementById('cover');
+              el.src = imgPath;
+              el.hidden = false;
+            }
+
+
+          }
+        })
+        .catch(() => { /* เงียบไว้ */ });
+    }
+  </script>
+</body>
+
+</html>

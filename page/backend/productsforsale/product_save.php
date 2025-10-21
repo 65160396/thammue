@@ -14,7 +14,15 @@ function safe_filename($name)
 $name        = trim($_POST['name'] ?? '');
 $category_id = intval($_POST['category_id'] ?? 0);
 $description = trim($_POST['description'] ?? '');
-$price       = strlen($_POST['price'] ?? '') ? $_POST['price'] : null;
+
+/* ราคา: รับได้ทั้ง 250 หรือ 1,250.50 */
+$priceStr = trim($_POST['price'] ?? '');
+$priceStr = str_replace(',', '', $priceStr);
+$price     = ($priceStr === '' ? null : (float)$priceStr);
+
+/* <<< ใหม่: จำนวนคงเหลือ >>> */
+$stock_qty = max(0, (int)($_POST['stock_qty'] ?? 0));
+
 $province    = trim($_POST['province'] ?? '');
 
 if ($name === '' || !$category_id || $description === '') {
@@ -48,15 +56,20 @@ if (!move_uploaded_file($_FILES['main_image']['tmp_name'], $mainTarget)) {
 $mainPublicPath = '/uploads/products/' . $mainFileName;
 
 /* ===== insert products ===== */
-$stmt = $mysqli->prepare("INSERT INTO products (name, category_id, description, price, province, main_image) VALUES (?,?,?,?,?,?)");
+/* เพิ่ม stock_qty เข้า columns และเพิ่มตัวแปรใน bind_param */
+$stmt = $mysqli->prepare("
+    INSERT INTO products (name, category_id, description, price, province, main_image, stock_qty)
+    VALUES (?,?,?,?,?,?,?)
+");
 $stmt->bind_param(
-    "sisdss",
+    "sisdssi",            // s name, i category, s desc, d price, s province, s main_image, i stock_qty
     $name,
     $category_id,
     $description,
-    $price,      // ถ้า null จะเป็น NULL โดยอัตโนมัติ
+    $price,               // ถ้าไม่มีราคา $price จะเป็น NULL ได้
     $province,
-    $mainPublicPath
+    $mainPublicPath,
+    $stock_qty
 );
 if (!$stmt->execute()) {
     @unlink($mainTarget);

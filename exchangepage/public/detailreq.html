@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รายละเอียดคำขอแลกเปลี่ยน | THAMMUE</title>
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .wrap{max-width:960px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+    .title{font-weight:800;font-size:1.25rem;margin:0 0 .25rem}
+    .muted{color:#64748b}
+    .grid{display:grid;gap:16px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    .box{border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .box h3{margin:.25rem 0 .5rem;font-size:1rem}
+    .thumb{width:100%;max-width:240px;aspect-ratio:1/1;object-fit:cover;border-radius:10px;border:1px solid #eee}
+    .pill{display:inline-block;padding:.25rem .5rem;border-radius:999px;font-size:.85rem}
+    .pill.pending{background:#f1f5f9}
+    .pill.accepted{background:#16a34a33;color:#166534}
+    .pill.rejected{background:#ef444433;color:#991b1b}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;background:#fff;cursor:pointer}
+    .btn.primary{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+    .kv{display:grid;grid-template-columns:140px 1fr;gap:8px}
+    .kv b{color:#334155}
+    .section-title{margin:.75rem 0 .5rem;font-weight:700}
+  </style>
+</head>
+<body>
+  <!-- header -->
+  <ul class="top-nav">
+    <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="index.html">ซื้อสินค้า</a></li>
+    <li class="right">
+      <a id="notiBtn" href="notifications.html">แจ้งเตือน <span id="notiBadge" hidden class="badge"></span></a>
+    </li>
+    <li><span class="top-divider">|</span></li>
+  </ul>
+
+  <div class="wrap">
+    <h2 style="margin:0 0 12px">แจ้งเตือน</h2>
+    <div id="box" class="card">กำลังโหลด...</div>
+  </div>
+
+  <script>
+  const API_BASE = '/thammue/api';
+  const qp = new URLSearchParams(location.search);
+  const nid = +(qp.get('nid') || 0);   // มาจาก notifications.html
+  const ridParam = +(qp.get('id') || 0); // สำรอง: ถ้าส่ง id คำขอมาโดยตรง
+
+  const box = document.getElementById('box');
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  const fmt = s => { try{ return new Date(s.replace(' ','T')).toLocaleString('th-TH'); } catch(_) { return s; } };
+  const img = src => src ? (src.startsWith('/thammue/') ? src : '/thammue/'+src.replace(/^\/+/,'')) : '/thammue/img/placeholder.png';
+
+  async function fetchNotification(nid){
+    // ดึง notification + mark read (ให้ badge ลดแน่ ๆ เมื่อเปิดหน้านี้ตรง ๆ)
+    const res = await fetch(`${API_BASE}/notifications/get.php?id=${nid}&mark=1`, {credentials:'include', cache:'no-store'});
+    if(!res.ok) return null;
+    const {item} = await res.json();
+    // รีเฟรช badge บน header
+    window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
+    return item;
+  }
+
+  function extractRequestIdFromLink(link){
+    if(!link) return 0;
+    try{
+      const u = new URL(link, location.origin);
+      return +(u.searchParams.get('id') || 0);
+    }catch(_){ return 0; }
+  }
+
+  async function fetchRequestDetail(rid){
+    const res = await fetch(`${API_BASE}/requests/get.php?id=${rid}`, {credentials:'include', cache:'no-store'});
+    if(!res.ok) return null;
+    const d = await res.json().catch(()=>({}));
+    return d.item || d.data?.item || null;
+  }
+
+  function statusPill(s){
+    return `<span class="pill ${s}">${({pending:'รอดำเนินการ',accepted:'ยอมรับแล้ว',rejected:'ปฏิเสธแล้ว'})[s] || s}</span>`;
+  }
+
+  function render(noti, req){
+    if(!req){
+      box.innerHTML = `
+        <div class="title">${esc(noti?.title || 'แจ้งเตือน')}</div>
+        ${noti?.body ? `<div>${esc(noti.body)}</div>` : ``}
+        <div class="muted">${esc(noti?.type || '')} • ${fmt(noti?.created_at || '')}</div>
+        <div class="actions" style="margin-top:12px">
+          <a class="btn" href="notifications.html">กลับไปหน้าการแจ้งเตือน</a>
+        </div>`;
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="grid">
+        <div>
+          <div class="title">คำขอ #${req.id} ${statusPill(req.status)}</div>
+          <div class="muted">สร้างเมื่อ: ${fmt(req.created_at)} ${req.decided_at ? ' • ตัดสินเมื่อ: '+fmt(req.decided_at) : ''}</div>
+
+          ${req.message ? `<div class="section-title">ข้อความจากผู้ยื่นคำขอ</div>
+          <div class="box">${esc(req.message)}</div>` : ``}
+
+          <div class="section-title">ผู้มีส่วนเกี่ยวข้อง</div>
+          <div class="box kv">
+            <b>ผู้ยื่นคำขอ</b><div>${esc(req.requester.name || req.requester.email || '—')}</div>
+            <b>เจ้าของสินค้า</b><div>${esc(req.owner.name || req.owner.email || '—')}</div>
+          </div>
+
+          <div class="section-title">สินค้า</div>
+          <div class="grid grid-2">
+            <div class="box">
+              <h3>สินค้าที่ขอแลกเปลี่ยน (ของผู้ขอ)</h3>
+              <img class="thumb" src="${img(req.requester_item?.cover)}" alt="">
+              <div>${esc(req.requester_item?.title || '-')}</div>
+            </div>
+            <div class="box">
+              <h3>สินค้าของฉัน (เป้าหมาย)</h3>
+              <img class="thumb" src="${img(req.target_item?.cover)}" alt="">
+              <div>${esc(req.target_item?.title || '-')}</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="notifications.html">กลับไปหน้าการแจ้งเตือน</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="box">
+            <h3>สรุปแจ้งเตือน</h3>
+            <div><b>${esc(noti?.title || '—')}</b></div>
+            ${noti?.body ? `<div class="muted" style="margin-top:.25rem">${esc(noti.body)}</div>` : ``}
+            <div class="muted" style="margin-top:.5rem">${esc(noti?.type || '')} • ${fmt(noti?.created_at || '')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async function init(){
+    box.textContent = 'กำลังโหลด...';
+    let noti = null, rid = ridParam;
+
+    if (nid) {
+      noti = await fetchNotification(nid);      // mark read + data
+      if (noti && !rid) rid = extractRequestIdFromLink(noti.link);
+    }
+
+    // เผื่อเรียกตรงแบบ detailreq.html?id=123
+    if (!rid && ridParam) rid = ridParam;
+
+    const req = rid ? await fetchRequestDetail(rid) : null;
+    render(noti, req);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  </script>
+
+  <script src="../js/header-noti.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รีพอร์ต | Admin</title>
+<style>.wrap{width:min(1080px,100%);margin:18px auto;padding:0 16px}.card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,.06);margin-bottom:10px}.btn{padding:6px 10px;border-radius:8px;border:0;margin-right:6px}</style>
+</head><body>
+<div class="wrap">
+  <h2>รีพอร์ตค้าง (open)</h2>
+  <label>โมดูล:
+    <select id="proj">
+      <option value="exchange">exchange (แลกเปลี่ยน)</option>
+      <option value="shop">shop (ซื้อขาย)</option>
+    </select>
+  </label>
+  <div id="list"></div>
+</div>
+<script src="admin.js"></script>
+<script>
+(async()=>{
+  await admin.ensureLogin();
+  proj.value = admin.project; proj.onchange = ()=>{ admin.project = proj.value; location.reload(); };
+  const {rows} = await admin.api('/thammue/admin/reports/list.php?status=open');
+  const box = document.getElementById('list');
+  rows.forEach(r=>{
+    const el=document.createElement('div'); el.className='card';
+    el.innerHTML = `<b>#${r.id}</b> [${r.category}] target=${r.target_type}:${r.target_id??'-'}<br>
+      ${r.message}<br>${r.attachment_path?`ไฟล์แนบ: <code>${r.attachment_path}</code>`:''}
+      <br><textarea rows="2" style="width:100%;margin:8px 0" placeholder="โน้ต admin"></textarea>
+      <button class="btn" data-to="in_progress" data-id="${r.id}">กำลังดำเนินการ</button>
+      <button class="btn" data-to="resolved" data-id="${r.id}">ปิดงาน</button>
+      <button class="btn" data-to="invalid" data-id="${r.id}">ไม่ใช่เรื่อง</button>`;
+    box.appendChild(el);
+  });
+  box.addEventListener('click', async(e)=>{
+    const b=e.target.closest('button'); if(!b) return;
+    const note=b.parentElement.querySelector('textarea').value.trim();
+    const ok = await admin.api('/thammue/admin/reports/resolve.php',{id:+b.dataset.id,to:b.dataset.to,note},'POST',true);
+    if(ok.ok){ b.parentElement.remove(); }
+  });
+})();
+</script>
+</body></html>

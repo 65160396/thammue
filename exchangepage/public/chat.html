@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แชท | THAMMUE</title>
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/chat.css" />
+
+
+</head>
+
+<body>
+  <!-- Topbar -->
+  <ul class="top-nav">
+    <li><a href="upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="index.html">ซื้อสินค้า</a></li>
+    <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#help">ช่วยเหลือ</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#lang">ไทย</a></li>
+  </ul>
+
+  <!-- Header -->
+  <div class="header-wrapper">
+    <div class="logo-container"><a href="index.html" class="brand-text">THAMMUE</a></div>
+    <div class="search-container">
+      <div class="search-group">
+        <input type="text" placeholder="ค้นหาสินค้า" />
+        <button class="search-button" aria-label="ค้นหา">
+          <img src="../img/Icon/search.png" alt="ค้นหา" />
+        </button>
+      </div>
+      <div class="icon-buttons">
+        <a class="action-button" href="request.html"><img src="../img/Icon/exchange.png" alt=""></a>
+        <a class="action-button" href="fav.html"><img src="../img/Icon/heart.png" alt=""></a>
+        <a class="action-button" href="chat.html"><img src="../img/Icon/chat.png" alt=""></a>
+        <a class="action-button" href="profile.html"><img src="../img/Icon/user.png" alt=""></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="category-buttons">
+    <a href="category/Electronics.html" class="category-button">อิเล็กทรอนิกส์</a>
+    <a href="category/homeappliances.html" class="category-button">เครื่องใช้ภายในบ้าน</a>
+    <a href="category/children.html" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="category/clothing.html" class="category-button">เสื้อผ้า</a>
+    <a href="category/books.html" class="category-button">หนังสือ</a>
+    <a href="category/collectibles.html" class="category-button">ของสะสม</a>
+  </div>
+
+  <div class="chat-wrap">
+    <div class="chat-grid">
+      <!-- List (left) -->
+      <aside class="chat-list">
+        <div class="chat-list-head">ห้องแชทของฉัน</div>
+        <ul id="convList">
+          <li class="hint">กำลังโหลด...</li>
+        </ul>
+      </aside>
+
+      <!-- Box (right) -->
+      <section class="chat-box">
+        <div class="chat-box-head">
+          <div id="chatHead">เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย</div>
+        </div>
+        <div id="msgs" class="chat-msgs">
+          <div class="msg you">สวัสดี! เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div>
+        </div>
+        <div class="chat-input">
+          <textarea id="input" placeholder="พิมพ์ข้อความ..." disabled></textarea>
+          <button id="sendBtn" disabled>ส่ง</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/thammue/api';
+    const listEl = document.getElementById('convList');
+    const headEl = document.getElementById('chatHead');
+    const msgsEl = document.getElementById('msgs');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const qs = new URLSearchParams(location.search);
+    let convId = Number(qs.get('c') || 0);
+    const withOwnerOf = Number(qs.get('with_owner_of') || 0);
+
+    let lastId = 0;
+    let polling = null;
+    let busy = false;
+
+    const esc = (s = '') => s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+
+    // --- Load conversation list ---
+    async function loadList() {
+      listEl.innerHTML = '<li class="hint">กำลังโหลด...</li>';
+      const r = await fetch(`${API_BASE}/chat/list.php`, { cache: 'no-store' });
+      const d = await r.json().catch(() => ({ ok: false }));
+      if (!d.ok) {
+        listEl.innerHTML = '<li class="hint">กรุณาเข้าสู่ระบบเพื่อใช้งานแชท</li>';
+        return;
+      }
+      if (!d.items || !d.items.length) {
+        listEl.innerHTML = '<li class="hint">ยังไม่มีห้องแชท</li>';
+        return;
+      }
+      listEl.innerHTML = d.items.map(c => `
+        <li>
+          <a href="chat.html?c=${c.id}">
+            <strong>${esc(c.other_name || 'อีกฝ่าย')}</strong>
+            <span class="meta">${c.item_title ? ' • ' + esc(c.item_title) : ''}</span><br>
+            <span class="meta">${esc(c.last_body || '')}</span>
+          </a>
+        </li>
+      `).join('');
+    }
+
+    // --- Open conversation by item owner (from detail page) ---
+    async function ensureFromItem() {
+      if (!withOwnerOf || convId) return;
+      // เรียก API ให้สร้าง/หา conv แล้วคืน conv_id
+      const r = await fetch(`${API_BASE}/chat/open.php?with_owner_of=${withOwnerOf}`, { cache: 'no-store' });
+      const d = await r.json().catch(() => ({ ok: false }));
+      if (d.ok && d.conv_id) {
+        convId = Number(d.conv_id);
+        history.replaceState({}, '', `chat.html?c=${convId}`);
+      }
+    }
+
+    // --- Load active conversation header & first messages ---
+    async function loadConv() {
+      if (!convId) {
+        headEl.textContent = 'เลือกห้องจากด้านซ้ายเพื่อเริ่มคุย';
+        msgsEl.innerHTML = '<div class="msg you"><div class="bubble">สวัสดี! เลือกห้องทางซ้ายเพื่อเริ่มสนทนา</div></div>';
+        input.disabled = true; sendBtn.disabled = true;
+        return;
+      }
+      // ดึงหัวข้อ/ชื่ออีกฝ่าย
+      const rInfo = await fetch(`${API_BASE}/chat/info.php?conv_id=${convId}`, { cache: 'no-store' });
+      const i = await rInfo.json().catch(() => ({ ok: false }));
+      if (!i.ok) {
+        headEl.textContent = 'ไม่มีสิทธิ์เข้าห้องนี้ หรือห้องไม่พบ';
+        input.disabled = true; sendBtn.disabled = true;
+        return;
+      }
+      headEl.innerHTML = `${esc(i.other_name || 'อีกฝ่าย')} ${i.item_title ? `<span class="sub">• ${esc(i.item_title)}</span>` : ''}`;
+      input.disabled = false; sendBtn.disabled = false;
+
+      // โหลดข้อความแรก
+      msgsEl.innerHTML = '';
+      lastId = 0;
+      lastDay = '';
+      await fetchLoop(true);
+      // ทำเครื่องหมายว่าอ่านแล้ว (เคลียร์ยอดบนเซิร์ฟเวอร์ + อัปเดต badge)
+      await markConversationRead(convId, 0);
+
+
+      // เริ่มโพลลิ่ง
+      if (polling) clearInterval(polling);
+      polling = setInterval(fetchLoop, 2000);
+    }
+
+    // --- Fetch messages (poll) ---
+    async function fetchLoop(initial = false) {
+      if (busy || !convId) return;
+      busy = true;
+      try {
+        const r = await fetch(`${API_BASE}/chat/fetch.php?conv_id=${convId}&after_id=${lastId}`, { cache: 'no-store' });
+        if (!r.ok) return;
+        const data = await r.json();
+        if (Array.isArray(data)) {
+          if (initial && !data.length) {
+            msgsEl.innerHTML = '<div class="msg you"><div class="bubble">เริ่มสนทนาได้เลย</div></div>';
+          }
+          if (data.length) {
+            data.forEach(m => appendMsg(m));
+            // หลังมีข้อความเข้ามาและแท็บโฟกัส -> mark อ่าน
+            if (!document.hidden) { await markConversationRead(convId, 0); }
+          }
+        }
+      } catch (_) { } finally { busy = false; }
+    }
+
+    function formatDayLabel(iso) {
+      const d = new Date(iso || Date.now());
+      return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    let lastDay = '';
+
+    function appendMsg(m) {
+      const mine = m.is_mine || m.sender_is_me || (m.mine === true) || (m.sender_id && (m.sender_id === m.me_id));
+      const when = m.created_at || '';
+      const day = formatDayLabel(when);
+
+      // คั่นวันใหม่
+      if (day !== lastDay) {
+        const sep = document.createElement('div');
+        sep.className = 'day-sep';
+        sep.innerHTML = `<span>${day}</span>`;
+        msgsEl.appendChild(sep);
+        lastDay = day;
+      }
+
+      const wrap = document.createElement('div');
+      wrap.className = 'msg ' + (mine ? 'me' : 'you');
+      wrap.innerHTML = `<div class="bubble">${esc(m.body || '')}<span class="at">${esc(when)}</span></div>`;
+      msgsEl.appendChild(wrap);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      lastId = Math.max(lastId, Number(m.id || 0));
+    }
+
+    // --- Send message ---
+    async function send() {
+      const body = (input.value || '').trim();
+      if (!body || !convId) return;
+      input.value = '';
+      const fd = new FormData();
+      fd.append('conv_id', convId);
+      fd.append('body', body);
+      const r = await fetch(`${API_BASE}/chat/send.php`, { method: 'POST', body: fd });
+      if (r.ok) fetchLoop();
+    }
+
+    sendBtn.addEventListener('click', send);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+
+    // boot
+    (async function boot() {
+      await loadList();
+      await ensureFromItem(); // รองรับ ?with_owner_of=ITEM_ID
+      await loadConv();
+    })();
+    async function markConversationRead(convId, knownUnreadInThisRoom = 0) {
+      try {
+        // optimistic: ลดป้ายออกไปก่อน
+        if (knownUnreadInThisRoom > 0) {
+          window.dispatchEvent(new CustomEvent('badge:delta', { detail: { id: 'chatBadge', delta: -knownUnreadInThisRoom } }));
+        }
+        // แจ้งเซิร์ฟเวอร์
+        const res = await fetch(`${API_BASE}/chat/mark_read.php`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ conv_id: String(convId) })
+        });
+
+        if (res.ok) {
+          const j = await res.json();
+          // ใช้ค่าจริงปรับทับ (กันคลาดเคลื่อน)
+          if (j && j.ok && typeof j.total_unread !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('badge:set', { detail: { id: 'chatBadge', value: Number(j.total_unread) || 0 } }));
+          } else {
+            // อย่างน้อยก็รีเฟรชอีกครั้ง
+            window.dispatchEvent(new CustomEvent('badge:refresh', { detail: 'chat' }));
+          }
+        }
+      } catch (e) {
+        // ถ้า error ให้รีเฟรชจากเซิร์ฟเวอร์
+        window.dispatchEvent(new CustomEvent('badge:refresh', { detail: 'chat' }));
+      }
+    }
+    function atBottom(el) { return el.scrollHeight - el.scrollTop - el.clientHeight < 6; }
+    msgsEl.addEventListener('scroll', () => {
+      if (convId && atBottom(msgsEl)) { markConversationRead(convId, 0); }
+    });
+
+    // แท็บกลับมาโฟกัส ก็ mark อีกรอบ
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && convId) { markConversationRead(convId, 0); }
+    });
+
+
+  </script>
+  <script src="../js/app-badges.js?v=chat" defer></script>
+
+</body>
+
+</html>

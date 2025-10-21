@@ -1,0 +1,188 @@
+/* ===========================
+   THAMMUE — Upload page only
+   Scoped by .upload-page
+   =========================== */
+
+/* ถ้าต้องการฉากหลังเฉพาะหน้านี้ ให้ใช้บรรทัดด้านล่าง
+.upload-page { background: var(--bg); color: var(--text); }
+*/
+
+/* ===== Layout (เฉพาะภายในหน้าอัปโหลด) ===== */
+.upload-page .container {
+  width: min(980px, 100%);
+  margin-inline: auto;
+  padding: 24px 16px;
+}
+.upload-page .card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  border: 1px solid var(--line);
+}
+.upload-page .page-title {
+  margin: 0 0 12px;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* ===== Stepper ===== */
+.upload-page .stepper {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 12px;
+  row-gap: 14px;
+  margin: 8px 0 24px;
+  padding-bottom: 2px;
+}
+.upload-page .stepper-line {
+  grid-column: 1/-1;
+  height: 4px;
+  background: var(--line);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 2px;
+}
+.upload-page .stepper-fill {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+.upload-page .step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.upload-page .step .dot {
+  width: 14px; height: 14px; min-width: 14px;
+  border-radius: 999px;
+  background: #cfd5df;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--line);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.upload-page .step .dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 74, 11, 0.25);
+  transform: scale(1.05);
+}
+.upload-page .step .label {
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.upload-page .step .label.active {
+  color: #223042;
+  font-weight: 600;
+}
+
+/* ===== Form ===== */
+.upload-page legend {
+  position: absolute;
+  left: -9999px; /* ซ่อนแต่ยังอ่านได้ */
+}
+.upload-page .field { margin: 12px 0; }
+.upload-page .field label {
+  display: block;
+  font-size: 14px;
+  color: #223042;
+  margin-bottom: 6px;
+}
+.upload-page .field input[type="text"],
+.upload-page .field select,
+.upload-page .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  outline: none;
+}
+.upload-page .field textarea { resize: vertical; }
+.upload-page .field input:focus,
+.upload-page .field select:focus,
+.upload-page .field textarea:focus {
+  border-color: #cfd7ff;
+  box-shadow: 0 0 0 3px rgba(77, 107, 255, 0.12);
+}
+
+.upload-page .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 680px) {
+  .upload-page .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ===== Upload Box & Thumbs ===== */
+.upload-page .upload {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.upload-page .upload-box {
+  width: 120px; height: 48px;
+  border-radius: 10px;
+  border: 1px dashed var(--line);
+  background: #fafbfe;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.upload-page .upload-box:hover { background: #f1f3f8; }
+.upload-page .plus {
+  font-size: 28px; line-height: 1; transform: translateY(-1px);
+}
+.upload-page .thumbs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.upload-page .thumb {
+  width: 60px; height: 60px; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--line);
+}
+
+/* ===== Actions / Buttons ===== */
+.upload-page .actions {
+  display: flex; gap: 10px; justify-content: center; margin-top: 14px;
+}
+.upload-page .btn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.05s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.upload-page .btn:active { transform: translateY(1px); }
+.upload-page .btn.primary {
+  background: var(--accent); color: #fff;
+}
+.upload-page .btn.primary:hover { background: var(--accent-700); }
+.upload-page .btn.ghost {
+  background: #fff; border-color: var(--line); color: #223042;
+}
+.upload-page .btn.ghost:hover { border-color: #c9cfd9; }
+
+/* ===== Panels ===== */
+.upload-page .panel[hidden] { display: none; }
+
+/* ===== Public page exceptions ===== */
+.upload-page.is-public .request-card,
+.upload-page.is-public .btn-primary-blue {
+  display: none !important;
+}
+
+/* ===== Visually hidden file input ===== */
+.upload-page .visually-file {
+  position: absolute; left: -9999px;
+  width: 1px; height: 1px; opacity: 0;
+}

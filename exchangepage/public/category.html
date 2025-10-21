@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>หมวดหมู่ | Thammue</title>
+
+  <link rel="stylesheet" href="/thammue/css/instyle.css" />
+  <link rel="stylesheet" href="/thammue/css/style.css" />
+  <link rel="stylesheet" href="../css/cards.kebab.css" />
+</head>
+<body>
+  <div class="header-wrapper" style="padding:16px">
+    <a class="brand-text" href="/thammue/public/index.html">THAMMUE</a>
+  </div>
+
+  <main class="section">
+    <div class="container">
+      <h2 id="catTitle">รายการสินค้า</h2>
+
+      <script>
+        // id → ชื่อหมวด
+        const CAT_MAP = {
+          1:'แฮนเมด',
+          2:'ของประดิษฐ์',
+          3:'ของใช้ทั่วไป',
+          4:'เสื้อผ้า',
+          5:'หนังสือ',
+          6:'ของสะสม'
+        };
+
+        const params = new URLSearchParams(location.search);
+        // รองรับทั้ง ?cat= และ ?category_id=
+        const catId = Number(params.get('cat') || params.get('category_id'));
+
+        const titleEl = document.getElementById('catTitle');
+        if (catId && CAT_MAP[catId]) {
+          titleEl.textContent = `สินค้าในหมวด: ${CAT_MAP[catId]}`;
+        } else {
+          titleEl.textContent = 'รายการสินค้า';
+        }
+
+        // แชร์ให้ไฟล์ JS ภายนอกใช้
+        window.__CAT_MAP__ = CAT_MAP;
+        window.__CAT_ID__  = catId || null;
+      </script>
+
+      <div id="catGrid" class="grid grid-4"></div>
+
+      <div class="center mt-16">
+        <button id="loadMore" class="btn" hidden>โหลดเพิ่ม</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="../js/dot/category.page.js"></script>
+</body>
+</html>

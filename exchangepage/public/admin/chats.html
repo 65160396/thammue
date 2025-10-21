@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>แชท | Admin</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 12px;
+            height: calc(100vh - 40px);
+            padding: 10px
+        }
+
+        .list,
+        .pane {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, .06);
+            padding: 10px;
+            overflow: auto
+        }
+
+        .th {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer
+        }
+
+        .msg {
+            padding: 6px 8px;
+            border-bottom: 1px dashed #eee
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <div class="list">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <label>โมดูล:
+                    <select id="proj">
+                        <option value="exchange">exchange (แลกเปลี่ยน)</option>
+                        <option value="shop">shop (ซื้อขาย)</option>
+                    </select>
+                </label>
+            </div>
+            <div id="threads"></div>
+        </div>
+        <div class="pane">
+            <div id="threadTitle"><b>เลือกห้องสนทนา</b></div>
+            <div id="messages"></div>
+            <div style="display:flex;gap:6px;padding-top:8px"><input id="msg"
+                    style="flex:1;padding:8px;border-radius:10px;border:1px solid #ccc"><button id="send">ส่ง</button>
+            </div>
+        </div>
+    </div>
+    <script src="admin.js"></script>
+    <script>
+        let currentId = 0;
+        (async () => {
+            await admin.ensureLogin();
+            proj.value = admin.project; proj.onchange = () => { admin.project = proj.value; location.reload(); };
+            const { rows } = await admin.api('/thammue/admin/chat/threads.php');
+            const t = document.getElementById('threads');
+            rows.forEach(r => {
+                const d = document.createElement('div'); d.className = 'th'; d.textContent = `#${r.id}: ${r.last_msg ?? '-'}`;
+                d.onclick = () => openThread(r.id);
+                t.appendChild(d);
+            });
+        })();
+        async function openThread(id) {
+            currentId = id;
+            document.getElementById('threadTitle').innerHTML = `<b>ห้อง #${id}</b>`;
+            const res = await admin.api(`/thammue/admin/chat/messages.php?thread_id=${id}`);
+            const box = document.getElementById('messages'); box.innerHTML = '';
+            (res.rows || []).forEach(m => {
+                const el = document.createElement('div'); el.className = 'msg';
+                el.textContent = `[${m.created_at}] ${m.sender_id}: ${m.body}`;
+                box.appendChild(el);
+            });
+        }
+        document.getElementById('send').onclick = async () => {
+            if (!currentId) return;
+            const body = document.getElementById('msg').value.trim(); if (!body) return;
+            const ok = await admin.api('/thammue/admin/chat/reply.php', { thread_id: currentId, body }, 'POST', true);
+            if (ok.ok) { document.getElementById('msg').value = ''; openThread(currentId); }
+        }
+    </script>
+</body>
+
+</html>

@@ -8,11 +8,49 @@
         <link rel="stylesheet" href="/css/open-shop.css">
     </head>
     <body class="open-shop">
+        <!-- topbar -->
         <ul class="top-nav">
-            <li><a href="store.html">ร้านค้า</a></li>
+            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
             <li><span class="top-divider">|</span></li>
-            <li><a href="../main.html">ซื้อสินค้า</a></li>
+            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#help">ช่วยเหลือ</a></li>
+            <li><span class="top-divider">|</span></li>
+            <li><a href="#lang">ไทย</a></li>
         </ul>
+
+        <!-- Header -->
+        <div class="header-wrapper">
+            <div class="logo-container">
+                <a href="/page/main.html" class="brand-text">THAMMUE</a>
+            </div>
+            <div class="search-container">
+                <div class="icon-buttons">
+                    <button class="action-button"><img src="/img/Icon/chat.png"
+                            alt="แชท" /></button>
+
+                    <!-- โปรไฟล์ -->
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-area" id="userArea"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                            <span class="user-chip" id="userChip" hidden></span>
+                            <svg class="chev" viewBox="0 0 20 20"
+                                aria-hidden="true">
+                                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown"
+                            role="menu"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <section class="open-shop">
             <div class="wizard-page">
@@ -20,19 +58,66 @@
                     <h2 class="form-section">อัปโหลดสินค้าเรียบร้อย</h2>
                     <p id="msg" class="hint">กำลังบันทึกข้อมูล…</p>
                     <div class="actions">
-                        <a class="btn"
+                        <a id="add-more" class="btn"
                             href="upload_product.html">เพิ่มสินค้าอีก</a>
-                        <a class="btn ghost"
-                            href="store.html">กลับหน้าร้านค้า</a>
+
+                        <a class="btn ghost" href="#"
+                            onclick="return goBackStore();">กลับหน้าร้านค้า</a>
+                        <script>
+function goBackStore(){
+  const q = new URLSearchParams(location.search);
+  const sid = q.get('shop_id') || sessionStorage.getItem('shop_id');
+  if(!sid){ alert('ไม่พบ shop_id ของร้าน'); return false; }
+  sessionStorage.setItem('shop_id', sid);          // เก็บกันพลาด
+  location.href = `store.html?shop_id=${encodeURIComponent(sid)}`;
+  return false;
+}
+</script>
+
                     </div>
                 </div>
             </div>
         </section>
+        <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+        <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
 
         <script>
-    const pid = new URLSearchParams(location.search).get('product_id');
-    document.getElementById('msg').textContent =
-      pid ? `บันทึกสำเร็จ (รหัสสินค้า #${pid})` : 'บันทึกสำเร็จ';
-  </script>
+      const params = new URLSearchParams(location.search);
+      const pid      = params.get('product_id');
+      const shopParam= params.get('shop_id');
+      const shopSS   = sessionStorage.getItem('shop_id');
+      const shopId   = shopParam || shopSS || null;
+
+      // แสดงข้อความสำเร็จ
+      document.getElementById('msg').textContent =
+        pid ? `บันทึกสำเร็จ (รหัสสินค้า #${pid})` : 'บันทึกสำเร็จ';
+
+      // ฟังก์ชันอัปเดตลิงก์ให้มี shop_id
+      function applyShopLinks(id){
+        if(!id) return;
+        document.querySelectorAll('[data-store-link]').forEach(a=>{
+          a.href = `store.html?shop_id=${encodeURIComponent(id)}`;
+        });
+        const addMore = document.getElementById('add-more');
+        if (addMore) addMore.href = `upload_product.html?shop_id=${encodeURIComponent(id)}`;
+        // กันพลาด เก็บไว้ใน sessionStorage ด้วย
+        sessionStorage.setItem('shop_id', id);
+      }
+
+      // 1) ถ้ามี shop_id อยู่แล้ว (query/session) ใส่ให้เลย
+      if (shopId) {
+        applyShopLinks(shopId);
+      } else if (pid) {
+        // 2) ถ้าไม่มีแต่มี product_id ลองขอ shop_id จาก backend (มีได้ยิ่งดี)
+        // สร้าง endpoint ง่ายๆ ที่คืน { ok: true, shop_id: 3 } จาก product_id
+        fetch(`/page/store/product_get_shop.php?product_id=${encodeURIComponent(pid)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (d && d.ok && d.shop_id) applyShopLinks(d.shop_id);
+          })
+          .catch(()=>{ /* เงียบไว้ ถ้าไม่มี endpoint ก็ใช้ลิงก์เดิม */ });
+      }
+    </script>
+
     </body>
 </html>

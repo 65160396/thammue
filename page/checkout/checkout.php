@@ -183,8 +183,8 @@ function full_addr($p)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ทำการสั่งซื้อ | THAMMUE</title>
-    <link rel="stylesheet" href="/css/style.css?v=1" />
-    <link rel="stylesheet" href="/css/checkout.css?v=1" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/checkout.css" />
 
 </head>
 

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>แก้ไขสินค้า | THAMMUE</title>
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .edit-wrap{max-width:960px;margin:24px auto;padding:16px}
+    .box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px}
+    .field{margin:12px 0}
+    .field label{display:block;font-weight:600;margin-bottom:6px}
+    .actions{display:flex;gap:10px;margin-top:16px}
+    /* ภาพ */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+    .thumb{position:relative;border-radius:10px;overflow:hidden;border:1px solid #eee}
+    .thumb img{width:100%;height:120px;object-fit:cover;display:block}
+    .thumb .cover-badge{position:absolute;top:6px;left:6px;background:#111;color:#fff;font-size:12px;padding:2px 6px;border-radius:999px}
+    .thumb .btns{position:absolute;right:6px;bottom:6px;display:flex;gap:6px}
+    .thumb button{border:0;border-radius:8px;padding:6px 8px;cursor:pointer}
+    .thumb .del{background:#fee2e2;color:#b91c1c}
+    .thumb .set{background:#e0f2fe;color:#0369a1}
+    .upload-area{display:flex;align-items:center;gap:12px;margin:8px 0}
+    .upload-area input[type=file]{display:none}
+    .fake-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px dashed #aaa;cursor:pointer}
+    .muted{color:#666}
+  </style>
+</head>
+<body>
+  <div class="edit-wrap">
+    <a href="index.html" class="back-link">⟵ กลับหน้าหลัก</a>
+    <h2>แก้ไขสินค้า</h2>
+
+    <div id="alert" class="box" style="display:none"></div>
+
+    <form id="editForm" class="box" hidden>
+      <div class="field">
+        <label for="title">ชื่อสินค้า *</label>
+        <input id="title" name="title" type="text" required />
+      </div>
+
+      <div class="field">
+        <label for="category_id">หมวดหมู่ *</label>
+        <select id="category_id" name="category_id" required>
+          <option value="1">อุปกรณ์อิเล็กทรอนิกส์</option>
+          <option value="2">ของใช้ในบ้าน</option>
+          <option value="3">อุปกรณ์เด็ก</option>
+          <option value="4">เสื้อผ้า</option>
+          <option value="5">หนังสือ</option>
+          <option value="6">ของสะสม</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="description">รายละเอียด</label>
+        <textarea id="description" name="description" rows="4"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="province">จังหวัด</label>
+        <input id="province" name="province" type="text" placeholder="เช่น ชลบุรี" />
+      </div>
+
+      <!-- ภาพ -->
+      <div class="field">
+        <label>รูปภาพ</label>
+        <div class="upload-area">
+          <label class="fake-btn" for="files">+ เพิ่มรูป</label>
+          <input id="files" type="file" accept="image/*" multiple />
+          <span class="muted">รองรับ JPG/PNG/WEBP/GIF (อัปโหลดได้หลายรูป)</span>
+        </div>
+        <div id="gallery" class="gallery"></div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+        <a class="btn btn-ghost" id="backDetail" href="#">ยกเลิก</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = '/thammue/api';
+    const params = new URLSearchParams(location.search);
+    const itemId = params.get('id');
+
+    const $ = s => document.querySelector(s);
+    const alertBox = $('#alert');
+    const form = $('#editForm');
+    const gallery = $('#gallery');
+    const filesInput = $('#files');
+
+    function showAlert(msg){ alertBox.style.display='block'; alertBox.textContent = msg; }
+    function hideAlert(){ alertBox.style.display='none'; }
+
+    function renderGallery(images){
+      gallery.innerHTML = images.map(im => `
+        <div class="thumb" data-img-id="${im.id}">
+          ${im.is_cover ? '<div class="cover-badge">หน้าปก</div>' : ''}
+          <img src="${im.url}" alt="">
+          <div class="btns">
+            ${im.is_cover ? '' : `<button class="set" data-action="setcover" data-id="${im.id}">ตั้งหน้าปก</button>`}
+            <button class="del" data-action="del" data-id="${im.id}">ลบ</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadItem() {
+      if (!itemId) { showAlert('ไม่พบรหัสสินค้า'); return; }
+      try {
+        const r = await fetch(`${API_BASE}/items/show.php?id=${encodeURIComponent(itemId)}`, { cache:'no-store' });
+        const d = await r.json();
+        if (!d || !d.ok || !d.item) { showAlert('ไม่พบสินค้า'); return; }
+        if (!d.item.is_owner) { showAlert('คุณไม่มีสิทธิ์แก้ไขสินค้านี้'); return; }
+
+        // ฟิลด์พื้นฐาน
+        $('#title').value = d.item.title || '';
+        $('#category_id').value = String(d.item.category_id || '');
+        $('#description').value = d.item.description || '';
+        $('#province').value = d.item.province || '';
+
+        // แกลเลอรี
+        renderGallery(d.item.images_detail || []);
+
+        $('#backDetail').href = `detail.html?id=${encodeURIComponent(itemId)}&view=public`;
+        hideAlert();
+        form.hidden = false;
+      } catch {
+        showAlert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+      }
+    }
+
+    // อัปโหลดรูป
+    filesInput.addEventListener('change', async () => {
+      if (!filesInput.files || filesInput.files.length === 0) return;
+      const fd = new FormData();
+      fd.append('item_id', itemId);
+      for (const f of filesInput.files) fd.append('files[]', f);
+      try {
+        const r = await fetch(`${API_BASE}/items/images.upload.php`, { method:'POST', body: fd });
+        const d = await r.json().catch(()=> ({}));
+        if (d && d.ok) {
+          // reload item to refresh gallery
+          await loadItem();
+          filesInput.value = '';
+        } else {
+          alert('อัปโหลดไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
+        }
+      } catch {
+        alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+      }
+    });
+
+    // คลิกในแกลเลอรี: ลบ / ตั้งหน้าปก
+    gallery.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const imgId = btn.dataset.id;
+      if (!action || !imgId) return;
+
+      if (action === 'del') {
+        if (!confirm('ลบรูปนี้หรือไม่?')) return;
+        try {
+          const r = await fetch(`${API_BASE}/items/images.delete.php`, {
+            method:'POST',
+            headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
+          });
+          const d = await r.json().catch(()=> ({}));
+          if (d && d.ok) {
+            await loadItem();
+          } else {
+            alert('ลบรูปไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
+          }
+        } catch {
+          alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+        }
+      }
+
+      if (action === 'setcover') {
+        try {
+          const r = await fetch(`${API_BASE}/items/images.setcover.php`, {
+            method:'POST',
+            headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+            body: new URLSearchParams({ item_id: String(itemId), image_id: String(imgId) })
+          });
+          const d = await r.json().catch(()=> ({}));
+          if (d && d.ok) {
+            await loadItem();
+          } else {
+            alert('ตั้งหน้าปกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
+          }
+        } catch {
+          alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+        }
+      }
+    });
+
+    // บันทึกข้อมูลพื้นฐาน
+    const formEl = document.getElementById('editForm');
+    formEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new URLSearchParams({
+        id: String(itemId),
+        title: document.getElementById('title').value.trim(),
+        category_id: String(document.getElementById('category_id').value),
+        description: document.getElementById('description').value,
+        province: document.getElementById('province').value.trim()
+      });
+      if (!fd.get('title') || !fd.get('category_id')) { alert('กรอกข้อมูลให้ครบ'); return; }
+      try {
+        const r = await fetch(`${API_BASE}/items/update.php`, {
+          method:'POST',
+          headers:{ 'Accept':'application/json', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: fd
+        });
+        const d = await r.json().catch(()=> ({}));
+        if (d && d.ok) {
+          alert('บันทึกสำเร็จ');
+          // อยู่หน้าเดิมต่อเพื่อแก้รูปต่อ หรือจะพากลับ detail ก็ได้
+        } else {
+          alert('บันทึกไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
+        }
+      } catch {
+        alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+      }
+    });
+
+    loadItem();
+  </script>
+</body>
+</html>

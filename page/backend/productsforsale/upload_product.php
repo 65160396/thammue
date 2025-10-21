@@ -12,6 +12,8 @@ $name        = trim($_POST['name'] ?? '');
 $category_id = (int)($_POST['category_id'] ?? 0);
 $description = trim($_POST['description'] ?? '');
 $shop_id     = isset($_POST['shop_id']) && $_POST['shop_id'] !== '' ? (int)$_POST['shop_id'] : null;
+$stock_qty  = max(0, (int)($_POST['stock_qty'] ?? 0));   // <-- เพิ่มบรรทัดนี้
+
 
 // ราคา: รองรับกรอก 250 หรือ 250.50 หรือมี comma 1,250.50
 $priceRaw = trim($_POST['price'] ?? '');
@@ -36,18 +38,20 @@ if (!is_dir($base)) @mkdir($base, 0777, true);
 $pdo->beginTransaction();
 try {
     // 1) insert product (main_image ว่างไว้ก่อน)
-    $sql = "INSERT INTO products (name, category_id, description, price, main_image, created_at"
+    $sql = "INSERT INTO products (name, category_id, description, price, stock_qty, main_image, created_at"
         . ($shop_id ? ", shop_id" : "")
-        . ") VALUES (:name, :cid, :desc, :price, '', NOW()"
+        . ") VALUES (:name, :cid, :desc, :price, :stock, '', NOW()"
         . ($shop_id ? ", :sid" : "")
         . ")";
     $st = $pdo->prepare($sql);
-    $st->bindValue(':name', $name);
-    $st->bindValue(':cid',  $category_id, PDO::PARAM_INT);
-    $st->bindValue(':desc', $description);
-    $st->bindValue(':price', number_format($price, 2, '.', '')); // เก็บเป็นทศนิยม 2 ตำแหน่ง
+    $st->bindValue(':name',  $name);
+    $st->bindValue(':cid',   $category_id, PDO::PARAM_INT);
+    $st->bindValue(':desc',  $description);
+    $st->bindValue(':price', number_format($price, 2, '.', ''));
+    $st->bindValue(':stock', $stock_qty, PDO::PARAM_INT);           // <-- เพิ่มบรรทัดนี้
     if ($shop_id) $st->bindValue(':sid', $shop_id, PDO::PARAM_INT);
     $st->execute();
+
     $productId = (int)$pdo->lastInsertId();
 
     // สร้างโฟลเดอร์ของสินค้า

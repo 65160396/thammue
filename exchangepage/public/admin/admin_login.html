@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>เข้าสู่ระบบ Admin | THAMMUE</title>
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --card: #fff;
+            --txt: #111;
+            --muted: #888;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            font-family: system-ui, Segoe UI, Arial;
+            display: grid;
+            place-items: center;
+            min-height: 100vh
+        }
+
+        .box {
+            width: min(440px, 92%);
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
+            padding: 22px
+        }
+
+        h2 {
+            margin: 0 0 12px
+        }
+
+        .inp {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            font-size: 16px;
+            box-sizing: border-box
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 0;
+            background: #111;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        .msg {
+            margin-top: 10px;
+            color: #d00;
+            font-size: 14px;
+            min-height: 1.4em
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h2>เข้าสู่ระบบ Admin</h2>
+        <form id="loginForm">
+            <input id="email" class="inp" type="email" placeholder="อีเมล" autocomplete="username" required>
+            <input id="pass" class="inp" type="password" placeholder="รหัสผ่าน" autocomplete="current-password"
+                required>
+            <button id="go" class="btn" type="submit">เข้าสู่ระบบ</button>
+            <div id="msg" class="msg"></div>
+            <div class="hint">เอ็นพอยต์: <code>/thammue/admin/login.php</code></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const btn = document.getElementById('go');
+        const msg = document.getElementById('msg');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();             // กันรีเฟรชหน้า
+            msg.textContent = '';
+            btn.disabled = true;
+
+            try {
+                // เปลี่ยนบรรทัด fetch เดิม
+                const res = await fetch('../../admin/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value.trim(),
+                        password: document.getElementById('pass').value
+                    })
+                });
+
+                // ถ้า PHP ส่งไม่ใช่ JSON จะโยน error -> โชว์ข้อความให้ตรวจ path
+                const data = await res.json().catch(() => ({ ok: false, error: 'invalid_json_or_wrong_path' }));
+
+                if (!res.ok || !data.ok) {
+                    msg.textContent = 'เข้าสู่ระบบไม่สำเร็จ: ' + (data.error || res.status);
+                    console.error('Login error', data, res.status);
+                } else {
+                    location.href = 'index.html';
+                }
+            } catch (err) {
+                console.error(err);
+                msg.textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (ตรวจ path /thammue/admin/login.php)';
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

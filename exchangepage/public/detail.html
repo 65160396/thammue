@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <base href="/thammue/public/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รายละเอียดสินค้า | THAMMUE</title>
+
+  <!-- ใช้สไตล์หลักเดิมของโปรเจกต์ -->
+  <link rel="stylesheet" href="../css/instyle.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- สไตล์เฉพาะหน้า detail -->
+  <link rel="stylesheet" href="../css/detail.css" />
+</head>
+<body>
+  <!-- แถบบนสุด (UI เดิม) -->
+  <ul class="top-nav">
+    <li><a href="../public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="../page/main.html">ซื้อสินค้า</a></li>
+
+    <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#help">ช่วยเหลือ</a></li>
+    <li><span class="top-divider">|</span></li>
+    <li><a href="#lang">ไทย</a></li>
+  </ul>
+
+  <!-- Header หลัก -->
+  <div class="header-wrapper">
+    <div class="logo-container">
+      <a href="../public/index.html" class="brand-text">THAMMUE</a>
+    </div>
+
+    <div class="search-container">
+      <div class="search-group">
+        <input type="text" placeholder="ค้นหาสินค้า" />
+        <button class="search-button" aria-label="ค้นหา">
+          <img src="../img/Icon/search.png" alt="ค้นหา" />
+        </button>
+      </div>
+
+      <div class="icon-buttons desktop-icons">
+        <a class="action-button" href="../public/request.html" aria-label="คำขอแลกเปลี่ยน">
+          <img src="../img/Icon/exchange.png" alt="">
+        </a>
+        <a class="action-button" href="../public/fav.html" aria-label="รายการโปรด">
+          <img src="../img/Icon/heart.png" alt="">
+        </a>
+        <a class="action-button" href="../public/chat.html" aria-label="แชท">
+          <img src="../img/Icon/chat.png" alt="">
+        </a>
+
+        <div class="user-menu" id="userMenu">
+          <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+            <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+            <span class="user-chip" id="userChip" hidden></span>
+            <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div class="user-dropdown" id="userDropdown" role="menu"></div>
+        </div>
+      </div>
+
+      <button class="hamburger" aria-label="เปิดเมนู" aria-controls="mobileIcons" aria-expanded="false">
+        <img src="../img/Icon/menu.png" alt="" aria-hidden="true">
+      </button>
+    </div>
+  </div>
+
+  <!-- เมนูมือถือ + หมวดหมู่ -->
+  <nav id="mobileIcons" class="icons-drawer" hidden>
+    <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
+    <a href="../public/request.html"><img src="../img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน</a>
+    <a href="../public/fav.html"><img src="../img/Icon/heart.png" alt=""> รายการโปรด</a>
+    <a href="../public/chat.html"><img src="../img/Icon/chat.png" alt=""> แชท</a>
+    <a href="profile.html"><img src="../img/Icon/user.png" alt=""> โปรไฟล์</a>
+  </nav>
+  <div class="icons-backdrop" hidden></div>
+
+  <div class="category-buttons">
+    <a href="../public/category.html?category_id=1" class="category-button">อุปกรณ์อิเล็กทรอนิกส์</a>
+    <a href="../public/category.html?category_id=2" class="category-button">ของใช้ในบ้าน</a>
+    <a href="../public/category.html?category_id=3" class="category-button">อุปกรณ์เด็ก</a>
+    <a href="../public/category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+    <a href="../public/category.html?category_id=5" class="category-button">หนังสือ</a>
+    <a href="../public/category.html?category_id=6" class="category-button">ของสะสม</a>
+  </div>
+
+
+  <!-- เนื้อหา -->
+  <div class="detail-wrap">
+    <a href="index.html" class="back-link">⟵ กลับหน้าหลัก</a>
+
+    <div id="notfound" class="container" style="padding:24px;display:none">
+      <div class="box">ไม่พบสินค้าที่คุณต้องการดู</div>
+    </div>
+
+    <div id="detail" class="detail-grid" style="display:none">
+      <!-- ซ้าย: รูป -->
+      <div>
+        <div class="photo-main" aria-label="รูปสินค้า">
+          <img id="mainImg" src="" alt="รูปสินค้า">
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+
+      <!-- ขวา: ข้อมูล -->
+      <div>
+        <div class="box">
+          <h2 id="title" class="detail-title"></h2>
+          <div class="meta" style="margin-bottom:8px">
+            <span class="chip" id="cat">หมวด: -</span>
+            <span class="chip" id="loc">พื้นที่: -</span>
+          </div>
+
+          <div class="fav-row">
+            <button id="favBtn" class="btn btn-ghost" aria-pressed="false" title="เพิ่ม/ลบรายการโปรด">
+              <span id="favIcon" class="icon">🤍</span> รายการโปรด
+            </button>
+          </div>
+
+          <p id="desc" class="muted" style="white-space:pre-wrap"></p>
+
+          <div class="actions">
+            <a id="chatBtn" class="btn btn-ghost" href="#">💬 ข้อความ</a>
+            <a id="openOffer" class="btn btn-primary" href="#">แลกเปลี่ยนสินค้า</a>
+          </div>
+
+          <div id="flash" class="flash" role="status" aria-live="polite" hidden></div>
+        </div>
+
+        <div class="box muted" style="margin-top:12px">
+          เจ้าของสินค้า: <span id="ownerName">-</span> · รหัสอ้างอิง: <span id="refCode">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal เลือกสินค้าของฉัน -->
+  <div id="offerModal" class="offer-modal" hidden>
+    <div class="offer-backdrop"></div>
+    <div class="offer-dialog" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
+      <div class="offer-head">
+        <h3 id="offerTitle">เลือกสินค้าของฉันเพื่อไปแลก</h3>
+        <button id="offerClose" class="offer-close" aria-label="ปิด">✕</button>
+      </div>
+
+      <div class="offer-body">
+        <div id="myItems" class="offer-grid"></div>
+        <label class="offer-label">ข้อความถึงเจ้าของสินค้า (ไม่บังคับ)</label>
+        <textarea id="offerMessage" class="offer-textarea" rows="3" placeholder="เช่น นัดรับที่…, แลกกับ…"></textarea>
+      </div>
+
+      <div class="offer-foot">
+        <button id="offerSubmit" class="btn-primary-black">ส่งคำขอแลก</button>
+        <button id="offerCancel" class="btn-ghost-black">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- หน้า detail ใช้ ES module ตัวเดียว -->
+  <script type="module" src="../js/detail.page.js"></script>
+</body>
+</html>
