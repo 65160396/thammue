@@ -1,107 +1,186 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue – แก้ไขข้อมูลร้านค้า</title>
-        <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/open-shop.css" />
-    </head>
-    <body class="open-shop">
-        <div class="wizard-page">
-            <div class="wizard-card">
-                <h2 class="form-section">แก้ไขข้อมูลร้านค้า</h2>
-
-                <form id="editForm">
-                    <input type="hidden" name="shop_id" id="shopId" />
-
-                    <div class="field">
-                        <label for="fShopName">ชื่อร้าน</label>
-                        <input type="text" name="shop_name" id="fShopName"
-                            required />
-                    </div>
-
-                    <div class="field">
-                        <label for="fEmail">อีเมล</label>
-                        <input type="email" name="email" id="fEmail" required />
-                    </div>
-
-                    <div class="field">
-                        <label for="fPhone">เบอร์โทร</label>
-                        <input type="tel" name="phone" id="fPhone"
-                            maxlength="20" />
-                    </div>
-
-                    <div class="field">
-                        <label for="fAddr">ที่รับของ</label>
-                        <textarea name="pickup_addr" id="fAddr"
-                            rows="3"></textarea>
-                    </div>
-
-                    <div style="margin-top:16px; display:flex; gap:12px;">
-                        <button class="btn primary"
-                            type="submit">บันทึก</button>
-                        <a class="btn" id="btnCancel">ยกเลิก</a>
-                    </div>
-                </form>
-
-            </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thammue - แก้ไขสินค้า</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/open-shop.css">
+    <style>
+    .thumb{width:80px;height:80px;object-fit:cover;border-radius:10px;border:1px solid #eee}
+    .thumb-wrap{display:flex;gap:10px;flex-wrap:wrap}
+    .muted{color:#777}
+  </style>
+  </head>
+  <body class="open-shop">
+    <!-- header -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="icon-buttons">
+          <button class="action-button"><img src="/img/Icon/chat.png"
+              alt="แชท"></button>
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์">
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20"><path
+                  d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" /></svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <script>
-    const url = new URL(location.href);
-    const qid = url.searchParams.get('id');
+    <section class="open-shop">
+      <div class="wizard-page">
+        <div class="wizard-card">
+          <h2 class="form-section">แก้ไขสินค้า</h2>
 
-    async function preload() {
-      const res  = await fetch('/page/backend/productsforsale/get_shop.php', { credentials: 'include' });
-      const data = await res.json();
-      const s    = data.shop || {};
+          <form id="editForm" action="/page/store/product_update.php"
+            method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" id="pid">
+            <input type="hidden" name="shop_id" id="sid">
 
-      const id = s.id || qid || '';
-      document.getElementById('shopId').value = id;
+            <div class="grid2">
+              <div class="field field--full">
+                <label for="name">ชื่อสินค้า</label>
+                <input id="name" name="name" type="text" required>
+              </div>
 
-      fShopName.value = s.shop_name   || '';
-      fEmail.value    = s.email       || '';
-      fPhone.value    = s.phone       || '';
-      fAddr.value     = s.pickup_addr || '';
-      // ไม่มี province แล้ว
+              <div class="field field--full">
+                <label for="price">ราคา (บาท)</label>
+                <input id="price" name="price" type="number" step="0.01" min="0"
+                  required>
+              </div>
+
+              <div class="field field--full">
+                <label for="stock_qty">จำนวน (ชิ้น)</label>
+                <input id="stock_qty" name="stock_qty" type="number" min="0"
+                  required>
+              </div>
+
+              <div class="field field--full">
+                <label for="category_id">หมวดหมู่สินค้า</label>
+                <select id="category_id" name="category_id" required>
+                  <option value disabled selected>เลือกหมวดหมู่</option>
+                  <option value="1">สินค้าแฮนเมด</option>
+                  <option value="2">งานประดิษฐ์</option>
+                  <option value="3">สินค้าท้องถิ่น</option>
+                  <option value="4">สินค้ามือสอง</option>
+                </select>
+              </div>
+
+              <div class="field field--full">
+                <label for="description">รายละเอียดสินค้า</label>
+                <input id="description" name="description" type="text" required>
+              </div>
+
+              <!-- รูปหลัก -->
+              <div class="field field--full">
+                <label>รูปหลักปัจจุบัน</label>
+                <div id="mainPreviewWrap" class="thumb-wrap"></div>
+                <div class="muted">หากไม่เลือกไฟล์ใหม่ ระบบจะใช้รูปเดิม</div>
+
+                <label for="image_main"
+                  style="margin-top:6px;">เปลี่ยนรูปหลัก</label>
+                <input id="image_main" name="image_main" type="file"
+                  accept="image/*">
+              </div>
+
+              <!-- รูปเพิ่มเติม -->
+              <div class="field field--full">
+                <label>รูปเพิ่มเติม</label>
+                <div id="extraPreviewWrap" class="thumb-wrap"></div>
+                <div class="muted">อัปโหลดเพิ่ม (ไม่จำเป็น)</div>
+
+                <input id="image_extra1" name="image_extra[]" type="file"
+                  accept="image/*" />
+                <input id="image_extra2" name="image_extra[]" type="file"
+                  accept="image/*" />
+
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn">บันทึกการแก้ไข</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+    <script>
+  (async function(){
+    const qs = new URLSearchParams(location.search);
+    const productId = qs.get('id');
+    const shopId = qs.get('shop_id');
+
+    // อ้าง element แบบชัดเจน (กันชน window.name)
+    const el = {
+      pid: document.getElementById('pid'),
+      sid: document.getElementById('sid'),
+      name: document.getElementById('name'),
+      price: document.getElementById('price'),
+      stock: document.getElementById('stock_qty'),
+      cat: document.getElementById('category_id'),
+      desc: document.getElementById('description'),
+      mainWrap: document.getElementById('mainPreviewWrap'),
+      extraWrap: document.getElementById('extraPreviewWrap'),
+    };
+
+    el.pid.value = productId || '';
+    el.sid.value = shopId || '';
+
+    if (!productId || !shopId) {
+      alert('ลิงก์ไม่ถูกต้อง: ขาด id หรือ shop_id');
+      history.back();
+      return;
     }
 
-    editForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(editForm);
+    const normalizePath = (s) => {
+      if (!s) return '';
+      let p = String(s).replace(/\\/g,'/');     // \ -> /
+      if (p.startsWith('/uploads/')) p = '/page' + p; // เติม /page ถ้าจำเป็น
+      return p;
+    };
+    const addThumb = (wrap, src) => {
+      if (!src) return;
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.src = normalizePath(src);
+      wrap.appendChild(img);
+    };
 
-      // ให้เบอร์เหลือตัวเลข
-      const phone = (fd.get('phone') || '').toString().replace(/\D+/g, '');
-      fd.set('phone', phone);
+    try {
+      const res = await fetch(`/page/store/product_get.php?id=${encodeURIComponent(productId)}&shop_id=${encodeURIComponent(shopId)}`, { credentials:'include' });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'โหลดข้อมูลไม่สำเร็จ');
 
-      try {
-        // ✅ เปลี่ยน path ให้ตรงกับที่ไฟล์คุณอยู่จริง
-        const res = await fetch('/page/storepage/update_shop.php', {
-          method: 'POST',
-          body: fd,
-          credentials: 'include'
-        });
+      const p = data.product;
 
-        // กันกรณีเซิร์ฟเวอร์ตอบเป็น html หรือ error
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON: ' + text.slice(0,120)); }
+      // เติมค่า
+      el.name.value  = p.name ?? '';
+      el.price.value = p.price ?? '';
+      el.stock.value = p.stock_qty ?? 0;
+      el.cat.value   = p.category_id ?? '';
+      el.desc.value  = p.description ?? '';
 
-        if (!res.ok || !data.ok) {
-          throw new Error((data && data.error) || 'บันทึกไม่สำเร็จ');
-        }
-
-        alert('บันทึกเรียบร้อย');
-        location.href = `/page/storepage/store-info.html?shop_id=${encodeURIComponent(fd.get('shop_id'))}`;
-      } catch (err) {
-        alert('บันทึกไม่สำเร็จ: ' + (err.message || err));
-        console.error(err);
-      }
-    });
-
-    btnCancel.addEventListener('click', () => history.back());
-    preload();
+      // พรีวิวรูป
+      addThumb(el.mainWrap, p.main_image);
+      (data.images || []).forEach(im => addThumb(el.extraWrap, im.image_path));
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'โหลดข้อมูลไม่สำเร็จ');
+    }
+  })();
   </script>
-    </body>
+  </body>
 </html>

@@ -362,3 +362,60 @@
   background: #f3f3f3;
   color: #111;
 }
+
+/* กล่องอัปโหลด */
+.file-uploader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* ซ่อน input ตัวจริง */
+.file-uploader input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ปุ่ม */
+.file-uploader .btn {
+  min-width: 120px;
+}
+
+/* ชื่อไฟล์ */
+.file-uploader .file-name {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+/* พรีวิวรูป (ใช้คลาสเดิมของคุณได้) */
+.thumb-wrap {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* เอฟเฟกต์ลากแล้วปล่อย (ออปชัน) */
+.file-uploader.drop {
+  background: #fafafa;
+  border-style: dashed;
+}

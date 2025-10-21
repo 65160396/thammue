@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="/css/open-shop.css" />
   </head>
   <body class="open-shop">
+    <!-- topbar -->
     <ul class="top-nav">
       <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-
       <li class="right"><a href="#notification">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
@@ -20,18 +20,15 @@
       <li><a href="#lang">ไทย</a></li>
     </ul>
 
-    <!-- Header (เหมือนหน้าอัปโหลดสินค้า) -->
+    <!-- Header -->
     <div class="header-wrapper">
       <div class="logo-container">
         <a href="/page/main.html" class="brand-text">THAMMUE</a>
       </div>
       <div class="search-container">
         <div class="icon-buttons">
-          <button class="action-button">
-            <img src="/img/Icon/chat.png" alt="แชท" />
-          </button>
-
-          <!-- โปรไฟล์ -->
+          <button class="action-button"><img src="/img/Icon/chat.png"
+              alt="แชท" /></button>
           <div class="user-menu" id="userMenu">
             <button class="user-area" id="userArea" aria-haspopup="true"
               aria-expanded="false">
@@ -59,12 +56,11 @@
               <tr>
                 <th style="text-align:left">ชื่อสินค้า</th>
                 <th style="text-align:right">ราคา</th>
-                <th style="text-align:center">สถานะ</th>
                 <th style="text-align:center">จัดการ</th>
               </tr>
             </thead>
             <tbody id="productList">
-              <tr><td colspan="4"
+              <tr><td colspan="3"
                   style="text-align:center">กำลังโหลด...</td></tr>
             </tbody>
           </table>
@@ -72,181 +68,81 @@
       </div>
     </section>
 
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+
     <script>
-  const url = new URL(location.href);
-  const shopId = url.searchParams.get('shop_id'); // สำหรับอนาคต
+    (function(){
+      const tbody = document.getElementById('productList');
+      const shopId = new URLSearchParams(location.search).get('shop_id');
 
-  (async () => {
-    try {
-      // TODO: เมื่อมี API จริง เปลี่ยน URL ด้านล่าง
-      // const res = await fetch('/page/backend/productsforsale/get_products.php', {credentials:'include'});
-      // const data = await res.json();
-      // const products = data.products || [];
-
-      // ชั่วคราว: mock ให้เห็นโครงหน้า
-      const products = [];
-
-      const list = document.getElementById('productList');
-      if (!products.length) {
-        list.innerHTML = '<tr><td colspan="4" style="text-align:center">ยังไม่มีสินค้า</td></tr>';
+      if (!shopId) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">ไม่พบ shop_id</td></tr>';
         return;
       }
-      list.innerHTML = products.map(p => `
-        <tr>
-          <td>${p.name}</td>
-          <td style="text-align:right">${p.price.toLocaleString()} บาท</td>
-          <td style="text-align:center">${p.status || '-'}</td>
-          <td style="text-align:center">
-            <a href="/page/storepage/edit_product.html?id=${p.id}">แก้ไข</a> |
-            <a href="#" data-id="${p.id}" class="del">ลบ</a>
-          </td>
-        </tr>
-      `).join('');
-    } catch (e) {
-      document.getElementById('productList').innerHTML =
-        '<tr><td colspan="4" style="text-align:center;color:red">โหลดข้อมูลไม่สำเร็จ</td></tr>';
-    }
-  })();
-  </script>
 
-    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
-    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
-    <script src="/js/store/shop-page.js"></script> <!--จัดการข้อมูลร้านค้า-->
-
-    <script>
-(function(){
-  const tbody  = document.getElementById('prod-rows') || document.querySelector('tbody');
-  const params = new URLSearchParams(location.search);
-  const shopId = params.get('shop_id');
-
-  if (!shopId) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">ไม่พบ shop_id</td></tr>`;
-    return;
-  }
-
-  const fmtPrice = v => Number(v ?? 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
-  const badge = (isActive, stock) => {
-    if (!Number(isActive)) return '<span class="chip chip--muted">ซ่อน</span>';
-    if (Number(stock) <= 0)  return '<span class="chip chip--warn">หมด</span>';
-    return '<span class="chip chip--ok">แสดง</span>';
-  };
-
-  function render(items){
-    if (!items?.length) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">ยังไม่มีสินค้า</td></tr>`;
-      return;
-    }
-    tbody.innerHTML = items.map(it => {
-      const thumb = it.main_image ? `<img src="${it.main_image}" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:8px;margin-right:8px">` : '';
-      return `
-        <tr data-id="${it.id}">
-          <td>${thumb}${it.name}</td>
-          <td>${fmtPrice(it.price)}</td>
-          <td>${it.stock_qty ?? 0}</td>
-          <td>${badge(it.is_active, it.stock_qty)}</td>
-          <td>
-            <a class="btn btn--ghost" href="/page/storepage/product-edit.html?id=${it.id}&shop_id=${shopId}">แก้ไข</a>
-            <button class="btn btn--ghost toggle">แสดง/ซ่อน</button>
-            <button class="btn btn--danger del">ลบ</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }
-
-  async function load(){
-    const r = await fetch(`/page/store/shop_products.php?shop_id=${encodeURIComponent(shopId)}`);
-    const d = await r.json();
-    if (!d.ok) throw new Error(d.error || 'load failed');
-    render(d.items);
-  }
-
-  document.addEventListener('click', async (e) => {
-    const row = e.target.closest('tr[data-id]');
-    if (!row) return;
-    const pid = row.getAttribute('data-id');
-
-    // toggle
-    if (e.target.classList.contains('toggle')) {
-      const r = await fetch('/page/store/product_toggle_active.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: new URLSearchParams({ product_id: pid, shop_id: shopId })
+      const fmt = v => Number(v||0).toLocaleString('th-TH', {
+        minimumFractionDigits: 2, maximumFractionDigits: 2
       });
-      const d = await r.json();
-      if (!d.ok) return alert(d.error || 'toggle failed');
-      load();
-    }
 
-    // delete
-    if (e.target.classList.contains('del')) {
-      if (!confirm('ลบสินค้านี้ใช่ไหม?')) return;
-      const r = await fetch('/page/store/product_delete.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: new URLSearchParams({ product_id: pid, shop_id: shopId })
-      });
-      const d = await r.json();
-      if (!d.ok) return alert(d.error || 'delete failed');
-      load();
-    }
-  });
+      const normalizePath = p => {
+        if (!p) return '';
+        let s = String(p).replace(/\\/g,'/');
+        if (s.startsWith('/uploads/')) s = '/page' + s;
+        return s;
+      };
 
-  load().catch(err => {
-    console.error(err);
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">โหลดรายการไม่สำเร็จ</td></tr>`;
-  });
-})();
-</script>
-    <script>
-(async function(){
-  const tbody=document.querySelector('tbody');
-  const params=new URLSearchParams(location.search);
-  const shopId=params.get('shop_id');
-  if(!shopId){
-    tbody.innerHTML='<tr><td colspan="5" align="center">ไม่พบ shop_id</td></tr>';
-    return;
-  }
-
-  const priceFmt=v=>Number(v||0).toLocaleString('th-TH',{minimumFractionDigits:2});
-  const status=(a,s)=>!a?'<span class="chip chip--muted">ซ่อน</span>':s<=0?'<span class="chip chip--warn">หมด</span>':'<span class="chip chip--ok">แสดง</span>';
-
-  async function load(){
-    const r=await fetch(`/page/store/shop_products.php?shop_id=${shopId}`);
-    const d=await r.json();
-    if(!d.ok){tbody.innerHTML=`<tr><td colspan="5" align="center">${d.error}</td></tr>`;return;}
-    if(!d.items.length){tbody.innerHTML='<tr><td colspan="5" align="center">ยังไม่มีสินค้า</td></tr>';return;}
-    tbody.innerHTML=d.items.map(x=>`
-      <tr data-id="${x.id}">
-        <td><img src="${x.main_image}" width="40" style="vertical-align:middle;border-radius:8px;margin-right:6px">${x.name}</td>
-        <td>${priceFmt(x.price)}</td>
-        <td>${x.stock_qty||0}</td>
-        <td>${status(x.is_active,x.stock_qty)}</td>
-        <td>
-          <button class="toggle">แสดง/ซ่อน</button>
-          <button class="del">ลบ</button>
-        </td>
-      </tr>`).join('');
-  }
-
-  tbody.addEventListener('click',async e=>{
-    const row=e.target.closest('tr[data-id]'); if(!row)return;
-    const id=row.dataset.id;
-    if(e.target.classList.contains('toggle')){
-      await fetch('/page/store/product_toggle_active.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({product_id:id,shop_id:shopId})});
-      load();
-    }
-    if(e.target.classList.contains('del')){
-      if(confirm('ลบสินค้านี้ใช่ไหม?')){
-        await fetch('/page/store/product_delete.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({product_id:id,shop_id:shopId})});
-        load();
+      function render(items){
+        if (!items?.length) {
+          tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">ยังไม่มีสินค้า</td></tr>';
+          return;
+        }
+        tbody.innerHTML = items.map(it => {
+          const img = normalizePath(it.main_image);
+          const thumb = img ? `<img src="${img}" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:8px;margin-right:8px">` : '';
+          return `
+            <tr class="product-row" data-id="${it.id}">
+              <td>${thumb}${it.name}</td>
+              <td style="text-align:right">${fmt(it.price)}</td>
+              <td style="text-align:center">
+                <a class="btn btn--ghost" href="/page/storepage/store-edit.html?id=${it.id}&shop_id=${shopId}">แก้ไข</a>
+                <button class="btn btn--danger del">ลบ</button>
+              </td>
+            </tr>`;
+        }).join('');
       }
-    }
-  });
 
-  load();
-})();
-</script>
+      async function load(){
+        const r = await fetch(`/page/store/shop_products.php?shop_id=${encodeURIComponent(shopId)}`, { credentials:'include' });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'load failed');
+        render(d.items);
+      }
 
+      tbody.addEventListener('click', async (e)=>{
+        const tr = e.target.closest('tr.product-row');
+        if (!tr) return;
+        const pid = tr.dataset.id;
+
+        if (e.target.closest('.del')) {
+          if (!confirm('ลบสินค้านี้ใช่ไหม?')) return;
+          const r = await fetch('/page/store/product_delete.php', {
+            method:'POST',
+            credentials:'include',
+            headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ product_id: pid, shop_id: shopId })
+          });
+          const d = await r.json();
+          if (!d.ok) return alert(d.error || 'delete failed');
+          await load();
+        }
+      });
+
+      load().catch(err=>{
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:red">โหลดรายการไม่สำเร็จ</td></tr>';
+      });
+    })();
+    </script>
   </body>
 </html>
