@@ -1,5 +1,5 @@
 @echo off
-set DOCROOT=N:\ProjectJob\ThamMue
+set DOCROOT=D:\New folder (3)\thammue
 taskkill /IM php.exe /F >nul 2>&1
 cd /d "%DOCROOT%"
 echo Serving from: %cd%
