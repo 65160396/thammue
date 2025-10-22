@@ -1,71 +1,98 @@
-/* ============================================================
-4) /js/change-password.js — หน้าจัดสเตป + POST เปลี่ยนรหัสผ่าน
-============================================================ */
-(function(){
-var emailEl = document.getElementById('emailDisplay');
-var s1 = document.getElementById('cp-step1');
-var s2 = document.getElementById('cp-step2');
-var s3 = document.getElementById('cp-step3');
-var nextBtn = document.getElementById('cpNext');
-var backBtn = document.getElementById('cpBack');
-var form = document.getElementById('cpForm');
+// /js/account/change-password.js
+(function () {
+  const step1 = document.getElementById('cp-step1');
+  const step2 = document.getElementById('cp-step2');
+  const step3 = document.getElementById('cp-step3');
+  const btnNext = document.getElementById('cpNext');
+  const btnBack = document.getElementById('cpBack');
+  const form = document.getElementById('cpForm');
+  const emailDisplay = document.getElementById('emailDisplay');
 
+  // ------- helpers -------
+  async function safeJson(res) {
+    try { return await res.json(); }
+    catch {
+      const t = await res.text();
+      console.error('RAW response:', t);
+      throw new Error('bad_json');
+    }
+  }
+  function alertThai(code) {
+    const map = {
+      missing_fields: 'กรุณากรอกข้อมูลให้ครบ',
+      too_short: 'รหัสผ่านใหม่ต้องยาวอย่างน้อย 8 ตัวอักษร',
+      confirm_mismatch: 'รหัสผ่านใหม่ไม่ตรงกัน',
+      current_incorrect: 'รหัสผ่านปัจจุบันไม่ถูกต้อง',
+      same_as_old: 'รหัสผ่านใหม่ต้องไม่ซ้ำรหัสเดิม',
+      not_logged_in: 'กรุณาเข้าสู่ระบบก่อน',
+      server_error: 'เซิร์ฟเวอร์ขัดข้อง กรุณาลองใหม่',
+      network: 'เครือข่ายขัดข้อง ลองใหม่อีกครั้ง'
+    };
+    alert(map[code] || map.network);
+  }
 
-// ดึงอีเมลจาก Me
-if (emailEl && window.Me && typeof Me.get === 'function') {
-Me.get().then(function(d){
-if (!d || !d.ok) { emailEl.textContent = 'ยังไม่ได้เข้าสู่ระบบ'; return; }
-emailEl.textContent = (d.user && d.user.email) ? d.user.email : 'ไม่พบอีเมลในบัญชี';
-}).catch(function(){ emailEl.textContent = 'โหลดอีเมลไม่สำเร็จ'; });
-}
+  // ------- โหลดอีเมลผู้ใช้ (พยายาม 2 endpoint เผื่อโปรเจกต์ใช้ตัวใดตัวหนึ่ง) -------
+  (async () => {
+    try {
+      let res = await fetch('/page/backend/check_email.php', {credentials:'include'});
+      if (!res.ok) throw new Error();
+      let j = await safeJson(res);
+      const email = j?.email || j?.data?.email || j?.user?.email;
+      if (email) { emailDisplay.textContent = email; return; }
+      throw new Error();
+    } catch {
+      try {
+        let res = await fetch('/page/backend/me.php', {credentials:'include'});
+        if (!res.ok) throw new Error();
+        let j = await safeJson(res);
+        const email = j?.email || j?.data?.user?.email || j?.user?.email;
+        emailDisplay.textContent = email || '—';
+      } catch {
+        emailDisplay.textContent = '—';
+      }
+    }
+  })();
 
+  // ------- สลับขั้น -------
+  btnNext?.addEventListener('click', () => {
+    step1.hidden = true; step2.hidden = false; step3.hidden = true;
+    document.getElementById('current_password')?.focus();
+  });
+  btnBack?.addEventListener('click', () => {
+    step1.hidden = false; step2.hidden = true; step3.hidden = true;
+  });
 
-function show(step){
-if (!s1 || !s2) return;
-s1.hidden = step !== 1;
-s2.hidden = step !== 2;
-if (s3) s3.hidden = step !== 3;
-var url = new URL(location.href);
-url.searchParams.set('step', step);
-history.replaceState(null, '', url);
-}
+  // ------- ส่งเปลี่ยนรหัส -------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const curr = document.getElementById('current_password').value.trim();
+    const neo  = document.getElementById('new_password').value.trim();
+    const conf = document.getElementById('confirm_password').value.trim();
 
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
 
-var initStep = parseInt(new URLSearchParams(location.search).get('step') || '1', 10);
-show([1,2,3].includes(initStep) ? initStep : 1);
-
-
-if (nextBtn) nextBtn.addEventListener('click', function(){ show(2); });
-if (backBtn) backBtn.addEventListener('click', function(){ show(1); });
-
-
-if (form) form.addEventListener('submit', function(e){
-if (s2 && s2.hidden) return; // ส่งเฉพาะตอนอยู่ step 2
-e.preventDefault();
-
-
-var current = document.getElementById('current_password').value.trim();
-var npw = document.getElementById('new_password').value.trim();
-var cf = document.getElementById('confirm_password').value.trim();
-
-
-if (!current || !npw || !cf) { alert('กรอกข้อมูลให้ครบ'); return; }
-if (npw.length < 8) { alert('รหัสผ่านใหม่อย่างน้อย 8 ตัวอักษร'); return; }
-if (npw !== cf) { alert('รหัสผ่านใหม่และยืนยันไม่ตรงกัน'); return; }
-
-
-fetch('/page/backend/change_password.php', {
-method: 'POST',
-headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-body: new URLSearchParams({ current_password: current, new_password: npw })
-})
-.then(function(res){ return Promise.all([res.ok, res.json().catch(function(){return {ok:false};})]); })
-.then(function(tuple){
-var ok = tuple[0];
-var data = tuple[1];
-if (ok && data.ok) { show(3); }
-else { alert((data && data.message) || 'เปลี่ยนรหัสผ่านไม่สำเร็จ'); }
-})
-.catch(function(){ alert('เปลี่ยนรหัสผ่านไม่สำเร็จ (เครือข่าย)'); });
+    try {
+      const res = await fetch('/page/backend/change_password.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include',
+  body: JSON.stringify({
+    current_password: curr,
+    new_password: neo,
+    confirm_password: conf
+  })
 });
+
+      const j = await safeJson(res);
+      if (!j.ok) { submitBtn.disabled = false; return alertThai(j.error); }
+
+      // สำเร็จ
+      step1.hidden = true; step2.hidden = true; step3.hidden = false;
+      form.reset();
+    } catch (e2) {
+      submitBtn.disabled = false;
+      alertThai('network');
+    }
+  });
 })();
