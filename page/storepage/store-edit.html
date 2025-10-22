@@ -13,6 +13,22 @@
   </style>
   </head>
   <body class="open-shop">
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+      <!-- ซ้าย -->
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+      <!-- ขวา -->
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
     <!-- header -->
     <div class="header-wrapper">
       <div class="logo-container">
@@ -117,6 +133,16 @@
 
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+
+    <!-- เปลี่ยนปุ่ม “เปิดร้านค้า/ร้านค้าของฉัน” ตามสถานะ -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        toggleOpenOrMyShop();
+      });
+    </script>
     <script>
 (async function(){
   const qs = new URLSearchParams(location.search);

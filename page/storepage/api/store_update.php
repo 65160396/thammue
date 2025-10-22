@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 session_start();
-require __DIR__ . '/../../_config.php';
+require __DIR__ . '/../../backend/config.php';  // ใช้ $conn (mysqli)
 
 $shopId = (int)($_POST['shop_id'] ?? $_POST['id'] ?? 0);
 $userId = (int)($_SESSION['user_id'] ?? 0);
@@ -25,16 +25,26 @@ if ($shop_name === '' || $email === '') {
 }
 
 try {
-    $pdo = db();
-    $chk = $pdo->prepare("SELECT id FROM shops WHERE id=? AND user_id=? LIMIT 1");
-    $chk->execute([$shopId, $userId]);
-    if (!$chk->fetch()) {
+    // ตรวจสิทธิ์เป็นเจ้าของร้าน
+    $chk = $conn->prepare("SELECT id FROM shops WHERE id=? AND user_id=? LIMIT 1");
+    $chk->bind_param("ii", $shopId, $userId);
+    $chk->execute();
+    $has = $chk->get_result()->fetch_assoc();
+    $chk->close();
+    if (!$has) {
         echo json_encode(['ok' => false, 'error' => 'not_found_or_no_permission']);
         exit;
     }
 
-    $stmt = $pdo->prepare("UPDATE shops SET shop_name=:shop_name,email=:email,phone=:phone,pickup_addr=:pickup_addr,updated_at=NOW() WHERE id=:id");
-    $stmt->execute([':shop_name' => $shop_name, ':email' => $email, ':phone' => $phone, ':pickup_addr' => $pickup_addr, ':id' => $shopId]);
+    // อัปเดต
+    $stmt = $conn->prepare(
+        "UPDATE shops SET shop_name=?, email=?, phone=?, pickup_addr=?, updated_at=NOW()
+     WHERE id=?"
+    );
+    $stmt->bind_param("ssssi", $shop_name, $email, $phone, $pickup_addr, $shopId);
+    $stmt->execute();
+    $stmt->close();
+
     echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);
