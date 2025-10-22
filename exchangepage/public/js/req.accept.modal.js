@@ -1,6 +1,6 @@
-// /thammue/public/js/req.accept.modal.js
+// /exchangepage/public/js/req.accept.modal.js
 (function () {
-  const API_BASE = '/thammue/api';
+  const API_BASE = '/exchangepage/api';
 
   function inject() {
     if (document.getElementById('acceptModal')) return;
@@ -21,7 +21,6 @@
         <textarea id="raNote" rows="3" placeholder="จุดนัด/แลนด์มาร์ก"></textarea>
       </label>
 
-      <!-- ✅ สรุปข้อมูลผู้ขอแลก (ข้อความล้วน) -->
       <div class="ra-summary">
         <div class="ra-sum-title">ข้อมูลผู้ขอแลก</div>
         <div class="ra-sum-row"><span>สินค้า (ผู้ขอ):</span> <strong id="sumItem">-</strong></div>
@@ -37,11 +36,10 @@
 </div>`;
     document.body.appendChild(el);
 
-    // bind
-    const modal = document.getElementById('acceptModal');
-    const x = modal.querySelector('.ra-x');
+    const modal    = document.getElementById('acceptModal');
+    const x        = modal.querySelector('.ra-x');
     const backdrop = modal.querySelector('.ra-backdrop');
-    const submit = modal.querySelector('#raSubmit');
+    const submit   = modal.querySelector('#raSubmit');
 
     const close = () => {
       modal.setAttribute('aria-hidden', 'true');
@@ -71,6 +69,7 @@
         const j = await res.json().catch(() => ({}));
         if (!res.ok || !j.ok) throw new Error(j.error || `HTTP ${res.status}`);
 
+        // ไปแชทหากมี conv_id หรือใช้ chat_url ที่ส่งมา
         window.location.href = j.chat_url || `/thammue/public/chat.html?c=${j.conv_id}`;
       } catch (e) {
         alert('ผิดพลาด: ' + (e.message || e));
@@ -80,9 +79,8 @@
     });
   }
 
-  // โหลดสรุปผู้ขอ + ใส่ลงในโมดัล
   async function fillSummary(reqId) {
-    const modal = document.getElementById('acceptModal');
+    const modal    = document.getElementById('acceptModal');
     const sumItem  = modal.querySelector('#sumItem');
     const sumPlace = modal.querySelector('#sumPlace');
     const sumNote  = modal.querySelector('#sumNote');
@@ -95,11 +93,10 @@
       const r = await fetch(`${API_BASE}/requests/detail_for_modal.php?id=${encodeURIComponent(reqId)}`, {
         cache: 'no-store', credentials: 'include'
       });
-      const d = await r.json().catch(() => ({ ok:false }));
+      const d = await r.json().catch(() => ({ ok: false }));
       if (!d.ok) throw new Error(d.error || 'load_fail');
 
       const loc = d.requester_location || {};
-      const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
       sumItem.textContent = d.requester_item_title || '-';
 
       const province    = loc.province    || '-';
@@ -109,7 +106,7 @@
       sumPlace.textContent = `จ.${province} อ.${district} ต.${subdistrict}${detail}`;
 
       sumNote.textContent = d.requester_note ? d.requester_note : 'ไม่มีโน้ต';
-    } catch (e) {
+    } catch (_) {
       sumItem.textContent  = '-';
       sumPlace.textContent = 'จ.- อ.- ต.-';
       sumNote.textContent  = 'ไม่มีโน้ต';
@@ -132,7 +129,7 @@
     fillSummary(id);
   }
 
-  // Intercept ปุ่มยอมรับ (capture)
+  // Intercept ปุ่มยอมรับ (ใช้ capture กัน event เดิม)
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('[data-act="accept"][data-id]');
     if (!btn) return;
