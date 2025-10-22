@@ -6,14 +6,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>หมวดหมู่ | Thammue</title>
 
-  <link rel="stylesheet" href="../css/instyle.css" />
-  <link rel="stylesheet" href="../css/style.css" />
-  <link rel="stylesheet" href="../css/cards.kebab.css" />
+  <link rel="stylesheet" href="/exchangepage/css/instyle.css" />
+  <link rel="stylesheet" href="/exchangepage/css/style.css" />
+  <link rel="stylesheet" href="/exchangepage/css/cards.kebab.css" />
 </head>
-<body>
-  <div class="header-wrapper" style="padding:16px">
-    <a class="brand-text" href="index.html">THAMMUE</a>
-  </div>
+  <body>
+    <ul class="top-nav">
+      <li><a class="js-upload"
+          href="Cupload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
+      <li class="right"><a id="notiBtn" href="notifications.html">แจ้งเตือน
+          <span id="notiBadge" hidden class="badge"></span></a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <div class="header-wrapper">
+      <div class="logo-container"><a href="/exchangepage/public/index.html"
+          class="brand-text">THAMMUE</a></div>
+      <div class="search-container">
+        <div class="search-group">
+          <input type="text" placeholder="ค้นหาสินค้า" />
+          <button class="search-button" aria-label="ค้นหา"><img
+              src="/exchangepage/img/Icon/search.png" alt="ค้นหา" /></button>
+        </div>
+
+        <div class="icon-buttons desktop-icons">
+          <a class="action-button" href="/exchangepage/public/request.html"
+            aria-label="คำขอแลกเปลี่ยน">
+            <img src="/exchangepage/img/Icon/exchange.png" alt><span
+              class="badge" id="reqBadge" hidden>0</span>
+          </a>
+          <a class="action-button" href="/exchangepage/public/fav.html"
+            aria-label="รายการโปรด">
+            <img src="/exchangepage/img/Icon/heart.png" alt><span class="badge"
+              id="favBadge" hidden>0</span>
+          </a>
+          <a class="action-button" href="/exchangepage/public/chat.html"
+            aria-label="แชท">
+            <img src="/exchangepage/img/Icon/chat.png" alt><span class="badge"
+              id="chatBadge" hidden>0</span>
+          </a>
+
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea" aria-haspopup="true"
+              aria-expanded="false">
+              <img src="/exchangepage/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
+        </div>
+
+        <button class="hamburger" aria-label="เปิดเมนู"
+          aria-controls="mobileIcons" aria-expanded="false">
+          <img src="/exchangepage/img/Icon/menu.png" alt aria-hidden="true">
+        </button>
+      </div>
+    </div>
+
+    <nav id="mobileIcons" class="icons-drawer" hidden>
+      <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
+      <a href="/exchangepage/public/request.html"><img
+          src="../img/Icon/exchange.png" alt> คำขอแลกเปลี่ยน</a>
+      <a href="/exchangepage/public/fav.html"><img src="../img/Icon/heart.png"
+          alt> รายการโปรด</a>
+      <a href="/exchangepage/public/chat.html"><img src="../img/Icon/chat.png"
+          alt> แชท</a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-area" id="userArea" aria-haspopup="true"
+          aria-expanded="false">
+          <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+          <span class="user-chip" id="userChip" hidden></span>
+          <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu"></div>
+      </div>
+
+      <a href="/page/profile.html"><img src="../img/Icon/user.png" alt>
+        โปรไฟล์</a>
+    </nav>
+    <div class="icons-backdrop" hidden></div>
+
+    <div class="category-buttons">
+      <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
+      <a href="category.html?category_id=2"
+        class="category-button">ของประดิษฐ์</a>
+      <a href="category.html?category_id=3"
+        class="category-button">ของใช้ทั่วไป</a>
+      <a href="category.html?category_id=4" class="category-button">เสื้อผ้า</a>
+      <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
+      <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
+    </div>
 
   <main class="section">
     <div class="container">
@@ -40,6 +136,6 @@
     </div>
   </main>
 
-  <script type="module" src="../js/dot/category.page.js"></script>
+  <script type="module" src="/exchangepage/public/js/dot/category.page.js"></script>
 </body>
 </html>

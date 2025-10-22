@@ -2,7 +2,7 @@
 <html lang="th">
   <head>
     <meta charset="utf-8" />
-    <base href="/thammue/exchangepage/public/">
+    <base href="/exchangepage/public/">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Thammue — อัปโหลดสินค้า</title>
 
@@ -18,24 +18,20 @@
       .thumbs img{width:100%;height:100px;object-fit:cover;border-radius:8px}
     </style>
   </head>
-
   <body>
-    <!-- Top bar -->
     <ul class="top-nav">
-      <li><a href="/exchangepage/public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
+      <li><a class="js-upload"
+          href="/exchangepage/public/upload.html">อัพโหลดสินค้าแลกเปลี่ยน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="/thammue/page/main.html">ซื้อสินค้า</a></li>
-      <li class="right">
-        <a id="notiBtn" href="/exchangepage/public/notifications.html">แจ้งเตือน <span id="notiBadge"
-            hidden class="badge"></span></a>
-      </li>
+      <li class="right"><a id="notiBtn" href="notifications.html">แจ้งเตือน
+          <span id="notiBadge" hidden class="badge"></span></a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#lang">ไทย</a></li>
     </ul>
 
-    <!-- Header -->
     <div class="header-wrapper">
       <div class="logo-container"><a href="/exchangepage/public/index.html"
           class="brand-text">THAMMUE</a></div>
@@ -43,50 +39,75 @@
         <div class="search-group">
           <input type="text" placeholder="ค้นหาสินค้า" />
           <button class="search-button" aria-label="ค้นหา"><img
-              src="../img/Icon/search.png" alt="ค้นหา" /></button>
+              src="/exchangepage/img/Icon/search.png" alt="ค้นหา" /></button>
         </div>
+
         <div class="icon-buttons desktop-icons">
           <a class="action-button" href="/exchangepage/public/request.html"
-            aria-label="คำขอแลกเปลี่ยน"><img src="../img/Icon/exchange.png"
-              alt><span class="badge" id="reqBadge" hidden>0</span></a>
-          <a class="action-button" href="/exchangepage/public/fav.html" aria-label="รายการโปรด"><img
-              src="../img/Icon/heart.png" alt><span class="badge" id="favBadge"
-              hidden>0</span></a>
-          <a class="action-button" href="/exchangepage/public/chat.html" aria-label="แชท"><img
-              src="../img/Icon/chat.png" alt><span class="badge" id="chatBadge"
-              hidden>0</span></a>
+            aria-label="คำขอแลกเปลี่ยน">
+            <img src="/exchangepage/img/Icon/exchange.png" alt><span
+              class="badge" id="reqBadge" hidden>0</span>
+          </a>
+          <a class="action-button" href="/exchangepage/public/fav.html"
+            aria-label="รายการโปรด">
+            <img src="/exchangepage/img/Icon/heart.png" alt><span class="badge"
+              id="favBadge" hidden>0</span>
+          </a>
+          <a class="action-button" href="/exchangepage/public/chat.html"
+            aria-label="แชท">
+            <img src="/exchangepage/img/Icon/chat.png" alt><span class="badge"
+              id="chatBadge" hidden>0</span>
+          </a>
+
           <div class="user-menu" id="userMenu">
             <button class="user-area" id="userArea" aria-haspopup="true"
               aria-expanded="false">
-              <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+              <img src="/exchangepage/img/Icon/user.png" alt="โปรไฟล์" />
               <span class="user-chip" id="userChip" hidden></span>
-              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path
-                  d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" /></svg>
+                  stroke-linejoin="round" />
+              </svg>
             </button>
             <div class="user-dropdown" id="userDropdown" role="menu"></div>
           </div>
         </div>
+
         <button class="hamburger" aria-label="เปิดเมนู"
           aria-controls="mobileIcons" aria-expanded="false">
-          <img src="../img/Icon/menu.png" alt aria-hidden="true">
+          <img src="/exchangepage/img/Icon/menu.png" alt aria-hidden="true">
         </button>
       </div>
     </div>
 
-    <!-- เมนูมือถือ -->
     <nav id="mobileIcons" class="icons-drawer" hidden>
       <button class="icons-drawer__close" aria-label="ปิดเมนู">✕</button>
-      <a href="/exchangepage/public/request.html"><img src="../img/Icon/exchange.png" alt>
-        คำขอแลกเปลี่ยน</a>
-      <a href="/exchangepage/public/fav.html"><img src="../img/Icon/heart.png" alt> รายการโปรด</a>
-      <a href="/exchangepage/public/chat.html"><img src="../img/Icon/chat.png" alt> แชท</a>
-      <a href="/exchangepage/public/profile.html"><img src="../img/Icon/user.png" alt> โปรไฟล์</a>
+      <a href="/exchangepage/public/request.html"><img
+          src="../img/Icon/exchange.png" alt> คำขอแลกเปลี่ยน</a>
+      <a href="/exchangepage/public/fav.html"><img src="../img/Icon/heart.png"
+          alt> รายการโปรด</a>
+      <a href="/exchangepage/public/chat.html"><img src="../img/Icon/chat.png"
+          alt> แชท</a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-area" id="userArea" aria-haspopup="true"
+          aria-expanded="false">
+          <img src="../img/Icon/user.png" alt="โปรไฟล์" />
+          <span class="user-chip" id="userChip" hidden></span>
+          <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu"></div>
+      </div>
+
+      <a href="/page/profile.html"><img src="../img/Icon/user.png" alt>
+        โปรไฟล์</a>
     </nav>
     <div class="icons-backdrop" hidden></div>
 
-    <!-- หมวดหมู่ปุ่มด่วน -->
     <div class="category-buttons">
       <a href="category.html?category_id=1" class="category-button">แฮนเมด</a>
       <a href="category.html?category_id=2"
@@ -97,7 +118,6 @@
       <a href="category.html?category_id=5" class="category-button">หนังสือ</a>
       <a href="category.html?category_id=6" class="category-button">ของสะสม</a>
     </div>
-
     <!-- เนื้อหาหลัก -->
     <main class="container">
       <section class="card">
@@ -115,7 +135,9 @@
               class="label">สถานที่นัดรับ</span></div>
         </div>
 
-        <form id="exchangeForm" novalidate>
+        <!-- เพิ่ม method/enctype เผื่อ fallback ส่งตรง -->
+        <form id="exchangeForm" method="post" enctype="multipart/form-data"
+          novalidate>
           <!-- STEP 1 -->
           <fieldset class="panel" data-step="1">
             <legend>ข้อมูลสินค้า</legend>
@@ -262,8 +284,8 @@
     <!-- JS -->
     <script src="/exchangepage/js/address.js"></script>
     <script>
-      // ประกาศ API_BASE แบบ global ถ้ายังไม่มี (เลี่ยงชนกับสคริปต์อื่น)
-      window.API_BASE = window.API_BASE || '/thammue/exchangepage/api';
+      // ใช้ API พอร์ตเดียวกับเพื่อน
+      window.API_BASE = '/exchangepage/api';
 
       (function () {
         const form   = document.getElementById('exchangeForm');
@@ -285,7 +307,7 @@
           panels.forEach(p => {
             const on = Number(p.dataset.step) === step;
             p.hidden = !on;
-            setPanelRequired(p, on);  // กัน not-focusable
+            setPanelRequired(p, on);
           });
           steps.forEach((s, i) => s.querySelector('.dot')?.classList.toggle('active', i < step));
           fill.style.width = ((step - 1) / 2) * 100 + '%';
@@ -314,7 +336,6 @@
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          // validate panel ปัจจุบัน
           const current = panels.find(p => !p.hidden);
           if (current && !current.checkValidity()) { current.reportValidity(); return; }
 
@@ -323,28 +344,60 @@
 
           const fd = new FormData(form);
           try {
-            const r = await fetch(`${window.API_BASE}/items/create.php`, {
+            // ✅ แก้ URL ให้ถูกต้อง (เอา /api ที่ซ้ำออก)
+            const res = await fetch(`${window.API_BASE}/items/create.php`, {
               method: 'POST',
               body: fd,
               credentials: 'include',
               cache: 'no-store'
             });
-            const d = await r.json().catch(() => null);
-            if (!r.ok || !d?.ok) {
-              alert('บันทึกล้มเหลว: ' + (d?.error || `${r.status} ${r.statusText}`));
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok || !data?.ok) {
+              alert('บันทึกล้มเหลว: ' + (data?.error || `${res.status} ${res.statusText}`));
               return;
             }
-            location.href = `success.html?id=${d.id}`;
-          } catch (_) {
+
+            // ใช้ success_url จาก API ถ้ามี (แน่นอนที่สุด)
+            if (data.success_url) {
+              location.href = data.success_url;
+            } else {
+              location.href = `success.html?id=${data.id || data.item_id}`;
+            }
+          } catch {
             alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
           }
         });
       })();
-    </script>
+const burger = document.querySelector('.hamburger');
+    const drawer = document.getElementById('mobileIcons');
+    const closeBtn = document.querySelector('.icons-drawer__close');
+    const backdrop = document.querySelector('.icons-backdrop');
+    function openIcons(){ drawer.hidden=false; backdrop.hidden=false; requestAnimationFrame(()=>drawer.classList.add('open')); document.body.style.overflow='hidden'; }
+    function closeIcons(){ drawer.classList.remove('open'); document.body.style.overflow=''; backdrop.hidden=true; setTimeout(()=>{ if(!drawer.classList.contains('open')) drawer.hidden=true; },250); }
+    burger?.addEventListener('click', openIcons);
+    closeBtn?.addEventListener('click', closeIcons);
+    backdrop?.addEventListener('click', closeIcons);
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeIcons(); });
 
-    <!-- shared -->
-    <script src="../js/app-badges.js?v=2" defer></script>
+    // chip ชื่อผู้ใช้
+    fetch('../api/me.php', { cache:'no-store', credentials:'include' })
+      .then(r=>r.ok?r.json():{ok:false})
+      .then(d=>{
+        const chip = document.getElementById('userChip');
+        const userArea = document.getElementById('userArea');
+        if(!chip||!userArea) return;
+        if(!d || !d.ok){ chip.hidden=true; userArea.href='/thammue/page/login.html'; return; }
+        const name = (d.user && (d.user.display_name||d.user.name)||'').trim();
+        if(name){ chip.textContent=name; chip.hidden=false; }
+      })
+      .catch(()=>{});
+  </script>
+    <script src="/exchangepage/public/js/auth.me.js"></script>
+    <script type="module" src="../js/dot/index.page.js"></script>
     <script src="../js/header-noti.js"></script>
+    <script src="../js/app-badges.js?v=2" defer></script>
+    <script src="js/verification.modal.js" defer></script>
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
   </body>

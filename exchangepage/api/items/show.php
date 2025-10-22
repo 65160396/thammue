@@ -1,10 +1,12 @@
 <?php
 // /exchangepage/api/items/show.php
+declare(strict_types=1);
 require __DIR__ . '/../_config.php';
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
 
-$pdo    = db();
-$userId = (int)($_SESSION['user_id'] ?? 0);
+$pdo = db();
+assert_db_alive($pdo);
+$userId = me_id();
 
 function cat_name(int $cid): string {
   static $CATS = [1=>'แฮนเมด',2=>'ของประดิษฐ์',3=>'ของใช้ทั่วไป',4=>'เสื้อผ้า',5=>'หนังสือ',6=>'ของสะสม'];
@@ -23,7 +25,7 @@ $item = $st->fetch();
 if (!$item) json_err('ไม่พบสินค้า', 404);
 
 $isOwner = ($userId > 0 && (int)$item['user_id'] === $userId);
-if (!$isOwner && $item['visibility'] !== 'public') json_err('สินค้านี้ยังไม่เปิดเผยสาธารณะ', 403);
+if (!$isOwner && ($item['visibility'] ?? 'public') !== 'public') json_err('สินค้านี้ยังไม่เปิดเผยสาธารณะ', 403);
 
 $imgSt = $pdo->prepare("SELECT id, path, sort_order FROM item_images WHERE item_id = :id ORDER BY sort_order, id");
 $imgSt->execute([':id'=>$id]);
@@ -43,6 +45,7 @@ if (!empty($images_detail)) {
 }
 $cover = $images[0] ?? null;
 
+// ปรับให้เข้ากับ users ของระบบหลัก
 $ownSt = $pdo->prepare("SELECT id, display_name AS name FROM users WHERE id = :u LIMIT 1");
 $ownSt->execute([':u'=>(int)$item['user_id']]);
 $owner = $ownSt->fetch() ?: ['id'=>(int)$item['user_id'], 'name'=>null];
@@ -53,6 +56,16 @@ if ($userId > 0) {
   $favSt->execute([':u'=>$userId, ':i'=>$id]);
   $isFav = (bool)$favSt->fetch();
 }
+$usersTable = defined('USERS_DB') ? USERS_DB . '.users' : 'users';
+
+$ownSt = $pdo->prepare("
+  SELECT id, COALESCE(display_name, name) AS name
+  FROM {$usersTable}
+  WHERE id = :u
+  LIMIT 1
+");
+$ownSt->execute([':u' => (int)$item['user_id']]);
+
 
 $out = [
   'id'=>(int)$item['id'],
@@ -68,8 +81,8 @@ $out = [
   'subdistrict'=>$item['subdistrict'] ?? null,
   'zipcode'=>$item['zipcode'] ?? null,
   'place_detail'=>$item['place_detail'] ?? null,
-  'visibility'=>$item['visibility'],
-  'created_at'=>$item['created_at'],
+  'visibility'=>$item['visibility'] ?? 'public',
+  'created_at'=>$item['created_at'] ?? null,
   'cover'=>$cover,
   'images'=>$images,
   'images_detail'=>$images_detail,

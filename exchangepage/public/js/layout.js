@@ -45,17 +45,14 @@
   try {
     const r = await fetch('../api/me.php', { cache: 'no-store', credentials: 'include' });
     const d = r.ok ? await r.json() : null;
-    const chip = document.getElementById('userChip');
-    const userArea = document.getElementById('userArea');
-    if (chip && userArea) {
-      if (!d || !d.ok) {
-        chip.hidden = true;
-        // ลิงก์ไปหน้า login ฝั่งหลัก
-        userArea.href = '/thammue/page/login.html';
-      } else {
-        const name = (d.user && (d.user.display_name || d.user.name) || '').trim();
-        if (name) { chip.textContent = name; chip.hidden = false; }
-      }
-    }
+const chip = document.getElementById('userChip');
+const userArea = document.getElementById('userArea');
+
+getMe().then(user => {
+  if (!chip || !userArea) return;
+  if (!user) { chip.hidden = true; userArea.href = '/thammue/page/login.html'; return; }
+  const name = (user.display_name || user.name || '').trim();
+  if (name) { chip.textContent = name; chip.hidden = false; }
+    })
   } catch (_) {}
 })();

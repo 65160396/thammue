@@ -2,15 +2,17 @@
 // /exchangepage/api/items/create.php
 declare(strict_types=1);
 require __DIR__ . '/../_config.php';
+
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') json_err('Method Not Allowed', 405);
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') json_err('Method Not Allowed', 405);
-
-$pdo    = db();
-$userId = (int)($_SESSION['user_id'] ?? 0);
+/* ----- DB + session (เช็คว่าพร้อม) ----- */
+$pdo = db();
+assert_db_alive($pdo);
+$userId = me_id();
 if ($userId <= 0) json_err('กรุณาเข้าสู่ระบบ', 401);
 
-// รับค่า
+/* ----- รับค่า ----- */
 $title        = trim((string)($_POST['title'] ?? ''));
 $categoryId   = (int)($_POST['category_id'] ?? 0);
 $description  = trim((string)($_POST['description'] ?? ''));
@@ -23,17 +25,15 @@ $subdistrict  = trim((string)($_POST['subdistrict'] ?? ''));
 $zipcode      = trim((string)($_POST['zipcode'] ?? ''));
 $place_detail = trim((string)($_POST['place_detail'] ?? ''));
 
-// validate ขั้นต่ำ
+/* ----- validate ขั้นต่ำ ----- */
 if ($title === '' || $categoryId <= 0) json_err('กรุณากรอกชื่อสินค้าและหมวดหมู่ให้ครบ', 422);
 
-// อัปโหลดรูป — เก็บไว้ใต้ /exchangepage/public/uploads/items
+/* ----- รูปภาพ ----- */
 $savedFiles = [];
-if (!empty($_FILES['images']['name'][0])) {
-  $savedFiles = save_uploaded_images($_FILES['images'], 'items');
-}
+if (!empty($_FILES['images']['name'][0])) $savedFiles = save_uploaded_images($_FILES['images'], 'items');
 if (!$savedFiles) json_err('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป', 422);
 
-// บันทึก DB
+/* ----- บันทึก DB ----- */
 $pdo->beginTransaction();
 try {
   $ins = $pdo->prepare("
@@ -54,7 +54,7 @@ try {
 
   $itemId = (int)$pdo->lastInsertId();
 
-  // บันทึกรูป (เก็บ path แบบ relative)
+  // บันทึกรูป (เก็บ path แบบ relative ภายใต้ /exchangepage/public/)
   $ord = 0;
   $stmtImg = $pdo->prepare("INSERT INTO item_images (item_id, path, sort_order) VALUES (:id, :p, :s)");
   foreach ($savedFiles as $basename) {
@@ -69,7 +69,9 @@ try {
     'detail_url'  => THAMMUE_BASE . "/public/detail.html?id={$itemId}&view=public",
     'success_url' => THAMMUE_BASE . "/public/success.html?id={$itemId}",
   ], 201);
+
 } catch (Throwable $e) {
   $pdo->rollBack();
+  // ส่งรายละเอียด SQL error ออกมาให้ debug
   json_err('บันทึกไม่สำเร็จ', 500, ['msg'=>$e->getMessage()]);
 }
