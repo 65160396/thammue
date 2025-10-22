@@ -94,6 +94,8 @@ $qrUrl = "https://promptpay.io/{$ppId}.png?amount={$amountStr}";
             toggleOpenOrMyShop();
         });
     </script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
 </body>
 
 </html>

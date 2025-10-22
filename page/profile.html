@@ -12,12 +12,17 @@
 
   <body class="open-shop">
 
-    <!-- topbar -->
+   
+    <!-- แถบบนสุด -->
     <ul class="top-nav">
-      <li><a href="/page/upload_product.html">อัพโหลดสินค้า</a></li>
+      <!-- ซ้าย -->
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
-      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+      <!-- ขวา -->
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
@@ -46,8 +51,11 @@
             <span id="cartBadge" class="icon-badge" hidden>0</span>
           </a>
 
-          <button class="action-button"><img src="/img/Icon/chat.png"
-              alt="แชท" /></button>
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท">
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
 
           <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
           <div class="user-menu" id="userMenu">
@@ -86,125 +94,133 @@
             data-path="my_order.html">การซื้อของฉัน</a>
 
           <a href="/page/favorites/index.php">รายการโปรด</a>
-          
-          <a href="/page/privacy_settings.html"
+
+          <!--  <a href="/page/privacy_settings.html"
             data-path="privacy_settings.html">การตั้งค่าความเป็นส่วนตัว</a>
-        </nav>
+        </nav>-->
 
-      </aside>
+        </aside>
 
-      <!-- เนื้อหาขวา -->
-      <section class="account-content">
+        <!-- เนื้อหาขวา -->
+        <section class="account-content">
 
-        <form id="profileForm" class="account-card form-v2"
-          action="/page/backend/save_profile.php" method="post"
-          autocomplete="off">
-          <input type="hidden" name="next"
-            value="<?= htmlspecialchars($_GET['next'] ?? '') ?>">
+          <form id="profileForm" class="account-card form-v2"
+            action="/page/backend/save_profile.php" method="post"
+            autocomplete="off">
+            <input type="hidden" name="next"
+              value="<?= htmlspecialchars($_GET['next'] ?? '') ?>">
 
-          <h1 class="account-title">รายละเอียดของฉัน</h1>
-          <div class="grid2">
-            <div class="field">
-              <label for="first_name">ชื่อ</label>
-              <input id="first_name" name="first_name" type="text"
-                required />
-            </div>
-            <div class="field">
-              <label for="last_name">นามสกุล</label>
-              <input id="last_name" name="last_name" type="text"
-                required />
-            </div>
-          </div>
-
-          <div class="grid2">
-            <div class="field">
-              <label>วันเกิด</label>
-              <div class="dob-row">
-                <select id="dobDay" aria-label="วัน" required></select>
-                <select id="dobMonth" aria-label="เดือน" required></select>
-                <select id="dobYear" aria-label="ปี (ค.ศ.)" required></select>
+            <h1 class="account-title">รายละเอียดของฉัน</h1>
+            <div class="grid2">
+              <div class="field">
+                <label for="first_name">ชื่อ</label>
+                <input id="first_name" name="first_name" type="text"
+                  required />
               </div>
-              <!-- ส่งวันเกิดเป็น YYYY-MM-DD ไป PHP -->
-              <input type="hidden" name="dob" id="dobIso" />
-
+              <div class="field">
+                <label for="last_name">นามสกุล</label>
+                <input id="last_name" name="last_name" type="text"
+                  required />
+              </div>
             </div>
+
+            <div class="grid2">
+              <div class="field">
+                <label>วันเกิด</label>
+                <div class="dob-row">
+                  <select id="dobDay" aria-label="วัน" required></select>
+                  <select id="dobMonth" aria-label="เดือน" required></select>
+                  <select id="dobYear" aria-label="ปี (ค.ศ.)" required></select>
+                </div>
+                <!-- ส่งวันเกิดเป็น YYYY-MM-DD ไป PHP -->
+                <input type="hidden" name="dob" id="dobIso" />
+
+              </div>
+              <div class="field">
+                <label for="gender">เพศ</label>
+                <select id="gender" name="gender" required>
+                  <option value selected disabled>— เลือก
+                    —</option>
+                  <option value="male">ชาย</option>
+                  <option value="female">หญิง</option>
+                  <option value="other">อื่น ๆ</option>
+                  <option value="prefer_not">ไม่ระบุ</option>
+                </select>
+              </div>
+            </div>
+
             <div class="field">
-              <label for="gender">เพศ</label>
-              <select id="gender" name="gender" required>
-                <option value selected disabled>— เลือก
-                  —</option>
-                <option value="male">ชาย</option>
-                <option value="female">หญิง</option>
-                <option value="other">อื่น ๆ</option>
-                <option value="prefer_not">ไม่ระบุ</option>
-              </select>
+              <label for="phone">หมายเลขโทรศัพท์</label>
+              <input id="phone" name="phone" type="tel"
+                inputmode="numeric" maxlength="10"
+                pattern="[0-9]{9,10}" required />
             </div>
-          </div>
 
-          <div class="field">
-            <label for="phone">หมายเลขโทรศัพท์</label>
-            <input id="phone" name="phone" type="tel"
-              inputmode="numeric" maxlength="10"
-              pattern="[0-9]{9,10}" required />
-          </div>
+            <h3 class="form-section">ที่อยู่</h3>
+            <div class="grid2">
+              <div class="field">
+                <label for="addr_province">จังหวัด</label>
+                <select id="addr_province" name="addr_province"
+                  required></select>
+              </div>
+              <div class="field">
+                <label for="addr_district">อำเภอ/เขต</label>
+                <select id="addr_district" name="addr_district"
+                  required disabled>
+                  <option value selected disabled>— เลือกอำเภอ/เขต
+                    —</option>
+                </select>
+              </div>
+            </div>
 
-          <h3 class="form-section">ที่อยู่</h3>
-          <div class="grid2">
+            <div class="grid2">
+              <div class="field">
+                <label for="addr_subdistrict">ตำบล/แขวง</label>
+                <select id="addr_subdistrict"
+                  name="addr_subdistrict" required disabled>
+                  <option value selected disabled>— เลือกตำบล/แขวง
+                    —</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="addr_postcode">รหัสไปรษณีย์</label>
+                <input id="addr_postcode" name="addr_postcode"
+                  type="text"
+                  inputmode="numeric" maxlength="5" required />
+              </div>
+            </div>
+
             <div class="field">
-              <label for="addr_province">จังหวัด</label>
-              <select id="addr_province" name="addr_province"
-                required></select>
+              <label for="addr_line">รายละเอียดที่อยู่ตามบัตร</label>
+              <input id="addr_line" name="addr_line"
+                type="text" placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
+                required />
             </div>
-            <div class="field">
-              <label for="addr_district">อำเภอ/เขต</label>
-              <select id="addr_district" name="addr_district"
-                required disabled>
-                <option value selected disabled>— เลือกอำเภอ/เขต
-                  —</option>
-              </select>
+
+            <div class="actions">
+              <button type="submit" class="btn">บันทึก</button>
             </div>
-          </div>
+          </form>
+        </section>
+      </main>
 
-          <div class="grid2">
-            <div class="field">
-              <label for="addr_subdistrict">ตำบล/แขวง</label>
-              <select id="addr_subdistrict"
-                name="addr_subdistrict" required disabled>
-                <option value selected disabled>— เลือกตำบล/แขวง
-                  —</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="addr_postcode">รหัสไปรษณีย์</label>
-              <input id="addr_postcode" name="addr_postcode"
-                type="text"
-                inputmode="numeric" maxlength="5" required />
-            </div>
-          </div>
+      <script src="/js/address.js"></script>
+      <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
+      <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
+      <script src="/js/account/profile.js"></script>
+      <script src="/js/account/account-common.js"></script>
+      <script src="/js/header-noti.js"></script>
+      <script src="/js/notify-poll.js"></script>
 
-          <div class="field">
-            <label for="addr_line">รายละเอียดที่อยู่ตามบัตร</label>
-            <input id="addr_line" name="addr_line"
-              type="text" placeholder="บ้านเลขที่ หมู่ ซอย ถนน"
-              required />
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn">บันทึก</button>
-          </div>
-        </form>
-      </section>
-    </main>
-
-    <script src="/js/address.js"></script>
-    <script src="/js/me.js"></script> <!--ดึงสถานะผู้ใช้-->
-    <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
-    <script src="/js/account/profile.js"></script>
-    <script src="/js/account/account-common.js"></script>
-
-    <!-- แสดงจำนวน "รายการโปรด" -->
-    <script src="/js/fav-badge.js" defer></script>
-    <script src="/js/cart-badge.js" defer></script>
-
-  </body>
-</html>
+      <!-- แสดงจำนวน "รายการโปรด" -->
+      <script src="/js/fav-badge.js" defer></script>
+      <script src="/js/cart-badge.js" defer></script>
+      <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+      <script src="/js/store/shop-toggle.js"></script>
+      <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleOpenOrMyShop();
+  });
+</script>
+    </body>
+  </html>

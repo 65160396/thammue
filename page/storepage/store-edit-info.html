@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue – แก้ไขข้อมูลร้านค้า</title>
+
+    <!-- ใช้ชุดสไตล์เดิม + open-shop.css -->
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+  </head>
+
+  <!-- ใช้ layout ของ open-shop.css -->
+  <body class="open-shop">
+    <section class="wizard-page">
+      <div class="wizard-card">
+        <h2 class="form-section">แก้ไขข้อมูลร้านค้า</h2>
+        <p class="hint">กรอกเฉพาะข้อมูลที่ต้องการแก้ไข แล้วกด
+          “บันทึกการเปลี่ยนแปลง”</p>
+
+        <form id="shopForm" autocomplete="off">
+          <input type="hidden" name="shop_id" id="shop_id" />
+
+          <div class="field">
+            <label for="shop_name">ชื่อร้าน</label>
+            <input type="text" id="shop_name" name="shop_name" required />
+          </div>
+
+          <div class="field">
+            <label for="email">อีเมล</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="field">
+            <label for="phone">เบอร์โทร</label>
+            <input type="text" id="phone" name="phone" maxlength="20" />
+          </div>
+
+          <div class="field field--full">
+            <label for="pickup_addr">ที่รับของ</label>
+            <textarea id="pickup_addr" name="pickup_addr"
+              placeholder></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn ghost"
+              id="btnCancel">ย้อนกลับ</button>
+            <button type="submit" class="btn">บันทึกการเปลี่ยนแปลง</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <script>
+      // ===== Helpers =====
+      function getShopId() {
+        const u = new URL(location.href);
+        return u.searchParams.get('shop_id') || u.searchParams.get('id');
+      }
+
+      // ไม่แสดงข้อความ error/สถานะใด ๆ ตามที่ต้องการ
+      function setMsg() { /* no-op */ }
+
+      function fillForm(d) {
+        if (!d) return;
+        document.getElementById('shop_id').value     = d.shop_id ?? d.id ?? '';
+        document.getElementById('shop_name').value   = d.shop_name || '';
+        document.getElementById('email').value       = d.email || '';
+        document.getElementById('phone').value       = d.phone || '';
+        document.getElementById('pickup_addr').value = d.pickup_addr || '';
+      }
+
+      // 1) Prefill จากหน้า info (ถ้ามี)
+      (function prefill() {
+        try {
+          const raw = sessionStorage.getItem('store_edit_prefill');
+          if (!raw) return;
+          const c = JSON.parse(raw);
+          if (String(c.shop_id) === String(getShopId())) fillForm(c);
+        } catch {}
+      })();
+
+      // 2) โหลดล่าสุดจาก API แล้วทับ
+      (async function load() {
+        const id = getShopId();
+        if (!id) return; // เงียบไว้ตามที่ต้องการ
+        try {
+          const r = await fetch(`/page/storepage/api/store_get.php?shop_id=${encodeURIComponent(id)}`, { credentials: 'same-origin' });
+          if (!r.ok) return;
+          const j = await r.json();
+          if (!j.ok) return;
+          fillForm(j.data);
+        } catch {}
+      })();
+
+      // 3) บันทึก
+      document.getElementById('shopForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        try {
+          const r = await fetch('/page/storepage/api/store_update.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+          const j = await r.json();
+          if (!j.ok) return; // เงียบไว้
+
+          sessionStorage.removeItem('store_edit_prefill');
+          const id = document.getElementById('shop_id').value;
+          location.href = `/page/storepage/store-info.html?shop_id=${encodeURIComponent(id)}`;
+        } catch {}
+      });
+
+      // 4) ยกเลิก
+      document.getElementById('btnCancel').addEventListener('click', () => {
+        const id = getShopId();
+        sessionStorage.removeItem('store_edit_prefill');
+        location.href = `/page/storepage/store-info.html?shop_id=${encodeURIComponent(id || '')}`;
+      });
+    </script>
+  </body>
+</html>

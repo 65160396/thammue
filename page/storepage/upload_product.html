@@ -14,7 +14,7 @@
       <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
@@ -28,8 +28,11 @@
       </div>
       <div class="search-container">
         <div class="icon-buttons">
-          <button class="action-button"><img src="/img/Icon/chat.png"
-              alt="แชท" /></button>
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท">
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
 
           <!-- โปรไฟล์ -->
           <div class="user-menu" id="userMenu">
@@ -145,5 +148,8 @@
       <script src="/js/user-menu.js"></script> <!--จัดการเมนูโปรไฟล์-->
       <script src="/js/products/upload-product.js"></script>
       <script src="/js/products/file-input-enhance.js"></script>
+
+      <script src="/js/header-noti.js"></script>
+      <script src="/js/notify-poll.js"></script>
     </body>
   </html>

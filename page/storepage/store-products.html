@@ -8,12 +8,16 @@
     <link rel="stylesheet" href="/css/open-shop.css" />
   </head>
   <body class="open-shop">
-    <!-- topbar -->
+    <!-- แถบบนสุด -->
     <ul class="top-nav">
-      <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
+      <!-- ซ้าย -->
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
-      <li><a href="/page/main.html">ซื้อสินค้า</a></li>
-      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+      <!-- ขวา -->
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
@@ -27,8 +31,11 @@
       </div>
       <div class="search-container">
         <div class="icon-buttons">
-          <button class="action-button"><img src="/img/Icon/chat.png"
-              alt="แชท" /></button>
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท">
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
           <div class="user-menu" id="userMenu">
             <button class="user-area" id="userArea" aria-haspopup="true"
               aria-expanded="false">
@@ -70,6 +77,15 @@
 
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+    <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleOpenOrMyShop();
+  });
+</script>
 
     <script>
     (function(){

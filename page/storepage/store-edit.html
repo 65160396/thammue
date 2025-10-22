@@ -118,69 +118,60 @@
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
     <script>
-  (async function(){
-    const qs = new URLSearchParams(location.search);
-    const productId = qs.get('id');
-    const shopId = qs.get('shop_id');
+(async function(){
+  const qs = new URLSearchParams(location.search);
+  const productId = qs.get('id');
+  const shopIdQS  = qs.get('shop_id'); // อาจไม่มี
 
-    // อ้าง element แบบชัดเจน (กันชน window.name)
-    const el = {
-      pid: document.getElementById('pid'),
-      sid: document.getElementById('sid'),
-      name: document.getElementById('name'),
-      price: document.getElementById('price'),
-      stock: document.getElementById('stock_qty'),
-      cat: document.getElementById('category_id'),
-      desc: document.getElementById('description'),
-      mainWrap: document.getElementById('mainPreviewWrap'),
-      extraWrap: document.getElementById('extraPreviewWrap'),
-    };
+  const el = {
+    pid:  document.getElementById('pid'),
+    sid:  document.getElementById('sid'),
+    name: document.getElementById('name'),
+    price:document.getElementById('price'),
+    stock:document.getElementById('stock_qty'),
+    cat:  document.getElementById('category_id'),
+    desc: document.getElementById('description'),
+    mainWrap:  document.getElementById('mainPreviewWrap'),
+    extraWrap: document.getElementById('extraPreviewWrap'),
+  };
 
-    el.pid.value = productId || '';
-    el.sid.value = shopId || '';
+  if (!productId) { alert('ลิงก์ไม่ถูกต้อง: ขาด id'); history.back(); return; }
+  el.pid.value = productId;
 
-    if (!productId || !shopId) {
-      alert('ลิงก์ไม่ถูกต้อง: ขาด id หรือ shop_id');
-      history.back();
-      return;
-    }
+  const normalizePath = (s)=>{ if(!s) return ''; s=String(s).replace(/\\/g,'/'); return s; };
+  const addThumb = (w,src)=>{ if(!src) return; const i=new Image(); i.className='thumb'; i.src=normalizePath(src); w.appendChild(i); };
 
-    const normalizePath = (s) => {
-      if (!s) return '';
-      let p = String(s).replace(/\\/g,'/');     // \ -> /
-      if (p.startsWith('/uploads/')) p = '/page' + p; // เติม /page ถ้าจำเป็น
-      return p;
-    };
-    const addThumb = (wrap, src) => {
-      if (!src) return;
-      const img = document.createElement('img');
-      img.className = 'thumb';
-      img.src = normalizePath(src);
-      wrap.appendChild(img);
-    };
+  // สร้าง URL เรียก API — ส่ง shop_id ก็ต่อเมื่อมีจริง
+  const url = new URL('/page/store/product_get.php', location.origin);
+  url.searchParams.set('id', productId);
+  if (shopIdQS) url.searchParams.set('shop_id', shopIdQS);
 
-    try {
-      const res = await fetch(`/page/store/product_get.php?id=${encodeURIComponent(productId)}&shop_id=${encodeURIComponent(shopId)}`, { credentials:'include' });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'โหลดข้อมูลไม่สำเร็จ');
+  try{
+    const res  = await fetch(url, {credentials:'include'});
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'โหลดข้อมูลไม่สำเร็จ');
 
-      const p = data.product;
+    const p = data.product;
 
-      // เติมค่า
-      el.name.value  = p.name ?? '';
-      el.price.value = p.price ?? '';
-      el.stock.value = p.stock_qty ?? 0;
-      el.cat.value   = p.category_id ?? '';
-      el.desc.value  = p.description ?? '';
+    // ถ้าไม่มี shop_id จาก query ให้ใช้จาก API
+    el.sid.value = shopIdQS || p.shop_id || '';
 
-      // พรีวิวรูป
-      addThumb(el.mainWrap, p.main_image);
-      (data.images || []).forEach(im => addThumb(el.extraWrap, im.image_path));
-    } catch (err) {
-      console.error(err);
-      alert(err.message || 'โหลดข้อมูลไม่สำเร็จ');
-    }
-  })();
-  </script>
+    // เติมค่า
+    el.name.value  = p.name ?? '';
+    el.price.value = p.price ?? '';
+    el.stock.value = p.stock_qty ?? 0;
+    el.cat.value   = p.category_id ?? '';
+    el.desc.value  = p.description ?? '';
+
+    // พรีวิวรูป
+    addThumb(el.mainWrap, p.main_image);
+    (data.images || []).forEach(im => addThumb(el.extraWrap, im.image_path));
+  }catch(err){
+    console.error(err);
+    alert(err.message || 'โหลดข้อมูลไม่สำเร็จ');
+  }
+})();
+</script>
+
   </body>
 </html>

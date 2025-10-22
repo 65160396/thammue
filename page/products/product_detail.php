@@ -118,7 +118,7 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><?= $name ?> | Thammue</title>
+    <title>Thammue - <?= $name ?> </title>
 
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/product-detail.css" />
@@ -259,6 +259,9 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             toggleOpenOrMyShop();
         });
     </script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+    <script src="/js/cart-badge.js" defer></script>
 
     <script>
         const ITEM_ID = <?= (int)$p['id'] ?>;
@@ -398,8 +401,6 @@ $shop  = htmlspecialchars($p['shop_name'] ?: 'ไม่ระบุร้าน'
             });
         })();
     </script>
-
-    <script src="/js/cart-badge.js" defer></script>
 </body>
 
 </html>

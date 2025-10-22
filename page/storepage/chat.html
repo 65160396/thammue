@@ -9,14 +9,17 @@
     <link rel="stylesheet" href="/css/chat.css" />
   </head>
   <body>
-    <!-- แถบบนสุด (เหมือนหน้า main) -->
+  
+    <!-- แถบบนสุด -->
     <ul class="top-nav">
-      <li><a href="/exchangepage/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <!-- ซ้าย -->
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a id="openOrMyShop"
           href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
-      <li class="right"><a href="#notification">แจ้งเตือน</a></li>
+      <!-- ขวา -->
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
@@ -116,6 +119,7 @@
     <script src="/js/fav-badge.js" defer></script>
     <script src="/js/cart-badge.js" defer></script>
     <script src="/js/notify-poll.js" defer></script>
+    <script src="/js/header-noti.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
