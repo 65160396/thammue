@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>นัดหมายแลกเปลี่ยน | THAMMUE</title>
+  <!-- สไตล์หลักของระบบซื้อขาย -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/instyle.css" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/search.css" />
+  <!-- สไตล์แลกเปลี่ยน -->
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.requests.css" />
+  <link rel="stylesheet" href="/css/ex.notifications.css" />
+  <link rel="stylesheet" href="/css/ex.mobile.css" />
+  
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">นัดหมายสำหรับการแลกเปลี่ยน</h1>
+    <div class="ex-card">
+      <label>รหัสคำขอ (request_id)</label>
+      <input id="fRid" type="number" placeholder="เช่น 123" style="padding:8px;border:1px solid #e5e7eb;border-radius:8px;width:200px">
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <input id="fAt" type="datetime-local" style="padding:8px;border:1px solid #e5e7eb;border-radius:8px;">
+        <input id="fPlace" type="text" placeholder="สถานที่นัดพบ" style="padding:8px;border:1px solid #e5e7eb;border-radius:8px;min-width:260px;">
+        <input id="fNote" type="text" placeholder="บันทึกเพิ่มเติม" style="padding:8px;border:1px solid #e5e7eb;border-radius:8px;min-width:260px;">
+        <button class="ex-btn" id="btnSave">บันทึก/อัปเดต</button>
+      </div>
+      <p class="ex-muted" style="margin-top:8px">* คู่สนทนาจะได้รับแจ้งเตือนเมื่อมีการอัปเดตนัดหมาย</p>
+    </div>
+  </div>
+
+  <script src="/js/ex.exchange.js"></script>
+  <script>
+  document.getElementById('btnSave').addEventListener('click', async ()=>{
+    try{
+      const request_id = parseInt(document.getElementById('fRid').value||'0',10);
+      if(!request_id){ alert('กรอกรหัสคำขอ'); return; }
+      const scheduled_at = (document.getElementById('fAt').value || '').replace('T',' ') + ':00';
+      const place = document.getElementById('fPlace').value;
+      const note  = document.getElementById('fNote').value;
+      await Ex.exUpdateMeeting({request_id, scheduled_at, place, note});
+      alert('บันทึกแล้ว');
+    }catch(e){ alert('ผิดพลาด: '+e.message); }
+  });
+  </script>
+</body>
+</html>

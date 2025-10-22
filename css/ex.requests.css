@@ -1,0 +1,8 @@
+
+/* สไตล์เฉพาะหน้ารายการคำขอ */
+.ex-req-item { display:flex; justify-content:space-between; gap:12px; }
+.ex-req-meta { font-size:12px; color:#6b7280; }
+.ex-req-status-pending { background:#fff7ed; border-color:#fed7aa; }
+.ex-req-status-accepted { background:#ecfdf5; border-color:#a7f3d0; }
+.ex-req-status-declined { background:#fef2f2; border-color:#fecaca; }
+.ex-req-status-cancelled { background:#f3f4f6; border-color:#e5e7eb; }

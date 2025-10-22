@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เพิ่มสินค้าใหม่ | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css">
+  <link rel="stylesheet" href="/css/ex.items.css">
+  <link rel="stylesheet" href="/css/ex.verify.modal.css">
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">เพิ่มสินค้าใหม่</h1>
+    <div class="ex-card">
+      <div class="ex-form">
+        <div class="row"><label>ชื่อสินค้า</label><input id="title" type="text" placeholder="เช่น Nike Air Zoom ..."></div>
+        <div class="row"><label>ราคา (ถ้ามี)</label><input id="price" type="number" step="0.01" placeholder="เช่น 1500"></div>
+        <div class="row"><label>คำอธิบาย</label><textarea id="description" rows="4" placeholder="รายละเอียดสินค้า..."></textarea></div>
+        <div class="row"><label>รูปหลัก</label>
+          <div>
+            <img id="thumbPreview" class="ex-thumb" alt="preview">
+            <div style="margin-top:8px">
+              <input id="thumb" type="file" accept="image/*">
+              <button class="ex-btn secondary" id="uploadBtn" type="button">อัปโหลด</button>
+            </div>
+            <div class="ex-muted" id="thumbUrlBox" style="margin-top:6px"></div>
+          </div>
+        </div>
+        <div class="row"><div></div><button class="ex-btn" id="saveBtn" type="button">บันทึกสินค้า</button></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/ex.exchange.js"></script>
+  <script src="/js/ex.item.form.js"></script>
+  <script src="/js/ex.verify.modal.js"></script>
+  <script>
+  (async function(){
+    // กั้นไว้ก่อน: ต้องยืนยันอีเมลก่อนถึงจะอัปโหลด/บันทึกได้
+    try{
+      const ok = await ExVerify.requireEmailVerificationBeforeUpload();
+      if(!ok){
+        // ปิดการใช้งานปุ่มจนกว่าจะยืนยันเสร็จ (หน้า reload แล้วจะ ok)
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('saveBtn').disabled = true;
+      }
+    }catch(e){
+      console.warn(e);
+    }
+  })();
+  </script>
+</body>
+</html>

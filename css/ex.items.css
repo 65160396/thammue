@@ -1,0 +1,8 @@
+
+/* ex.items.css */
+.ex-form { display:grid; gap:12px; max-width:720px; }
+.ex-form .row { display:grid; grid-template-columns: 160px 1fr; gap:12px; align-items:center; }
+.ex-form input[type=text], .ex-form input[type=number], .ex-form textarea {
+  padding:10px; border:1px solid #e5e7eb; border-radius:10px; width:100%;
+}
+.ex-thumb { width:120px; height:120px; object-fit:cover; border:1px solid #e5e7eb; border-radius:12px; background:#f8fafc; }

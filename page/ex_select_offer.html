@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เลือกของที่จะเสนอ | THAMMUE</title>
+  <!-- สไตล์หลักของระบบซื้อขาย -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/instyle.css" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/search.css" />
+  <!-- สไตล์แลกเปลี่ยน -->
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.requests.css" />
+  <link rel="stylesheet" href="/css/ex.notifications.css" />
+  <link rel="stylesheet" href="/css/ex.mobile.css" />
+  
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">เลือกของที่จะเสนอ</h1>
+    <div class="ex-card">
+      <ul id="myItems" class="ex-list"></ul>
+    </div>
+    <div class="ex-card">
+      <a class="ex-btn" href="/page/ex_detail.html">กลับไปหน้ารายละเอียด</a>
+    </div>
+  </div>
+
+  <script src="/js/ex.exchange.js"></script>
+  <script>
+  (async function(){
+    try{
+      const res = await fetch('/page/backend/ex_list_my_items.php', {credentials:'include'}).then(r=>r.json());
+      if(!res.ok){ throw new Error(res.error || 'โหลดรายการของฉันไม่ได้'); }
+      const ul = document.getElementById('myItems');
+      if(!res.items || !res.items.length){ ul.innerHTML = '<li class="ex-muted">ยังไม่มีของในร้านของคุณ</li>'; return; }
+      res.items.forEach(it=>{
+        const li = document.createElement('li');
+        li.innerHTML = \`
+          <div style="display:flex;gap:12px;align-items:center;">
+            \${it.thumb ? '<img src="'+it.thumb+'" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #eee;">' : ''}
+            <div>
+              <div><b>#\${it.id}</b> \${(it.title||'-')}</div>
+              <div class="ex-muted">คลิกเพื่อเลือก</div>
+            </div>
+          </div>
+        \`;
+        li.style.cursor='pointer';
+        li.addEventListener('click', ()=>{
+          sessionStorage.setItem('ex_offered_item_id', String(it.id));
+          alert('เลือก #' + it.id + ' แล้ว');
+          history.back();
+        });
+        ul.appendChild(li);
+      });
+    }catch(e){ alert(e.message); }
+  })();
+  </script>
+</body>
+</html>

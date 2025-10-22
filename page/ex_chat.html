@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แชต (แลกเปลี่ยน/ซื้อขาย) | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css">
+  <link rel="stylesheet" href="/css/ex.chat_fav.css">
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">แชต</h1>
+    <div class="ex-card ex-chat">
+      <div class="ex-chat-list">
+        <div class="ex-h2">ห้องของฉัน</div>
+        <ul id="roomList" class="ex-list"></ul>
+      </div>
+      <div class="ex-chat-room">
+        <div class="ex-h2" id="roomTitle">เลือกห้องเพื่อเริ่มสนทนา</div>
+        <div id="messages" class="ex-chat-messages"></div>
+        <div class="ex-chat-input">
+          <input id="msg" type="text" placeholder="พิมพ์ข้อความ..." style="flex:1;padding:8px;border:1px solid #e5e7eb;border-radius:8px;">
+          <button id="send" class="ex-btn">ส่ง</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/ex.exchange.js"></script>
+  <script src="/js/ex.chat.page.js"></script>
+</body>
+</html>

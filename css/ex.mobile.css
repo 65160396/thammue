@@ -1,0 +1,8 @@
+
+/* ปรับบนมือถือเพิ่มเติม */
+@media (max-width:480px){
+  .ex-h1 { font-size:20px; }
+  .ex-h2 { font-size:16px; }
+  .ex-card { padding:12px; }
+  .ex-actions .ex-btn { padding:8px 10px; }
+}

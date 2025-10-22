@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รายละเอียด (แลกเปลี่ยน) | THAMMUE</title>
+  <!-- สไตล์หลักของระบบซื้อขาย -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/instyle.css" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/search.css" />
+  <!-- สไตล์แลกเปลี่ยน -->
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.requests.css" />
+  <link rel="stylesheet" href="/css/ex.notifications.css" />
+  <link rel="stylesheet" href="/css/ex.mobile.css" />
+  
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">รายละเอียดสินค้า (โหมดแลกเปลี่ยน)</h1>
+    <div class="ex-card">
+      <div id="exItemBox" class="ex-row">
+        <div class="ex-col">
+          <div id="exItemTitle" class="ex-h2">ชื่อสินค้า</div>
+          <div id="exItemMeta" class="ex-muted">เจ้าของ • หมวดหมู่ • สถานะ</div>
+          <div style="margin-top:12px;">
+            <a class="ex-btn" id="btnExSelectOffer" href="/page/ex_select_offer.html">เลือกของที่จะเอามาแลก</a>
+            <button class="ex-btn secondary" id="btnExMakeRequest" disabled>ขอแลกทันที</button>
+          </div>
+          <div class="ex-muted" style="margin-top:8px">* ต้องเลือก "ของที่จะเสนอ" ก่อนจึงจะกด "ขอแลกทันที" ได้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/ex.exchange.js"></script>
+  <script>
+  (function(){
+    // จำลอง: รับพารามิเตอร์ item_id จาก URL เช่น ?id=123
+    const params = new URLSearchParams(location.search);
+    const requested_item_id = parseInt(params.get('id')||'0',10);
+    if(!requested_item_id){ document.getElementById('btnExSelectOffer').disabled=true; }
+
+    // ใช้ sessionStorage ชั่วคราวเก็บ offered_item_id ที่เลือกจากหน้า ex_select_offer.html
+    function getOfferedId(){ return parseInt(sessionStorage.getItem('ex_offered_item_id')||'0',10); }
+    function refreshButton(){
+      const hasOffer = !!getOfferedId();
+      document.getElementById('btnExMakeRequest').disabled = !hasOffer || !requested_item_id;
+    }
+    refreshButton();
+
+    document.getElementById('btnExMakeRequest').addEventListener('click', async ()=>{
+      try{
+        const offered_item_id = getOfferedId();
+        if(!offered_item_id){ alert('ยังไม่ได้เลือกของที่จะเสนอ'); return; }
+        const message = prompt('ข้อความถึงเจ้าของสินค้า (ถ้ามี)') || '';
+        const res = await Ex.exCreateRequest({requested_item_id, offered_item_id, message});
+        alert('ส่งคำขอแล้ว #' + res.request_id);
+        // เคลียร์ของที่เลือก เพื่อป้องกันกดซ้ำ
+        sessionStorage.removeItem('ex_offered_item_id');
+        location.href = '/page/ex_requests.html';
+      }catch(e){ alert('ผิดพลาด: '+e.message); }
+    });
+  })();
+  </script>
+</body>
+</html>

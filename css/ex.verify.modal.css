@@ -1,0 +1,13 @@
+
+/* ex.verify.modal.css */
+.ex-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:1000;}
+.ex-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1001;}
+.ex-modal .ex-sheet{background:#fff;border-radius:18px;max-width:460px;width:92%;box-shadow:0 10px 30px rgba(0,0,0,.15);padding:18px;border:1px solid #e5e7eb;}
+.ex-modal h3{margin:0 0 8px;font-size:18px}
+.ex-modal p{margin:4px 0 10px;color:#6b7280}
+.ex-modal .row{display:flex;gap:8px;align-items:center}
+.ex-modal input[type=text]{flex:1;padding:10px;border:1px solid #e5e7eb;border-radius:10px}
+.ex-modal .ex-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+.ex-modal .ex-btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #d1d5db;background:#111;color:#fff;text-decoration:none}
+.ex-modal .ex-btn.secondary{background:#fff;color:#111}
+.ex-hide{display:none!important}

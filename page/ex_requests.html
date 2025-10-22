@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คำขอแลกเปลี่ยนของฉัน | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">คำขอแลกเปลี่ยนของฉัน</h1>
+    <div class="ex-card">
+      <div class="ex-row">
+        <div class="ex-col">
+          <h2 class="ex-h2">ขาเข้า (คนอื่นขอแลกกับฉัน)</h2>
+          <ul id="incoming" class="ex-list"></ul>
+        </div>
+        <div class="ex-col">
+          <h2 class="ex-h2">ขาออก (ฉันเป็นคนขอ)</h2>
+          <ul id="outgoing" class="ex-list"></ul>
+        </div>
+      </div>
+    </div>
+    <p class="ex-muted">* ใช้บัญชีล็อกอินเดียวกับระบบซื้อขาย</p>
+  </div>
+  <script src="/js/ex.exchange.js"></script>
+  <script>
+  (async function(){
+    function itemLi(r){
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div><b>#${r.id}</b> <span class="ex-badge">${r.status}</span></div>
+        <div>ของที่ขอ: ${r.requested_item_id} | ของที่เสนอ: ${r.offered_item_id}</div>
+        <div class="ex-muted">เมื่อ: ${r.created_at}</div>
+        <div class="ex-actions">
+          ${r.side==='incoming' && r.status==='pending' ? '<button class="ex-btn" data-act="accept">ยอมรับ</button><button class="ex-btn secondary" data-act="decline">ปฏิเสธ</button>' : ''}
+          ${r.side==='outgoing' && r.status==='pending' ? '<button class="ex-btn secondary" data-act="cancel">ยกเลิก</button>' : ''}
+        </div>
+      `;
+      li.addEventListener('click', async (ev)=>{
+        const btn = ev.target.closest('button'); if(!btn) return;
+        try{
+          if(btn.dataset.act==='accept'){ await Ex.exAccept(r.id); }
+          if(btn.dataset.act==='decline'){ await Ex.exDecline(r.id); }
+          if(btn.dataset.act==='cancel'){ await Ex.exCancel(r.id); }
+          location.reload();
+        }catch(e){ alert('เกิดข้อผิดพลาด: '+e.message); }
+      });
+      return li;
+    }
+    try{
+      const data = await Ex.exListMyRequests();
+      const incoming = document.getElementById('incoming');
+      const outgoing = document.getElementById('outgoing');
+      (data.incoming||[]).forEach(r=>incoming.appendChild(itemLi({...r, side:'incoming'})));
+      (data.outgoing||[]).forEach(r=>outgoing.appendChild(itemLi({...r, side:'outgoing'})));
+      if(!incoming.children.length) incoming.innerHTML = '<li class="ex-muted">ว่าง</li>';
+      if(!outgoing.children.length) outgoing.innerHTML = '<li class="ex-muted">ว่าง</li>';
+    }catch(e){
+      alert('โหลดข้อมูลไม่ได้: '+e.message);
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+/* /css/ex.exchange.css */
+:root { --ex-gap: 12px; --ex-radius: 12px; --ex-line:#e5e7eb; --ex-ink:#0f172a; }
+.ex-container { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+.ex-card { border:1px solid var(--ex-line); border-radius: var(--ex-radius); padding:16px; margin-bottom:16px; background:#fff; }
+.ex-h1 { font-size: 22px; margin: 0 0 12px; }
+.ex-h2 { font-size: 18px; margin: 0 0 8px; }
+.ex-row { display:flex; gap: var(--ex-gap); flex-wrap: wrap; }
+.ex-col { flex:1 1 280px; min-width: 260px; }
+.ex-btn { display:inline-block; padding:10px 14px; border-radius:10px; border:1px solid #d1d5db; background:#111; color:#fff; text-decoration:none; }
+.ex-btn.secondary { background:#fff; color:#111; }
+.ex-badge { font-size: 12px; padding:4px 8px; border-radius:999px; background:#f3f4f6; border:1px solid #e5e7eb; }
+.ex-list { list-style:none; padding:0; margin:0; }
+.ex-list li { padding:10px 0; border-bottom:1px dashed var(--ex-line); }
+.ex-muted { color:#6b7280; }
+.ex-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+@media (max-width:680px){
+  .ex-col { min-width: 100%; }
+}

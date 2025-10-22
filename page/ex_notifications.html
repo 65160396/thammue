@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>การแจ้งเตือนแลกเปลี่ยน | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+</head>
+<body>
+  <div class="ex-container">
+    <h1 class="ex-h1">การแจ้งเตือน (แลกเปลี่ยน)</h1>
+    <div class="ex-card">
+      <ul id="notis" class="ex-list"></ul>
+    </div>
+    <p class="ex-muted">* ระบบนี้แยกตารางแจ้งเตือนสำหรับการแลกเปลี่ยน (ex_notifications)</p>
+  </div>
+  <script src="/js/ex.exchange.js"></script>
+  <script>
+    (async function(){
+      try{
+        const res = await Ex.exListNoti();
+        const ul = document.getElementById('notis');
+        if(!res.items || !res.items.length){ ul.innerHTML = '<li class="ex-muted">ไม่มีแจ้งเตือน</li>'; return; }
+        res.items.forEach(n=>{
+          const li = document.createElement('li');
+          li.innerHTML = `<div><b>${n.title||'-'}</b></div><div class="ex-muted">${n.body||''}</div><div class="ex-muted">${n.created_at}</div>`;
+          ul.appendChild(li);
+        });
+      }catch(e){ alert('โหลดแจ้งเตือนผิดพลาด: '+e.message); }
+    })();
+  </script>
+</body>
+</html>

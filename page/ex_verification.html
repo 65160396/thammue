@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ยืนยันตัวตน (KYC) | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.verify.kyc.css" />
+</head>
+<body>
+  <div class="ex-kyc-wrap">
+    <h1 class="ex-h1">ยืนยันตัวตน</h1>
+    <div class="ex-kyc-card">
+      <div class="ex-kyc-status" id="kycStatus">กำลังตรวจสอบสถานะ...</div>
+      <p class="ex-kyc-note">กรอกข้อมูลตามบัตรประชาชน และอัปโหลดรูปบัตร/เซลฟีถือบัตร เพื่อยืนยันตัวตนครั้งแรก ระบบจะไม่ถามซ้ำสำหรับผู้ใช้เดิม (ตรวจผ่าน user_id)</p>
+    </div>
+
+    <div class="ex-kyc-card">
+      <div class="ex-kyc-grid">
+        <label>ชื่อ-นามสกุล (ตามบัตร)</label>
+        <input type="text" id="full_name" placeholder="ชื่อ นามสกุล">
+
+        <label>เลขบัตรประชาชน</label>
+        <input type="text" id="national_id" placeholder="13 หลัก">
+
+        <label>วันเกิด</label>
+        <input type="date" id="dob">
+
+        <label>ที่อยู่ตามบัตร</label>
+        <textarea id="address" rows="3" placeholder="บ้านเลขที่ / หมู่ / ซอย / ถนน / แขวง/ตำบล / เขต/อำเภอ / จังหวัด / รหัสไปรษณีย์"></textarea>
+
+        <label>รูปบัตร (ด้านหน้า)</label>
+        <div>
+          <img id="img_front_preview" class="ex-kyc-thumb" alt="front preview">
+          <div class="ex-kyc-actions" style="margin-top:8px">
+            <input id="img_front" type="file" accept="image/*">
+            <button class="ex-btn secondary" id="btnUploadFront" type="button">อัปโหลด</button>
+          </div>
+          <div class="ex-kyc-note" id="url_front"></div>
+        </div>
+
+        <label>รูปบัตร (ด้านหลัง)</label>
+        <div>
+          <img id="img_back_preview" class="ex-kyc-thumb" alt="back preview">
+          <div class="ex-kyc-actions" style="margin-top:8px">
+            <input id="img_back" type="file" accept="image/*">
+            <button class="ex-btn secondary" id="btnUploadBack" type="button">อัปโหลด</button>
+          </div>
+          <div class="ex-kyc-note" id="url_back"></div>
+        </div>
+
+        <label>เซลฟีถือบัตร</label>
+        <div>
+          <img id="img_selfie_preview" class="ex-kyc-thumb" alt="selfie preview">
+          <div class="ex-kyc-actions" style="margin-top:8px">
+            <input id="img_selfie" type="file" accept="image/*">
+            <button class="ex-btn secondary" id="btnUploadSelfie" type="button">อัปโหลด</button>
+          </div>
+          <div class="ex-kyc-note" id="url_selfie"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ex-kyc-card">
+      <div class="ex-kyc-actions">
+        <button class="ex-btn" id="btnSubmit">ส่งข้อมูลยืนยันตัวตน</button>
+        <a class="ex-btn secondary" href="/page/ex_item_new.html">กลับไปเพิ่มสินค้า</a>
+      </div>
+      <p class="ex-kyc-note">หมายเหตุ: เมื่อส่งแล้วสถานะจะเป็น “รอตรวจสอบ (pending)” หรือ “ยืนยันแล้ว (approved)” ตามการตั้งค่าระบบของคุณ</p>
+    </div>
+  </div>
+
+  <script src="/js/ex.verify.kyc.page.js"></script>
+</body>
+</html>

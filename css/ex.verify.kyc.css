@@ -1,0 +1,14 @@
+
+/* ex.verify.kyc.css */
+.ex-kyc-wrap{max-width:900px;margin:24px auto;padding:0 16px}
+.ex-kyc-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:16px}
+.ex-kyc-grid{display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:center}
+.ex-kyc-grid input[type=text], .ex-kyc-grid input[type=date], .ex-kyc-grid textarea{
+  padding:10px;border:1px solid #e5e7eb;border-radius:10px;width:100%;
+}
+.ex-kyc-note{color:#6b7280}
+.ex-kyc-thumb{width:160px;height:100px;object-fit:cover;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc}
+.ex-kyc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ex-kyc-status{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#f3f4f6;font-size:12px}
+.ex-kyc-danger{background:#fef2f2;border-color:#fecaca}
+.ex-kyc-ok{background:#ecfdf5;border-color:#a7f3d0}
