@@ -4,10 +4,37 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Thammue</title>
+
+    <!-- CSS หลัก -->
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/instyle.css" />
-    <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="/css/search.css" />
     <link rel="stylesheet" href="/css/products.css" />
+
+    <!-- CSS เพิ่มสำหรับเมนูโปรไฟล์ใน Drawer -->
+    <style>
+      .icons-drawer .drawer-acc{
+        display:grid; grid-template-columns:32px 1fr auto;
+        align-items:center; gap:12px; width:100%;
+        padding:12px 8px; border-radius:12px; border:0;
+        background:transparent; color:#fff; text-align:left; cursor:pointer;
+      }
+      .icons-drawer .drawer-acc:hover{ background:rgba(255,255,255,.08); }
+      .icons-drawer .drawer-acc .chev{ width:16px; height:16px; opacity:.7; transition:transform .2s ease; }
+      .icons-drawer .drawer-acc[aria-expanded="true"] .chev{ transform:rotate(180deg); }
+      .icons-drawer .drawer-acc-menu{
+        display:flex; flex-direction:column; gap:2px;
+        margin-left:44px; padding:8px 0 12px;
+      }
+      .icons-drawer .drawer-acc-menu a{
+        padding:8px; border-radius:10px; color:#fff; text-decoration:none;
+      }
+      .icons-drawer .drawer-acc-menu a:hover{ background:rgba(255,255,255,.08); }
+      .icons-drawer .drawer-acc-menu hr{
+        border:none; border-top:1px solid rgba(255,255,255,.12); margin:6px 0;
+      }
+      .icons-drawer .drawer-acc-menu a.logout{ color:#ff6b6b; }
+    </style>
   </head>
 
   <body>
@@ -33,74 +60,75 @@
         <a href="/page/main.html" class="brand-text">THAMMUE</a>
       </div>
 
-      <button class="hamburger" id="hamburgerBtn" type="button"
-        aria-label="เมนู">
-        <img src="/img/Icon/menu.png" alt="เมนู">
+      <!-- ปุ่มแฮมเบอร์เกอร์ (มือถือ) -->
+      <button
+        class="hamburger"
+        id="hamburgerBtn"
+        type="button"
+        aria-label="เมนู"
+        aria-controls="iconsDrawer"
+        aria-expanded="false">
+        <img src="/img/Icon/menu.png" alt="เมนู" />
       </button>
 
-      <!--ค้นหา-->
+      <!-- ค้นหา + ไอคอนขวา (เดสก์ท็อป) -->
       <div class="search-container">
         <div class="search-group">
-          <input id="q" type="text" placeholder="ค้นหาสินค้า"
-            autocomplete="off" autocapitalize="off" spellcheck="false"
-            role="combobox" aria-autocomplete="list" aria-expanded="false"
-            aria-controls="qSuggest" aria-haspopup="listbox" />
+          <input
+            id="q"
+            type="text"
+            placeholder="ค้นหาสินค้า"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="qSuggest"
+            aria-haspopup="listbox" />
 
           <button id="btnSearch" class="search-button" type="button"
             aria-label="ค้นหา">
             <img src="/img/Icon/search.png" alt="ค้นหา" />
           </button>
 
-          <!-- เอา hidden ออก -->
           <div id="qSuggest" class="search-suggest"></div>
         </div>
 
         <div class="icon-buttons desktop-icons">
           <a class="action-button" href="/page/favorites/index.php"
             aria-label="รายการโปรด">
-            <img src="/img/Icon/heart.png" alt="รายการโปรด">
+            <img src="/img/Icon/heart.png" alt="รายการโปรด" />
             <span id="favBadge" class="icon-badge" hidden>0</span>
           </a>
 
           <a class="action-button" href="/page/cart/index.php"
             aria-label="ตะกร้า" style="position:relative">
-            <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+            <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" />
             <span id="cartBadge" class="icon-badge" hidden>0</span>
           </a>
 
           <a class="action-button" href="/page/storepage/chat.html"
             aria-label="แชท" style="position:relative">
-            <img src="/img/Icon/chat.png" alt="แชท">
+            <img src="/img/Icon/chat.png" alt="แชท" />
             <span id="chatBadge" class="icon-badge" hidden>0</span>
-            <!-- ✅ badge -->
           </a>
 
           <!-- ▼ โปรไฟล์ + ชื่อ + เมนูดรอปดาวน์ -->
           <div class="user-menu" id="userMenu">
-            <!---กล่องรวมปุ่มโปรไฟล์ + เมนูดรอปดาวน์ -->
-
             <button class="user-area" id="userArea" aria-haspopup="true"
-              aria-expanded="false"> <!---userArea ที่ไว้ เปิด ปิดเมนู-->
-
+              aria-expanded="false">
               <img src="/img/Icon/user.png" alt="โปรไฟล์" />
               <span class="user-chip" id="userChip" hidden></span>
-              <!---userChip ที่ไว้โชว์ชื่อผู้ใช้-->
               <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                <!---ตัวเลขเป็นพิกัดวาดรูปลูกศร ชี้ลง-->
-                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
-                  stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round" />
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </button>
-
-            <div class="user-dropdown" id="userDropdown"
-              role="menu">
-              <!-- JS จะเติมรายการให้หลังจาก login/logout -->
-            </div>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -122,6 +150,7 @@
     <div class="ad-banner">
       <img src="/img/Illustration/โฆษณา.jpg" alt="โฆษณา" />
     </div>
+
     <!-- ผลการค้นหา -->
     <section id="searchSection" class="search-results" hidden>
       <div class="search-results__head">
@@ -137,81 +166,165 @@
       <div id="homeGrid" class="product-grid"></div>
     </section>
 
+    <!-- ===== สคริปต์ส่วนบน (ไม่เกี่ยวกับ drawer) ===== -->
     <script src="/js/nav-active.js"></script>
     <script src="/js/flashmessage.js"></script>
-    <!--แสดง flash message ชั่วคราวจากพารามิเตอร์-->
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
     <script src="/js/api/products.js" defer></script>
     <script src="/js/category/category-feed.js" defer></script>
-    
-    <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+
+    <!-- ดูว่าเมลนี้มีร้านค้ายัง -->
     <script src="/js/store/shop-toggle.js"></script>
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleOpenOrMyShop();
-  });
-</script>
+      document.addEventListener('DOMContentLoaded', () => {
+        toggleOpenOrMyShop();
+      });
+    </script>
 
     <script src="/js/productsforsale/products-list.js"></script>
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    renderProducts({
-      endpoint: '/page/backend/productsforsale/get_products.php' ,
-      container: '#homeGrid'
-    });
-  });
-</script>
-    <script src="/js/nav/hamburger.js"></script>
+      document.addEventListener('DOMContentLoaded', () => {
+        renderProducts({
+          endpoint: '/page/backend/productsforsale/get_products.php',
+          container: '#homeGrid',
+        });
+      });
+    </script>
 
+    <!-- badge counters (เดสก์ท็อป) -->
     <script src="/js/fav-badge.js" defer></script>
     <script src="/js/cart-badge.js" defer></script>
 
+    <!-- ===== Drawer มือถือ ===== -->
     <div class="icons-drawer" id="iconsDrawer" hidden>
-      <button class="icons-drawer__close" id="iconsClose">ปิด</button>
-      <a href="/page/favorites/index.php"><img src="/img/Icon/heart.png" alt>
-        รายการโปรด</a>
-      <a href="/page/cart/index.php"><img src="/img/Icon/shopping-cart.png"
-          alt> ตะกร้า</a>
-      <a href="/page/storepage/chat.html"><img src="/img/Icon/chat.png" alt>
-        แชท</a>
+      <button class="icons-drawer__close" id="iconsClose"
+        type="button">ปิด</button>
+
+      <a href="/page/favorites/index.php">
+        <img src="/img/Icon/heart.png" alt /> รายการโปรด
+        <span class="badge" id="favBadgeMobile" hidden>0</span>
+      </a>
+
+      <a href="/page/cart/index.php">
+        <img src="/img/Icon/shopping-cart.png" alt /> ตะกร้า
+        <span class="badge" id="cartBadgeMobile" hidden>0</span>
+      </a>
+
+      <a href="/page/storepage/chat.html">
+        <img src="/img/Icon/chat.png" alt /> แชท
+        <span class="badge" id="chatBadgeMobile" hidden>0</span>
+      </a>
+
+      <!-- ✅ โปรไฟล์: ปุ่ม + เมนูย่อย -->
+      <button id="mobileProfileToggle" class="drawer-acc" aria-expanded="false"
+        type="button">
+        <img src="/img/Icon/user.png" alt> โปรไฟล์
+        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <div id="mobileAccountMenu" class="drawer-acc-menu" hidden></div>
     </div>
+
     <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
 
-    <!-- ใส่ท้ายหน้า ก่อนปิด </body> -->
+    <!-- ===== สคริปต์ท้ายหน้า ===== -->
     <script src="/js/search/search.js"></script>
-
     <script>
-  if (!localStorage.getItem('searchHistory')) {
-    localStorage.setItem('searchHistory', JSON.stringify(['ทำมือ', 'สร้อยผ้า', 'งานประดิษฐ์']));
-  }
-</script>
-
+      if (!localStorage.getItem('searchHistory')) {
+        localStorage.setItem('searchHistory', JSON.stringify(['ทำมือ', 'สร้อยผ้า', 'งานประดิษฐ์']));
+      }
+    </script>
     <script>
-Search.init({
-  input:   "#q",
-  button:  "#btnSearch",
-  results: "#results",
-  endpoint: "/page/backend/search_products.php",
-  per: 24,
-  sort: "relevance",
-  minLength: 1,
-  debounceMs: 300,
-  prefillLastOnLoad: false,
-  rememberLast: true,
-  mode: 'full'
-});
-</script>
+      // hotfix: บังคับโชว์เวลาโฟกัส เพื่อกันธีมอื่นที่ใช้ [hidden]{display:none!important}
+      const qEl = document.getElementById('q');
+      if (qEl) {
+        qEl.addEventListener('focus', () => {
+          const box = document.getElementById('qSuggest');
+          if (box) {
+            box.classList.add('show');
+            box.removeAttribute('hidden');
+          }
+        });
+      }
+    </script>
 
+    <!-- โหลดหลังจากมี DOM ของ drawer/backdrop แล้ว -->
+    <script src="/js/nav/hamburger.js"></script>
+
+    <!-- เมนูโปรไฟล์สำหรับ Drawer (เรนเดอร์ตามสถานะล็อกอิน) -->
     <script>
-  // hotfix: บังคับโชว์เวลาโฟกัส เพื่อกันธีมอื่นที่ใช้ [hidden]{display:none!important}
-  document.getElementById('q').addEventListener('focus', () => {
-    const box = document.getElementById('qSuggest');
-    box.classList.add('show');
-    box.removeAttribute('hidden');
-  });
-</script>
+      (function () {
+    const toggle = document.getElementById('mobileProfileToggle');
+    const menu   = document.getElementById('mobileAccountMenu');
+    const dd     = document.getElementById('userDropdown'); // เมนูเดสก์ท็อป
+    if (!toggle || !menu || !dd) return;
+
+    // ช่วยบอกสถานะล็อกอินจากเดสก์ท็อป: มีลิงก์ .logout แปลว่าล็อกอินแล้ว
+    const isLoggedInFromDesktop = () => !!dd.querySelector('a.logout');
+
+    // clone เมนูจากเดสก์ท็อปมาใส่ใน drawer (รักษา <hr> และ class .logout)
+    function syncMenuFromDesktop() {
+      const fr = document.createDocumentFragment();
+      const items = dd.querySelectorAll('a, hr');
+      if (items.length) {
+        items.forEach((el) => {
+          const clone = el.cloneNode(true);
+          // ลบ role/aria ที่ไม่จำเป็น และบังคับสีใน drawer
+          if (clone.tagName === 'A') {
+            clone.removeAttribute('role');
+            clone.style.color = 'inherit';
+          }
+          fr.appendChild(clone);
+        });
+        menu.innerHTML = '';
+        menu.appendChild(fr);
+        return true;
+      }
+      return false;
+    }
+
+    // fallback ถ้าเดสก์ท็อปยังไม่เติมเมนู (เช่นโหลดช้า)
+    function renderFallback() {
+      if (isLoggedInFromDesktop()) {
+        menu.innerHTML = `
+          <a href="/page/account/index.html">บัญชีของฉัน</a>
+          <a href="/page/order/history.html">การซื้อของฉัน</a>
+          <a href="/page/account/change_password.html">เปลี่ยนรหัสผ่าน</a>
+          <hr>
+          <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
+        `;
+      } else {
+        menu.innerHTML = `
+          <a href="/page/login.html">เข้าสู่ระบบ</a>
+          <a href="/page/register.html">สมัครสมาชิก</a>
+        `;
+      }
+    }
+
+    // เปิด/ปิดเมนูโปรไฟล์ใน drawer
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      if (!expanded) {
+        // ครั้งแรกที่จะเปิด: พยายามซิงก์จากเดสก์ท็อปก่อน
+        const ok = syncMenuFromDesktop();
+        if (!ok) renderFallback();
+      }
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      menu.hidden = expanded;
+    });
+
+    // ถ้าเดสก์ท็อปเติมเมนูภายหลัง (user-menu.js async) ให้ sync อัตโนมัติ
+    const mo = new MutationObserver(() => {
+      if (!menu.hidden) syncMenuFromDesktop();
+    });
+    mo.observe(dd, { childList: true, subtree: true });
+  })();
+    </script>
+
     <script src="/js/notify-poll.js"></script>
-
   </body>
 </html>
