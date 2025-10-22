@@ -1,4 +1,4 @@
-// /thammue/public/js/dot/category.page.js
+// /exchangepage/public/js/dot/category.page.js
 import { Kebab } from '../cards.kebab.js';
 
 const API_BASE = '/exchangepage/api';
@@ -18,8 +18,7 @@ function getCatName(id) {
   if (!id) return null;
   const mapFromPage = (window.__CAT_MAP__ || {});
   if (mapFromPage[id]) return mapFromPage[id];
-
-  // สำรอง (กันกรณีลืมประกาศในหน้า HTML)
+  // สำรอง
   const FALLBACK = {
     1: 'แฮนเมด',
     2: 'ของประดิษฐ์',
@@ -32,12 +31,12 @@ function getCatName(id) {
 }
 
 function cardHtml(it) {
-  const img = it.cover || (it.images && it.images[0]) || '../img/placeholder.png';
+  const img = it.cover || (it.images && it.images[0]) || '/exchangepage/public/img/placeholder.png';
   const title = it.title || '';
   const id = it.id;
   const province = it.province || '';
-  const catName = it.category_name || it.category || ''; // จาก API ถ้ามี
-  const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
+  const catName = it.category_name || it.category || '';
+  const href = `/exchangepage/public/detail.html?id=${encodeURIComponent(id)}&view=public`;
   const isOwner = it.is_owner === true;
 
   const menuHtml = isOwner
@@ -45,7 +44,9 @@ function cardHtml(it) {
       <button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
       <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>
     `
-    : `<button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>`;
+    : `
+      <button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>
+    `;
 
   return `
   <article class="card" data-card-id="${id}">
@@ -94,10 +95,10 @@ async function fetchAndRender(append = false) {
   const btn = document.getElementById('loadMore');
   const qs = getQS();
 
-  // ตั้งหัวข้อด้วย "ชื่อหมวด" ไม่ใช่เลข
+  // ตั้งหัวข้อด้วย "ชื่อหมวด"
   const name = getCatName(qs.category_id);
-  document.getElementById('catTitle').textContent =
-    name ? `สินค้าในหมวด: ${name}` : 'รายการสินค้า';
+  const h = document.getElementById('catTitle');
+  if (h) h.textContent = name ? `สินค้าในหมวด: ${name}` : 'รายการสินค้า';
 
   try {
     const res = await fetch(`${API_BASE}/items/list.php${buildQuery(qs)}`, { cache: 'no-store' });
@@ -129,19 +130,19 @@ async function fetchAndRender(append = false) {
 fetchAndRender(false);
 
 // โหลดเพิ่ม
-document.getElementById('loadMore').addEventListener('click', () => fetchAndRender(true));
+document.getElementById('loadMore')?.addEventListener('click', () => fetchAndRender(true));
 
 // จัดการ action edit/delete/report ด้วย event delegation
-document.getElementById('catGrid').addEventListener('click', async (e) => {
+document.getElementById('catGrid')?.addEventListener('click', async (e) => {
   const itemBtn = e.target.closest('.card-kebab__item');
   if (!itemBtn) return;
-
   e.preventDefault();
+
   const action = itemBtn.dataset.action;
   const itemId = itemBtn.dataset.id;
 
   if (action === 'edit') {
-    location.href = `edit.html?id=${encodeURIComponent(itemId)}`;
+    location.href = `/exchangepage/public/edit.html?id=${encodeURIComponent(itemId)}`;
     return;
   }
 
@@ -150,7 +151,10 @@ document.getElementById('catGrid').addEventListener('click', async (e) => {
     try {
       const r = await fetch(`${API_BASE}/items/delete.php`, {
         method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
         body: new URLSearchParams({ id: String(itemId) })
       });
       const d = await r.json().catch(()=> ({}));
@@ -173,7 +177,10 @@ document.getElementById('catGrid').addEventListener('click', async (e) => {
     try {
       const r = await fetch(`${API_BASE}/items/report.php`, {
         method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
         body: new URLSearchParams({ id: String(itemId), reason })
       });
       const d = await r.json().catch(()=> ({}));

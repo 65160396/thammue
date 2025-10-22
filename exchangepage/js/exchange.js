@@ -1,19 +1,18 @@
-// /js/exchange.js
+// /exchangepage/public/js/exchange.js
 /* =========================================================
  * Thammue - Exchange Form (Wizard + Single-pick Accumulate Uploader)
  * - เลือกไฟล์ครั้งละ 1 รูป (input ไม่มี multiple)
  * - กด/ลากวางซ้ำเพื่อสะสมรูปได้
  * - ลบรายรูปได้
- * - ไม่ตรวจรูปซ้ำ (ตามที่ต้องการ)
- * - ปล่อยให้ form submit ไป PHP ตาม action ได้จริง (no preventDefault เว้นแต่ invalid)
+ * - ไม่ตรวจรูปซ้ำ
+ * - ปล่อยให้ form submit ไป PHP ตาม action ได้จริง
  * ========================================================= */
-
 document.addEventListener('DOMContentLoaded', () => {
   // ---------- Grab Elements ----------
-  const form   = document.getElementById('exchangeForm');
+  const form = document.getElementById('exchangeForm');
   const panels = Array.from(document.querySelectorAll('.panel'));
-  const fill   = document.querySelector('.stepper-fill');
-  const dots   = Array.from(document.querySelectorAll('.step .dot'));
+  const fill = document.querySelector('.stepper-fill');
+  const dots = Array.from(document.querySelectorAll('.step .dot'));
 
   // ---------- Wizard ----------
   let step = 0;
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // แยก phase = 'nav' (ตอน next/back) กับ 'submit' (ตอนส่งฟอร์ม)
+  // แยก phase = 'nav' กับ 'submit'
   const firstInvalidIn = (el, opts = {}) => {
     const phase = opts.phase || 'nav';
     const controls = el.querySelectorAll('input, select, textarea');
@@ -42,35 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (invalid) { invalid.reportValidity(); return; }
     showStep(step + 1);
   }));
-
   document.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => {
     showStep(step - 1);
   }));
-
   showStep(0);
 
   // ---------- Uploader (single-pick per add, accumulate many) ----------
   function bindUploader(inputId, thumbsId, opts = {}) {
-    const input   = document.getElementById(inputId);
-    const thumbs  = document.getElementById(thumbsId);
+    const input = document.getElementById(inputId);
+    const thumbs = document.getElementById(thumbsId);
     const trigger = document.querySelector(`.upload-box[data-for="${inputId}"]`);
     if (!input || !thumbs || !trigger) return;
 
-    // กัน bind ซ้ำ
     if (input.dataset.bound === '1') return;
     input.dataset.bound = '1';
 
     // ตั้งค่า
-    input.removeAttribute('multiple'); // เลือกครั้งละ 1 รูป
-    const MAX_FILES   = opts.maxFiles ?? 10;
-    const MAX_MB      = opts.maxMB ?? 8;
+    input.removeAttribute('multiple');
+    const MAX_FILES = opts.maxFiles ?? 10;
+    const MAX_MB = opts.maxMB ?? 8;
     const ACCEPT_LIST = (input.accept || 'image/*').split(',').map(s => s.trim().toLowerCase());
 
     /** @type {File[]} */
-    const store = []; // แหล่งความจริง
+    const store = [];
 
-    const isAccept = (file) =>
-      ACCEPT_LIST.some(acc => acc === 'image/*' ? file.type.startsWith('image/') : file.type.toLowerCase() === acc);
+    const isAccept = (file) => ACCEPT_LIST.some(acc =>
+      acc === 'image/*' ? file.type.startsWith('image/') : file.type.toLowerCase() === acc
+    );
 
     // เปิดไฟล์ด้วยคลิก/คีย์บอร์ด
     const openPicker = () => { input.value = ''; input.click(); };
@@ -81,16 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // drag & drop
-    ['dragenter','dragover'].forEach(evt =>
-      trigger.addEventListener(evt, e => { e.preventDefault(); trigger.classList.add('drag'); })
-    );
-    ['dragleave','drop'].forEach(evt =>
-      trigger.addEventListener(evt, e => { e.preventDefault(); trigger.classList.remove('drag'); })
-    );
+    ['dragenter','dragover'].forEach(evt => trigger.addEventListener(evt, e => {
+      e.preventDefault(); trigger.classList.add('drag');
+    }));
+    ['dragleave','drop'].forEach(evt => trigger.addEventListener(evt, e => {
+      e.preventDefault(); trigger.classList.remove('drag');
+    }));
     trigger.addEventListener('drop', (e) => {
       const list = e.dataTransfer?.files;
       if (!list || !list.length) return;
-      addOne(list[0]); // รับไฟล์แรกต่อครั้ง
+      addOne(list[0]); // รับครั้งละ 1 รูป
     });
 
     // file picker (ครั้งละ 1)
@@ -108,19 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
       syncInputFromStore();
       renderThumbs();
     }
-
     function removeAt(index) {
       store.splice(index, 1);
       syncInputFromStore();
       renderThumbs();
     }
-
     function syncInputFromStore() {
       const dt = new DataTransfer();
       store.forEach(f => dt.items.add(f));
       input.files = dt.files;
     }
-
     function renderThumbs() {
       thumbs.innerHTML = '';
       store.forEach((file, idx) => {
@@ -142,35 +136,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ให้ตรงกับ HTML ปัจจุบัน
-  bindUploader('images',      'thumbs1', { maxFiles: 10, maxMB: 8 });
+  bindUploader('images', 'thumbs1', { maxFiles: 10, maxMB: 8 });
   bindUploader('want_images', 'thumbs2', { maxFiles: 10, maxMB: 8 });
 
   // ---------- Form Submit ----------
-  // ---------- Form Submit ----------
-form?.addEventListener('submit', (e) => {
-  // ตรวจทุกสเต็ป…
-  for (let s = 0; s < panels.length; s++) {
-    const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
-    if (invalid) { 
+  form?.addEventListener('submit', (e) => {
+    // ตรวจทุกสเต็ป…
+    for (let s = 0; s < panels.length; s++) {
+      const invalid = firstInvalidIn(panels[s], { phase: 'submit' });
+      if (invalid) {
+        e.preventDefault();
+        showStep(s);
+        invalid.reportValidity();
+        return;
+      }
+    }
+    // ต้องมีรูปอย่างน้อย 1 รูป
+    const imgInput = document.getElementById('images');
+    if (!imgInput || imgInput.files.length === 0) {
       e.preventDefault();
-      showStep(s);
-      invalid.reportValidity();
+      showStep(0);
+      alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
       return;
     }
-  }
-
-  // ต้องมีรูปอย่างน้อย 1 รูป (เพราะเราเอา required ออกจาก input ที่ซ่อน)
-  const imgInput = document.getElementById('images');
-  if (!imgInput || imgInput.files.length === 0) {
-    e.preventDefault();
-    showStep(0);
-    alert('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป');
-    return;
-  }
-
-  // ปล่อยให้เบราว์เซอร์ submit ต่อไปตามปกติ (อย่าเรียก preventDefault อีก)
+    // ปล่อยให้เบราว์เซอร์ submit ต่อไปตาม action ของฟอร์ม
+  });
 });
-
-
-});
-

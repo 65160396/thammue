@@ -1,4 +1,5 @@
 <?php
+// /exchangepage/api/requests/update.php
 require __DIR__ . '/../_config.php';
 require __DIR__ . '/../notifications/_lib.php';
 
@@ -11,7 +12,6 @@ $id  = (int)($_POST['id'] ?? 0);
 $act = (string)($_POST['action'] ?? '');
 if ($id<=0 || !in_array($act, ['accept','reject'], true)) json_err('BAD_REQ', 400);
 
-/* ดึงข้อมูลคำขอ + เจ้าของไอเท็ม + ผู้ยื่นคำขอ + ชื่อสินค้า */
 $st = $pdo->prepare("
   SELECT r.id, r.item_id, r.status,
          r.requester_user_id AS requester_id,
@@ -32,15 +32,11 @@ $new = ($act==='accept') ? 'accepted' : 'rejected';
 
 $pdo->beginTransaction();
 try {
-  // 1) อัปเดตสถานะ
   $pdo->prepare("UPDATE requests SET status=:s, decided_at=NOW() WHERE id=:id")
       ->execute([':s'=>$new, ':id'=>$id]);
 
-  // 2) ยิงแจ้งเตือนไปยังผู้ยื่นคำขอ + สำเนาให้เจ้าของ
   $requesterId = (int)$row['requester_id'];
-  if ($requesterId <= 0) { // กันพลาดสคีมา
-    throw new RuntimeException('REQUESTER_ID_MISSING');
-  }
+  if ($requesterId <= 0) throw new RuntimeException('REQUESTER_ID_MISSING');
 
   $itemTitle = (string)($row['item_title'] ?? '');
   $statusTxt = ($new==='accepted') ? 'ถูกตอบรับ' : 'ถูกปฏิเสธ';
@@ -48,8 +44,7 @@ try {
   $body      = $itemTitle ? "รายการ: \"{$itemTitle}\" (คำขอ #{$id})" : "คำขอ #{$id}";
   $link      = THAMMUE_BASE . "/public/request-detail.html?id={$id}";
 
-  notify($pdo, $requesterId, 'exchange', $title, $body, $link);                         // ผู้ยื่นคำขอ
- 
+  notify($pdo, $requesterId, 'exchange', $title, $body, $link);
 
   $pdo->commit();
   json_ok(['status'=>$new]);

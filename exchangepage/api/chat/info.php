@@ -18,4 +18,4 @@ $st->execute([':c'=>$cid, ':u'=>$uid]);
 $cv = $st->fetch(); if(!$cv) json_err('NOT_FOUND', 404);
 
 $other = ((int)$cv['user_a']===$uid) ? ($cv['b_name'] ?? 'อีกฝ่าย') : ($cv['a_name'] ?? 'อีกฝ่าย');
-json_ok(['other_name'=>$other,'item_title'=>$cv['item_title'] ?? null]);
+json_ok(['other_name'=>$other, 'item_title'=>$cv['item_title'] ?? null]);

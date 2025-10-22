@@ -1,5 +1,5 @@
 <?php
-// /thammue/api/items/images.upload.php
+// /exchangepage/api/items/images.upload.php
 declare(strict_types=1);
 require __DIR__ . '/../_config.php';
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
@@ -12,14 +12,14 @@ if (!$uid) json_err('UNAUTH', 401);
 $itemId = (int)($_POST['item_id'] ?? 0);
 if ($itemId <= 0) json_err('MISSING_ITEM_ID', 422);
 
-// ตรวจสิทธิ์เจ้าของ
+// owner only
 $own = $pdo->prepare("SELECT user_id FROM items WHERE id=:id");
 $own->execute([':id'=>$itemId]);
 $owner = (int)$own->fetchColumn();
 if (!$owner) json_err('NOT_FOUND', 404);
 if ($owner !== $uid) json_err('FORBIDDEN', 403);
 
-// ค้นหา sort สูงสุด
+// sort base
 $maxSt = $pdo->prepare("SELECT COALESCE(MAX(sort_order),0) FROM item_images WHERE item_id=:id");
 $maxSt->execute([':id'=>$itemId]);
 $baseSort = (int)$maxSt->fetchColumn();
@@ -40,17 +40,12 @@ if (!empty($_FILES['files']) && is_array($_FILES['files']['name'])) {
     $dest  = $destBase . '/' . $fname;
     if (!@move_uploaded_file($tmp, $dest)) continue;
 
-    // path ที่เก็บใน DB ให้สัมพันธ์กับ $BASE (/thammue/)
     $relPath = 'uploads/items/' . $itemId . '/' . $fname;
 
     $ins = $pdo->prepare("INSERT INTO item_images (item_id, path, sort_order) VALUES (:item,:path,:sort)");
-    $ins->execute([
-      ':item' => $itemId,
-      ':path' => $relPath,
-      ':sort' => ++$baseSort,
-    ]);
+    $ins->execute([':item'=>$itemId, ':path'=>$relPath, ':sort'=>++$baseSort]);
 
-    $added[] = ['id' => (int)$pdo->lastInsertId(), 'url' => '/thammue/'.$relPath];
+    $added[] = ['id'=>(int)$pdo->lastInsertId(), 'url'=> THAMMUE_BASE . '/' . $relPath];
   }
 }
 

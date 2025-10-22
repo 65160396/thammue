@@ -1,4 +1,4 @@
-// /thammue/public/js/cards.kebab.js
+// /exchangepage/public/js/cards.kebab.js
 // โมดูลจัดการปุ่ม 3 จุดบนการ์ด (toggle/close) ด้วย event delegation
 
 function closeAll(scope = document) {
@@ -22,13 +22,14 @@ function toggle(btn) {
   }
 }
 
-// ป้องกัน bind ซ้ำ: เก็บ reference ไว้สำหรับถอน event ได้ถ้าต้องการ
+// ป้องกัน bind ซ้ำ
 const _bound = new WeakSet();
 
 function bind(rootSelectorOrEl = document) {
   const root = typeof rootSelectorOrEl === 'string'
     ? document.querySelector(rootSelectorOrEl)
     : rootSelectorOrEl;
+
   if (!root || _bound.has(root)) return;
   _bound.add(root);
 
@@ -36,16 +37,14 @@ function bind(rootSelectorOrEl = document) {
   root.addEventListener('click', (e) => {
     const kebabBtn = e.target.closest('.card-kebab__btn');
     if (!kebabBtn) return;
-    // ต้องให้ปุ่มอยู่ภายใต้ root เท่านั้น
     if (!root.contains(kebabBtn)) return;
     e.preventDefault();
-    e.stopPropagation(); // กันคลิกหลุดไปปิดเองจาก listener ด้านนอก
+    e.stopPropagation();
     toggle(kebabBtn);
   });
 
   // คลิกนอกกรอบเมนู → ปิด
   document.addEventListener('click', (e) => {
-    // ถ้าคลิกนอก .card-kebab ทั้งหมด ให้ปิดทุกเมนู
     if (!e.target.closest('.card-kebab')) closeAll();
   });
 

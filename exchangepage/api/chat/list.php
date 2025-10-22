@@ -5,7 +5,8 @@ $pdo = db();
 $uid = me_id(); if(!$uid) json_err('AUTH', 401);
 
 $st = $pdo->prepare("
-  SELECT c.id, i.title AS item_title,
+  SELECT c.id,
+         i.title AS item_title,
          CASE WHEN c.user_a=:u THEN u2.display_name ELSE u1.display_name END AS other_name,
          (SELECT body FROM messages m WHERE m.conv_id=c.id ORDER BY m.id DESC LIMIT 1) AS last_body
   FROM conversations c

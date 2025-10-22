@@ -1,11 +1,11 @@
-// /thammue/public/js/index.page.js
+// /exchangepage/public/js/index.page.js
 // ใช้กับหน้า public/index.html
-
 const API_BASE = '/exchangepage/api';
-
 let __ME_ID = 0;
+
 async function fetchMe() {
   try {
+    // อยู่ใต้ /exchangepage/public → ../api = /exchangepage/api
     const r = await fetch('../api/me.php', { cache: 'no-store' });
     const d = await r.json().catch(() => ({}));
     if (d && d.user && Number.isInteger(d.user.id)) __ME_ID = d.user.id;
@@ -38,45 +38,45 @@ function computeIsOwner(it) {
   if (Number.isInteger(it.user_id) && it.user_id === __ME_ID) return true;
   return false;
 }
+
 function cardHtml(it) {
-  const img = it.cover || (it.images && it.images[0]) || '../img/placeholder.png';
+  const img = it.cover || (it.images && it.images[0]) || '/exchangepage/public/img/placeholder.png';
   const title = it.title || '';
   const id = it.id;
   const province = it.province || '';
   const catName = it.category_name || it.category || '';
-  const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
-
+  const href = `/exchangepage/public/detail.html?id=${encodeURIComponent(id)}&view=public`;
   const isOwner = computeIsOwner(it);
+
   const menuHtml = isOwner
     ? `
       <button class="card-kebab__item" role="menuitem" data-action="edit" data-id="${id}">✏️ แก้ไขสินค้า</button>
       <button class="card-kebab__item card-kebab__item--danger" role="menuitem" data-action="delete" data-id="${id}">🗑️ ลบสินค้า</button>
     `
-    : `<button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>`;
+    : `
+      <button class="card-kebab__item" role="menuitem" data-action="report" data-id="${id}">🚩 Report</button>
+    `;
 
   return `
-    <article class="card" data-card-id="${id}">
-      <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
-
-      <div class="card-kebab" data-id="${id}">
-        <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </button>
-        <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>
-          ${menuHtml}
-        </div>
+  <article class="card" data-card-id="${id}">
+    <a class="stretched-link" href="${href}" aria-label="ดูรายละเอียด: ${title}"></a>
+    <div class="card-kebab" data-id="${id}">
+      <button class="card-kebab__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-${id}" title="เพิ่มเติม">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </button>
+      <div class="card-kebab__menu" id="menu-${id}" role="menu" hidden>
+        ${menuHtml}
       </div>
-
-      <div class="thumb" role="img" aria-label="${title}">
-        ${img ? `<img class="thumb-img" src="${img}" alt="">` : ''}
-      </div>
-      <div class="card-body">
-        <h3>${title}</h3>
-        <p class="muted">หมวด: ${catName || '-'} ${province ? ' · ' + province : ''}</p>
-        <a class="btn btn-sm" href="detail.html?id=${id}&view=public">ดูรายละเอียด</a>
-      </div>
-    </article>
-  `;
+    </div>
+    <div class="thumb" role="img" aria-label="${title}">
+      ${img ? `<img class="thumb-img" src="${img}" alt="">` : ''}
+    </div>
+    <div class="card-body">
+      <h3>${title}</h3>
+      <p class="muted">หมวด: ${catName || '-'} ${province ? ' · ' + province : ''}</p>
+      <a class="btn btn-sm" href="/exchangepage/public/detail.html?id=${id}&view=public">ดูรายละเอียด</a>
+    </div>
+  </article>`;
 }
 
 // ======= helpers =======
@@ -111,7 +111,9 @@ async function loadSection({ el, qs = '' }) {
   const category_id = sp.get('category_id') || undefined;
 
   // skeleton
-  host.innerHTML = Array.from({ length: limit }).map(() => `<article class="card"><div class="thumb"></div><div class="card-body"><h3>&nbsp;</h3></div></article>`).join('');
+  host.innerHTML = Array.from({ length: limit })
+    .map(() => `<article class="card"><div class="thumb"></div><div class="card-body"><h3>&nbsp;</h3></div></article>`)
+    .join('');
 
   try {
     const { items } = await fetchList({ sort, limit, offset: 0, category_id });
@@ -121,7 +123,7 @@ async function loadSection({ el, qs = '' }) {
         <div class="card-body">
           <h3>ยังไม่มีรายการ</h3>
           <p class="muted">อัปโหลดของชิ้นแรกเพื่อเริ่มแลกเปลี่ยนกันเลย</p>
-          <a class="btn btn-sm" href="upload.html">อัปโหลดสินค้า</a>
+          <a class="btn btn-sm" href="/exchangepage/public/upload.html">อัปโหลดสินค้า</a>
         </div>
       </article>`;
   } catch (err) {
@@ -136,26 +138,25 @@ async function loadLatestOthers({ el }) {
   if (!host) return;
   closeAllKebabs();
 
-  const limit = Number(host.dataset.limit) || 4;      // ต้องการกี่ชิ้นบนหน้าแรก
-  const pageSize = Math.max(12, limit);               // ขนาดดึงต่อรอบ
+  const limit = Number(host.dataset.limit) || 4;       // ต้องการกี่ชิ้นบนหน้าแรก
+  const pageSize = Math.max(12, limit);                // ขนาดดึงต่อรอบ
   let offset = 0;
   let picked = [];
 
   // skeleton
-  host.innerHTML = Array.from({ length: limit }).map(() => `<article class="card"><div class="thumb"></div><div class="card-body"><h3>&nbsp;</h3></div></article>`).join('');
+  host.innerHTML = Array.from({ length: limit })
+    .map(() => `<article class="card"><div class="thumb"></div><div class="card-body"><h3>&nbsp;</h3></div></article>`)
+    .join('');
 
   try {
     while (picked.length < limit) {
       const { items } = await fetchList({ sort: 'new', limit: pageSize, offset });
       if (!items.length) break;
 
-      // เก็บเฉพาะ “ไม่ใช่ของฉัน”
       for (const it of items) {
         if (!computeIsOwner(it)) picked.push(it);
         if (picked.length >= limit) break;
       }
-
-      // ถ้ารอบนี้ได้ของน้อยกว่า pageSize แปลว่าใกล้หมดแล้ว
       if (items.length < pageSize) break;
       offset += pageSize;
     }
@@ -166,12 +167,11 @@ async function loadLatestOthers({ el }) {
           <div class="thumb"></div>
           <div class="card-body">
             <h3>ยังไม่มีรายการจากผู้ใช้อื่น</h3>
-            <p class="muted">ลองกลับมาดูใหม่อีกครั้ง หรือไปที่ <a class="link" href="list.html">ดูทั้งหมด</a></p>
+            <p class="muted">ลองกลับมาดูใหม่อีกครั้ง หรือไปที่ <a class="link" href="/exchangepage/public/list.html">ดูทั้งหมด</a></p>
           </div>
         </article>`;
       return;
     }
-
     host.innerHTML = picked.slice(0, limit).map(cardHtml).join('');
   } catch (err) {
     console.error('loadLatestOthers failed', err);
@@ -194,13 +194,13 @@ function bindGridActions(gridId) {
 
     const itemBtn = e.target.closest('.card-kebab__item');
     if (!itemBtn) return;
-
     e.preventDefault();
+
     const action = itemBtn.dataset.action;
     const itemId = itemBtn.dataset.id;
 
     if (action === 'edit') {
-      location.href = `edit.html?id=${encodeURIComponent(itemId)}`;
+      location.href = `/exchangepage/public/edit.html?id=${encodeURIComponent(itemId)}`;
       return;
     }
 
@@ -242,11 +242,8 @@ function bindGridActions(gridId) {
           body: new URLSearchParams({ id: String(itemId), reason })
         });
         const d = await r.json().catch(() => ({}));
-        if (d && d.ok) {
-          alert('ส่งรายงานเรียบร้อย ขอบคุณที่ช่วยดูแลชุมชน');
-        } else {
-          alert('รายงานไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
-        }
+        if (d && d.ok) alert('ส่งรายงานเรียบร้อย ขอบคุณที่ช่วยดูแลชุมชน');
+        else alert('รายงานไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
       } catch {
         alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
       } finally {
@@ -260,18 +257,19 @@ function bindGridActions(gridId) {
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.card-kebab')) closeAllKebabs();
 });
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllKebabs(); });
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAllKebabs();
+});
 
 // ======= Boot =======
 (async function boot() {
   await fetchMe();
-
   ['latestGrid', 'booksGrid', 'clothesGrid'].forEach(bindGridActions);
 
   // “สินค้าที่คุณสนใจ” — แสดงเฉพาะของคนอื่น
   await loadLatestOthers({ el: 'latestGrid' });
 
   // หมวดหนังสือ/เสื้อผ้า — ตามปกติ
-  loadSection({ el: 'booksGrid',   qs: '?category_id=5&limit=8&sort=new' });
+  loadSection({ el: 'booksGrid', qs: '?category_id=5&limit=8&sort=new' });
   loadSection({ el: 'clothesGrid', qs: '?category_id=4&limit=8&sort=new' });
 })();

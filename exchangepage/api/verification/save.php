@@ -1,37 +1,45 @@
 <?php
-// /thammue/api/verification/save.php
+// /exchangepage/api/verification/save.php
 declare(strict_types=1);
 require __DIR__ . '/../_config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// เปิดโหมด DEV verbose ชั่วคราว
-const DEV_VERBOSE = true;
-
 try {
   $pdo = db();
-  $uid = require_login(); // ถ้าไม่ล็อกอินจะโยน json_err ทันที
+  $uid = require_login();
 
-  // --- ตรวจฟิลด์ที่ต้องมีตามฟอร์ม modal ---
   $need = ['full_name','dob_iso','citizen_id','province','district','subdistrict','postcode','addr_line'];
   foreach ($need as $k) {
-    if (!isset($_POST[$k]) || trim((string)$_POST[$k]) === '') {
-      json_err("missing_$k");
-    }
+    if (!isset($_POST[$k]) || trim((string)$_POST[$k]) === '') json_err("missing_$k", 422);
   }
   if (empty($_FILES['id_front']) || ($_FILES['id_front']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-    json_err('missing_id_front');
+    json_err('missing_id_front', 422);
   }
 
-  // --- เซฟไฟล์บัตร (อนุญาตภาพ/PDF) ---
-  // โฟลเดอร์จะถูกสร้างอัตโนมัติ ถ้าไม่มี
-  $relPath = save_upload($_FILES['id_front'], 'uploads/ids', ['jpg','jpeg','png','webp','gif','pdf'], 5_000_000);
+  // helper: เซฟไฟล์เดียวไปที่ /exchangepage/public/uploads/ids
+  $save_one = function(array $file, array $allowExt, int $maxBytes=5_000_000): string {
+    if ($file['error'] !== UPLOAD_ERR_OK) json_err('upload_error', 400);
+    if ($file['size'] > $maxBytes)        json_err('file_too_large', 413);
 
-  // --- เตรียมค่าบันทึกเข้าตาราง verifications ของคุณ ---
-  // ตารางของคุณ: id, user_id, full_name, dob, citizen_id, province, district, subdistrict, postcode, addr_line, id_front_path, status, created_at
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, $allowExt, true)) json_err('bad_file_type', 415);
+
+    $baseDir = UPLOAD_DIR . '/ids';
+    if (!is_dir($baseDir)) @mkdir($baseDir, 0777, true);
+
+    $name = bin2hex(random_bytes(8)) . '.' . $ext;
+    $dest = $baseDir . '/' . $name;
+    if (!@move_uploaded_file($file['tmp_name'], $dest)) json_err('save_failed', 500);
+
+    // เก็บเป็น path relative สำหรับเสิร์ฟผ่าน public
+    return 'uploads/ids/' . $name;
+  };
+
+  $relPath = $save_one($_FILES['id_front'], ['jpg','jpeg','png','webp','gif','pdf']);
+
   $full_name = trim((string)$_POST['full_name']);
   $dob       = trim((string)$_POST['dob_iso']); // YYYY-MM-DD
-  // เก็บเลขบัตรแบบ mask
   $cid_raw   = preg_replace('/\D/', '', (string)$_POST['citizen_id']);
   $cid_mask  = substr($cid_raw, 0, 6) . str_repeat('•', max(0, 13 - 6));
 
@@ -53,14 +61,7 @@ try {
     ':file' => $relPath,
   ]);
 
-  // (ไม่ต้องมีหน้าแอดมินก็ได้) — ส่ง ok กลับเลย ให้ใช้งานต่อได้
   json_ok();
-
 } catch (Throwable $e) {
-  if (DEV) {
-    // โยนรายละเอียดเพื่อ debug ชั่วคราว
-    json_err('server_error', 500, ['msg' => $e->getMessage()]);
-  } else {
-    json_err('server_error', 500);
-  }
+  json_err('server_error', 500, ['msg'=>$e->getMessage()]);
 }

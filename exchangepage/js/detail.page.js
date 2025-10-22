@@ -1,9 +1,10 @@
+// /exchangepage/public/js/detail.page.js
 import { getItem, toggleFavorite } from './detail.api.js';
 import { initOfferModal } from './detail.modal.js';
 
-const qs   = new URLSearchParams(location.search);
-const id   = parseInt(qs.get('id') || '0', 10);
-const $    = (s) => document.getElementById(s);
+const qs = new URLSearchParams(location.search);
+const id = parseInt(qs.get('id') || '0', 10);
+const $ = (s) => document.getElementById(s);
 const flash = $('flash');
 
 function showError(msg){
@@ -14,13 +15,14 @@ function showError(msg){
 
 function setFavUI(liked){
   const btn = $('favBtn');
+  if (!btn) return;
   btn.dataset.liked = liked ? '1' : '0';
   btn.setAttribute('aria-pressed', liked ? 'true' : 'false');
   btn.innerHTML = liked ? '❤️ อยู่ในรายการโปรด' : '🤍 รายการโปรด';
 }
 
 function onAuthRedirect(){
-  location.href = '/thammue/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
+  location.href = '/exchangepage/public/page/login.html?next=' + encodeURIComponent(location.pathname + location.search);
 }
 
 async function bootstrap(){
@@ -38,23 +40,24 @@ async function bootstrap(){
   // Render
   $('detail').style.display = '';
   $('title').textContent = it.title || '';
-  $('cat').textContent   = `หมวด: ${it.category_name || '-'}`;
-  $('loc').textContent   = `พื้นที่: ${(it.province || '') + (it.district ? ' · ' + it.district : '') || '-'}`;
-  $('desc').textContent  = it.description || '';
+  $('cat').textContent = `หมวด: ${it.category_name || '-'}`;
+  $('loc').textContent = `พื้นที่: ${(it.province || '') + (it.district ? ' · ' + it.district : '') || '-'}`;
+  $('desc').textContent = it.description || '';
   $('ownerName').textContent = it.owner?.name || '-';
-  $('refCode').textContent   = it.ref || '-';
+  $('refCode').textContent = it.ref || '-';
 
   // Gallery
   const images = (Array.isArray(it.images) && it.images.length) ? it.images : (it.cover ? [it.cover] : []);
-  const main   = $('mainImg');
+  const main = $('mainImg');
   const thumbs = $('thumbs');
   main.src = images[0] || 'https://picsum.photos/800?grayscale';
-  thumbs.innerHTML = images.map((src,i)=>`
+  thumbs.innerHTML = images.map((src,i)=> `
     <div class="thumb ${i===0?'active':''}" data-src="${src}">
       <img src="${src}" alt="">
     </div>`).join('');
   thumbs.addEventListener('click', e => {
-    const t = e.target.closest('.thumb'); if (!t) return;
+    const t = e.target.closest('.thumb');
+    if (!t) return;
     thumbs.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     main.src = t.dataset.src;
@@ -73,27 +76,26 @@ async function bootstrap(){
   });
 
   // Chat
-// Chat
-if (it.id) {
-  $('chatBtn').addEventListener('click', (ev) => {
-    ev.preventDefault();
-    // ใช้ absolute path กัน <base href="/thammue/public/"> กลืน
-    location.href = '/thammue/public/chat.html?with_owner_of=' + it.id;
-  });
-}
-
+  if (it.id) {
+    $('chatBtn')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      // absolute path กัน <base> กลืน
+      location.href = '/exchangepage/public/chat.html?with_owner_of=' + it.id;
+    });
+  }
 
   // Offer Modal
   const modal = initOfferModal({ itemId: it.id, onAuthRedirect });
-  $('openOffer')?.addEventListener('click', (e) => { e.preventDefault(); modal.open(); });
+  $('openOffer')?.addEventListener('click', (e) => {
+    e.preventDefault(); modal.open();
+  });
 
-  // Flash helper
+  // Flash helper (เผื่อใช้)
   function flashMsg(text){
     if (!flash) return;
     flash.textContent = text;
     flash.hidden = !text;
   }
-  // (ตอนนี้ flash ใช้กับเคสอื่น ๆ ได้ในอนาคต)
 }
 
 bootstrap();

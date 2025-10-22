@@ -1,5 +1,5 @@
 <?php
-// /thammue/api/favorites/list.php
+// /exchangepage/api/favorites/list.php
 require __DIR__ . '/../_config.php';
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
 
@@ -7,9 +7,8 @@ $pdo = db();
 $uid = me_id();
 if (!$uid) json_err('AUTH', 401);
 
-// หมวดหมู่ไว้แปลงชื่อ
-$CATS = [1=>'อุปกรณ์อิเล็กทรอนิกส์',2=>'ของใช้ในบ้าน',3=>'อุปกรณ์เด็ก',4=>'เสื้อผ้า',5=>'หนังสือ',6=>'ของสะสม'];
-$BASE = '/thammue/';
+// หมวดหมู่ (ใช้ชื่อเดียวกับฝั่งหน้าเว็บ)
+$CATS = [1=>'แฮนเมด',2=>'ของประดิษฐ์',3=>'ของใช้ทั่วไป',4=>'เสื้อผ้า',5=>'หนังสือ',6=>'ของสะสม'];
 
 $sql = "
   SELECT i.id, i.title, i.category_id, i.province,
@@ -23,15 +22,14 @@ $st = $pdo->prepare($sql);
 $st->execute([':u'=>$uid]);
 $rows = $st->fetchAll() ?: [];
 
-$items = array_map(function($r) use($CATS,$BASE){
-  $cover = $r['cover'] ? ($BASE . ltrim($r['cover'], '/')) : null;
+$items = array_map(function($r) use($CATS){
   return [
     'id'            => (int)$r['id'],
     'title'         => (string)$r['title'],
     'category_id'   => (int)$r['category_id'],
     'category_name' => $CATS[(int)$r['category_id']] ?? '-',
     'province'      => $r['province'] ?: null,
-    'cover'         => $cover,
+    'cover'         => pub_url($r['cover'] ?? null), // แปลงเป็น URL ใช้งานได้จริง
   ];
 }, $rows);
 

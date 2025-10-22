@@ -1,18 +1,12 @@
 <?php
-// /thammue/exchangepage/api/_config.php
+// /exchangepage/api/_config.php
 
-// ---------- HTTP headers & CORS ----------
+/* ---------- HTTP headers & CORS ---------- */
 header('Content-Type: application/json; charset=utf-8');
 
-// สะท้อน origin เพื่อให้ส่งคุกกี้ได้ (อย่าใช้ * ตอนมี Credentials)
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin) {
-  // อนุญาตเฉพาะ localhost ของ dev
-  if (preg_match('~^https?://(localhost|127\.0\.0\.1)(:\d+)?$~', $origin)) {
-    header('Access-Control-Allow-Origin: ' . $origin);
-  } else {
-    header('Access-Control-Allow-Origin: http://localhost:8000');
-  }
+if ($origin && preg_match('~^https?://(localhost|127\.0\.0\.1)(:\d+)?$~', $origin)) {
+  header('Access-Control-Allow-Origin: ' . $origin);
 } else {
   header('Access-Control-Allow-Origin: http://localhost:8000');
 }
@@ -20,27 +14,21 @@ header('Vary: Origin');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-
-// preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
-// ---------- Session ----------
-$cookie_secure = false; // dev http
-$cookie_httponly = true;
-$cookie_samesite = 'Lax';
-// ทำ path ให้ตรงกับ base (/thammue/exchangepage) เพื่อให้หน้าเว็บส่งคุกกี้ติดมาถูกที่
+/* ---------- Session ---------- */
+// ให้คุกกี้ครอบคลุมทั้ง /exchangepage (หน้า public และ /api)
 session_set_cookie_params([
   'lifetime' => 0,
-  // เดิม: 'path' => '/thammue/exchangepage',
-  'path' => '/exchangepage',     // ✅ ให้ครอบคลุมทั้งหน้าและ API
-  'domain' => '',
-  'secure' => false,
+  'path'     => '/exchangepage',
+  'domain'   => '',
+  'secure'   => false, // dev
   'httponly' => true,
-  'samesite' => 'Lax'
+  'samesite' => 'Lax',
 ]);
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-// ---------- DB ----------
+/* ---------- DB ---------- */
 $DB_HOST = '127.0.0.1';
 $DB_NAME = 'thammue';
 $DB_USER = 'root';
@@ -53,21 +41,19 @@ function db(): PDO {
     $pdo = new PDO(
       "mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4",
       $DB_USER, $DB_PASS,
-      [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-      ]
+      [ PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC ]
     );
   }
   return $pdo;
 }
 
-// ---------- Base paths ----------
-define('THAMMUE_BASE', '/exchangepage');           // public base สำหรับสร้าง URL
-define('PUBLIC_DIR', dirname(__DIR__) . '/public');       // โฟลเดอร์ public ของ exchangepage
-define('UPLOAD_DIR', PUBLIC_DIR . '/uploads');            // เก็บอัปโหลดใน exchangepage/public/uploads
+/* ---------- Base paths ---------- */
+define('THAMMUE_BASE', '/exchangepage');                 // public base สำหรับสร้าง URL
+define('PUBLIC_DIR', dirname(__DIR__) . '/public');      // /exchangepage/public
+define('UPLOAD_DIR', PUBLIC_DIR . '/uploads');           // /exchangepage/public/uploads
 
-// ---------- JSON helpers ----------
+/* ---------- JSON helpers ---------- */
 function json_ok($data = [], int $code = 200): void {
   http_response_code($code);
   if (is_array($data)) echo json_encode(['ok'=>true] + $data, JSON_UNESCAPED_UNICODE);
@@ -80,7 +66,7 @@ function json_err(string $message, int $code = 400, array $extra = []): void {
   exit;
 }
 
-// ---------- Auth helpers ----------
+/* ---------- Auth helpers ---------- */
 function me_id(): int { return (int)($_SESSION['user_id'] ?? 0); }
 function require_login(): int {
   $uid = me_id();
@@ -88,47 +74,34 @@ function require_login(): int {
   return $uid;
 }
 
-// ---------- FS helpers ----------
-function ensure_dir(string $path): void {
-  if (!is_dir($path)) mkdir($path, 0777, true);
-}
-// แปลง relative path -> public URL (/thammue/exchangepage/xxx)
+/* ---------- FS helpers ---------- */
+function ensure_dir(string $path): void { if (!is_dir($path)) mkdir($path, 0777, true); }
 function public_url(?string $relPath): ?string {
   if ($relPath === null || $relPath === '') return null;
-  $relPath = '/' . ltrim($relPath, '/');
-  return rtrim(THAMMUE_BASE, '/') . $relPath;
+  return rtrim(THAMMUE_BASE, '/') . '/' . ltrim($relPath, '/');
 }
-if (!function_exists('pub_url')) {
-  function pub_url(?string $relPath): ?string { return public_url($relPath); }
-}
+if (!function_exists('pub_url')) { function pub_url(?string $relPath): ?string { return public_url($relPath); } }
 
-// เซฟหลายรูป: คืนชื่อไฟล์ที่บันทึกได้ (เก็บไฟล์ไว้ใต้ UPLOAD_DIR)
+/* เซฟหลายรูปไว้ใต้ /exchangepage/public/uploads/<subdir> และคืนชื่อไฟล์ */
 function save_uploaded_images(array $files, string $subdir = 'items'): array {
   $targetDir = rtrim(UPLOAD_DIR, '/') . '/' . trim($subdir, '/');
   ensure_dir($targetDir);
   $saved = [];
   $allowed = [
-    'image/jpeg' => 'jpg',
-    'image/png'  => 'png',
-    'image/webp' => 'webp',
-    'image/gif'  => 'gif',
+    'image/jpeg'=>'jpg', 'image/png'=>'png', 'image/webp'=>'webp', 'image/gif'=>'gif',
+    'application/pdf'=>'pdf'
   ];
   $n = isset($files['name']) ? count($files['name']) : 0;
-  for ($i = 0; $i < $n; $i++) {
+  for ($i=0; $i<$n; $i++) {
     $err = $files['error'][$i] ?? UPLOAD_ERR_NO_FILE;
     if ($err !== UPLOAD_ERR_OK) continue;
-
     $tmp = $files['tmp_name'][$i] ?? '';
     if (!$tmp || !is_uploaded_file($tmp)) continue;
-
     $type = @mime_content_type($tmp);
     if (!isset($allowed[$type])) continue;
-
     $ext = $allowed[$type];
-    $name = bin2hex(random_bytes(8)) . '.' . $ext;
-    $dest = $targetDir . '/' . $name;
-
-    if (move_uploaded_file($tmp, $dest)) $saved[] = $name;
+    $name = bin2hex(random_bytes(8)).'.'.$ext;
+    if (move_uploaded_file($tmp, $targetDir.'/'.$name)) $saved[] = $name;
   }
   return $saved;
 }

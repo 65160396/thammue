@@ -139,3 +139,4 @@
     openModal(btn.getAttribute('data-id'));
   }, true);
 })();
+///exchangepage/public/js/req.accept.modal.js

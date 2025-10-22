@@ -1,7 +1,6 @@
-// /js/address.js
+// /thammue/js/address.js
 (function () {
-  const DATA_URL =
-    'https://raw.githubusercontent.com/kongvut/thai-province-data/refs/heads/master/api/latest/province_with_district_and_sub_district.json';
+  const DATA_URL = 'https://raw.githubusercontent.com/kongvut/thai-province-data/refs/heads/master/api/latest/province_with_district_and_sub_district.json';
 
   // ------- utility -------
   const resetSelect = (el, ph, disabled = true) => {
@@ -47,16 +46,15 @@
     const $dist = document.querySelector(cfg.district);
     const $subd = document.querySelector(cfg.subdistrict);
     const $post = cfg.postcode ? document.querySelector(cfg.postcode) : null;
-
     if (!$prov || !$dist || !$subd) return;
 
     // ค่าเริ่มต้น
-    resetSelect($prov,  '— เลือกจังหวัด —',   false);
-    resetSelect($dist,  '— เลือกอำเภอ/เขต —', true);
-    resetSelect($subd,  '— เลือกตำบล/แขวง —', true);
+    resetSelect($prov, '— เลือกจังหวัด —', false);
+    resetSelect($dist, '— เลือกอำเภอ/เขต —', true);
+    resetSelect($subd, '— เลือกตำบล/แขวง —', true);
     if ($post) $post.value = '';
 
-    // เมื่อข้อมูลพร้อม ให้เติมจังหวัด และ bind อีเวนต์
+    // เมื่อข้อมูลพร้อม → เติมจังหวัด/ bind อีเวนต์
     ensureData().then((DATA) => {
       fillOptions($prov, DATA, 'name_th');
 
@@ -92,22 +90,22 @@
     });
   }
 
-  // โยนออกเป็น global ให้หน้าอื่นเรียกใช้งานได้
+  // โยนออกเป็น global
   window.initThaiAddress = initThaiAddress;
 
-  // Backward-compatible: ถ้าหน้าไหนยังใช้ id เดิม (province/district/subdistrict)
-  // จะ auto-init ให้ เพื่อไม่ให้ของเก่าเสีย
+  // Backward-compatible auto-init (id มาตรฐาน)
   document.addEventListener('DOMContentLoaded', () => {
     const hasLegacy =
       document.getElementById('province') &&
       document.getElementById('district') &&
       document.getElementById('subdistrict');
+
     if (hasLegacy) {
       initThaiAddress({
         province: '#province',
         district: '#district',
-        subdistrict: '#subdistrict',
-        // ถ้าหน้าเก่ามี input postcode ให้ใส่ selector ตรงนี้เพิ่มได้
+        subdistrict: '#subdistrict'
+        // postcode: '#postcode' // ใส่ถ้าหน้ามี
       });
     }
   });

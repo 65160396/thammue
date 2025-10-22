@@ -1,4 +1,4 @@
-// /thammue/public/js/dot/list.page.js
+// /exchangepage/public/js/dot/list.page.js
 import { Kebab } from '../cards.kebab.js';
 
 const API_BASE = '/exchangepage/api';
@@ -13,13 +13,12 @@ function getQS() {
 }
 
 function cardHtml(it) {
-  const img = it.cover || (it.images && it.images[0]) || '../img/placeholder.png';
+  const img = it.cover || (it.images && it.images[0]) || '/exchangepage/public/img/placeholder.png';
   const title = it.title || '';
   const id = it.id;
   const province = it.province || '';
   const catName = it.category_name || it.category || '';
-  const href = `detail.html?id=${encodeURIComponent(id)}&view=public`;
-
+  const href = `/exchangepage/public/detail.html?id=${encodeURIComponent(id)}&view=public`;
   const isOwner = it.is_owner === true;
 
   const menuHtml = isOwner
@@ -79,9 +78,10 @@ async function fetchAndRender(append = false) {
   const btn = document.getElementById('loadMore');
   const qs = getQS();
 
-  document.getElementById('listTitle').textContent =
-    qs.interest ? 'ทั้งหมดจากความสนใจของคุณ' :
-    qs.category_id ? 'สินค้าตามหมวดหมู่' : 'รายการทั้งหมด';
+  const t = document.getElementById('listTitle');
+  if (t) t.textContent = qs.interest
+    ? 'ทั้งหมดจากความสนใจของคุณ'
+    : qs.category_id ? 'สินค้าตามหมวดหมู่' : 'รายการทั้งหมด';
 
   try {
     const res = await fetch(`${API_BASE}/items/list.php${buildQuery(qs)}`, { cache: 'no-store' });
@@ -113,19 +113,19 @@ async function fetchAndRender(append = false) {
 fetchAndRender(false);
 
 // โหลดเพิ่ม
-document.getElementById('loadMore').addEventListener('click', () => fetchAndRender(true));
+document.getElementById('loadMore')?.addEventListener('click', () => fetchAndRender(true));
 
 // จัดการ action edit/delete/report ด้วย event delegation
-document.getElementById('listGrid').addEventListener('click', async (e) => {
+document.getElementById('listGrid')?.addEventListener('click', async (e) => {
   const itemBtn = e.target.closest('.card-kebab__item');
   if (!itemBtn) return;
-
   e.preventDefault();
+
   const action = itemBtn.dataset.action;
   const itemId = itemBtn.dataset.id;
 
   if (action === 'edit') {
-    location.href = `edit.html?id=${encodeURIComponent(itemId)}`;
+    location.href = `/exchangepage/public/edit.html?id=${encodeURIComponent(itemId)}`;
     return;
   }
 
@@ -167,11 +167,8 @@ document.getElementById('listGrid').addEventListener('click', async (e) => {
         body: new URLSearchParams({ id: String(itemId), reason })
       });
       const d = await r.json().catch(()=> ({}));
-      if (d && d.ok) {
-        alert('ส่งรายงานเรียบร้อย ขอบคุณที่ช่วยดูแลชุมชน');
-      } else {
-        alert('รายงานไม่สำเร็จ: ' + (d?.error || 'UNKNOWN'));
-      }
+      if (d && d.ok) { alert('ส่งรายงานเรียบร้อย ขอบคุณที่ช่วยดูแลชุมชน'); }
+      else { alert('รายงานไม่สำเร็จ: ' + (d?.error || 'UNKNOWN')); }
     } catch {
       alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
     } finally {

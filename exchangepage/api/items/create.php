@@ -1,18 +1,14 @@
 <?php
-// /thammue/exchangepage/api/items/create.php
+// /exchangepage/api/items/create.php
 declare(strict_types=1);
 require __DIR__ . '/../_config.php';
 if (session_status() === PHP_SESSION_NONE) { @session_start(); }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  json_err('Method Not Allowed', 405);
-}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') json_err('Method Not Allowed', 405);
 
 $pdo    = db();
 $userId = (int)($_SESSION['user_id'] ?? 0);
-if ($userId <= 0) {
-  json_err('กรุณาเข้าสู่ระบบ', 401);
-}
+if ($userId <= 0) json_err('กรุณาเข้าสู่ระบบ', 401);
 
 // รับค่า
 $title        = trim((string)($_POST['title'] ?? ''));
@@ -28,18 +24,14 @@ $zipcode      = trim((string)($_POST['zipcode'] ?? ''));
 $place_detail = trim((string)($_POST['place_detail'] ?? ''));
 
 // validate ขั้นต่ำ
-if ($title === '' || $categoryId <= 0) {
-  json_err('กรุณากรอกชื่อสินค้าและหมวดหมู่ให้ครบ', 422);
-}
+if ($title === '' || $categoryId <= 0) json_err('กรุณากรอกชื่อสินค้าและหมวดหมู่ให้ครบ', 422);
 
-// อัปโหลดรูป — ใช้ helper ให้ไปเก็บที่ UPLOAD_DIR/items
+// อัปโหลดรูป — เก็บไว้ใต้ /exchangepage/public/uploads/items
 $savedFiles = [];
 if (!empty($_FILES['images']['name'][0])) {
-  $savedFiles = save_uploaded_images($_FILES['images'], 'items'); // ✅ เก็บที่ exchangepage/public/uploads/items
+  $savedFiles = save_uploaded_images($_FILES['images'], 'items');
 }
-if (!$savedFiles) {
-  json_err('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป', 422);
-}
+if (!$savedFiles) json_err('กรุณาอัปโหลดรูปสินค้าอย่างน้อย 1 รูป', 422);
 
 // บันทึก DB
 $pdo->beginTransaction();
@@ -54,39 +46,29 @@ try {
       (:u, :t, :c, :d, :wt, :wc, :wn, :pv, :dt, :sd, :zc, :pd, 'public', NOW())
   ");
   $ins->execute([
-    ':u'  => $userId,
-    ':t'  => $title,
-    ':c'  => $categoryId,
-    ':d'  => $description !== '' ? $description : null,
-    ':wt' => $wantTitle !== '' ? $wantTitle : null,
-    ':wc' => $wantCatId, // อาจเป็น NULL
-    ':wn' => $wantNote !== '' ? $wantNote : null,
-    ':pv' => $province !== '' ? $province : null,
-    ':dt' => $district !== '' ? $district : null,
-    ':sd' => $subdistrict !== '' ? $subdistrict : null,
-    ':zc' => $zipcode !== '' ? $zipcode : null,
-    ':pd' => $place_detail !== '' ? $place_detail : null,
+    ':u'=>$userId, ':t'=>$title, ':c'=>$categoryId,
+    ':d'=>$description ?: null, ':wt'=>$wantTitle ?: null, ':wc'=>$wantCatId, ':wn'=>$wantNote ?: null,
+    ':pv'=>$province ?: null, ':dt'=>$district ?: null, ':sd'=>$subdistrict ?: null, ':zc'=>$zipcode ?: null,
+    ':pd'=>$place_detail ?: null,
   ]);
 
   $itemId = (int)$pdo->lastInsertId();
 
-  // บันทึกภาพ
+  // บันทึกรูป (เก็บ path แบบ relative)
   $ord = 0;
   $stmtImg = $pdo->prepare("INSERT INTO item_images (item_id, path, sort_order) VALUES (:id, :p, :s)");
   foreach ($savedFiles as $basename) {
-    $publicPath = 'uploads/items/' . $basename; // เก็บเป็น relative path
+    $publicPath = 'uploads/items/' . $basename;
     $stmtImg->execute([':id'=>$itemId, ':p'=>$publicPath, ':s'=>$ord++]);
   }
 
   $pdo->commit();
-
   json_ok([
     'id'          => $itemId,
     'item_id'     => $itemId,
     'detail_url'  => THAMMUE_BASE . "/public/detail.html?id={$itemId}&view=public",
     'success_url' => THAMMUE_BASE . "/public/success.html?id={$itemId}",
   ], 201);
-
 } catch (Throwable $e) {
   $pdo->rollBack();
   json_err('บันทึกไม่สำเร็จ', 500, ['msg'=>$e->getMessage()]);
