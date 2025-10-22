@@ -162,13 +162,18 @@ $orders = $stmt->fetchAll();
     </script>
     <script src="/js/me.js"></script>
     <script src="/js/user-menu.js"></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+
+    <!---ดูว่าเมลนี้มีร้านค้ายัง -->
     <script src="/js/store/shop-toggle.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            toggleOpenOrMyShop();
-        });
-    </script>
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleOpenOrMyShop();
+  });
+</script>
     <script src="/js/cart-badge.js" defer></script>
 </body>
+
 
 </html>

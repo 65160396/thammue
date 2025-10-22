@@ -45,7 +45,7 @@ function imgPath($row)
 
 <head>
     <meta charset="utf-8" />
-    <title>ตะกร้าสินค้า | Thammue</title>
+    <title>Thammue - ตะกร้าสินค้า</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/cart.css" />

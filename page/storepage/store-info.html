@@ -1,123 +1,173 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue – ข้อมูลร้านค้า</title>
-        <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/open-shop.css" />
-    </head>
-    <body class="open-shop">
-        <ul class="top-nav">
-            <li><a href="/page/storepage/store.html">ร้านค้า</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="/page/main.html">ซื้อสินค้า</a></li>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue - ข้อมูลร้านค้า</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+  </head>
+  <body class="open-shop">
+    <!-- แถบบนสุด -->
+    <ul class="top-nav">
+      <!-- ซ้าย -->
+      <li><a
+          href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
-            <li class="right"><a href="#notification">แจ้งเตือน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
+      <!-- ขวา -->
+      <li class="right"><a
+          href="/page/notifications.html">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
 
-        <!-- Header -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/page/main.html" class="brand-text">THAMMUE</a>
-            </div>
-            <div class="search-container">
-                <div class="icon-buttons">
-                    <button class="action-button">
-                        <img src="/img/Icon/chat.png" alt="แชท" />
-                    </button>
+    <!-- Header -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="icon-buttons">
 
-                    <div class="user-menu" id="userMenu">
-                        <button class="user-area" id="userArea"
-                            aria-haspopup="true" aria-expanded="false">
-                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                            <span class="user-chip" id="userChip" hidden></span>
-                            <svg class="chev" viewBox="0 0 20 20"
-                                aria-hidden="true">
-                                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
-                                    stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown"
-                            role="menu"></div>
-                    </div>
-                </div>
-            </div>
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท">
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
+
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea"
+              aria-haspopup="true" aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                  stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown"
+              role="menu"></div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <section class="open-shop">
-            <div class="wizard-page">
-                <div class="wizard-card">
-                    <h2 class="form-section">ข้อมูลร้านค้า</h2>
+    <section class="open-shop">
+      <div class="wizard-page">
+        <div class="wizard-card">
+          <h2 class="form-section">ข้อมูลร้านค้า</h2>
 
-                    <div class="field"><label>ชื่อร้าน</label> <div
-                            id="shopName">—</div></div>
-                    <div class="field"><label>อีเมล</label> <div
-                            id="shopEmail">—</div></div>
-                    <div class="field"><label>เบอร์โทร</label> <div
-                            id="shopPhone">—</div></div>
-                    <div class="field"><label>ที่รับของ</label> <div
-                            id="shopAddr">—</div></div>
-                    <div class="field"><label>สถานะ</label> <div
-                            id="shopStatus">—</div></div>
+          <div class="field"><label>ชื่อร้าน</label> <div
+              id="shopName">—</div></div>
+          <div class="field"><label>อีเมล</label> <div
+              id="shopEmail">—</div></div>
+          <div class="field"><label>เบอร์โทร</label> <div
+              id="shopPhone">—</div></div>
+          <div class="field"><label>ที่รับของ</label> <div
+              id="shopAddr">—</div></div>
+          <div class="field"><label>สถานะ</label> <div
+              id="shopStatus">—</div></div>
 
-                    <div style="margin-top:16px; display:flex; gap:12px;">
-                        <button id="btnEdit"
-                            class="btn primary">แก้ไขข้อมูลร้านค้า</button>
-                        <button id="btnView" class="btn">ดูหน้าร้าน
-                            (สาธารณะ)</button>
-                    </div>
-                </div>
-            </div>
-        </section>
+          <div style="margin-top:16px; display:flex; gap:12px;">
+            <!-- ใน store-info.html -->
+            <!-- ปุ่มเดิม -->
+            <a id="btnEdit" class="btn" href="#">แก้ไขข้อมูลร้านค้า</a>
 
-        <!-- ถ้าหน้านี้ใช้เมนูผู้ใช้ ให้คงไฟล์ 2 อันนี้ไว้ -->
-        <script src="/js/me.js"></script>
-        <script src="/js/user-menu.js"></script>
+            <script>
+  // สมมติคุณมีตัวแปร d ที่ดึงมาแสดงแล้ว (จาก API เดิม)
+  // d = { id, shop_name, email, phone, pickup_addr, province, status }
 
-        <!-- สคริปต์หลัก (ก้อนเดียวพอ) -->
-        <script>
-    const url = new URL(location.href);
-    const shopIdQuery = url.searchParams.get('shop_id');
+  const btn = document.getElementById('btnEdit');
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const payload = {
+      shop_id: d.id,
+      shop_name: d.shop_name,
+      email: d.email,
+      phone: d.phone,
+      pickup_addr: d.pickup_addr,
+      province: d.province,
+      status: d.status,
+      ts: Date.now()
+    };
+    sessionStorage.setItem('store_edit_prefill', JSON.stringify(payload));
+    location.href = `/page/storepage/store-edit-info.html?shop_id=${encodeURIComponent(d.id)}`;
+  });
+</script>
 
-    (async () => {
-      const res  = await fetch('/page/backend/productsforsale/get_shop.php', { credentials: 'include' });
-      const data = await res.json();
-      const s    = data.shop || {};
+          </div>
+        </div>
+      </div>
+    </section>
 
-      // แสดงข้อมูล
-      document.getElementById('shopName').textContent   = s.shop_name   || '(ไม่มีชื่อร้าน)';
-      document.getElementById('shopEmail').textContent  = s.email       || '-';
-      document.getElementById('shopPhone').textContent  = s.phone       || '-';
-      document.getElementById('shopAddr').textContent   = s.pickup_addr || '-';
-      document.getElementById('shopStatus').textContent = s.status      || '-';
+    <!-- ถ้าหน้านี้ใช้เมนูผู้ใช้ ให้คงไฟล์ 2 อันนี้ไว้ -->
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
 
-      const id = s.id || shopIdQuery || '';
+    <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleOpenOrMyShop();
+  });
+</script>
+    <script>
+  (async () => {
+    const res  = await fetch('/page/backend/productsforsale/get_shop.php', { credentials: 'include' });
+    const data = await res.json();
+    const s    = data.shop || {};
 
-      const btnEdit = document.getElementById('btnEdit');
-      if (btnEdit) {
-        btnEdit.addEventListener('click', () => {
-          const target = id
-            ? `/page/storepage/store-edit.html?id=${encodeURIComponent(id)}`
-            : `/page/storepage/store-edit.html`;
-          location.href = target;
-        });
-      }
+    // แสดงข้อมูล
+    document.getElementById('shopName').textContent   = s.shop_name   || '(ไม่มีชื่อร้าน)';
+    document.getElementById('shopEmail').textContent  = s.email       || '-';
+    document.getElementById('shopPhone').textContent  = s.phone       || '-';
+    document.getElementById('shopAddr').textContent   = s.pickup_addr || '-';
+    document.getElementById('shopStatus').textContent = s.status      || '-';
 
-      const btnView = document.getElementById('btnView');
-      if (btnView) {
-        btnView.addEventListener('click', () => {
-          if (!id) return alert('ยังไม่ทราบรหัสร้าน');
-          location.href = `/page/storepage/store_public.php?id=${encodeURIComponent(id)}`;
-        });
-      }
-    })();
-  </script>
-    </body>
+    const id = s.id; // id ร้านจาก API
+
+    const btnEdit = document.getElementById('btnEdit');
+    if (btnEdit) {
+      btnEdit.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!id) return alert('ยังไม่ทราบรหัสร้าน');
+
+        // เก็บค่าไว้ให้หน้าแก้ไข prefill ทันที
+        sessionStorage.setItem('store_edit_prefill', JSON.stringify({
+          shop_id: id,
+          shop_name: s.shop_name || '',
+          email: s.email || '',
+          phone: s.phone || '',
+          pickup_addr: s.pickup_addr || '',
+          province: s.province || '',
+          status: s.status || '',
+          ts: Date.now()
+        }));
+
+        // 👉 ไปหน้าแก้ไข "ข้อมูลร้านค้า" (ไม่ใช่หน้าแก้สินค้า)
+        location.href = `/page/storepage/store-edit-info.html?shop_id=${encodeURIComponent(id)}`;
+      });
+    }
+
+    const btnView = document.getElementById('btnView');
+    if (btnView) {
+      btnView.addEventListener('click', () => {
+        if (!id) return alert('ยังไม่ทราบรหัสร้าน');
+        location.href = `/page/storepage/store_public.php?id=${encodeURIComponent(id)}`;
+      });
+    }
+  })();
+</script>
+
+  </body>
 </html>

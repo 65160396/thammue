@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue – แก้ไขข้อมูลร้านค้า</title>
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+
+    <!-- ซ่อนดอกจัน required เฉพาะหน้านี้ -->
+    <style>
+      .no-req-star .field label:has(+ input[required]),
+      .no-req-star .field label:has(+ textarea[required]),
+      .no-req-star .field label:has(+ select[required]){padding-left:0!important}
+      .no-req-star .field label:has(+ input[required])::before,
+      .no-req-star .field label:has(+ textarea[required])::before,
+      .no-req-star .field label:has(+ select[required])::before{content:none!important}
+    </style>
+  </head>
+
+  <!-- เพิ่มคลาส no-req-star เพื่อซ่อนดอกจันเฉพาะหน้านี้ -->
+  <body class="open-shop no-req-star">
+    <!-- ========== Top black bar ========== -->
+    <ul class="top-nav">
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a id="openOrMyShop" href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <!-- ========== Header ========== -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="icon-buttons">
+          <a class="action-button" href="/page/storepage/chat.html" aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท" />
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
+
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Page content ========== -->
+    <section class="wizard-page">
+      <div class="wizard-card">
+        <h2 class="form-section">แก้ไขข้อมูลร้านค้า</h2>
+        <p class="hint">กรอกเฉพาะข้อมูลที่ต้องการแก้ไข แล้วกด “บันทึกการเปลี่ยนแปลง”</p>
+
+        <form id="shopForm" autocomplete="off">
+          <input type="hidden" name="shop_id" id="shop_id" />
+
+          <div class="field">
+            <label for="shop_name">ชื่อร้าน</label>
+            <input type="text" id="shop_name" name="shop_name" required />
+          </div>
+
+          <div class="field">
+            <label for="email">อีเมล</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="field">
+            <label for="phone">เบอร์โทร</label>
+            <input type="text" id="phone" name="phone" maxlength="20" />
+          </div>
+
+          <div class="field field--full">
+            <label for="pickup_addr">ที่รับของ</label>
+            <textarea id="pickup_addr" name="pickup_addr" placeholder=""></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn ghost" id="btnCancel">ย้อนกลับ</button>
+            <button type="submit" class="btn">บันทึกการเปลี่ยนแปลง</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ====== Global scripts for the header / user area ====== -->
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+
+    <!-- เปลี่ยนปุ่ม “เปิดร้านค้า/ร้านค้าของฉัน” ตามสถานะ -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        toggleOpenOrMyShop();
+      });
+    </script>
+
+    <!-- ====== Page scripts (prefill + load + save) ====== -->
+    <script>
+      function getShopId(){
+        const u = new URL(location.href);
+        return u.searchParams.get('shop_id') || u.searchParams.get('id');
+      }
+      function fillForm(d){
+        if(!d) return;
+        shop_id.value     = d.shop_id ?? d.id ?? '';
+        shop_name.value   = d.shop_name || '';
+        email.value       = d.email || '';
+        phone.value       = d.phone || '';
+        pickup_addr.value = d.pickup_addr || '';
+      }
+
+      // Prefill จาก sessionStorage
+      (function prefill(){
+        try{
+          const raw = sessionStorage.getItem('store_edit_prefill');
+          if(!raw) return;
+          const c = JSON.parse(raw);
+          if(String(c.shop_id) === String(getShopId())) fillForm(c);
+        }catch{}
+      })();
+
+      // โหลดจาก API มา "ทับ" อีกที
+      (async function load(){
+        const id = getShopId();
+        if(!id) return; // ไม่ขึ้น error บนหน้า
+        try{
+          const r = await fetch(`/page/storepage/api/store_get.php?shop_id=${encodeURIComponent(id)}`, { credentials:'same-origin' });
+          if(!r.ok){ console.warn('store_get status', r.status, await r.text()); return; }
+          const j = await r.json();
+          if(!j.ok){ console.warn('store_get error', j); return; }
+          fillForm(j.data);
+        }catch(e){ console.warn('store_get failed', e); }
+      })();
+
+      // บันทึก
+      let isSaving = false;
+      shopForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        if(isSaving) return;
+        isSaving = true;
+        const saveBtn = document.querySelector('button[type="submit"]');
+        const cancelBtn = document.getElementById('btnCancel');
+        saveBtn?.setAttribute('disabled','');
+        cancelBtn?.setAttribute('disabled','');
+
+        if(!shop_id.value) shop_id.value = getShopId() || '';
+
+        const fd = new FormData(shopForm);
+        try{
+          const r = await fetch('/page/storepage/api/store_update.php', {
+            method:'POST', body:fd, credentials:'same-origin'
+          });
+          const text = await r.text();
+          let j; try{ j = JSON.parse(text); }catch{ alert('Server ส่งข้อมูลผิดรูปแบบ: '+text); return; }
+          if(!j.ok){ alert('บันทึกไม่สำเร็จ: ' + (j.error || 'unknown')); return; }
+
+          sessionStorage.removeItem('store_edit_prefill');
+          const id = shop_id.value || getShopId() || '';
+          location.href = `/page/storepage/store-info.html?shop_id=${encodeURIComponent(id)}`;
+        }catch(err){
+          console.error(err); alert('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้');
+        }finally{
+          isSaving = false;
+          saveBtn?.removeAttribute('disabled');
+          cancelBtn?.removeAttribute('disabled');
+        }
+      });
+
+      // ย้อนกลับ
+      btnCancel.addEventListener('click', ()=>{
+        const id = shop_id.value || getShopId() || '';
+        sessionStorage.removeItem('store_edit_prefill');
+        location.href = `/page/storepage/store-info.html?shop_id=${encodeURIComponent(id)}`;
+      });
+    </script>
+  </body>
+</html>

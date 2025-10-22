@@ -295,6 +295,8 @@ function full_addr($p)
         });
     </script>
     <script src="/js/cart-badge.js" defer></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
 </body>
 
 </html>

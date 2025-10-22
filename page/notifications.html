@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/page/">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue - แจ้งเตือน</title>
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/instyle.css" />
+
+    <style>
+    /* ส่วนของหน้าแจ้งเตือน */
+    .noti-wrap{ width:min(980px,100%); margin:24px auto; padding:0 16px; }
+    .noti-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+    .noti-list{ display:grid; gap:12px; }
+    .noti-item{ background:var(--card,#fff); border-radius:var(--radius,16px); box-shadow:var(--shadow,0 10px 24px rgba(0,0,0,.08)); border:1px solid var(--line,#e9edf3); padding:14px 16px; cursor:pointer; }
+    .noti-item.unread{ outline:2px solid rgba(14,165,233,.28); border-color:transparent; }
+    .noti-title{ margin:0 0 4px; font-weight:700; }
+    .noti-body{ margin:0 0 6px; color:var(--muted,#6b7280); }
+    .noti-meta{ font-size:12px; color:var(--muted,#6b7280); }
+    .btn{ appearance:none; border:1px solid var(--line,#e9edf3); background:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    .btn:hover{ background:#f6f7fb; }
+    .empty,.loader{ text-align:center; color:var(--muted,#6b7280); padding:24px 0; }
+  </style>
+  </head>
+  <body>
+
+    <ul class="top-nav">
+      <!-- ซ้าย -->
+      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+
+      <!-- ขวา -->
+      <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#help">ช่วยเหลือ</a></li>
+      <li><span class="top-divider">|</span></li>
+      <li><a href="#lang">ไทย</a></li>
+    </ul>
+
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+
+      <button class="hamburger" id="hamburgerBtn" type="button"
+        aria-label="เมนู">
+        <img src="/img/Icon/menu.png" alt="เมนู">
+      </button>
+
+      <div class="search-container">
+        <!-- … ช่องค้นหา ตามไฟล์คุณ … -->
+        <div class="icon-buttons desktop-icons">
+          <a class="action-button" href="/page/favorites/index.php"
+            aria-label="รายการโปรด">
+            <img src="/img/Icon/heart.png" alt="รายการโปรด">
+            <span id="favBadge" class="icon-badge" hidden>0</span>
+          </a>
+
+          <a class="action-button" href="/page/cart/index.php"
+            aria-label="ตะกร้า" style="position:relative">
+            <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+            <span id="cartBadge" class="icon-badge" hidden>0</span>
+          </a>
+
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
+            <img src="/img/Icon/chat.png" alt="แชท">
+            <span id="chatBadge" class="icon-badge" hidden>0</span>
+          </a>
+
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea"
+              aria-haspopup="true" aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
+                  stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown"
+              role="menu"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="noti-wrap">
+      <div class="noti-toolbar">
+        <h1 style="margin:0;font-size:20px;">แจ้งเตือน</h1>
+        <button id="btnMarkAll"
+          class="btn">ทำเป็นอ่านแล้วทั้งหมด</button>
+      </div>
+
+      <div id="notiList" class="noti-list" aria-live="polite"></div>
+      <div id="emptyState" class="empty" hidden>ยังไม่มีแจ้งเตือน</div>
+      <div id="loader" class="loader" hidden>กำลังโหลด…</div>
+      <div id="sentinel" style="height:1px;"></div>
+    </main>
+
+    <script src="/js/nav-active.js"></script>
+    <script src="/js/flashmessage.js"></script>
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+    <script src="/js/store/shop-toggle.js"></script>
+    <script src="/js/nav/hamburger.js"></script>
+    <script src="/js/fav-badge.js" defer></script>
+    <script src="/js/cart-badge.js" defer></script>
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+
+    <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleOpenOrMyShop();
+  });
+</script>
+
+    <script>
+    const API_BASE = '/page/backend';  // ← ให้ตรงกับ backend ของคุณ
+
+    const elList   = document.getElementById('notiList');
+    const elEmpty  = document.getElementById('emptyState');
+    const elLoader = document.getElementById('loader');
+    const elBtnAll = document.getElementById('btnMarkAll');
+
+    let limit=20, offset=0, loading=false, noMore=false;
+
+    function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
+    function fmt(s){try{const d=new Date(s.replace(' ','T'));return d.toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});}catch{return s;}}
+
+    function addItem(it){
+      const div=document.createElement('div');
+      div.className='noti-item'+(it.is_read?'':' unread');
+      div.dataset.id=it.id;
+      div.innerHTML=`
+        <h3 class="noti-title">${esc(it.title)}</h3>
+        ${it.body?`<p class="noti-body">${esc(it.body)}</p>`:''}
+        <div class="noti-meta">${fmt(it.created_at)}</div>
+      `;
+      div.addEventListener('click', async ()=>{
+        if(!it.is_read){
+          div.classList.remove('unread');
+          // ลดเลข badge บนลิงก์ "แจ้งเตือน" แบบ optimistic
+          const badge=document.querySelector('#notiBadge');
+          if(badge && !badge.hidden){
+            const n=parseInt((badge.textContent||'0').replace('+',''))||0;
+            const next=Math.max(0,n-1);
+            badge.textContent=next>99?'99+':String(next);
+            badge.hidden=next===0;
+          }
+          try{
+            await fetch(`${API_BASE}/notifications/mark_read.php`,{
+              method:'POST',credentials:'include',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({ids:[it.id]})
+            });
+          }catch{}
+          window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
+        }
+        // ถ้าต้องการไปหน้า detailreq:
+        // location.href = `/page/detailreq.html?nid=${encodeURIComponent(it.id)}`;
+      });
+      elList.appendChild(div);
+    }
+
+    async function loadMore(){
+      if(loading||noMore) return;
+      loading=true; elLoader.hidden=false;
+      try{
+        const r=await fetch(`${API_BASE}/notifications/list.php?limit=${limit}&offset=${offset}`,{credentials:'include'});
+        if(!r.ok){ throw new Error(r.status); }
+        const j=await r.json();
+        const items=Array.isArray(j.items)?j.items:[];
+        if(offset===0 && items.length===0){ elEmpty.hidden=false; } else { elEmpty.hidden=true; }
+        items.forEach(addItem);
+        offset+=items.length;
+        if(items.length<limit) noMore=true;
+      }catch(e){
+        console.error('load list failed:', e);
+      }finally{
+        elLoader.hidden=true; loading=false;
+      }
+    }
+
+    document.getElementById('btnMarkAll').addEventListener('click', async ()=>{
+      try{
+        await fetch(`${API_BASE}/notifications/mark_read.php`,{
+          method:'POST',credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({ids:[]})
+        });
+        elList.querySelectorAll('.noti-item.unread').forEach(x=>x.classList.remove('unread'));
+        const badge=document.querySelector('#notiBadge'); if(badge) badge.hidden=true;
+        window.dispatchEvent(new CustomEvent('thammue:notifications:changed'));
+      }catch(e){}
+    });
+
+    const io=new IntersectionObserver(es=>{
+      for(const e of es){ if(e.isIntersecting) loadMore(); }
+    },{rootMargin:'800px 0px 0px 0px'});
+    io.observe(document.getElementById('sentinel'));
+
+    loadMore();
+  </script>
+
+  </body>
+</html>
