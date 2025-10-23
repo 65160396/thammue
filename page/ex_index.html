@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แลกเปลี่ยนสินค้า | THAMMUE</title>
+
+  <!-- สไตล์หลักของ exchangepage -->
+  <link rel="stylesheet" href="/css/ex.exchange.css">
+  <!-- สไตล์เฉพาะหน้า index นี้ -->
+  <link rel="stylesheet" href="/css/ex.index.css">
+</head>
+<body>
+
+  <!-- Header ดำสไตล์ exchangepage -->
+  <header class="ex-topbar">
+    <div class="ex-topbar-inner">
+      <div class="ex-brand">THAMMUE</div>
+
+      <form class="ex-search" onsubmit="return goSearch(event)">
+        <input id="q" type="search" placeholder="ค้นหาสินค้า" aria-label="ค้นหา">
+        <button type="submit" aria-label="ค้นหา">🔍</button>
+      </form>
+
+      <nav class="ex-top-actions">
+        <a href="/page/ex_notifications.html" class="ex-action">
+          <span>แจ้งเตือน</span>
+          <span id="exNotiBadge" class="ex-badge"></span>
+        </a>
+        <a href="/page/ex_chat.html" class="ex-action">
+          <span>แชท</span>
+        </a>
+        <a href="/page/ex_my_items.html" class="ex-action">
+          <span>ร้านของฉัน</span>
+        </a>
+        <a href="/page/ex_verification.html" class="ex-action">
+          <span id="kycPill" class="ex-pill ex-pill-muted">KYC</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- เนื้อหา -->
+  <main class="ex-main">
+    <section class="ex-hero">
+      <h1 class="ex-h1">ศูนย์กลางการแลกเปลี่ยน</h1>
+      <p class="ex-muted">เริ่มจากดูคำขอที่ค้างอยู่ หรือเพิ่มสินค้าของคุณเพื่อเสนอแลก</p>
+      <div class="ex-hero-actions">
+        <a class="ex-btn" href="/page/ex_requests.html">ไปที่คำขอแลกเปลี่ยน</a>
+        <a class="ex-btn secondary" href="/page/ex_my_items.html">จัดการสินค้าของฉัน</a>
+      </div>
+    </section>
+
+    <!-- การ์ดเมนูแบบ grid -->
+    <section class="ex-grid">
+      <a class="ex-card" href="/page/ex_requests.html">
+        <div class="ex-card-icon">🔁</div>
+        <div class="ex-card-title">คำขอของฉัน</div>
+        <div class="ex-card-sub">ดูขาเข้า/ขาออก • ตอบรับ/ปฏิเสธ/ยกเลิก</div>
+      </a>
+
+      <a class="ex-card" href="/page/ex_my_items.html">
+        <div class="ex-card-icon">📦</div>
+        <div class="ex-card-title">สินค้าของฉัน</div>
+        <div class="ex-card-sub">เพิ่ม/แก้ไขสินค้า • ใช้เสนอแลก</div>
+      </a>
+
+      <a class="ex-card" href="/page/ex_notifications.html">
+        <div class="ex-card-icon">🔔</div>
+        <div class="ex-card-title">แจ้งเตือน</div>
+        <div class="ex-card-sub">อัปเดตสถานะคำขอและนัดหมาย</div>
+      </a>
+
+      <a class="ex-card" href="/page/ex_chat.html">
+        <div class="ex-card-icon">💬</div>
+        <div class="ex-card-title">แชท</div>
+        <div class="ex-card-sub">คุยรายละเอียดก่อนตกลงแลก</div>
+      </a>
+
+      <a class="ex-card" href="/page/ex_verification.html">
+        <div class="ex-card-icon">🪪</div>
+        <div class="ex-card-title">ยืนยันตัวตน (KYC)</div>
+        <div class="ex-card-sub">ยืนยันครั้งเดียว • ใช้ user เดียวกับซื้อขาย</div>
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer (เรียบ ๆ) -->
+  <footer class="ex-footer">
+    <div class="ex-footer-inner">© THAMMUE Exchange</div>
+  </footer>
+
+  <!-- สคริปต์หลักของ exchange (ใช้ badge/เรียก API) -->
+  <script src="/js/ex.exchange.js"></script>
+  <!-- สคริปต์เฉพาะหน้า index นี้ -->
+  <script src="/js/ex.index.page.js"></script>
+
+  <script>
+    function goSearch(e){
+      e.preventDefault();
+      const q = (document.getElementById('q').value||'').trim();
+      if(!q) return false;
+      // ถ้าคุณมีหน้าค้นหาเฉพาะ exchange ให้เปลี่ยนลิงก์นี้
+      location.href = '/page/ex_requests.html?q=' + encodeURIComponent(q);
+      return false;
+    }
+  </script>
+</body>
+</html>

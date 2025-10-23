@@ -1,0 +1,55 @@
+/* โทน/สัดส่วนยึด exchangepage: แถบหัวดำ ตัวหนังสือขาว ช่องค้นหากลาง */
+.ex-topbar { background:#000; color:#fff; }
+.ex-topbar-inner{
+  max-width:1200px; margin:0 auto; padding:14px 16px;
+  display:grid; grid-template-columns: 160px 1fr auto; gap:16px; align-items:center;
+}
+.ex-brand{ font-size:24px; letter-spacing:4px; font-weight:700; }
+.ex-search{ display:flex; align-items:center; gap:8px; justify-self:center; width:100%; max-width:520px; }
+.ex-search input{
+  flex:1; padding:10px 12px; border-radius:12px; border:0; outline:none;
+}
+.ex-search button{
+  border:0; background:#fff; color:#111; border-radius:12px; padding:10px 14px; cursor:pointer;
+}
+.ex-top-actions{ display:flex; gap:14px; align-items:center; }
+.ex-action{ color:#fff; text-decoration:none; position:relative; }
+.ex-badge{
+  display:inline-block; min-width:18px; height:18px; padding:0 6px; margin-left:6px;
+  background:#ef4444; color:#fff; border-radius:999px; font-size:12px; line-height:18px; text-align:center;
+}
+.ex-pill{ padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #d1d5db; }
+.ex-pill-muted{ background:#111; color:#fff; border-color:#333; }
+
+/* ส่วนเนื้อหา */
+.ex-main{ max-width:1100px; margin:18px auto; padding:0 16px; }
+.ex-hero{ background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:18px; }
+.ex-hero .ex-hero-actions{ margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+/* การ์ดเมนู */
+.ex-grid{
+  margin-top:16px;
+  display:grid; gap:12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.ex-card{
+  display:block; text-decoration:none; color:#111; background:#fff;
+  border:1px solid #e5e7eb; border-radius:16px; padding:16px; transition:.15s ease;
+}
+.ex-card:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.ex-card-icon{ font-size:28px; margin-bottom:6px; }
+.ex-card-title{ font-weight:700; margin-bottom:2px; }
+.ex-card-sub{ color:#6b7280; font-size:14px; }
+
+/* ปุ่ม */
+.ex-btn{
+  display:inline-block; background:#111; color:#fff; border:1px solid #111;
+  padding:10px 14px; border-radius:12px; text-decoration:none;
+}
+.ex-btn.secondary{ background:#fff; color:#111; border-color:#d1d5db; }
+
+.ex-muted{ color:#6b7280; }
+.ex-h1{ font-size:22px; margin:0 0 4px; }
+
+.ex-footer{ margin:22px 0 40px; color:#6b7280; }
+.ex-footer-inner{ max-width:1100px; margin:0 auto; padding:0 16px; }
