@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="th">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>สินค้าในหมวด | THAMMUE</title>
+        <link rel="stylesheet" href="/css/ex.exchange.css">
+        <link rel="stylesheet"
+            href="/css/ex.index.css"><!-- reuse card style -->
+        <link rel="stylesheet" href="/css/ex.header.css">
+        <link rel="stylesheet" href="/css/ex.cards.kebab.css">
+        <style>
+    .wrap{max-width:1100px;margin:16px auto;padding:0 16px}
+    .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+    .empty{padding:16px;color:#64748b}
+  </style>
+    </head>
+    <body>
+        <div data-include="/page/partials/ex_header.html"></div>
+
+        <main class="wrap">
+            <div class="head">
+                <h2 id="title">สินค้าในหมวด</h2>
+                <a href="/page/ex_index.html"
+                    class="ex-link-more">กลับหน้าแรก</a>
+            </div>
+            <div id="grid" class="grid"></div>
+            <div style="text-align:center;margin:12px 0">
+                <button id="btnMore" class="ex-btn tiny" type="button"
+                    hidden>โหลดเพิ่ม</button>
+            </div>
+        </main>
+
+        <script src="/js/ex.include.js"></script>
+        <script src="/js/me.js"></script>
+        <script src="/js/ex.cards.kebab.js"></script>
+        <script src="/js/ex.header.js"></script>
+        <script>
+  const CATEGORY_MAP={1:'แฮนเมด',2:'ของประดิษฐ์',3:'ของใช้ทั่วไป',4:'เสื้อผ้า',5:'หนังสือ',6:'ของสะสม'};
+  const qs = new URLSearchParams(location.search);
+  const catId = +(qs.get('category_id')||0);
+
+  const API = {
+    byCat:(id,limit,offset)=>`/page/backend/ex_feed_by_category.php?category_id=${encodeURIComponent(id)}&limit=${limit}&offset=${offset}`
+  };
+
+  const grid   = document.getElementById('grid');
+  const title  = document.getElementById('title');
+  const moreBt = document.getElementById('btnMore');
+
+  let offset=0, limit=20, loading=false, done=false;
+
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+
+  // NOTE: ต้องมี user_id ใน item (จาก API) เพื่อให้เมนู 3 จุดตัดสินใจได้
+  function cardHTML(it){
+    const sub = [
+      it.category_id ? `หมวด: ${CATEGORY_MAP[it.category_id]||'ไม่ระบุ'}` : null,
+      it.province || null
+    ].filter(Boolean).join(' · ');
+    const img = it.thumbnail_url || '/img/sample/placeholder.png';
+    const uid = (it.user_id!=null) ? String(it.user_id) : ''; // ถ้า API ยังไม่ส่งมาก็ปล่อยว่าง จะโชว์เฉพาะ “รายงาน”
+
+    return `
+      <article class="ex-card-x" data-id="${it.id}" data-user="${uid}">
+        <a class="ex-card-thumb" href="/page/ex_item_view.html?id=${it.id}"
+           style="background-image:url('${img}')"></a>
+        <div class="ex-card-body">
+          <h3>${escapeHtml(it.title||'-')}</h3>
+          <p class="ex-sub">${escapeHtml(sub)}</p>
+          <a class="ex-btn tiny" href="/page/ex_item_view.html?id=${it.id}">ดูรายละเอียด</a>
+        </div>
+      </article>`;
+  }
+
+  async function loadMore(){
+    if (loading||done) return;
+    loading=true; moreBt.disabled=true;
+    try{
+      const r = await fetch(API.byCat(catId,limit,offset), {credentials:'include', cache:'no-store'});
+      const raw = await r.text();
+      let data; try{ data = JSON.parse(raw); }catch(e){
+        alert('โหลดข้อมูลไม่ได้: ' + raw.slice(0,120)); return;
+      }
+      if (!data?.ok){ alert('โหลดข้อมูลไม่ได้'); return; }
+
+      const items = data.items||[];
+      if (offset===0 && items.length===0){
+        grid.innerHTML = `<div class="empty">ยังไม่มีสินค้าในหมวดนี้</div>`;
+        done=true; moreBt.hidden=true; return;
+      }
+
+      grid.insertAdjacentHTML('beforeend', items.map(cardHTML).join(''));
+      // ติดตั้งเมนู 3 จุดในการ์ดใหม่ที่เพิ่งเติม
+      if (window.ExCardsKebab?.init) ExCardsKebab.init(grid);
+
+      offset += items.length;
+      if (items.length < limit){ done=true; moreBt.hidden=true; } else { moreBt.hidden=false; }
+    } finally { loading=false; moreBt.disabled=false; }
+  }
+
+  (function init(){
+    title.textContent = 'หมวด: ' + (CATEGORY_MAP[catId]||catId||'-');
+    loadMore();
+    moreBt.addEventListener('click', loadMore);
+  })();
+  </script>
+    </body>
+</html>

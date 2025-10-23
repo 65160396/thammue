@@ -12,11 +12,20 @@ async function includePartials() {
       console.error('include fail:', url, e);
     }
   }
-  // init header after inject
+
+  // เรียก init header หลังจาก inject เสร็จจริง ๆ
   if (window.requestAnimationFrame) {
     requestAnimationFrame(() => window.exHeaderInit && window.exHeaderInit());
   } else {
     setTimeout(() => window.exHeaderInit && window.exHeaderInit(), 0);
   }
+
+  // แจ้งว่า partials พร้อมแล้ว
+  document.dispatchEvent(new CustomEvent('ex:partials:ready'));
 }
+
 document.addEventListener('DOMContentLoaded', includePartials);
+
+// ❌ อย่าเรียก exHeaderInit ตรงนี้ก่อน include เสร็จ
+// if (window.exHeaderInit) window.exHeaderInit();
+// document.dispatchEvent(new CustomEvent('ex:partials:ready'));

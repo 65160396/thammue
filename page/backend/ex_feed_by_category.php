@@ -1,40 +1,35 @@
 <?php
-// /page/backend/ex_feed_by_category.php
+$REQUIRE_LOGIN = false;
 require_once __DIR__ . '/ex__items_common.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-$category_id = (int)($_GET['category_id'] ?? 0);
-if ($category_id <= 0) {
-  echo json_encode(['ok'=>true, 'items'=>[]], JSON_UNESCAPED_UNICODE);
-  exit;
-}
-
-$limit  = max(1, min( (int)($_GET['limit'] ?? 20), 48 ));
+$catId  = (int)($_GET['category_id'] ?? 0);
+$limit  = max(1, (int)($_GET['limit']  ?? 20));
 $offset = max(0, (int)($_GET['offset'] ?? 0));
+if ($catId <= 0) { echo json_encode(['ok'=>true,'items'=>[]]); exit; }
 
-$table = EX_ITEMS_TABLE;
-$select = "
-  id, user_id, title, thumbnail_url, category_id,
-  COALESCE(province, addr_province) AS province,
-  COALESCE(updated_at, created_at) AS ts
-";
+$table  = EX_ITEMS_TABLE;
 
 if ($uid) {
-  $sql = "SELECT $select FROM `$table`
-          WHERE category_id = ? AND user_id <> ?
-          ORDER BY ts DESC
-          LIMIT ? OFFSET ?";
+  $sql = "
+    SELECT id, user_id, title, description, thumbnail_url, category_id, province, created_at, updated_at
+    FROM `$table` WHERE category_id=? AND user_id <> ?
+    ORDER BY COALESCE(updated_at, created_at) DESC
+    LIMIT ?, ?
+  ";
   $st = $mysqli->prepare($sql);
-  $st->bind_param('iiii', $category_id, $uid, $limit, $offset);
+  $st->bind_param('iiii', $catId, $uid, $offset, $limit);
 } else {
-  $sql = "SELECT $select FROM `$table`
-          WHERE category_id = ?
-          ORDER BY ts DESC
-          LIMIT ? OFFSET ?";
+  $sql = "
+    SELECT id, user_id, title, description, thumbnail_url, category_id, province, created_at, updated_at
+    FROM `$table` WHERE category_id=?
+    ORDER BY COALESCE(updated_at, created_at) DESC
+    LIMIT ?, ?
+  ";
   $st = $mysqli->prepare($sql);
-  $st->bind_param('iii', $category_id, $limit, $offset);
+  $st->bind_param('iii', $catId, $offset, $limit);
 }
 $st->execute();
 $rs = $st->get_result();
@@ -42,14 +37,11 @@ $rs = $st->get_result();
 $items = [];
 while ($r = $rs->fetch_assoc()) {
   $items[] = [
-    'id'            => (int)$r['id'],
-    'user_id'       => (int)$r['user_id'],
-    'title'         => (string)($r['title'] ?? ''),
-    'thumbnail_url' => (string)($r['thumbnail_url'] ?? ''),
-    'category_id'   => isset($r['category_id']) ? (int)$r['category_id'] : null,
-    'province'      => $r['province'] ?? null,
-    'updated_at'    => $r['ts'] ?? null,
+    'id'=>(int)$r['id'],'user_id'=>(int)$r['user_id'],
+    'title'=>$r['title']??'','description'=>$r['description']??'',
+    'thumbnail_url'=>$r['thumbnail_url']??'',
+    'category_id'=>isset($r['category_id'])?(int)$r['category_id']:null,
+    'province'=>$r['province']??null,'created_at'=>$r['created_at']??null,
   ];
 }
-
-echo json_encode(['ok'=>true, 'items'=>$items], JSON_UNESCAPED_UNICODE);
+echo json_encode(['ok'=>true,'items'=>$items], JSON_UNESCAPED_UNICODE);

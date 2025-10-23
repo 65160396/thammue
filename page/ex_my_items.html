@@ -1,42 +1,49 @@
 <!doctype html>
 <html lang="th">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>สินค้าของฉัน | THAMMUE</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>สินค้าของฉัน | THAMMUE</title>
 
-  <link rel="stylesheet" href="/css/ex.exchange.css" />
-  <link rel="stylesheet" href="/css/ex.header.css" />
-  <style>
-    body{ background:#f6f8fb; }
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-    .card{background:#fff;border:1px solid #eef1f5;border-radius:14px;overflow:hidden}
-    .thumb{width:100%;height:160px;object-fit:cover;display:block;background:#f3f4f6}
-    .body{padding:10px 12px}
-    .title{font-weight:800;margin:4px 0 6px}
-    .muted{color:#64748b;font-size:13px}
-    .empty{margin-top:16px;text-align:center;color:#64748b}
-  </style>
-</head>
-<body>
-  <div data-include="/page/partials/ex_header.html"></div>
+    <link rel="stylesheet" href="/css/ex.exchange.css" />
+    <link rel="stylesheet" href="/css/ex.header.css" />
+    <link rel="stylesheet" href="/css/ex.cards.kebab.css">
+    <style>
+      body{ background:#f6f8fb; }
+      .wrap{max-width:1100px;margin:0 auto;padding:16px}
+      .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+      .card{background:#fff;border:1px solid #eef1f5;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+      .thumb{width:100%;height:170px;object-fit:cover;display:block;background:#f3f4f6}
+      .body{padding:10px 12px}
+      .title{font-weight:800;margin:4px 0 6px}
+      .muted{color:#64748b;font-size:13px}
+      .empty{margin-top:16px;text-align:center;color:#64748b}
+    </style>
+  </head>
+  <body>
+    <div data-include="/page/partials/ex_header.html"></div>
 
-  <main class="wrap">
-    <h2 style="margin:8px 0 12px;font-weight:800">สินค้าของฉัน</h2>
-    <div id="grid" class="grid"></div>
-    <div id="empty" class="empty" hidden>ยังไม่มีสินค้า ลองอัปโหลดชิ้นแรกดูนะ</div>
-  </main>
+    <main class="wrap">
+      <h2 style="margin:8px 0 12px;font-weight:800">สินค้าของฉัน</h2>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty" hidden>ยังไม่มีสินค้า ลองอัปโหลดชิ้นแรกดูนะ</div>
+    </main>
 
-  <script src="/js/ex.include.js"></script>
-  <script src="/js/me.js"></script>
-  <script src="/js/ex.header.js"></script>
-  <script>
-  (function(){
-    fetch('/page/backend/ex_list_my_items.php', {credentials:'include', cache:'no-store'})
-      .then(r => r.json())
-      .then(d => {
+    <script src="/js/ex.include.js"></script>
+    <script src="/js/me.js"></script>
+    <script src="/js/ex.cards.kebab.js"></script>
+    <script src="/js/ex.header.js"></script>
+    <script>
+    (async function(){
+      // เอา myId มาก่อน เพื่อใส่เป็น data-user (ให้สคริปต์สามจุดรู้ว่าเป็นเจ้าของ)
+      const me = (window.Me && typeof Me.get==='function') ? await Me.get() : { ok:false };
+      const myId = me?.ok ? (me.user?.id ?? null) : null;
+
+      try{
+        const r = await fetch('/page/backend/ex_list_my_items.php', {credentials:'include', cache:'no-store'});
+        const d = await r.json();
         if (!d?.ok) throw new Error(d?.error || 'load_fail');
+
         const grid = document.getElementById('grid');
         const empty = document.getElementById('empty');
 
@@ -47,25 +54,35 @@
 
         const fr = document.createDocumentFragment();
         d.items.forEach(it => {
-          const a = document.createElement('a');
-          a.className = 'card';
-          a.href = `/page/ex_item_view.html?id=${encodeURIComponent(it.id)}`;
-          a.innerHTML = `
-            <img class="thumb" src="${it.thumbnail_url || ''}" alt="">
+          const card = document.createElement('article');
+          card.className = 'ex-card-x card';
+          card.setAttribute('data-id', it.id);
+          // หน้านี้เป็น “ของฉัน” ทั้งหมด ใส่ user เป็น myId เพื่อให้ขึ้นเมนู แก้ไข/ลบ
+          if (myId != null) card.setAttribute('data-user', String(myId));
+
+          card.innerHTML = `
+            <a href="/page/ex_item_view.html?id=${encodeURIComponent(it.id)}" aria-label="ดูรายละเอียด">
+              <img class="thumb" src="${it.thumbnail_url || ''}" alt="">
+            </a>
             <div class="body">
-              <div class="title">${it.title || '-'}</div>
-              <div class="muted">${(it.description || '').slice(0,60)}</div>
+              <a class="title" href="/page/ex_item_view.html?id=${encodeURIComponent(it.id)}">
+                ${it.title || '-'}
+              </a>
+              <div class="muted">${(it.description || '').slice(0, 60) || '&nbsp;'}</div>
             </div>
           `;
-          fr.appendChild(a);
+          fr.appendChild(card);
         });
         grid.appendChild(fr);
-      })
-      .catch(() => {
+
+        // แจ้งให้สคริปต์สามจุดสแกนและติดตั้งเมนูในกริดนี้
+        if (window.ExCardsKebab?.init) ExCardsKebab.init(grid);
+
+      }catch(e){
         document.getElementById('empty').textContent = 'โหลดรายการไม่สำเร็จ';
         document.getElementById('empty').hidden = false;
-      });
-  })();
-  </script>
-</body>
+      }
+    })();
+    </script>
+  </body>
 </html>

@@ -8,8 +8,10 @@
     <!-- สไตล์หลัก + ธีม -->
     <link rel="stylesheet" href="/css/ex.exchange.css">
     <link rel="stylesheet" href="/css/ex.theme.exchangepage.css">
+
     <!-- สไตล์เฉพาะหน้า index -->
     <link rel="stylesheet" href="/css/ex.index.css">
+
     <!-- สไตล์ Header -->
     <link rel="stylesheet" href="/css/ex.header.css">
   </head>
@@ -36,55 +38,11 @@
       <!-- สินค้าที่คุณสนใจ -->
       <section class="ex-section">
         <div class="ex-section-header">
-          <h2>สินค้าที่คุณสนใจ</h2>
-          <a class="ex-link-more" href="/page/ex_requests.html">ดูทั้งหมด</a>
+          <h2>ใกล้คุณ</h2>
+          <a class="ex-link-more"
+            href="/page/ex_requests.html?near=1">ดูทั้งหมด</a>
         </div>
-
-        <div class="ex-cards">
-          <article class="ex-card-x">
-            <div class="ex-card-thumb"
-              style="background-image:url('/img/sample/room.jpg')"></div>
-            <div class="ex-card-body">
-              <h3>โฮมเซ็ต</h3>
-              <p class="ex-sub">หมวด: ของใช้ในบ้าน · กทม.</p>
-              <a class="ex-btn tiny"
-                href="/page/ex_requests.html">ดูรายละเอียด</a>
-            </div>
-          </article>
-
-          <article class="ex-card-x">
-            <div class="ex-card-thumb"
-              style="background-image:url('/img/sample/phone.jpg')"></div>
-            <div class="ex-card-body">
-              <h3>สมาร์ตโฟน</h3>
-              <p class="ex-sub">หมวด: อุปกรณ์อิเล็กทรอนิกส์</p>
-              <a class="ex-btn tiny"
-                href="/page/ex_requests.html">ดูรายละเอียด</a>
-            </div>
-          </article>
-
-          <article class="ex-card-x">
-            <div class="ex-card-thumb"
-              style="background-image:url('/img/sample/bear.jpg')"></div>
-            <div class="ex-card-body">
-              <h3>ตุ๊กตาหมี</h3>
-              <p class="ex-sub">หมวด: ของสะสม · ชลบุรี</p>
-              <a class="ex-btn tiny"
-                href="/page/ex_requests.html">ดูรายละเอียด</a>
-            </div>
-          </article>
-
-          <article class="ex-card-x">
-            <div class="ex-card-thumb"
-              style="background-image:url('/img/sample/shirt.jpg')"></div>
-            <div class="ex-card-body">
-              <h3>เสื้อยืด</h3>
-              <p class="ex-sub">หมวด: เสื้อผ้า</p>
-              <a class="ex-btn tiny"
-                href="/page/ex_requests.html">ดูรายละเอียด</a>
-            </div>
-          </article>
-        </div>
+        <div id="nearbyGrid" class="ex-cards"></div>
       </section>
 
       <!-- แบนด์คั่น (CTA อัปโหลดสินค้า) -->
@@ -97,12 +55,6 @@
             <a class="btn btn-primary"
               href="/page/ex_item_new.html">อัปโหลดสินค้าเพื่อแลก</a>
           </div>
-        </div>
-      </section>
-      <section class="section">
-        <div class="container">
-          <h3 class="section-title">ใกล้คุณ</h3>
-          <div id="nearbyGrid" class="grid grid-4"></div>
         </div>
       </section>
 
@@ -125,7 +77,6 @@
       <section class="ex-reasons" id="why">
         <h2>การแลกเปลี่ยนสินค้า</h2>
         <p class="ex-muted">ทำไมเราจึงควรแลกเปลี่ยนสินค้า</p>
-
         <div class="ex-reason-grid">
           <div class="ex-reason-card">
             <h3>ประหยัดค่าใช้จ่าย</h3>
@@ -150,9 +101,7 @@
     <div data-include="/page/partials/ex_footer.html"></div>
 
     <!-- ===== Scripts ===== -->
-    <!-- 1) include partials (header/footer) -->
-
-    <!-- 2) ฟังก์ชันของ Header (ใส่ไว้หลัง include เพื่อให้ DOM ของ header พร้อมแล้ว) -->
+    <!-- 1) include partials (header/footer) + header behavior -->
     <script>
       (function initHeader(){
         // รอจนกว่าจะมีปุ่ม hamburger แปลว่าพาร์เชียลโหลดแล้ว
@@ -172,11 +121,14 @@
             q.setAttribute('aria-expanded','true');
           });
           q.addEventListener('blur', () => {
-            setTimeout(() => { qSuggest.hidden = true; q.setAttribute('aria-expanded','false'); }, 120);
+            setTimeout(() => {
+              qSuggest.hidden = true;
+              q.setAttribute('aria-expanded','false');
+            }, 120);
           });
         }
+
         if (btnSearch && q){
-          // ถ้ามี form ก็ปล่อยให้ submit ตามปกติ
           const form = btnSearch.closest('form');
           if (!form) {
             btnSearch.addEventListener('click', (e) => {
@@ -189,13 +141,14 @@
 
         // ===== User menu (desktop) =====
         const userMenu = document.getElementById('userMenu');
-        const userBtn  = document.getElementById('userArea');
-        const userDd   = document.getElementById('userDropdown');
+        const userBtn = document.getElementById('userArea');
+        const userDd = document.getElementById('userDropdown');
 
         function closeUserMenu(){
           userMenu?.classList.remove('open');
           userBtn?.setAttribute('aria-expanded','false');
         }
+
         userBtn?.addEventListener('click', (e) => {
           e.stopPropagation();
           const opened = userMenu?.classList.toggle('open');
@@ -226,6 +179,7 @@
           document.body.classList.remove('body-lock');
           hamb?.setAttribute('aria-expanded','false');
         }
+
         hamb?.addEventListener('click', openDrawer);
         closeBtn?.addEventListener('click', closeDrawer);
         backdrop?.addEventListener('click', closeDrawer);
@@ -249,6 +203,7 @@
           mobileMenu.appendChild(fr);
           return true;
         }
+
         function renderMobileFallback() {
           if (!mobileMenu) return;
           mobileMenu.innerHTML = `
@@ -259,6 +214,7 @@
             <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
           `;
         }
+
         mobileToggle?.addEventListener('click', () => {
           const expanded = mobileToggle.getAttribute('aria-expanded') === 'true';
           if (!expanded) {
@@ -271,19 +227,22 @@
 
         // ถ้าเดสก์ท็อปเรนเดอร์เมนูล่าช้า ให้ sync อัตโนมัติเมื่อมีการเปลี่ยน
         if (userDd) {
-          const mo = new MutationObserver(() => { if (!mobileMenu?.hidden) syncDesktopMenuToMobile(); });
+          const mo = new MutationObserver(() => {
+            if (!mobileMenu?.hidden) syncDesktopMenuToMobile();
+          });
           mo.observe(userDd, { childList: true, subtree: true });
         }
       })();
     </script>
 
-    <!-- 3) สคริปต์เฉพาะหน้า index (โหลดแบบ defer ได้) -->
-    <script src="/js/ex.include.js"></script>
+    <!-- 2) สคริปต์ระบบ user/header/include -->
     <script src="/js/me.js"></script>
-    <!-- ให้มาก่อน เพื่อ ex.header.js เรียก Me.get() ได้ -->
-    <script src="/js/ex.header.js"></script> <!-- มี window.exHeaderInit -->
+    <script src="/js/ex.header.js"></script>
+    <script src="/js/ex.include.js"></script>
 
-    <!-- จะ include header แล้วเรียก exHeaderInit() -->
-    <script src="/js/ex.index.page.js" defer></script>
+    <!-- ตัวนี้แทนของเดิม -->
+
+    <script src="/js/ex.index.feed.js" defer></script>
+
   </body>
 </html>

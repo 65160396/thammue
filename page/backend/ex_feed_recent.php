@@ -1,35 +1,33 @@
 <?php
-// /page/backend/ex_feed_recent.php
-require_once __DIR__ . '/ex__items_common.php'; // $mysqli, $uid, EX_ITEMS_TABLE
+$REQUIRE_LOGIN = false;
+require_once __DIR__ . '/ex__items_common.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-$limit  = max(1, min( (int)($_GET['limit'] ?? 20), 48 ));
+$limit  = max(1, (int)($_GET['limit']  ?? 20));
 $offset = max(0, (int)($_GET['offset'] ?? 0));
-
-$table = EX_ITEMS_TABLE;
-
-// เอาคอลัมน์จังหวัดให้แมพได้ทั้งชื่อใหม่/เก่า
-$select = "
-  id, user_id, title, thumbnail_url, category_id,
-  COALESCE(province, addr_province) AS province,
-  COALESCE(updated_at, created_at) AS ts
-";
+$table  = EX_ITEMS_TABLE;
 
 if ($uid) {
-  $sql = "SELECT $select FROM `$table`
-          WHERE user_id <> ?
-          ORDER BY ts DESC
-          LIMIT ? OFFSET ?";
+  $sql = "
+    SELECT id, user_id, title, description, thumbnail_url, category_id, province, created_at, updated_at
+    FROM `$table`
+    WHERE user_id <> ?
+    ORDER BY COALESCE(updated_at, created_at) DESC
+    LIMIT ?, ?
+  ";
   $st = $mysqli->prepare($sql);
-  $st->bind_param('iii', $uid, $limit, $offset);
+  $st->bind_param('iii', $uid, $offset, $limit);
 } else {
-  $sql = "SELECT $select FROM `$table`
-          ORDER BY ts DESC
-          LIMIT ? OFFSET ?";
+  $sql = "
+    SELECT id, user_id, title, description, thumbnail_url, category_id, province, created_at, updated_at
+    FROM `$table`
+    ORDER BY COALESCE(updated_at, created_at) DESC
+    LIMIT ?, ?
+  ";
   $st = $mysqli->prepare($sql);
-  $st->bind_param('ii', $limit, $offset);
+  $st->bind_param('ii', $offset, $limit);
 }
 $st->execute();
 $rs = $st->get_result();
@@ -37,14 +35,11 @@ $rs = $st->get_result();
 $items = [];
 while ($r = $rs->fetch_assoc()) {
   $items[] = [
-    'id'            => (int)$r['id'],
-    'user_id'       => (int)$r['user_id'],
-    'title'         => (string)($r['title'] ?? ''),
-    'thumbnail_url' => (string)($r['thumbnail_url'] ?? ''),
-    'category_id'   => isset($r['category_id']) ? (int)$r['category_id'] : null,
-    'province'      => $r['province'] ?? null,
-    'updated_at'    => $r['ts'] ?? null,
+    'id'=>(int)$r['id'],'user_id'=>(int)$r['user_id'],
+    'title'=>$r['title']??'','description'=>$r['description']??'',
+    'thumbnail_url'=>$r['thumbnail_url']??'',
+    'category_id'=>isset($r['category_id'])?(int)$r['category_id']:null,
+    'province'=>$r['province']??null,'created_at'=>$r['created_at']??null,
   ];
 }
-
-echo json_encode(['ok'=>true, 'items'=>$items], JSON_UNESCAPED_UNICODE);
+echo json_encode(['ok'=>true,'items'=>$items], JSON_UNESCAPED_UNICODE);
