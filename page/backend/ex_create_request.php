@@ -41,3 +41,8 @@ $st->bind_param("isiss", $owner_user_id, $typ, $rid, $title, $body);
 $st->execute();
 
 jok(['request_id'=>$rid]);
+// ... ดึง $targetOwnerId จาก ex_items target_item_id ก่อน
+if ((int)$targetOwnerId === (int)$uid) {
+  jerr('cannot_offer_to_own_item', 400);
+}
+

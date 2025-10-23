@@ -1,55 +1,121 @@
-/* โทน/สัดส่วนยึด exchangepage: แถบหัวดำ ตัวหนังสือขาว ช่องค้นหากลาง */
-.ex-topbar { background:#000; color:#fff; }
-.ex-topbar-inner{
-  max-width:1200px; margin:0 auto; padding:14px 16px;
-  display:grid; grid-template-columns: 160px 1fr auto; gap:16px; align-items:center;
-}
-.ex-brand{ font-size:24px; letter-spacing:4px; font-weight:700; }
-.ex-search{ display:flex; align-items:center; gap:8px; justify-self:center; width:100%; max-width:520px; }
-.ex-search input{
-  flex:1; padding:10px 12px; border-radius:12px; border:0; outline:none;
-}
-.ex-search button{
-  border:0; background:#fff; color:#111; border-radius:12px; padding:10px 14px; cursor:pointer;
-}
-.ex-top-actions{ display:flex; gap:14px; align-items:center; }
-.ex-action{ color:#fff; text-decoration:none; position:relative; }
-.ex-badge{
-  display:inline-block; min-width:18px; height:18px; padding:0 6px; margin-left:6px;
-  background:#ef4444; color:#fff; border-radius:999px; font-size:12px; line-height:18px; text-align:center;
-}
-.ex-pill{ padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #d1d5db; }
-.ex-pill-muted{ background:#111; color:#fff; border-color:#333; }
+/* HERO ต่อเนื่องเต็มกว้าง */
+.ex-hero-visual{ position:relative; width:100%; height:380px; }
+@media (min-width: 992px){ .ex-hero-visual{ height:420px; } }
 
-/* ส่วนเนื้อหา */
-.ex-main{ max-width:1100px; margin:18px auto; padding:0 16px; }
-.ex-hero{ background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:18px; }
-.ex-hero .ex-hero-actions{ margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
-
-/* การ์ดเมนู */
-.ex-grid{
-  margin-top:16px;
-  display:grid; gap:12px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+.ex-hero-bg{
+  position:absolute; inset:0;
+  background-image: var(--ex-hero, url('/img/hero/exchange-hero.jpg')); /* เปลี่ยนเป็นภาพของคุณได้ */
+  background-size: cover; background-position: center;
+  filter: saturate(1) contrast(1) brightness(.9);
 }
-.ex-card{
-  display:block; text-decoration:none; color:#111; background:#fff;
-  border:1px solid #e5e7eb; border-radius:16px; padding:16px; transition:.15s ease;
+.ex-hero-overlay{
+  position:absolute; inset:0;
+  background: linear-gradient( to bottom, rgba(0,0,0,.45), rgba(0,0,0,.35) 30%, rgba(0,0,0,.25) 60%, rgba(0,0,0,.15) );
 }
-.ex-card:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
-.ex-card-icon{ font-size:28px; margin-bottom:6px; }
-.ex-card-title{ font-weight:700; margin-bottom:2px; }
-.ex-card-sub{ color:#6b7280; font-size:14px; }
-
-/* ปุ่ม */
-.ex-btn{
-  display:inline-block; background:#111; color:#fff; border:1px solid #111;
-  padding:10px 14px; border-radius:12px; text-decoration:none;
+.ex-hero-center{
+  position:relative; z-index:2; height:100%;
+  max-width:1100px; margin:0 auto; padding:0 16px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#fff;
 }
-.ex-btn.secondary{ background:#fff; color:#111; border-color:#d1d5db; }
+.ex-hero-center h1{ font-size:40px; font-weight:800; letter-spacing:.5px; margin:0 0 10px; }
+.ex-hero-center p{ max-width:720px; margin:0 auto 14px; line-height:1.6; opacity:.95; }
+.ex-hero-cta{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+.ex-hero-cta .ex-btn{ border-radius:999px; padding:12px 18px; }
+.ex-hero-cta .ex-btn.secondary{ background:transparent; color:#fff; border-color:#fff; }
 
-.ex-muted{ color:#6b7280; }
-.ex-h1{ font-size:22px; margin:0 0 4px; }
+/* คอนเทนต์หลัก */
+.ex-index-main{ background:#f3f4f6; }
 
-.ex-footer{ margin:22px 0 40px; color:#6b7280; }
-.ex-footer-inner{ max-width:1100px; margin:0 auto; padding:0 16px; }
+/* ส่วนหัวแต่ละบล็อก */
+.ex-section{ max-width:1100px; margin:16px auto; padding:0 16px 20px; }
+.ex-section-header{ display:flex; align-items:flex-end; justify-content:space-between; margin:18px 0 10px; }
+.ex-section-header h2{ font-size:20px; font-weight:800; margin:0; }
+.ex-link-more{ font-size:14px; color:#0ea5e9; text-decoration:none; }
+.ex-link-more:hover{ text-decoration:underline; }
+
+/* การ์ดสินค้า */
+.ex-cards{ display:grid; gap:14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.ex-card-x{
+  background:#fff; border:1px solid #e5e7eb; border-radius:18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  overflow:hidden; display:flex; flex-direction:column;
+}
+.ex-card-thumb{ height:160px; background:#f3f4f6; background-size:cover; background-position:center; }
+.ex-card-body{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:8px; }
+.ex-card-body h3{ margin:0; font-size:16px; font-weight:700; }
+.ex-sub{ color:#6b7280; font-size:13px; }
+.ex-btn.tiny{ padding:8px 12px; border-radius:999px; font-size:13px; align-self:flex-start; }
+
+/* ==== แบนด์คั่นสไตล์ exchangepage ==== */
+.section{ padding:22px 0; }
+.section-band{ background:#eef2f7; }
+.container{ max-width:1100px; margin:0 auto; padding:0 16px; }
+.band{ display:flex; align-items:center; justify-content:center; min-height:200px; }
+.band-content{ text-align:center; }
+.band-content h2{ font-size:22px; font-weight:800; margin:0 0 8px; }
+.band-content .muted{ color:#6b7280; margin-bottom:12px; }
+
+.btn{ display:inline-block; border:1px solid #111; color:#fff; background:#111; text-decoration:none;
+      padding:10px 14px; border-radius:12px; cursor:pointer; }
+.btn:hover{ filter:brightness(1.05); }
+.btn.btn-primary{ background:#0f766e; border-color:#0f766e; }
+.btn.btn-sm{ padding:8px 12px; border-radius:10px; }
+
+/* กริดหมวด */
+.grid{ display:grid; gap:12px; }
+.grid-4{ grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+/* เหตุผล/คุณค่า */
+.ex-reasons{ background:#eee; padding:28px 0; text-align:center; }
+.ex-reasons h2{ font-size:20px; font-weight:800; margin:0 0 6px; }
+.ex-reason-grid{
+  max-width:1100px; margin:12px auto 0; padding:0 16px;
+  display:grid; gap:14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.ex-reason-card{
+  background:#fff; border:1px solid #e5e7eb; border-radius:18px; padding:16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06); text-align:left;
+}
+.ex-reason-card h3{ margin:0 0 6px; font-size:16px; font-weight:800; }
+.ex-reason-card p{ margin:0; color:#6b7280; }
+
+/* ฟุตเตอร์ */
+.footer{ background:#fff; padding:24px 0; }
+.footer-grid{
+  display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+}
+.footer h5{ margin:0 0 8px; font-size:14px; font-weight:800; }
+.footer .list{ list-style:none; padding:0; margin:0; }
+.footer .list li{ margin:6px 0; }
+.footer .list a{ color:#111; text-decoration:none; }
+.footer .list a:hover{ text-decoration:underline; }
+.subscribe{ display:flex; gap:8px; }
+.subscribe input{ padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; flex:1; }
+.social a{ margin-right:8px; text-decoration:none; color:#111; }
+
+.tiny{ font-size:12px; }
+.center{ text-align:center; }
+.mt-24{ margin-top:24px; }
+.muted{ color:#6b7280; }
+/* --- No horizontal scroll (page scope) --- */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+/* HERO + ชั้นพื้นหลังไม่ล้นขอบ */
+.ex-hero-visual,
+.ex-hero-visual > *,
+.ex-hero-bg,
+.ex-hero-overlay {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* คอนเทนต์ที่ใช้ .container ให้ไม่เกินจอ */
+.container { max-width: min(1100px, 100%); margin-inline: auto; padding-inline: 16px; }
+
+/* รูป/วิดีโอทั่วหน้าไม่ล้น */
+img, video { max-width: 100%; height: auto; }
+
+/* กริด/การ์ดกันล้นเผื่อเงา/เส้นขอบ */
+.ex-cards, .grid { overflow: hidden; }
+

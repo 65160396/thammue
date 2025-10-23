@@ -1,0 +1,290 @@
+/* =======================
+   THAMMUE — Header Only
+   ======================= */
+
+/* Reset เฉพาะที่จำเป็น */
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; }
+
+/* ---------- Top bar ---------- */
+.top-nav{
+  list-style:none; margin:0; padding:2px 12px;
+  background:#fff; color:#000; display:flex; align-items:center; gap:6px;
+}
+.top-nav li{ display:inline-flex; align-items:center; }
+.top-nav li.right{ margin-left:auto; }
+.top-nav a{ display:block; font-size:12px; color:#000; padding:2px 6px; text-decoration:none; opacity:.9; }
+.top-nav a:hover{ opacity:1; }
+.top-divider{ color:#c4c4c4; }
+
+/* ---------- Header ดำ ---------- */
+.header-wrapper{
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  background:#000; color:#fff; padding:18px 24px; position:relative;
+}
+.logo-container{ margin-right:20px; }
+.brand-text{
+  color:#fff; font-size:24px; letter-spacing:.2em; font-weight:600; line-height:1;
+  white-space:nowrap; font-family:"Cinzel","Times New Roman",serif; text-decoration:none;
+}
+@media (max-width:768px){ .brand-text{ font-size:18px; letter-spacing:.35em; } }
+
+/* Search + Icons (desktop) */
+.search-container{ display:flex; align-items:center; gap:12px; flex:1 1 auto; }
+.search-group{
+  display:flex; align-items:center; width:clamp(320px,48vw,560px); height:44px;
+  background:#fff; border:1px solid #e5e5e5; border-radius:12px; overflow:hidden;
+}
+.search-group input{
+  flex:1; height:100%; border:0; outline:none; background:#fff; padding:0 14px; font-size:15px;
+}
+.search-button{
+  width:56px; height:100%; border:0; border-left:1px solid #e5e5e5; background:#fff;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.search-button img{ width:18px; height:18px; opacity:.85; }
+.search-group:focus-within{ border-color:#111; box-shadow:0 0 0 3px rgba(0,0,0,.08); }
+
+.icon-buttons{ display:flex; align-items:center; gap:14px; }
+.action-button{
+  position:relative; width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+  border:0; background:transparent; border-radius:50%; cursor:pointer; transition:background-color .2s;
+}
+.action-button:hover{ background:#111; }
+.action-button img{ height:26px; width:auto; display:block; }
+.icon-badge{
+  position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px;
+  display:grid; place-items:center; font-size:12px; font-weight:700; color:#fff; background:#ff2d55; border-radius:999px;
+}
+.icon-badge[hidden]{ display:none !important; }
+
+/* ผู้ใช้ (desktop) */
+.user-menu{ position:relative; z-index:1; }
+.user-area{ display:flex; align-items:center; gap:8px; color:#fff; background:transparent; border:0; cursor:pointer; }
+.user-area img{ height:26px; width:auto; display:block; }
+.user-chip{
+  color:#fff; font-size:14px; opacity:.9; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.user-area .chev{ width:14px; height:14px; opacity:.7; }
+.user-dropdown{
+  position:absolute; top:calc(100% + 10px); right:0; min-width:190px; background:#fff; color:#111;
+  border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.22); padding:8px 0; opacity:0; transform:translateY(-6px);
+  pointer-events:none; transition:.18s ease; z-index:1000;
+}
+.user-dropdown::before{
+  content:""; position:absolute; top:-8px; right:18px; border:8px solid transparent; border-bottom-color:#fff;
+  filter:drop-shadow(0 -2px 1px rgba(0,0,0,.06));
+}
+.user-menu.open .user-dropdown,
+.user-menu:hover .user-dropdown,
+.user-menu:focus-within .user-dropdown{ opacity:1; transform:translateY(0); pointer-events:auto; }
+.user-dropdown a{ display:block; padding:10px 14px; color:#111; text-decoration:none; font-size:14px; }
+.user-dropdown a:hover{ background:#f3f4f6; }
+.user-dropdown hr{ border:0; border-top:1px solid #eee; margin:6px 0; }
+.user-dropdown a.logout{ color:#b91c1c; }
+
+/* ---------- Hamburger + Drawer (mobile) ---------- */
+:root{
+  --collapse-width:1100px;   /* เปลี่ยนจุดพับเหลือแค่ hamburger ได้ที่นี่ */
+}
+
+.hamburger{ display:none !important; background:transparent; border:0; padding:8px; margin-left:auto; line-height:0; cursor:pointer; }
+.hamburger img{ width:24px; height:24px; display:block; }
+
+/* Drawer */
+.icons-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:90; }
+.icons-backdrop[hidden]{ display:none; }
+
+.icons-drawer{
+  position:fixed; top:0; right:0; width:300px; max-width:88vw; height:100dvh;
+  background:#111; color:#fff; z-index:99; transform:translateX(100%); transition:transform .25s ease;
+  display:flex; flex-direction:column; padding:16px; box-shadow:-6px 0 24px rgba(0,0,0,.35);
+}
+.icons-drawer.open{ transform:translateX(0); }
+.icons-drawer__close{
+  align-self:flex-end; background:#fff; color:#111; border:0; border-radius:999px; padding:6px 12px; font-weight:600; cursor:pointer; margin-bottom:16px;
+}
+.icons-drawer a{
+  display:grid; grid-template-columns:32px 1fr auto; align-items:center; gap:12px;
+  padding:12px 8px; border-radius:12px; color:#fff; text-decoration:none;
+}
+.icons-drawer a:hover{ background:rgba(255,255,255,.08); }
+.icons-drawer a img{ width:24px; height:24px; filter:invert(1); }
+
+/* เมนูโปรไฟล์ย่อยใน Drawer */
+.drawer-acc{
+  display:grid; grid-template-columns:32px 1fr auto; align-items:center; gap:12px; width:100%;
+  padding:12px 8px; border-radius:12px; background:transparent; color:#fff; text-align:left; cursor:pointer; border:0;
+}
+.drawer-acc:hover{ background:rgba(255,255,255,.08); }
+.drawer-acc .chev{ width:16px; height:16px; opacity:.7; transition:transform .2s ease; }
+.drawer-acc[aria-expanded="true"] .chev{ transform:rotate(180deg); }
+.drawer-acc-menu{ display:flex; flex-direction:column; gap:2px; margin-left:44px; padding:8px 0 12px; }
+.drawer-acc-menu a{ padding:8px; border-radius:10px; color:#fff; text-decoration:none; }
+.drawer-acc-menu a:hover{ background:rgba(255,255,255,.08); }
+.drawer-acc-menu hr{ border:none; border-top:1px solid rgba(255,255,255,.12); margin:6px 0; }
+.drawer-acc-menu a.logout{ color:#ff6b6b; }
+
+/* ---------- Category bar ---------- */
+.category-buttons{
+  display:flex; justify-content:center; align-items:stretch; gap:0; padding:0;
+  background:#fff; border-bottom:1px solid #eee; overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.category-button{
+  display:flex; align-items:center; justify-content:center; padding:8px 20px; font-size:14px;
+  color:#000; background:#fff; text-decoration:none; border-radius:0; white-space:nowrap;
+}
+.category-button:hover{ background:#f3f3f3; }
+.category-button.active{ background:#000; color:#fff; font-weight:600; }
+
+/* ---------- Responsive ---------- */
+/* แสดงชื่อบนเดสก์ท็อปเสมอ, มือถือค่อยซ่อน */
+@media (min-width:769px){ .icon-buttons .user-chip{ display:inline !important; } }
+@media (max-width:640px){ .icon-buttons .user-chip{ display:none; } }
+
+/* จุดพับ: ซ่อนไอคอนทั้งหมดให้เหลือ hamburger + ช่องค้นหาเต็มแถว */
+@media (max-width:1100px){
+  .desktop-icons{ display:none !important; }
+  .hamburger{
+    display:inline-flex !important; align-items:center; justify-content:center;
+    width:40px; height:40px; padding:0; border-radius:8px; border:1px solid #333; background:#111;
+    position:absolute; right:16px; top:50%; transform:translateY(-50%); z-index:6;
+  }
+  .search-container{ flex:1 1 100%; order:3; }
+  .search-group{ width:100%; }
+}
+
+/* ป้องกัน element ที่ซ่อนไว้ยังรับคลิก */
+[hidden]{ display:none !important; }
+
+/* กันกล่อง suggest ทับคลิก */
+#qSuggest{ position:absolute; z-index:10; }
+/* === FIX: ให้ไอคอนชิดขวาบนเดสก์ท็อป === */
+
+/* ให้คอนเทนเนอร์ของช่องค้นหายืดเต็มแถว */
+.header-wrapper .search-container{
+  display:flex;
+  align-items:center;
+  flex: 1 1 auto;   /* ยืดรับพื้นที่ที่เหลือ */
+  gap: 12px;
+}
+
+/* ให้กล่องค้นหายืดได้จริง (ไม่ล็อกความกว้างคงที่) */
+.header-wrapper .search-group{
+  flex: 1 1 560px;  /* ยืดได้-หดได้ */
+  width: auto;      /* ยกเลิก width เดิมที่ clamp ไว้ */
+  min-width: 260px;
+}
+
+/* บังคับกลุ่มไอคอนชิดขอบขวา */
+.header-wrapper .desktop-icons,
+.header-wrapper .icon-buttons{
+  margin-left: auto;     /* ดันไปสุดขวา */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* เดสก์ท็อป: ซ่อน hamburger */
+@media (min-width: 1101px){
+  .hamburger{ display:none !important; }
+}
+
+/* มือถือ: คงพฤติกรรมเดิม (ซ่อนไอคอน, แสดง hamburger, ค้นหาเต็มแถว) */
+@media (max-width: 1100px){
+  .desktop-icons{ display:none !important; }
+  .hamburger{
+    display:inline-flex !important;
+    position:absolute; right:16px; top:50%; transform:translateY(-50%);
+  }
+  .header-wrapper .search-container{ flex: 1 1 100%; order:3; }
+  .header-wrapper .search-group{ width:100%; }
+}
+/* === Search box: ทำให้กว้างพอดี (ทั้งเดสก์ท็อป/มือถือ) === */
+
+/* จัดเลย์เอาต์แถว header ให้ไอคอนอยู่ขวา, ช่องค้นหาอยู่กลาง-ซ้าย และมีระยะหายใจ */
+.header-wrapper{ gap:16px; }
+.header-wrapper .search-container{
+  display:flex; align-items:center; flex:1 1 auto; gap:12px;
+}
+.header-wrapper .desktop-icons{ margin-left:auto; display:flex; gap:14px; }
+
+/* เดสก์ท็อป: จำกัดความกว้างไม่ให้ยาวเกินไป */
+@media (min-width:1101px){
+  .header-wrapper .search-group{
+    /* ไม่กินทั้งแถว: ยาวประมาณ 34vw แต่ไม่เกิน 560px และไม่ต่ำกว่า 360px */
+    flex:0 1 auto;
+    width:clamp(360px, 34vw, 560px) !important;
+  }
+}
+
+/* แท็บเล็ตแนวนอน ~ เดสก์ท็อปเล็ก */
+@media (min-width:768px) and (max-width:1100px){
+  .header-wrapper .search-group{
+    /* ยาวประมาณครึ่งหน้าจอ แต่ล็อกไม่เกิน 500px */
+    flex:0 1 auto;
+    width:clamp(320px, 50vw, 500px) !important;
+  }
+}
+
+/* มือถือ: ให้เต็มความกว้างแถว (ดูอ่านง่าย) */
+@media (max-width:767px){
+  .header-wrapper .search-container{ flex:1 1 100%; order:3; }
+  .header-wrapper .search-group{ width:100% !important; }
+  .desktop-icons{ display:none !important; }   /* แสดงแฮมเบอร์เกอร์แทน */
+}
+
+/* กันความกว้างที่ตั้งไว้ก่อนหน้ามาทับ */
+.header-wrapper .search-group{ max-width:100%; }
+/* ===== Move search box to the right, next to icons ===== */
+.header-wrapper{ gap:16px; }
+
+/* ดันกล่องค้นหา + ไอคอนไปฝั่งขวา */
+.header-wrapper .search-container{
+  margin-left:auto;              /* ดันทั้งบล็อคไปชิดขวา */
+  flex:0 1 auto;                 /* ไม่ยืดกินพื้นที่ซ้าย */
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;      /* เรียง search ก่อน แล้วไอคอนชิดขวา */
+  gap:12px;
+}
+
+/* ขนาดกล่องค้นหา—พอดีสายตา */
+.header-wrapper .search-group{
+  width:clamp(360px, 34vw, 560px);  /* เดสก์ท็อป: ประมาณหนึ่งในสามของหน้าจอ */
+  max-width:100%;
+}
+
+/* ให้ชุดไอคอนอยู่ขวาสุด */
+.header-wrapper .desktop-icons{
+  margin-left:12px;     /* เว้นระยะเล็กน้อยจากกล่องค้นหา */
+  display:flex; gap:14px;
+}
+
+/* Tablet: ย่อกล่องค้นหาเล็กลง */
+@media (min-width:768px) and (max-width:1100px){
+  .header-wrapper .search-group{ width:clamp(320px, 42vw, 500px); }
+}
+
+/* Mobile: ช่องค้นหาเต็มแถว ไอคอนใช้แฮมเบอร์เกอร์แทน */
+@media (max-width:767px){
+  .header-wrapper .search-container{ flex:1 1 100%; order:3; }
+  .header-wrapper .search-group{ width:100%; }
+  .desktop-icons{ display:none !important; } /* ใช้เมนู hamburger */
+}
+/* ป้องกัน hamburger ทับช่องค้นหา */
+@media (max-width: 992px){
+  /* เผื่อที่ทางขวาให้ปุ่ม */
+  .header-wrapper{
+    padding-right: 64px;     /* พื้นที่พอให้ปุ่ม 40px + ระยะหายใจ */
+  }
+  /* ถ้าต้องการเผื่อที่แค่บริเวณช่องค้นหา ใช้อันนี้แทน */
+  /* .header-wrapper .search-container{ padding-right:64px; } */
+
+  /* ปรับตำแหน่งปุ่มนิดหน่อยให้ไม่ชิดขอบเกินไป */
+  .hamburger{
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

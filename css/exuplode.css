@@ -1,241 +1,115 @@
-/* ===== Theme ===== */
-:root {
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --text: #1b1f24;
-  --muted: #8a93a0;
-  --line: #e6e9ef;
-  --accent: #000000;
-  --accent-700: #383838;
-  --radius: 14px;
-  --shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+/* ============ พื้นหลัง + กล่องหลัก ============ */
+body { background:#f6f8fb; }
+.upx-card{
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 22px 24px;
+  background:#fff;
+  border:1px solid #e9edf3;
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
 }
 
-* {
-  box-sizing: border-box;
-}
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", Arial,
-    sans-serif;
+/* หัวเรื่องหน้า */
+.upx .page-title{
+  margin:0 0 12px;
+  font-size:20px;
+  font-weight:700;
+  color:#111;
 }
 
-/* ===== Layout ===== */
-.container {
-  width: min(980px, 100%);
-  margin-inline: auto;
-  padding: 24px 16px;
+/* ============ Stepper ============ */
+/* โครง stepper 3 ช่องแบบบาง ๆ */
+.stepper{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  column-gap:18px;
+  align-items:flex-start;
+  margin:10px 0 18px;
 }
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 28px;
-  border: 1px solid var(--line);
+.stepper-line{
+  position:absolute;
+  top:14px; left:0; right:0;
+  height:2px; background:#e8ebf1; border-radius:2px;
+  z-index:0;
 }
-.page-title {
-  margin: 0 0 12px;
-  font-weight: 700;
-  font-size: 20px;
-}
-/* (เพิ่มจากไฟล์ก่อน): เฮดเดอร์ให้มีระยะห่างเล็กน้อย */
-.header-wrapper {
-  margin: 12px 0 20px;
-}
-
-/* ===== Stepper (ปรับใหม่) ===== */
-.stepper {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 12px;
-  row-gap: 14px;
-  margin: 8px 0 24px;
-  padding-bottom: 2px;
-}
-.stepper-line {
-  grid-column: 1/-1;
-  height: 4px;
-  background: var(--line);
-  border-radius: 999px;
-  position: relative;
-  overflow: hidden;
-  margin-top: 2px;
-}
-.stepper-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0%;
-  background: var(--accent);
-  border-radius: 999px;
-  transition: width 0.25s ease;
-}
-.step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.step .dot {
-  width: 14px;
-  height: 14px;
-  min-width: 14px;
-  border-radius: 999px;
-  background: #cfd5df;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px var(--line);
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-}
-.step .dot.active {
-  background: var(--accent);
-  box-shadow: 0 0 0 2px rgba(255, 74, 11, 0.25);
-  transform: scale(1.05);
-}
-.step .label {
-  font-size: 14px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.step .label.active {
-  color: #223042;
-  font-weight: 600;
+.stepper-line .stepper-fill{
+  width:0%; height:100%;
+  background:#111; border-radius:2px;
+  transition:width .25s ease;
 }
 
-/* ===== Form ===== */
-legend {
-  position: absolute;
-  left: -9999px;
-} /* ซ่อน legend แต่อ่านได้โดย screen reader */
-
-.field {
-  margin: 12px 0;
+/* จุด + ป้ายชื่อ */
+.step{
+  display:flex; flex-direction:column; align-items:center;
+  gap:6px; z-index:1;
 }
-.field label {
-  display: block;
-  font-size: 14px;
-  color: #223042;
-  margin-bottom: 6px;
+.step .dot{
+  width:14px; height:14px; border-radius:50%;
+  background:#fff; border:2px solid #cfd6e2;
 }
-.field input[type="text"],
-.field select,
-.field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
-  font-size: 14px;
-  outline: none;
-}
-.field textarea {
-  resize: vertical;
-}
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: #cfd7ff;
-  box-shadow: 0 0 0 3px rgba(77, 107, 255, 0.12);
+.step .dot.active{ background:#111; border-color:#111; }
+.step .label{
+  font-size:13px; color:#334155; white-space:nowrap;
 }
 
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-@media (max-width: 680px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
+/* มือถือ: ย่อขนาด */
+@media (max-width:640px){
+  .stepper{ column-gap:12px; }
+  .step .label{ font-size:12px; }
+  .step .dot{ width:12px; height:12px; }
 }
 
-/* ===== Upload Box & Thumbs ===== */
-.upload {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+/* ============ ฟอร์ม ============ */
+.panel{ margin:0; padding:0; border:0; }
+.field{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+.field label{ font-size:14px; font-weight:700; color:#0f172a; }
+
+/* อินพุตโทนบาง มน */
+input[type="text"], input[type="number"], select, textarea{
+  background:#fff; color:#111827;
+  border:1px solid #e1e6ef;
+  border-radius:12px;
+  padding:10px 12px; font-size:14.5px; outline:none;
 }
-.upload-box {
-  width: 120px;
-  height: 48px;
-  border-radius: 10px;
-  border: 1px dashed var(--line);
-  background: #fafbfe;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.upload-box:hover {
-  background: #f1f3f8;
-}
-.plus {
-  font-size: 28px;
-  line-height: 1;
-  transform: translateY(-1px);
-}
-.thumbs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.thumb {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid var(--line);
+textarea{ min-height:96px; resize:vertical; }
+input:focus, select:focus, textarea:focus{
+  border-color:#111; box-shadow:0 0 0 3px rgba(17,17,17,.06);
 }
 
-/* ===== Actions / Buttons ===== */
-.actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 14px;
+/* ============ อัปโหลดรูป ============ */
+.upload{ display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; }
+.visually-file{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+.upload-box{
+  width:120px; height:120px;
+  border:2px dashed #d7dee8;
+  background:#f8fafc;
+  border-radius:12px;
+  display:grid; place-items:center;
+  cursor:pointer; transition:transform .15s ease, background .2s;
 }
-.btn {
-  appearance: none;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: transform 0.05s ease, background 0.2s ease, border-color 0.2s ease;
-}
-.btn:active {
-  transform: translateY(1px);
-}
-.btn.primary {
-  background: var(--accent);
-  color: #fff;
-}
-.btn.primary:hover {
-  background: var(--accent-700);
-}
-.btn.ghost {
-  background: #fff;
-  border-color: var(--line);
-  color: #223042;
-}
-.btn.ghost:hover {
-  border-color: #c9cfd9;
+.upload-box:hover{ transform:translateY(-1px); background:#f3f4f6; }
+.upload-box .plus{ font-size:34px; color:#6b7280; }
+
+.thumbs{ display:flex; flex-wrap:wrap; gap:10px; }
+.thumbs img{
+  width:120px; height:120px; object-fit:cover;
+  border-radius:12px; border:1px solid #e5e7eb;
 }
 
-/* ===== Panels ===== */
-.panel[hidden] {
-  display: none;
+/* ============ ปุ่ม ============ */
+.actions{
+  display:flex; justify-content:center; gap:10px;
+  margin-top:18px;
 }
-
-/* ===== Public page exceptions ===== */
-.is-public .request-card,
-.is-public .btn-primary-blue {
-  display: none !important;
+.btn{
+  padding:9px 16px; border-radius:10px;
+  font-weight:700; font-size:14px; cursor:pointer;
+  border:2px solid #111; transition:filter .15s ease;
 }
+.btn.primary{ background:#111; color:#fff; }
+.btn.primary:hover{ filter:brightness(.95); }
+.btn.ghost{ background:#fff; color:#111; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; }

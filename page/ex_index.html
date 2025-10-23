@@ -1,109 +1,289 @@
 <!doctype html>
 <html lang="th">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>แลกเปลี่ยนสินค้า | THAMMUE</title>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THAMMUE แลกเปลี่ยนสินค้า</title>
 
-  <!-- สไตล์หลักของ exchangepage -->
-  <link rel="stylesheet" href="/css/ex.exchange.css">
-  <!-- สไตล์เฉพาะหน้า index นี้ -->
-  <link rel="stylesheet" href="/css/ex.index.css">
-</head>
-<body>
+    <!-- สไตล์หลัก + ธีม -->
+    <link rel="stylesheet" href="/css/ex.exchange.css">
+    <link rel="stylesheet" href="/css/ex.theme.exchangepage.css">
+    <!-- สไตล์เฉพาะหน้า index -->
+    <link rel="stylesheet" href="/css/ex.index.css">
+    <!-- สไตล์ Header -->
+    <link rel="stylesheet" href="/css/ex.header.css">
+  </head>
+  <body>
+    <!-- Header/Topbar/Category: include ทีเดียวทุกหน้า -->
+    <div data-include="/page/partials/ex_header.html"></div>
 
-  <!-- Header ดำสไตล์ exchangepage -->
-  <header class="ex-topbar">
-    <div class="ex-topbar-inner">
-      <div class="ex-brand">THAMMUE</div>
-
-      <form class="ex-search" onsubmit="return goSearch(event)">
-        <input id="q" type="search" placeholder="ค้นหาสินค้า" aria-label="ค้นหา">
-        <button type="submit" aria-label="ค้นหา">🔍</button>
-      </form>
-
-      <nav class="ex-top-actions">
-        <a href="/page/ex_notifications.html" class="ex-action">
-          <span>แจ้งเตือน</span>
-          <span id="exNotiBadge" class="ex-badge"></span>
-        </a>
-        <a href="/page/ex_chat.html" class="ex-action">
-          <span>แชท</span>
-        </a>
-        <a href="/page/ex_my_items.html" class="ex-action">
-          <span>ร้านของฉัน</span>
-        </a>
-        <a href="/page/ex_verification.html" class="ex-action">
-          <span id="kycPill" class="ex-pill ex-pill-muted">KYC</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- เนื้อหา -->
-  <main class="ex-main">
-    <section class="ex-hero">
-      <h1 class="ex-h1">ศูนย์กลางการแลกเปลี่ยน</h1>
-      <p class="ex-muted">เริ่มจากดูคำขอที่ค้างอยู่ หรือเพิ่มสินค้าของคุณเพื่อเสนอแลก</p>
-      <div class="ex-hero-actions">
-        <a class="ex-btn" href="/page/ex_requests.html">ไปที่คำขอแลกเปลี่ยน</a>
-        <a class="ex-btn secondary" href="/page/ex_my_items.html">จัดการสินค้าของฉัน</a>
+    <!-- HERO: ภาพเต็มกว้าง + overlay + CTA -->
+    <section class="ex-hero-visual">
+      <div class="ex-hero-bg"></div>
+      <div class="ex-hero-overlay"></div>
+      <div class="ex-hero-center">
+        <h1>เชิญชวนแลกเปลี่ยน</h1>
+        <p>เปลี่ยนของที่ไม่ได้ใช้ ให้กลายเป็นคุณค่ากับเพื่อนบ้านและชุมชน —
+          ประหยัดเงิน ลดขยะ ช่วยโลกไปด้วยกัน</p>
+        <div class="ex-hero-cta">
+          <a class="ex-btn" href="/page/ex_requests.html">เริ่มต้นแลกเปลี่ยน</a>
+          <a class="ex-btn secondary" href="#why">ทำไมต้อง THAMMUE?</a>
+        </div>
       </div>
     </section>
 
-    <!-- การ์ดเมนูแบบ grid -->
-    <section class="ex-grid">
-      <a class="ex-card" href="/page/ex_requests.html">
-        <div class="ex-card-icon">🔁</div>
-        <div class="ex-card-title">คำขอของฉัน</div>
-        <div class="ex-card-sub">ดูขาเข้า/ขาออก • ตอบรับ/ปฏิเสธ/ยกเลิก</div>
-      </a>
+    <main class="ex-index-main">
+      <!-- สินค้าที่คุณสนใจ -->
+      <section class="ex-section">
+        <div class="ex-section-header">
+          <h2>สินค้าที่คุณสนใจ</h2>
+          <a class="ex-link-more" href="/page/ex_requests.html">ดูทั้งหมด</a>
+        </div>
 
-      <a class="ex-card" href="/page/ex_my_items.html">
-        <div class="ex-card-icon">📦</div>
-        <div class="ex-card-title">สินค้าของฉัน</div>
-        <div class="ex-card-sub">เพิ่ม/แก้ไขสินค้า • ใช้เสนอแลก</div>
-      </a>
+        <div class="ex-cards">
+          <article class="ex-card-x">
+            <div class="ex-card-thumb"
+              style="background-image:url('/img/sample/room.jpg')"></div>
+            <div class="ex-card-body">
+              <h3>โฮมเซ็ต</h3>
+              <p class="ex-sub">หมวด: ของใช้ในบ้าน · กทม.</p>
+              <a class="ex-btn tiny"
+                href="/page/ex_requests.html">ดูรายละเอียด</a>
+            </div>
+          </article>
 
-      <a class="ex-card" href="/page/ex_notifications.html">
-        <div class="ex-card-icon">🔔</div>
-        <div class="ex-card-title">แจ้งเตือน</div>
-        <div class="ex-card-sub">อัปเดตสถานะคำขอและนัดหมาย</div>
-      </a>
+          <article class="ex-card-x">
+            <div class="ex-card-thumb"
+              style="background-image:url('/img/sample/phone.jpg')"></div>
+            <div class="ex-card-body">
+              <h3>สมาร์ตโฟน</h3>
+              <p class="ex-sub">หมวด: อุปกรณ์อิเล็กทรอนิกส์</p>
+              <a class="ex-btn tiny"
+                href="/page/ex_requests.html">ดูรายละเอียด</a>
+            </div>
+          </article>
 
-      <a class="ex-card" href="/page/ex_chat.html">
-        <div class="ex-card-icon">💬</div>
-        <div class="ex-card-title">แชท</div>
-        <div class="ex-card-sub">คุยรายละเอียดก่อนตกลงแลก</div>
-      </a>
+          <article class="ex-card-x">
+            <div class="ex-card-thumb"
+              style="background-image:url('/img/sample/bear.jpg')"></div>
+            <div class="ex-card-body">
+              <h3>ตุ๊กตาหมี</h3>
+              <p class="ex-sub">หมวด: ของสะสม · ชลบุรี</p>
+              <a class="ex-btn tiny"
+                href="/page/ex_requests.html">ดูรายละเอียด</a>
+            </div>
+          </article>
 
-      <a class="ex-card" href="/page/ex_verification.html">
-        <div class="ex-card-icon">🪪</div>
-        <div class="ex-card-title">ยืนยันตัวตน (KYC)</div>
-        <div class="ex-card-sub">ยืนยันครั้งเดียว • ใช้ user เดียวกับซื้อขาย</div>
-      </a>
-    </section>
-  </main>
+          <article class="ex-card-x">
+            <div class="ex-card-thumb"
+              style="background-image:url('/img/sample/shirt.jpg')"></div>
+            <div class="ex-card-body">
+              <h3>เสื้อยืด</h3>
+              <p class="ex-sub">หมวด: เสื้อผ้า</p>
+              <a class="ex-btn tiny"
+                href="/page/ex_requests.html">ดูรายละเอียด</a>
+            </div>
+          </article>
+        </div>
+      </section>
 
-  <!-- Footer (เรียบ ๆ) -->
-  <footer class="ex-footer">
-    <div class="ex-footer-inner">© THAMMUE Exchange</div>
-  </footer>
+      <!-- แบนด์คั่น (CTA อัปโหลดสินค้า) -->
+      <section class="section section-band">
+        <div class="container band">
+          <div class="band-content">
+            <h2>สินค้าเหลือใช้อย่าทิ้ง ลองมาแลกเปลี่ยนกัน</h2>
+            <p class="muted">อัปโหลดรูปและบอกสิ่งที่อยากได้กลับ
+              เราจะช่วยจับคู่ให้เหมาะทั้งราคา คุณค่า และระยะทาง</p>
+            <a class="btn btn-primary"
+              href="/page/ex_item_new.html">อัปโหลดสินค้าเพื่อแลก</a>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="container">
+          <h3 class="section-title">ใกล้คุณ</h3>
+          <div id="nearbyGrid" class="grid grid-4"></div>
+        </div>
+      </section>
 
-  <!-- สคริปต์หลักของ exchange (ใช้ badge/เรียก API) -->
-  <script src="/js/ex.exchange.js"></script>
-  <!-- สคริปต์เฉพาะหน้า index นี้ -->
-  <script src="/js/ex.index.page.js"></script>
+      <!-- กริดตัวอย่างหมวด -->
+      <section class="section">
+        <div class="container">
+          <h3 class="section-title">เพราะคุณชอบหนังสือ</h3>
+          <div id="booksGrid" class="grid grid-4"></div>
+        </div>
+      </section>
 
-  <script>
-    function goSearch(e){
-      e.preventDefault();
-      const q = (document.getElementById('q').value||'').trim();
-      if(!q) return false;
-      // ถ้าคุณมีหน้าค้นหาเฉพาะ exchange ให้เปลี่ยนลิงก์นี้
-      location.href = '/page/ex_requests.html?q=' + encodeURIComponent(q);
-      return false;
-    }
-  </script>
-</body>
+      <section class="section">
+        <div class="container">
+          <h3 class="section-title">เพราะคุณชอบเสื้อผ้า</h3>
+          <div id="clothesGrid" class="grid grid-4"></div>
+        </div>
+      </section>
+
+      <!-- บล็อกเหตุผล/คุณค่า -->
+      <section class="ex-reasons" id="why">
+        <h2>การแลกเปลี่ยนสินค้า</h2>
+        <p class="ex-muted">ทำไมเราจึงควรแลกเปลี่ยนสินค้า</p>
+
+        <div class="ex-reason-grid">
+          <div class="ex-reason-card">
+            <h3>ประหยัดค่าใช้จ่าย</h3>
+            <p>ลดการซื้อของใหม่ ใช้ของที่ยังใช้ได้คุ้ม
+              แลกเปลี่ยนกับสิ่งที่ต้องการได้ทันที</p>
+          </div>
+          <div class="ex-reason-card">
+            <h3>ลดขยะ สร้างคุณค่าใหม่</h3>
+            <p>สิ่งของที่ไม่ใช้แล้วไม่ต้องทิ้ง สามารถแลกให้คนอื่นนำไปใช้ต่อ
+              เกิดคุณค่า</p>
+          </div>
+          <div class="ex-reason-card">
+            <h3>ได้ของที่ตรงใจ</h3>
+            <p>เลือกสิ่งของที่คุณต้องการจริง ๆ จากการแลก ไม่ต้องลงทุนเพิ่ม
+              และยังสนุกกับการพบคนใหม่</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <div data-include="/page/partials/ex_footer.html"></div>
+
+    <!-- ===== Scripts ===== -->
+    <!-- 1) include partials (header/footer) -->
+
+    <!-- 2) ฟังก์ชันของ Header (ใส่ไว้หลัง include เพื่อให้ DOM ของ header พร้อมแล้ว) -->
+    <script>
+      (function initHeader(){
+        // รอจนกว่าจะมีปุ่ม hamburger แปลว่าพาร์เชียลโหลดแล้ว
+        if (!document.getElementById('hamburgerBtn')) {
+          return setTimeout(initHeader, 40);
+        }
+
+        // ===== Search =====
+        const q = document.getElementById('q');
+        const qSuggest = document.getElementById('qSuggest');
+        const btnSearch = document.getElementById('btnSearch');
+
+        if (q && qSuggest){
+          q.addEventListener('focus', () => {
+            qSuggest.classList.add('show');
+            qSuggest.hidden = false;
+            q.setAttribute('aria-expanded','true');
+          });
+          q.addEventListener('blur', () => {
+            setTimeout(() => { qSuggest.hidden = true; q.setAttribute('aria-expanded','false'); }, 120);
+          });
+        }
+        if (btnSearch && q){
+          // ถ้ามี form ก็ปล่อยให้ submit ตามปกติ
+          const form = btnSearch.closest('form');
+          if (!form) {
+            btnSearch.addEventListener('click', (e) => {
+              e.preventDefault();
+              const s = (q.value||'').trim();
+              if (s) location.href = '/page/ex_requests.html?q=' + encodeURIComponent(s);
+            });
+          }
+        }
+
+        // ===== User menu (desktop) =====
+        const userMenu = document.getElementById('userMenu');
+        const userBtn  = document.getElementById('userArea');
+        const userDd   = document.getElementById('userDropdown');
+
+        function closeUserMenu(){
+          userMenu?.classList.remove('open');
+          userBtn?.setAttribute('aria-expanded','false');
+        }
+        userBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const opened = userMenu?.classList.toggle('open');
+          userBtn.setAttribute('aria-expanded', opened ? 'true':'false');
+        });
+        document.addEventListener('click', closeUserMenu);
+        userDd?.addEventListener('click', (e)=> e.stopPropagation());
+
+        // ===== Drawer (mobile) =====
+        const drawer   = document.getElementById('iconsDrawer');
+        const backdrop = document.getElementById('iconsBackdrop');
+        const hamb     = document.getElementById('hamburgerBtn');
+        const closeBtn = document.getElementById('iconsClose');
+
+        function openDrawer(){
+          if(!drawer) return;
+          drawer.hidden = false;
+          requestAnimationFrame(()=> drawer.classList.add('open'));
+          backdrop.hidden = false;
+          document.body.classList.add('body-lock');
+          hamb?.setAttribute('aria-expanded','true');
+        }
+        function closeDrawer(){
+          if(!drawer) return;
+          drawer.classList.remove('open');
+          setTimeout(()=> { drawer.hidden = true; }, 200);
+          backdrop.hidden = true;
+          document.body.classList.remove('body-lock');
+          hamb?.setAttribute('aria-expanded','false');
+        }
+        hamb?.addEventListener('click', openDrawer);
+        closeBtn?.addEventListener('click', closeDrawer);
+        backdrop?.addEventListener('click', closeDrawer);
+        window.addEventListener('keydown', (e)=> { if(e.key==='Escape') closeDrawer(); });
+
+        // ===== Sync เมนูโปรไฟล์เข้า Drawer =====
+        const mobileToggle = document.getElementById('mobileProfileToggle');
+        const mobileMenu   = document.getElementById('mobileAccountMenu');
+
+        function syncDesktopMenuToMobile() {
+          if (!userDd || !mobileMenu) return false;
+          const fr = document.createDocumentFragment();
+          const items = userDd.querySelectorAll('a, hr');
+          if (!items.length) return false;
+          items.forEach(el => {
+            const clone = el.cloneNode(true);
+            if (clone.tagName === 'A') clone.style.color = 'inherit';
+            fr.appendChild(clone);
+          });
+          mobileMenu.innerHTML = '';
+          mobileMenu.appendChild(fr);
+          return true;
+        }
+        function renderMobileFallback() {
+          if (!mobileMenu) return;
+          mobileMenu.innerHTML = `
+            <a href="/page/profile.html">โปรไฟล์ของฉัน</a>
+            <a href="/page/ex_my_items.html">สินค้าของฉัน</a>
+            <a href="/page/ex_requests.html">การแลกเปลี่ยนของฉัน</a>
+            <hr>
+            <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
+          `;
+        }
+        mobileToggle?.addEventListener('click', () => {
+          const expanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+          if (!expanded) {
+            const ok = syncDesktopMenuToMobile();
+            if (!ok) renderMobileFallback();
+          }
+          mobileToggle.setAttribute('aria-expanded', String(!expanded));
+          mobileMenu.hidden = expanded;
+        });
+
+        // ถ้าเดสก์ท็อปเรนเดอร์เมนูล่าช้า ให้ sync อัตโนมัติเมื่อมีการเปลี่ยน
+        if (userDd) {
+          const mo = new MutationObserver(() => { if (!mobileMenu?.hidden) syncDesktopMenuToMobile(); });
+          mo.observe(userDd, { childList: true, subtree: true });
+        }
+      })();
+    </script>
+
+    <!-- 3) สคริปต์เฉพาะหน้า index (โหลดแบบ defer ได้) -->
+    <script src="/js/ex.include.js"></script>
+    <script src="/js/me.js"></script>
+    <!-- ให้มาก่อน เพื่อ ex.header.js เรียก Me.get() ได้ -->
+    <script src="/js/ex.header.js"></script> <!-- มี window.exHeaderInit -->
+
+    <!-- จะ include header แล้วเรียก exHeaderInit() -->
+    <script src="/js/ex.index.page.js" defer></script>
+  </body>
 </html>

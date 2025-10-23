@@ -33,3 +33,8 @@ if ($has){
   $st->execute();
   echo json_encode(['ok'=>true,'favorited'=>true], JSON_UNESCAPED_UNICODE); exit;
 }
+// ... ดึง $itemOwnerId จากตาราง ex_items ให้ได้ก่อน (เช่น SELECT user_id FROM ex_items WHERE id=?)
+if ((int)$itemOwnerId === (int)$uid) {
+  jerr('cannot_fav_own_item', 400);
+}
+

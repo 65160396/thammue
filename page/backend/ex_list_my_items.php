@@ -1,11 +1,33 @@
 <?php
-require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-$uid = me();
-if (!$uid) jerr('not_logged_in', 401);
+// /page/backend/ex_list_my_items.php
+$REQUIRE_LOGIN = true;                              // ← ต้องล็อกอิน
+require_once __DIR__ . '/ex__items_common.php';
 
-$st = $mysqli->prepare("SELECT id, title, thumbnail_url AS thumb FROM items WHERE user_id=? ORDER BY id DESC LIMIT 200");
-$st->bind_param("i", $uid);
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store');
+
+// สามารถรองรับแบ่งหน้าได้ภายหลัง; ตอนนี้ดึงทั้งหมดของผู้ใช้
+$table = EX_ITEMS_TABLE;
+
+$st = $mysqli->prepare("
+  SELECT id, title, description, thumbnail_url, created_at
+  FROM `$table`
+  WHERE user_id = ?
+  ORDER BY COALESCE(updated_at, created_at) DESC
+");
+$st->bind_param('i', $uid);
 $st->execute();
-$items = stmt_all_assoc($st);
-echo json_encode(['ok'=>true,'items'=>$items], JSON_UNESCAPED_UNICODE);
+$rs = $st->get_result();
+
+$items = [];
+while ($r = $rs->fetch_assoc()) {
+  $items[] = [
+    'id'            => (int)$r['id'],
+    'title'         => $r['title'] ?: '',
+    'description'   => $r['description'] ?: '',
+    'thumbnail_url' => $r['thumbnail_url'] ?: '',
+    'created_at'    => $r['created_at'] ?: null,
+  ];
+}
+
+echo json_encode(['ok'=>true, 'items'=>$items], JSON_UNESCAPED_UNICODE);

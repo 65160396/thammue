@@ -37,15 +37,15 @@
       if(!res.items || !res.items.length){ ul.innerHTML = '<li class="ex-muted">ยังไม่มีของในร้านของคุณ</li>'; return; }
       res.items.forEach(it=>{
         const li = document.createElement('li');
-        li.innerHTML = \`
-          <div style="display:flex;gap:12px;align-items:center;">
-            \${it.thumb ? '<img src="'+it.thumb+'" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #eee;">' : ''}
-            <div>
-              <div><b>#\${it.id}</b> \${(it.title||'-')}</div>
-              <div class="ex-muted">คลิกเพื่อเลือก</div>
-            </div>
-          </div>
-        \`;
+          li.innerHTML = (
+            '<div style="display:flex;gap:12px;align-items:center;">' +
+              (it.thumb ? ('<img src="'+it.thumb+'" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #eee;">') : '') +
+              '<div>' +
+                '<div><b>#' + it.id + '</b> ' + (it.title || '-') + '</div>' +
+                '<div class="ex-muted">คลิกเพื่อเลือก</div>' +
+              '</div>' +
+            '</div>'
+          );
         li.style.cursor='pointer';
         li.addEventListener('click', ()=>{
           sessionStorage.setItem('ex_offered_item_id', String(it.id));

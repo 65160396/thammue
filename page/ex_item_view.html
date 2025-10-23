@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ดูรายละเอียดสินค้า | THAMMUE</title>
+
+    <link rel="stylesheet" href="/css/ex.exchange.css" />
+    <link rel="stylesheet" href="/css/ex.header.css" />
+    <style>
+    body{ background:#f6f8fb; }
+    .detail-wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .back-link{display:inline-block;margin:4px 0 10px;color:#111;text-decoration:none}
+    .back-link:hover{text-decoration:underline}
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .photo-main{border:1px solid #eee;border-radius:12px;overflow:hidden;background:#fff}
+    .photo-main img{display:block;width:100%;height:auto}
+    .thumbs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .thumb{width:94px;height:74px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:#fff}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb.active{border-color:#0ea5e9}
+    .box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px}
+    .detail-title{font-size:1.5rem;font-weight:800;margin:0 0 6px}
+    .chip{display:inline-block;background:#f1f5f9;color:#334155;border-radius:999px;padding:.25rem .5rem;font-size:.85rem;margin-right:6px}
+    .muted{color:#64748b}
+    .meta2{margin-top:6px}
+
+    .btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:10px;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700}
+    .btn-ghost{border:1px solid #cbd5e1;background:#fff;color:#0ea5e9}
+    .btn-primary{background:#111827;color:#fff;border:none}
+    .btn:focus{outline:3px solid rgba(14,165,233,.25);outline-offset:2px}
+    .btn[disabled]{opacity:.5;pointer-events:none;cursor:not-allowed}
+    .actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .fav-row{margin:8px 0 10px}
+    .flash{margin-top:10px;background:#e8f7ef;color:#14532d;border:1px solid #bbf7d0;padding:10px 12px;border-radius:10px;font-size:14px}
+    #notfound .box{ text-align:center; font-weight:700 }
+
+    /* ป้าย “เป็นสินค้าของฉัน” */
+    .own-banner{
+      margin-top:10px;
+      background:#ecfdf5;
+      color:#065f46;
+      border:1px solid #bbf7d0;
+      border-radius:10px;
+      padding:10px 12px;
+      font-weight:700;
+    }
+
+    @media (max-width:900px){.detail-grid{grid-template-columns:1fr}}
+  </style>
+  </head>
+  <body>
+    <div data-include="/page/partials/ex_header.html"></div>
+
+    <main class="detail-wrap">
+      <a href="/page/ex_index.html" class="back-link">⟵ กลับหน้าหลัก</a>
+
+      <div id="notfound" style="padding:24px;display:none">
+        <div class="box">ไม่พบสินค้าที่คุณต้องการดู</div>
+      </div>
+
+      <div id="detail" class="detail-grid" style="display:none">
+        <div>
+          <div class="photo-main" aria-label="รูปสินค้า">
+            <img id="mainImg" src alt="รูปสินค้า">
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+
+        <div>
+          <div class="box">
+            <h2 id="title" class="detail-title">—</h2>
+
+            <!-- หมวดหมู่ / พื้นที่ -->
+            <div class="meta">
+              <span class="chip" id="cat">หมวด: -</span>
+              <span class="chip" id="loc">พื้นที่: -</span>
+            </div>
+            <!-- สถานที่นัดรับ -->
+            <div id="pickupLine" class="muted meta2" style="display:none"></div>
+
+            <div class="fav-row">
+              <button id="favBtn" class="btn btn-ghost" aria-pressed="false"
+                title="เพิ่ม/ลบรายการโปรด">
+                <span id="favIcon" class="icon">🤍</span> รายการโปรด
+              </button>
+            </div>
+
+            <p id="desc" class="muted" style="white-space:pre-wrap"></p>
+
+            <div class="actions">
+              <a id="chatBtn" class="btn btn-ghost" href="#">💬 ข้อความ</a>
+              <button id="openOffer" class="btn btn-primary"
+                type="button">แลกเปลี่ยนสินค้า</button>
+            </div>
+
+            <!-- ป้ายเจ้าของ -->
+            <div id="ownBanner" class="own-banner" hidden>เป็นสินค้าของฉัน</div>
+
+            <div id="flash" class="flash" role="status" aria-live="polite"
+              hidden></div>
+          </div>
+
+          <div class="box muted" style="margin-top:12px">
+            เจ้าของสินค้า: <span id="ownerName">-</span> · รหัสอ้างอิง: <span
+              id="refCode">-</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/js/ex.include.js"></script>
+    <script src="/js/me.js"></script>
+    <script src="/js/ex.header.js"></script>
+
+    <script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  const itemId = qs.get('id');
+
+  const API = {
+    getItem   : id => `/page/backend/ex_item_get.php?id=${encodeURIComponent(id)}`,
+    toggleFav : id => `/page/backend/ex_fav_toggle.php?item_id=${encodeURIComponent(id)}`, // optional
+  };
+
+  const $notfound   = document.getElementById('notfound');
+  const $detail     = document.getElementById('detail');
+  const $mainImg    = document.getElementById('mainImg');
+  const $thumbs     = document.getElementById('thumbs');
+  const $title      = document.getElementById('title');
+  const $cat        = document.getElementById('cat');
+  const $loc        = document.getElementById('loc');
+  const $pickupLine = document.getElementById('pickupLine');
+  const $desc       = document.getElementById('desc');
+  const $owner      = document.getElementById('ownerName');
+  const $ref        = document.getElementById('refCode');
+  const $favBtn     = document.getElementById('favBtn');
+  const $favIcon    = document.getElementById('favIcon');
+  const $flash      = document.getElementById('flash');
+  const $chatBtn    = document.getElementById('chatBtn');
+  const $openOffer  = document.getElementById('openOffer');
+  const $ownBanner  = document.getElementById('ownBanner');
+
+  if (!itemId) { $notfound.style.display = ''; return; }
+
+  fetch(API.getItem(itemId), { cache:'no-store', credentials:'include' })
+    .then(async r => {
+      const raw = await r.text();
+      try {
+        const d = JSON.parse(raw);
+        if (!d.ok || !d.item) throw new Error(d.error || 'no item');
+        const it = d.item;
+
+        $detail.style.display = '';
+        $title.textContent = it.title || '—';
+
+        // หมวดหมู่ / พื้นที่
+        $cat.textContent = `หมวด: ${it.category_name || '-'}`;
+        const area = [it.addr_province, it.addr_subdistrict].filter(Boolean).join(' · ');
+        $loc.textContent = `พื้นที่: ${area || '-'}`;
+
+        // สถานที่นัดรับ
+        const pickParts = [];
+        if (it.place_detail) pickParts.push(it.place_detail);
+        const area2 = [it.addr_subdistrict, it.addr_province].filter(Boolean).join(' · ');
+        if (area2) pickParts.push(area2);
+        if (it.addr_zipcode) pickParts.push(it.addr_zipcode);
+        // สถานที่นัดรับ: แสดงเฉพาะรายละเอียดที่ผู้ใช้พิมพ์
+        const pickText = (it.place_detail || '').trim();
+        if (pickText) { $pickupLine.textContent = `สถานที่นัดรับ: ${pickText}`;
+        $pickupLine.style.display = '';
+        } else {
+         $pickupLine.style.display = 'none';
+        }
+
+
+        // อื่น ๆ
+        $desc.textContent  = it.description || '-';
+        $owner.textContent = it.owner_name || 'ผู้ใช้';
+        $ref.textContent   = it.ref_code || `EX${String(it.id||'').padStart(6,'0')}`;
+
+        // รูป
+        const imgs = [];
+        if (it.thumbnail_url) imgs.push(it.thumbnail_url);
+        if (Array.isArray(it.images)) imgs.push(...it.images);
+        const uniq = [...new Set(imgs.filter(Boolean))];
+        if (uniq.length) {
+          $mainImg.src = uniq[0];
+          renderThumbs(uniq);
+        }
+
+        // ใช้ธงจาก API ตัดสินว่าเป็นเจ้าของหรือไม่
+        if (it.is_owner) {
+          markOwnerMode();
+        } else if (it.owner_id) {
+          $chatBtn.href = `/page/ex_chat.html?to=${encodeURIComponent(it.owner_id)}&item=${encodeURIComponent(it.id)}`;
+        }
+      } catch(e) {
+        console.error('getItem error:', e, 'raw=', raw);
+        $notfound.style.display = '';
+      }
+    })
+    .catch(() => { $notfound.style.display = ''; });
+
+  function renderThumbs(arr){
+    $thumbs.innerHTML = '';
+    arr.forEach((src,i)=>{
+      const b = document.createElement('button');
+      b.className = 'thumb' + (i===0 ? ' active':'' );
+      b.type='button';
+      b.onclick = () => {
+        [...$thumbs.children].forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        $mainImg.src = src;
+      };
+      const im = document.createElement('img');
+      im.src = src; im.alt='ภาพสินค้า';
+      b.appendChild(im);
+      $thumbs.appendChild(b);
+    });
+  }
+
+  function setFavState(on){
+    $favBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    $favIcon.textContent = on ? '💖' : '🤍';
+  }
+
+  $favBtn.addEventListener('click', async () => {
+    try{
+      const r = await fetch(API.toggleFav(itemId), { method:'POST', credentials:'include' });
+      const d = await r.json().catch(()=>null);
+      if (d?.ok) {
+        setFavState(Boolean(d.is_fav));
+        flash(d.is_fav ? 'เพิ่มในรายการโปรดแล้ว' : 'นำออกจากรายการโปรดแล้ว');
+      } else {
+        flash('ทำรายการไม่สำเร็จ', true);
+      }
+    }catch{ flash('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว', true); }
+  });
+
+  function markOwnerMode(){
+    $ownBanner.hidden = false;
+    $favBtn.setAttribute('disabled', 'true');
+    $chatBtn.setAttribute('disabled', 'true'); $chatBtn.removeAttribute('href');
+    $openOffer.setAttribute('disabled', 'true');
+    $favBtn.title = 'ไม่สามารถเพิ่มรายการโปรดให้สินค้าของตัวเองได้';
+    $chatBtn.title = 'นี่คือสินค้าของคุณ';
+    $openOffer.title = 'ไม่สามารถแลกเปลี่ยนสินค้ากับตัวเองได้';
+  }
+
+  function flash(msg, error=false){
+    $flash.textContent = msg;
+    $flash.style.background = error ? '#fdecec' : '#e8f7ef';
+    $flash.style.color = error ? '#7f1d1d' : '#14532d';
+    $flash.style.borderColor = error ? '#fecaca' : '#bbf7d0';
+    $flash.hidden = false;
+    setTimeout(()=>{ $flash.hidden = true; }, 2200);
+  }
+})();
+</script>
+
+  </body>
+</html>

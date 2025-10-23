@@ -1,36 +1,71 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>สินค้าของฉัน | THAMMUE</title>
-  <link rel="stylesheet" href="/css/ex.exchange.css">
-  <link rel="stylesheet" href="/css/ex.items.css">
+
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.header.css" />
+  <style>
+    body{ background:#f6f8fb; }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .card{background:#fff;border:1px solid #eef1f5;border-radius:14px;overflow:hidden}
+    .thumb{width:100%;height:160px;object-fit:cover;display:block;background:#f3f4f6}
+    .body{padding:10px 12px}
+    .title{font-weight:800;margin:4px 0 6px}
+    .muted{color:#64748b;font-size:13px}
+    .empty{margin-top:16px;text-align:center;color:#64748b}
+  </style>
 </head>
 <body>
-  <div class="ex-container">
-    <h1 class="ex-h1">สินค้าของฉัน</h1>
-    <div class="ex-card">
-      <div style="margin-bottom:12px">
-        <a class="ex-btn" href="/page/ex_item_new.html">+ เพิ่มสินค้าใหม่</a>
-      </div>
-      <table style="width:100%; border-collapse:collapse">
-        <thead>
-          <tr>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">#ID</th>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">รูป</th>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">ชื่อ</th>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">ราคา</th>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">อัปเดตล่าสุด</th>
-            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px">จัดการ</th>
-          </tr>
-        </thead>
-        <tbody id="myItemsBody"></tbody>
-      </table>
-    </div>
-  </div>
-  <script src="/js/ex.exchange.js"></script>
-  <script src="/js/ex.my.items.page.js"></script>
+  <div data-include="/page/partials/ex_header.html"></div>
+
+  <main class="wrap">
+    <h2 style="margin:8px 0 12px;font-weight:800">สินค้าของฉัน</h2>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>ยังไม่มีสินค้า ลองอัปโหลดชิ้นแรกดูนะ</div>
+  </main>
+
+  <script src="/js/ex.include.js"></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/ex.header.js"></script>
+  <script>
+  (function(){
+    fetch('/page/backend/ex_list_my_items.php', {credentials:'include', cache:'no-store'})
+      .then(r => r.json())
+      .then(d => {
+        if (!d?.ok) throw new Error(d?.error || 'load_fail');
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('empty');
+
+        if (!Array.isArray(d.items) || d.items.length === 0) {
+          empty.hidden = false;
+          return;
+        }
+
+        const fr = document.createDocumentFragment();
+        d.items.forEach(it => {
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.href = `/page/ex_item_view.html?id=${encodeURIComponent(it.id)}`;
+          a.innerHTML = `
+            <img class="thumb" src="${it.thumbnail_url || ''}" alt="">
+            <div class="body">
+              <div class="title">${it.title || '-'}</div>
+              <div class="muted">${(it.description || '').slice(0,60)}</div>
+            </div>
+          `;
+          fr.appendChild(a);
+        });
+        grid.appendChild(fr);
+      })
+      .catch(() => {
+        document.getElementById('empty').textContent = 'โหลดรายการไม่สำเร็จ';
+        document.getElementById('empty').hidden = false;
+      });
+  })();
+  </script>
 </body>
 </html>

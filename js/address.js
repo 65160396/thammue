@@ -1,9 +1,8 @@
-// /exchangepage/js/address.js
+// /js/address.js  (เดิมของคุณ)
 (function () {
   const DATA_URL =
     'https://raw.githubusercontent.com/kongvut/thai-province-data/refs/heads/master/api/latest/province_with_district_and_sub_district.json';
 
-  // ------- utility -------
   const resetSelect = (el, ph, disabled = true) => {
     if (!el) return;
     el.disabled = disabled;
@@ -23,7 +22,6 @@
     el.appendChild(frag);
   };
 
-  // ------- data loader (โหลดครั้งเดียวใช้ได้ทั้งหน้า) -------
   let DATA = null;
   let loading = null;
   const ensureData = () => {
@@ -40,9 +38,9 @@
     return loading;
   };
 
-  // ------- main initializer (รียูสได้หลายชุด) -------
+  // ✅ รองรับ postcode (อ่านได้จาก cfg.postcode)
   function initThaiAddress(cfg) {
-    // cfg: { province, district, subdistrict, postcode? } เป็น CSS selector
+    // cfg: { province, district, subdistrict, postcode? }
     const $prov = document.querySelector(cfg.province);
     const $dist = document.querySelector(cfg.district);
     const $subd = document.querySelector(cfg.subdistrict);
@@ -50,13 +48,14 @@
 
     if (!$prov || !$dist || !$subd) return;
 
-    // ค่าเริ่มต้น
-    resetSelect($prov,  '— เลือกจังหวัด —',   false);
-    resetSelect($dist,  '— เลือกอำเภอ/เขต —', true);
-    resetSelect($subd,  '— เลือกตำบล/แขวง —', true);
-    if ($post) $post.value = '';
+    resetSelect($prov, '— เลือกจังหวัด —', false);
+    resetSelect($dist, '— เลือกอำเภอ/เขต —', true);
+    resetSelect($subd, '— เลือกตำบล/แขวง —', true);
+    if ($post) {
+      $post.value = '';
+      $post.readOnly = true;     // ✅ postcode ให้ระบบเติมอัตโนมัติ
+    }
 
-    // เมื่อข้อมูลพร้อม ให้เติมจังหวัด และ bind อีเวนต์
     ensureData().then((DATA) => {
       fillOptions($prov, DATA, 'name_th');
 
@@ -67,7 +66,7 @@
         resetSelect($subd, '— เลือกตำบล/แขวง —', true);
         if (!prov) return;
         fillOptions($dist, prov.districts ?? [], 'name_th');
-        if ($post) $post.value = '';
+        if ($post) { $post.value = ''; } // เปลี่ยนจังหวัด เคลียร์ zip
       });
 
       // อำเภอ/เขต -> ตำบล/แขวง
@@ -76,9 +75,9 @@
         const dist = prov?.districts?.find((d) => d.name_th === $dist.value);
         resetSelect($subd, '— เลือกตำบล/แขวง —', false);
         if (!dist) return;
-        // note: key ใน dataset นี้คือ sub_districts และมี zip_code
+        // dataset นี้ใช้ key sub_districts และมี zip_code
         fillOptions($subd, dist.sub_districts ?? [], (s) => s.name_th, (s) => s.name_th);
-        if ($post) $post.value = '';
+        if ($post) { $post.value = ''; } // เปลี่ยนอำเภอ เคลียร์ zip
       });
 
       // ตำบล/แขวง -> เติมรหัสไปรษณีย์อัตโนมัติ
@@ -87,27 +86,29 @@
         const prov = DATA.find((p) => p.name_th === $prov.value);
         const dist = prov?.districts?.find((d) => d.name_th === $dist.value);
         const subd = dist?.sub_districts?.find((s) => s.name_th === $subd.value);
+
+        // ✅ เติมอัตโนมัติให้ตรง และคง readOnly (ผู้ใช้ยังแก้ได้ถ้าคุณอยากให้ก็ set readOnly=false)
         $post.value = subd?.zip_code || '';
+        $post.readOnly = true;
       });
     });
   }
 
-  // โยนออกเป็น global ให้หน้าอื่นเรียกใช้งานได้
   window.initThaiAddress = initThaiAddress;
 
-  // Backward-compatible: ถ้าหน้าไหนยังใช้ id เดิม (province/district/subdistrict)
-  // จะ auto-init ให้ เพื่อไม่ให้ของเก่าเสีย
+  // ✅ Auto-init: ถ้ามี id พื้นฐานอยู่แล้ว ให้ใส่ postcode ด้วย (#zipcode)
   document.addEventListener('DOMContentLoaded', () => {
     const hasLegacy =
       document.getElementById('province') &&
       document.getElementById('district') &&
       document.getElementById('subdistrict');
     if (hasLegacy) {
+      const hasZip = !!document.getElementById('zipcode');
       initThaiAddress({
         province: '#province',
         district: '#district',
         subdistrict: '#subdistrict',
-        // ถ้าหน้าเก่ามี input postcode ให้ใส่ selector ตรงนี้เพิ่มได้
+        postcode: hasZip ? '#zipcode' : undefined,   // ✅ เพิ่มให้ auto-fill
       });
     }
   });
