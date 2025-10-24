@@ -1,47 +1,92 @@
 <?php
 // /page/backend/ex_request_decide.php
-$REQUIRE_LOGIN = true;
-require_once __DIR__ . '/ex__items_common.php';
+require_once __DIR__ . '/ex__common.php';
 
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store');
 
-$request_id = (int)($_POST['request_id'] ?? 0);
-$action     = strtolower(trim((string)($_POST['action'] ?? '')));
-$meet_at    = trim((string)($_POST['meet_at'] ?? ''));   // '2025-10-22 14:00' (ออปชัน)
-$meet_note  = trim((string)($_POST['meet_note'] ?? '')); // ออปชัน
+try {
+  // ให้ mysqli โยน exception เวลา error เพื่อจะได้ try/catch ส่ง JSON
+  mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if ($request_id<=0 || !in_array($action, ['accept','decline'], true)) jerr('bad_params',400);
+  $m = dbx();
+  if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+  $uid = me();
+  if (!$uid) jerr('not_logged_in', 401);
 
-// โหลดคำขอ
-$st = $mysqli->prepare("SELECT * FROM ex_requests WHERE id=?");
-$st->bind_param("i", $request_id);
-$st->execute();
-$req = $st->get_result()->fetch_assoc();
-if (!$req) jerr('not_found',404);
-if ((int)$req['owner_user_id'] !== $uid) jerr('forbidden',403);
-if ($req['status']!=='pending') jerr('invalid_status',400);
+  $rid    = (int)($_POST['request_id'] ?? 0);
+  $action = trim((string)($_POST['action'] ?? '')); // accept | decline | cancel
+  if ($rid <= 0) jerr('bad_request');
 
-// อัปเดตสถานะ
-$new = ($action==='accept') ? 'accepted' : 'declined';
-$st = $mysqli->prepare("UPDATE ex_requests SET status=?, updated_at=NOW() WHERE id=?");
-$st->bind_param("si", $new, $request_id);
-$st->execute();
+  // ดึงคำขอ
+  $st = $m->prepare("SELECT * FROM ex_requests WHERE id=? LIMIT 1");
+  $st->bind_param("i", $rid);
+  $st->execute();
+  $r = $st->get_result()->fetch_assoc();
+  if (!$r) jerr('not_found', 404);
+  if ($r['status'] !== 'pending') jerr('invalid_status', 400);
 
-// แจ้งเตือนไปฝั่งผู้ขอ
-$to_user = (int)$req['requester_user_id'];
-if ($action==='accept'){
-  $title = 'ผู้แลกยอมรับคำขอของคุณแล้ว';
-  $body  = 'โปรดไปที่แชทเพื่อสนทนารายละเอียด'.($meet_at?(" | นัดรับ: ".$meet_at):'').($meet_note?(" | หมายเหตุ: ".$meet_note):'');
-  $typ   = 'request_accepted';
-} else {
-  $title = 'คำขอแลกของคุณถูกปฏิเสธ';
-  $body  = 'เจ้าของสินค้าปฏิเสธคำขอแลกเปลี่ยน';
-  $typ   = 'request_declined';
+  $requester = (int)$r['requester_user_id']; // คนขอ
+  $owner     = (int)$r['owner_user_id'];     // เจ้าของของที่ถูกขอ
+
+  // ---------- ผู้ขอยกเลิก ----------
+// ----- เจ้าของยอมรับ -----
+if ($action === 'accept') {
+  if ($uid !== $owner) jerr('forbidden', 403);
+
+  $meet_date = trim((string)($_POST['meet_date'] ?? '')); // YYYY-MM-DD
+  $meet_time = trim((string)($_POST['meet_time'] ?? '')); // HH:MM
+  $place     = trim((string)($_POST['place'] ?? ''));
+  $note      = trim((string)($_POST['note'] ?? ''));
+
+  $m->begin_transaction();
+  try {
+    // อัปเดตสถานะ ex_requests
+    $st = $m->prepare("UPDATE ex_requests SET status='accepted', updated_at=NOW() WHERE id=?");
+    $st->bind_param("i", $rid);
+    $st->execute();
+
+    // บันทึก/อัปเดตนัดหมายลง ex_meetings (upsert)
+    $st = $m->prepare("
+      INSERT INTO ex_meetings
+        (request_id, owner_user_id, requester_user_id, meet_date, meet_time, meet_place, meet_note, created_at, updated_at)
+      VALUES
+        (?,?,?,?,?,?,?, NOW(), NOW())
+      ON DUPLICATE KEY UPDATE
+        meet_date=VALUES(meet_date),
+        meet_time=VALUES(meet_time),
+        meet_place=VALUES(meet_place),
+        meet_note=VALUES(meet_note),
+        updated_at=NOW()
+    ");
+    $st->bind_param("iiissss", $rid, $owner, $requester, $meet_date, $meet_time, $place, $note);
+    $st->execute();
+
+    // แจ้งเตือนผู้ขอ พร้อมรายละเอียดสั้น ๆ
+    $title = 'ผู้ขายยอมรับคำขอของคุณ';
+    $dt    = trim(($meet_date ?: '') . ' ' . ($meet_time ?: ''));
+    $detail= [];
+    if ($dt)    $detail[] = "วันเวลา: $dt";
+    if ($place) $detail[] = "สถานที่: $place";
+    if ($note)  $detail[] = "หมายเหตุ: $note";
+    $body  = $detail ? implode(' | ', $detail) : 'โปรดเปิดหน้าตารางนัดหมายเพื่อดูรายละเอียด';
+    $typ   = 'status';
+    $st = $m->prepare("INSERT INTO ex_notifications (user_id,type,ref_id,title,body,is_read,created_at)
+                       VALUES (?,?,?,?,?,0,NOW())");
+    $st->bind_param("isiss", $requester, $typ, $rid, $title, $body);
+    $st->execute();
+
+    $m->commit();
+    jok(['request_id'=>$rid]);
+  } catch (Throwable $e) {
+    $m->rollback();
+    jerr('sql_fail: '.$e->getMessage(), 500);
+  }
 }
-$st = $mysqli->prepare("INSERT INTO ex_notifications (user_id, type, ref_id, title, body, is_read, created_at)
-                        VALUES (?, ?, ?, ?, ?, 0, NOW())");
-$st->bind_param("isiss", $to_user, $typ, $request_id, $title, $body);
-$st->execute();
 
-jok(['status'=>$new]);
+
+
+  jerr('bad_action', 400);
+
+} catch (Throwable $e) {
+  jerr('fatal: '.$e->getMessage(), 500);
+}

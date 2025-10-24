@@ -1,0 +1,305 @@
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --line: #e9edf3;
+  --text: #0f172a;
+  --muted: #64748b;
+  --me: #0ea5e9; /* ฟ้า */
+  --me-ink: #ffffff;
+  --you: #ffffff; /* ขาว */
+  --you-ink: #0f172a;
+  --radius: 14px;
+}
+
+/* พื้นหลังรวม */
+body {
+  background: var(--bg);
+}
+
+/* กรอบหน้าแชท */
+.chat-wrap {
+  max-width: 1100px;
+  margin: 18px auto;
+  padding: 0 16px;
+}
+.chat-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+}
+
+/* การ์ดซ้าย/ขวา */
+.chat-list,
+.chat-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
+}
+.chat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+/* หัวการ์ด */
+.chat-list-head,
+.chat-box-head {
+  background: #f9fafb;
+  padding: 12px 14px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+}
+
+/* รายการห้อง */
+.chat-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 70vh;
+  overflow: auto;
+}
+.chat-list li {
+  border-top: 1px solid var(--line);
+}
+.chat-list a {
+  display: block;
+  padding: 12px 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+.chat-list a:hover {
+  background: #f7f7fb;
+}
+.chat-list .meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* โซนข้อความ */
+.chat-msgs {
+  padding: 18px 16px 12px;
+  height: 62vh;
+  overflow: auto;
+  background: linear-gradient(#fafbff, #f6f7fb);
+  scroll-behavior: smooth;
+}
+
+/* คั่นวัน */
+.day-sep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 14px;
+}
+.day-sep::before,
+.day-sep::after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+}
+.day-sep span {
+  font-size: 12px;
+  color: var(--muted);
+  background: #eef2ff;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ฟองแชท */
+.msg {
+  max-width: 72%;
+  margin: 8px 0;
+  display: flex;
+  gap: 10px;
+}
+.msg .bubble {
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 16px;
+  line-height: 1.45;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* ฝั่งผู้ใช้คนอื่น */
+.msg.you {
+  justify-content: flex-start;
+}
+.msg.you .bubble {
+  background: var(--you);
+  color: var(--you-ink);
+  border: 1px solid var(--line);
+  border-top-left-radius: 6px;
+}
+/* หางฟอง (เล็ก ๆ) – สองชั้น: ขอบ + พื้น */
+.msg.you .bubble::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: -8px;
+  border-width: 8px 8px 8px 0;
+  border-style: solid;
+  border-color: transparent var(--line) transparent transparent;
+}
+.msg.you .bubble::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: -7px;
+  border-width: 8px 8px 8px 0;
+  border-style: solid;
+  border-color: transparent var(--you) transparent transparent;
+}
+
+/* ฝั่งฉัน */
+.msg.me {
+  justify-content: flex-end;
+}
+.msg.me .bubble {
+  background: var(--me);
+  color: var(--me-ink);
+  border-top-right-radius: 6px;
+}
+/* หางฟองฝั่งฉัน (ถ้าชอบมี) */
+.msg.me .bubble::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: -8px;
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #188fd0; /* เฉดเข้มเป็นเงา */
+}
+.msg.me .bubble::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: -7px;
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--me);
+}
+
+/* เวลาใต้ฟอง */
+.at {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* กล่องพิมพ์ (sticky) */
+.chat-input {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+  position: sticky;
+  bottom: 0;
+}
+.chat-input textarea {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  height: 48px;
+  resize: none;
+  font: inherit;
+  outline: none;
+  background: #fff;
+}
+.chat-input textarea:focus {
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+}
+.chat-input button {
+  border: none;
+  background: var(--me);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-weight: 600;
+  min-width: 84px;
+  transition: transform 0.04s ease;
+}
+.chat-input button:active {
+  transform: translateY(1px);
+}
+
+/* หัวห้อง */
+#chatHead {
+  font-weight: 700;
+}
+#chatHead .sub {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* scrollbar นุ่มนวล */
+.chat-msgs::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.chat-msgs::-webkit-scrollbar-thumb {
+  background: #cfd8e3;
+  border-radius: 999px;
+}
+.chat-msgs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ข้อความแนะนำ */
+.hint {
+  padding: 12px;
+  color: var(--muted);
+}
+
+/* ตอบสนองจอเล็ก */
+@media (max-width: 900px) {
+  .chat-grid {
+    grid-template-columns: 1fr;
+  }
+  .chat-list {
+    order: 2;
+  }
+}
+
+/* ===== Chat list: 1 แถว 1 แชท ===== */
+#convList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block; /* กัน grid/columns เดิม */
+}
+#convList li {
+  display: block; /* บังคับเป็นบล็อกแถวเดียว */
+  width: 100%; /* กินเต็มแถว */
+}
+#convList li + li {
+  border-top: 1px solid #eef2f7;
+}
+#convList li a {
+  display: flex; /* จัดข้อความหลายบรรทัดให้เรียบร้อย */
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #111;
+}
+#convList li a:hover {
+  background: #f6f7fb;
+}
+#convList li.is-active a {
+  background: #eef7ff;
+}
+
+#convList .title {
+  font-weight: 600;
+}
+#convList .meta {
+  font-size: 12px;
+  color: #6b7280;
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>สถานะการแลกเปลี่ยน (ขาออก) | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.header.css" />
+  <style>
+    body{background:#f6f8fb}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .head{display:flex;justify-content:space-between;align-items:center;margin:6px 0 12px}
+    .card{background:#fff;border:1px solid #eef1f5;border-radius:12px;padding:12px;margin:10px 0}
+    .row{display:flex;gap:12px;align-items:center}
+    .thumb{width:60px;height:60px;border-radius:10px;object-fit:cover;background:#f3f4f6}
+    .muted{color:#64748b}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div data-include="/page/partials/ex_header.html"></div>
+
+  <main class="wrap">
+    <div class="head">
+      <h1 style="margin:0">สถานะการแลกเปลี่ยน (ขาออก)</h1>
+      <a class="btn" href="/page/ex_requests.html">คำขอแลกเปลี่ยน</a>
+    </div>
+    <div id="list"></div>
+    <div id="empty" class="muted" style="padding:8px 0"></div>
+  </main>
+
+  <script src="/js/ex.include.js"></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/ex.header.js"></script>
+  <script>
+  const API = {
+    list: '/page/backend/ex_requests_list.php',
+    cancel: '/page/backend/ex_request_cancel.php'
+  };
+
+  function el(tag, attrs={}, html=''){
+    const e=document.createElement(tag);
+    Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));
+    if (html) e.innerHTML = html;
+    return e;
+  }
+
+  function card(r){
+    const c = el('div', {class:'card'});
+    c.innerHTML = `
+      <div class="row">
+        <img class="thumb" src="${r.req_thumb||''}" alt="">
+        <div>
+          <div><b>${r.req_title||'-'}</b> <span class="muted">ที่ฉันไปขอ</span></div>
+          <div class="muted">ของที่ฉันเสนอ: ${r.off_title||'-'}</div>
+          <div class="muted" style="font-size:12px">เมื่อ: ${r.created_at}</div>
+          <div class="muted" style="font-size:12px">สถานะ: ${r.status}</div>
+        </div>
+      </div>
+    `;
+    if (r.status === 'pending'){
+      const act = el('div',{class:'actions'});
+      const cancel = el('button',{class:'btn',type:'button'},'ยกเลิกคำขอ');
+      cancel.onclick = async ()=>{
+        if(!confirm('ยืนยันยกเลิกคำขอนี้?')) return;
+        const res = await fetch(API.cancel, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          credentials:'include',
+          body: JSON.stringify({ request_id: r.id })
+        });
+        const data = await res.json().catch(()=>null);
+        if (data?.ok){ alert('ยกเลิกแล้ว'); location.reload(); }
+        else alert('ยกเลิกไม่สำเร็จ');
+      };
+      act.appendChild(cancel);
+      c.appendChild(act);
+    }
+    return c;
+  }
+
+  (async function init(){
+    try{
+      const r = await fetch(API.list, {credentials:'include', cache:'no-store'});
+      const raw = await r.text();
+      const d = JSON.parse(raw);
+      const list = document.getElementById('list');
+      const empty = document.getElementById('empty');
+      const arr = (d?.outgoing)||[];
+      if (!arr.length){ empty.textContent = 'ไม่มีคำขอที่ฉันเป็นคนส่ง'; return; }
+      const fr = document.createDocumentFragment();
+      arr.forEach(x=>fr.appendChild(card(x)));
+      list.appendChild(fr);
+    }catch(e){
+      document.getElementById('empty').textContent = 'โหลดข้อมูลไม่สำเร็จ';
+    }
+  })();
+  </script>
+</body>
+</html>

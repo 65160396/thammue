@@ -1,48 +1,82 @@
 
-/* สคริปต์เฉพาะหน้า ex_requests.html */
-(function(){
-  async function render(){
-    const data = await Ex.exListMyRequests();
-    const incoming = document.getElementById('incoming');
-    const outgoing = document.getElementById('outgoing');
+(function () {
+  const API = {
+    list:   '/page/backend/ex_requests_list.php',
+    decide: '/page/backend/ex_request_decide.php'
+  };
 
-    function setStatusClass(badge, status){
-      const map = {pending:'ex-req-status-pending',accepted:'ex-req-status-accepted',declined:'ex-req-status-declined',cancelled:'ex-req-status-cancelled'};
-      const cls = map[status] || '';
-      if (cls) badge.classList.add(cls);
-    }
+  // ปุ่มใน card จะเรียกใช้ openModal(r.id) ที่คุณมีอยู่แล้ว
+  function card(r){
+    const c = document.createElement('div');
+    c.className = 'card';
+    const placeLine = r.preferred_place ? `<div class="muted" style="margin-top:4px">สถานที่ที่ผู้ขอเสนอ: ${r.preferred_place}</div>` : '';
+    const noteLine  = r.note ? `<div class="muted" style="margin-top:2px">โน้ตจากผู้ขอ: ${r.note}</div>` : '';
 
-    function li(r, side){
-      const li = document.createElement('li');
-      li.className = 'ex-req-item';
-      li.innerHTML = `
+    c.innerHTML = `
+      <div class="row">
+        <img class="thumb" src="${r.off_thumb||''}" alt="">
         <div>
-          <div><b>#${r.id}</b> <span class="ex-badge">${r.status}</span></div>
-          <div class="ex-req-meta">ขอ: ${r.requested_item_id} | เสนอ: ${r.offered_item_id}</div>
-          <div class="ex-req-meta">${r.created_at}</div>
+          <div><b>${r.off_title||'-'}</b> <span class="muted">ขอแลกกับ</span></div>
+          <div class="muted">${r.req_title||'-'}</div>
+          <div class="muted" style="font-size:12px">เมื่อ: ${r.created_at}</div>
+          <div class="muted" style="font-size:12px">สถานะ: ${r.status}</div>
+          ${placeLine}
+          ${noteLine}
         </div>
-        <div class="ex-actions">
-          ${side==='incoming' && r.status==='pending' ? '<button class="ex-btn" data-act="accept">ยอมรับ</button><button class="ex-btn secondary" data-act="decline">ปฏิเสธ</button>' : ''}
-          ${side==='outgoing' && r.status==='pending' ? '<button class="ex-btn secondary" data-act="cancel">ยกเลิก</button>' : ''}
-        </div>
-      `;
-      setStatusClass(li.querySelector('.ex-badge'), r.status);
-      li.addEventListener('click', async (ev)=>{
-        const btn = ev.target.closest('button'); if(!btn) return;
-        try{
-          if(btn.dataset.act==='accept'){ await Ex.exAccept(r.id); }
-          if(btn.dataset.act==='decline'){ await Ex.exDecline(r.id); }
-          if(btn.dataset.act==='cancel'){ await Ex.exCancel(r.id); }
-          location.reload();
-        }catch(e){ alert('ผิดพลาด: '+e.message); }
-      });
-      return li;
+      </div>
+    `;
+
+    if (r.status === 'pending'){
+      const act = document.createElement('div');
+      act.className = 'actions';
+      const ok = Object.assign(document.createElement('button'), {className:'btn primary', type:'button', textContent:'ยอมรับ'});
+      const no = Object.assign(document.createElement('button'), {className:'btn', type:'button', textContent:'ปฏิเสธ'});
+
+      ok.onclick = () => window.openModal && openModal(r.id);
+      no.onclick = async () => {
+        if (!confirm('ยืนยันปฏิเสธคำขอนี้?')) return;
+        const fd = new FormData();
+        fd.append('request_id', r.id);
+        fd.append('action', 'decline');
+        const res = await fetch(API.decide, {method:'POST', body:fd, credentials:'include'});
+        const data = await res.json().catch(()=>null);
+        if (data?.ok){ alert('ปฏิเสธแล้ว'); location.reload(); }
+        else alert('ทำรายการไม่สำเร็จ');
+      };
+      act.append(ok, no);
+      c.appendChild(act);
+    }
+    return c;
+  }
+
+  async function render(){
+    let data;
+    try{
+      const r = await fetch(API.list, {credentials:'include', cache:'no-store'});
+      data = await r.json();
+    }catch(e){
+      const empty = document.getElementById('empty');
+      if (empty) empty.textContent = 'โหลดข้อมูลไม่สำเร็จ';
+      console.error(e);
+      return;
     }
 
-    (data.incoming||[]).forEach(r=>incoming.appendChild(li(r,'incoming')));
-    (data.outgoing||[]).forEach(r=>outgoing.appendChild(li(r,'outgoing')));
-    if(!incoming.children.length) incoming.innerHTML = '<li class="ex-muted">ว่าง</li>';
-    if(!outgoing.children.length) outgoing.innerHTML = '<li class="ex-muted">ว่าง</li>';
+    const list  = document.getElementById('list');
+    const empty = document.getElementById('empty');
+    if (!list) return;
+
+    const arr = data?.incoming || [];
+    if (!arr.length){
+      if (empty) empty.textContent = 'ไม่มีคำขอเข้ามา';
+      return;
+    }
+    const fr = document.createDocumentFragment();
+    arr.forEach(r => fr.appendChild(card(r)));
+    list.innerHTML = '';
+    list.appendChild(fr);
   }
-  window.addEventListener('DOMContentLoaded', ()=>render().catch(e=>alert(e.message)));
+
+  // ให้รันหลัง partial header ถูก include แล้ว (กัน timing ชนกับ header)
+  document.addEventListener('ex:partials:ready', render);
 })();
+
