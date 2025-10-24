@@ -8,54 +8,55 @@
     <link rel="stylesheet" href="/css/ex.exchange.css" />
     <link rel="stylesheet" href="/css/ex.header.css" />
     <style>
-    body{ background:#f6f8fb; }
-    .detail-wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .back-link{display:inline-block;margin:4px 0 10px;color:#111;text-decoration:none}
-    .back-link:hover{text-decoration:underline}
-    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-    .photo-main{border:1px solid #eee;border-radius:12px;overflow:hidden;background:#fff}
-    .photo-main img{display:block;width:100%;height:auto}
-    .thumbs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-    .thumb{width:94px;height:74px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:#fff}
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .thumb.active{border-color:#0ea5e9}
-    .box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px}
-    .detail-title{font-size:1.5rem;font-weight:800;margin:0 0 6px}
-    .chip{display:inline-block;background:#f1f5f9;color:#334155;border-radius:999px;padding:.25rem .5rem;font-size:.85rem;margin-right:6px}
-    .muted{color:#64748b}
-    .meta2{margin-top:6px}
+      body{ background:#f6f8fb; }
+      .detail-wrap{max-width:1100px;margin:0 auto;padding:16px}
+      .back-link{display:inline-block;margin:4px 0 10px;color:#111;text-decoration:none}
+      .back-link:hover{text-decoration:underline}
+      .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+      .photo-main{border:1px solid #eee;border-radius:12px;overflow:hidden;background:#fff}
+      .photo-main img{display:block;width:100%;height:auto}
+      .thumbs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+      .thumb{width:94px;height:74px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:#fff}
+      .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+      .thumb.active{border-color:#0ea5e9}
+      .box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px}
+      .detail-title{font-size:1.5rem;font-weight:800;margin:0 0 6px}
+      .chip{display:inline-block;background:#f1f5f9;color:#334155;border-radius:999px;padding:.25rem .5rem;font-size:.85rem;margin-right:6px}
+      .muted{color:#64748b}
+      .meta2{margin-top:6px}
 
-    .btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:10px;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700}
-    .btn-ghost{border:1px solid #cbd5e1;background:#fff;color:#0ea5e9}
-    .btn-primary{background:#111827;color:#fff;border:none}
-    .btn:focus{outline:3px solid rgba(14,165,233,.25);outline-offset:2px}
-    .btn[disabled]{opacity:.5;pointer-events:none;cursor:not-allowed}
-    .actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-    .fav-row{margin:8px 0 10px}
-    .flash{margin-top:10px;background:#e8f7ef;color:#14532d;border:1px solid #bbf7d0;padding:10px 12px;border-radius:10px;font-size:14px}
-    #notfound .box{ text-align:center; font-weight:700 }
+      .btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:10px;padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:700}
+      .btn-ghost{border:1px solid #cbd5e1;background:#fff;color:#0ea5e9}
+      .btn-primary{background:#111827;color:#fff;border:none}
+      .btn:focus{outline:3px solid rgba(14,165,233,.25);outline-offset:2px}
+      .btn[disabled]{opacity:.5;pointer-events:none;cursor:not-allowed}
+      .actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+      .fav-row{margin:8px 0 10px}
+      .flash{margin-top:10px;background:#e8f7ef;color:#14532d;border:1px solid #bbf7d0;padding:10px 12px;border-radius:10px;font-size:14px}
+      #notfound .box{ text-align:center; font-weight:700 }
 
-    .own-banner{
-      margin-top:10px;background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;
-      border-radius:10px;padding:10px 12px;font-weight:700;
-    }
+      .own-banner{
+        margin-top:10px;background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;
+        border-radius:10px;padding:10px 12px;font-weight:700;
+      }
 
-    /* ===== Modal ===== */
-    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:40}
-    .modal{position:fixed;inset:0;display:none;z-index:50;align-items:center;justify-content:center}
-    .modal.open,.modal-backdrop.open{display:flex}
-    .modal-card{width:min(720px,94vw);background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 30px 80px rgba(0,0,0,.25)}
-    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f5}
-    .modal-title{font-weight:800}
-    .modal-body{padding:12px 16px;max-height:70vh;overflow:auto}
-    .modal-foot{padding:12px 16px;border-top:1px solid #eef1f5;display:flex;justify-content:flex-end;gap:8px}
-    .x{background:transparent;border:0;font-size:20px;cursor:pointer}
-    .my-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill, minmax(220px,1fr))}
-    .my-card{border:1px solid #eef1f5;border-radius:12px;overflow:hidden;background:#fff}
-    .my-thumb{height:140px;background:#f3f4f6;background-size:cover;background-position:center}
-    .my-body{padding:8px 10px}
-    .radio-row{display:flex;align-items:center;gap:8px;margin-top:6px}
-    .note-box{width:100%;min-height:74px;border:1px solid #e5e7eb;border-radius:10px;padding:8px}
+      /* ===== Modal ===== */
+      .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:40}
+      .modal{position:fixed;inset:0;display:none;z-index:50;align-items:center;justify-content:center}
+      .modal.open,.modal-backdrop.open{display:flex}
+      .modal-card{width:min(720px,94vw);background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+      .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f5}
+      .modal-title{font-weight:800}
+      .modal-body{padding:12px 16px;max-height:70vh;overflow:auto}
+      .modal-foot{padding:12px 16px;border-top:1px solid #eef1f5;display:flex;justify-content:flex-end;gap:8px}
+      .x{background:transparent;border:0;font-size:20px;cursor:pointer}
+      .my-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill, minmax(220px,1fr))}
+      .my-card{border:1px solid #eef1f5;border-radius:12px;overflow:hidden;background:#fff}
+      .my-thumb{height:140px;background:#f3f4f6;background-size:cover;background-position:center}
+      .my-body{padding:8px 10px}
+      .radio-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+      .note-box{width:100%;min-height:74px;border:1px solid #e5e7eb;border-radius:10px;padding:8px}
+      .fav-on{border-color:#a58bff;background:#f6f0ff}
     </style>
   </head>
   <body>
@@ -89,7 +90,7 @@
 
             <div class="fav-row">
               <button id="favBtn" class="btn btn-ghost" aria-pressed="false" title="เพิ่ม/ลบรายการโปรด">
-                <span id="favIcon" class="icon">🤍</span> รายการโปรด
+                <span id="favIcon" class="icon">🤍</span> <span id="favText">รายการโปรด</span>
               </button>
             </div>
 
@@ -146,11 +147,12 @@
   const itemId = qs.get('id');
 
   const API = {
-    getItem   : id => `/page/backend/ex_item_get.php?id=${encodeURIComponent(id)}`,
-    listMine  : `/page/backend/ex_list_my_items.php`,
-    createReq : `/page/backend/ex_request_create.php`,
-    badge     : `/page/backend/ex_badge_counts.php`,
-    toggleFav : id => `/page/backend/ex_fav_toggle.php?item_id=${encodeURIComponent(id)}`, // optional
+    getItem     : id => `/page/backend/ex_item_get.php?id=${encodeURIComponent(id)}`,
+    listMine    : `/page/backend/ex_list_my_items.php`,
+    createReq   : `/page/backend/ex_request_create.php`,
+    badge       : `/page/backend/ex_badge_counts.php`,
+    favStatus   : id => `/page/backend/ex_favorite_status.php?item_id=${encodeURIComponent(id)}`,
+    favToggle   : `/page/backend/ex_favorite_toggle.php`,
   };
 
   const $notfound   = document.getElementById('notfound');
@@ -166,6 +168,7 @@
   const $ref        = document.getElementById('refCode');
   const $favBtn     = document.getElementById('favBtn');
   const $favIcon    = document.getElementById('favIcon');
+  const $favText    = document.getElementById('favText');
   const $flash      = document.getElementById('flash');
   const $chatBtn    = document.getElementById('chatBtn');
   const $openOffer  = document.getElementById('openOffer');
@@ -182,6 +185,7 @@
 
   if (!itemId) { $notfound.style.display = ''; return; }
 
+  // โหลดรายละเอียดสินค้า
   fetch(API.getItem(itemId), { cache:'no-store', credentials:'include' })
     .then(async r => {
       const raw = await r.text();
@@ -196,7 +200,7 @@
         const area = [it.addr_province, it.addr_subdistrict].filter(Boolean).join(' · ');
         $loc.textContent = `พื้นที่: ${area || '-'}`;
 
-        // สถานที่นัดรับ (แสดงเฉพาะรายละเอียดที่ผู้ใช้พิมพ์)
+        // สถานที่นัดรับ
         const pickText = (it.place_detail || '').trim();
         $pickupLine.style.display = pickText ? '' : 'none';
         if (pickText) $pickupLine.textContent = `สถานที่นัดรับ: ${pickText}`;
@@ -218,6 +222,8 @@
           markOwnerMode();
         } else if (it.owner_id) {
           $chatBtn.href = `/page/ex_chat.html?to=${encodeURIComponent(it.owner_id)}&item=${encodeURIComponent(it.id)}`;
+          // โหลดสถานะรายการโปรดเริ่มต้น
+          initFavoriteState();
         }
       } catch(e) {
         console.error('getItem error:', e, 'raw=', raw);
@@ -225,6 +231,14 @@
       }
     })
     .catch(() => { $notfound.style.display = ''; });
+
+  async function initFavoriteState(){
+    try{
+      const r = await fetch(API.favStatus(itemId), {credentials:'include', cache:'no-store'});
+      const d = await r.json();
+      if(d.ok){ setFavState(!!d.is_favorite); }
+    }catch(e){ console.warn('fav status', e); }
+  }
 
   function renderThumbs(arr){
     $thumbs.innerHTML = '';
@@ -245,21 +259,33 @@
   }
 
   function setFavState(on){
+    $favBtn.classList.toggle('fav-on', on);
     $favBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    $favIcon.textContent = on ? '💖' : '🤍';
+    $favIcon.textContent = on ? '💜' : '🤍';
+    $favText.textContent = on ? 'ลบจากโปรด' : 'รายการโปรด';
   }
 
   $favBtn.addEventListener('click', async () => {
     try{
-      const r = await fetch(API.toggleFav(itemId), { method:'POST', credentials:'include' });
+      $favBtn.disabled = true;
+      const r = await fetch(API.favToggle, {
+        method:'POST',
+        credentials:'include',
+        headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+        body: new URLSearchParams({ item_id: itemId }).toString()
+      });
       const d = await r.json().catch(()=>null);
       if (d?.ok) {
-        setFavState(Boolean(d.is_fav));
-        flash(d.is_fav ? 'เพิ่มในรายการโปรดแล้ว' : 'นำออกจากรายการโปรดแล้ว');
+        setFavState(Boolean(d.is_favorite));
+        flash(d.is_favorite ? 'เพิ่มในรายการโปรดแล้ว' : 'นำออกจากรายการโปรดแล้ว');
       } else {
-        flash('ทำรายการไม่สำเร็จ', true);
+        flash(d?.error || 'ทำรายการไม่สำเร็จ', true);
       }
-    }catch{ flash('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว', true); }
+    }catch{
+      flash('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว', true);
+    }finally{
+      $favBtn.disabled = false;
+    }
   });
 
   function markOwnerMode(){
@@ -284,10 +310,10 @@
   /* ===== Modal logic ===== */
   function openOfferModal(){ $mBackdrop.classList.add('open'); $mModal.classList.add('open'); }
   function closeOfferModal(){ $mBackdrop.classList.remove('open'); $mModal.classList.remove('open'); }
-  $mClose.addEventListener('click', closeOfferModal);
-  $mBackdrop.addEventListener('click', closeOfferModal);
+  document.getElementById('offerClose').addEventListener('click', closeOfferModal);
+  document.getElementById('offerBackdrop').addEventListener('click', closeOfferModal);
 
-  $openOffer.addEventListener('click', async () => {
+  document.getElementById('openOffer').addEventListener('click', async () => {
     // โหลด “สินค้าของฉัน”
     $mGrid.innerHTML = '';
     $mHint.textContent = 'กำลังโหลดสินค้าของฉัน…';

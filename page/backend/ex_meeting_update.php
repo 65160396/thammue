@@ -1,5 +1,4 @@
 <?php
-// /page/backend/ex_meeting_update.php
 require_once __DIR__ . '/ex__common.php';
 $m = dbx();
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -13,7 +12,6 @@ $place = trim((string)($in['place'] ?? ''));
 $note  = trim((string)($in['note'] ?? ''));
 if ($rid<=0) jerr('bad_request', 400);
 
-/* เช็กสิทธิ์จาก items */
 $st = $m->prepare("
   SELECT it_req.user_id AS owner_user_id, it_off.user_id AS requester_user_id
   FROM ".T_REQUESTS." r
@@ -27,7 +25,7 @@ $rrow = stmt_one_assoc($st);
 if (!$rrow) jerr('not_found', 404);
 if ($uid!==(int)$rrow['owner_user_id'] && $uid!==(int)$rrow['requester_user_id']) jerr('forbidden', 403);
 
-/* ตารางนัดหมาย */
+/* upsert ex_meetings table */
 $m->query("CREATE TABLE IF NOT EXISTS ex_meetings (
   request_id INT PRIMARY KEY,
   scheduled_at DATETIME NULL,
@@ -36,21 +34,20 @@ $m->query("CREATE TABLE IF NOT EXISTS ex_meetings (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-$st = $m->prepare("
-  INSERT INTO ex_meetings (request_id,scheduled_at,place,note,updated_at)
-  VALUES (?,?,?,?,NOW())
+$st2 = $m->prepare("
+  INSERT INTO ex_meetings (request_id, scheduled_at, place, note, updated_at)
+  VALUES (?, ?, ?, ?, NOW())
   ON DUPLICATE KEY UPDATE scheduled_at=VALUES(scheduled_at), place=VALUES(place), note=VALUES(note), updated_at=NOW()
 ");
-$sa = ($scheduled_at!=='') ? $scheduled_at : null;
-$st->bind_param("isss", $rid, $sa, $place, $note);
-$st->execute();
+$sa = ($scheduled_at !== '') ? $scheduled_at : null;
+$st2->bind_param("isss", $rid, $sa, $place, $note);
+$st2->execute();
 
-/* แจ้งอีกฝั่ง */
+/* แจ้งอีกฝ่าย */
 $other = ($uid===(int)$rrow['owner_user_id']) ? (int)$rrow['requester_user_id'] : (int)$rrow['owner_user_id'];
 $typ='meeting_updated'; $title='มีการอัปเดตนัดหมาย'; $body='มีการอัปเดตเวลา/สถานที่นัดหมายเพื่อแลกเปลี่ยน';
-$st = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at)
-                   VALUES (?,?,?,?,?,0,NOW())");
-$st->bind_param("isiss", $other, $typ, $rid, $title, $body);
-$st->execute();
+$ins = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at) VALUES (?,?,?,?,?,0,NOW())");
+$ins->bind_param("isiss", $other, $typ, $rid, $title, $body);
+$ins->execute();
 
 jok();

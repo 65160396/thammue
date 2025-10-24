@@ -1,21 +1,80 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>รายการโปรดของฉัน | THAMMUE</title>
+  <title>รายการโปรด | THAMMUE</title>
   <link rel="stylesheet" href="/css/ex.exchange.css">
-  <link rel="stylesheet" href="/css/ex.chat_fav.css">
+  <link rel="stylesheet" href="/css/ex.header.css">
+  <style>
+    body{background:#f6f8fb}
+    .wrap{max-width:1000px;margin:0 auto;padding:16px}
+    .card{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #eef1f5;border-radius:14px;padding:10px;margin:8px 0}
+    .thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;background:#f2f2f2}
+    .remove{margin-left:auto;border:1px solid #fcd5d5;background:#fff;padding:6px 10px;border-radius:10px;cursor:pointer}
+    .remove:hover{background:#fff5f5}
+  </style>
 </head>
 <body>
-  <div class="ex-container">
-    <h1 class="ex-h1">รายการโปรด</h1>
-    <div class="ex-card">
-      <div id="favGrid" class="ex-fav-grid"></div>
-    </div>
-  </div>
-  <script src="/js/ex.exchange.js"></script>
-  <script src="/js/ex.fav.page.js"></script>
+  <div data-include="/page/partials/ex_header.html"></div>
+  <main class="wrap">
+    <h2 style="font-weight:800;margin:6px 0 14px">รายการโปรดของฉัน</h2>
+    <div id="list"></div>
+    <div id="empty" style="color:#64748b">กำลังโหลด...</div>
+  </main>
+  <script src="/js/ex.include.js"></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/ex.header.js"></script>
+
+
+  <script>
+  (async function(){
+    const list = document.getElementById('list');
+    const empty = document.getElementById('empty');
+
+    async function load(){
+      const r = await fetch('/page/backend/ex_favorites_list.php',{credentials:'include'});
+      const d = await r.json();
+      if(!d.ok){ empty.textContent = d.error || 'โหลดข้อมูลไม่สำเร็จ'; return; }
+      const items = d.items || [];
+      if(!items.length){ empty.textContent = 'ยังไม่มีรายการโปรด'; list.innerHTML=''; return; }
+      empty.textContent = '';
+      list.innerHTML = items.map(x => `
+        <div class="card" data-item-id="${x.item_id}">
+          <img class="thumb" src="${x.thumb || '/img/placeholder.png'}" alt="">
+          <div>
+            <div style="font-weight:700">${x.title || '—'}</div>
+            <div style="font-size:12px;color:#64748b">เพิ่มเมื่อ: ${x.created_at || '-'}</div>
+          </div>
+          <button class="remove">ลบออก</button>
+        </div>
+      `).join('');
+    }
+
+    list.addEventListener('click', async (ev)=>{
+      const btn = ev.target.closest('.remove');
+      if(!btn) return;
+      const card = btn.closest('.card');
+      const id = +card.dataset.itemId;
+      btn.disabled = true;
+      const r = await fetch('/page/backend/ex_favorite_toggle.php',{
+        method:'POST',
+        credentials:'include',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({item_id:id}).toString()
+      });
+      const d = await r.json();
+      if(d.ok){
+        card.remove();
+        if(!list.children.length) document.getElementById('empty').textContent = 'ยังไม่มีรายการโปรด';
+      }else{
+        alert(d.error || 'เอาออกไม่สำเร็จ');
+      }
+      btn.disabled = false;
+    });
+
+    load();
+  })();
+  </script>
 </body>
 </html>

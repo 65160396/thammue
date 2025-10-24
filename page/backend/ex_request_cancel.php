@@ -1,5 +1,4 @@
 <?php
-// /page/backend/ex_request_cancel.php
 require_once __DIR__ . '/ex__common.php';
 $m = dbx();
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -24,17 +23,19 @@ try {
   $st->execute();
   $req = stmt_one_assoc($st);
   if (!$req) jerr('not_found', 404);
-  if ($uid !== (int)$req['requester_user_id']) jerr('forbidden', 403);
 
-  $st = $m->prepare("UPDATE ".T_REQUESTS." SET status='canceled', updated_at=NOW() WHERE id=?");
-  $st->bind_param("i", $rid);
-  $st->execute();
+  $owner = (int)$req['owner_user_id'];
+  $requester = (int)$req['requester_user_id'];
+  if ($uid !== $requester) jerr('forbidden', 403);
+
+  $st2 = $m->prepare("UPDATE ".T_REQUESTS." SET status='canceled', updated_at=NOW() WHERE id=?");
+  $st2->bind_param("i", $rid);
+  $st2->execute();
 
   $typ='request_canceled'; $title='คำขอแลกถูกยกเลิก'; $body='ผู้ใช้ยกเลิกคำขอแลกที่ส่งถึงคุณ';
-  $st = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at)
-                     VALUES (?,?,?,?,?,0,NOW())");
-  $st->bind_param("isiss", $req['owner_user_id'], $typ, $rid, $title, $body);
-  $st->execute();
+  $ins = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at) VALUES (?,?,?,?,?,0,NOW())");
+  $ins->bind_param("isiss", $owner, $typ, $rid, $title, $body);
+  $ins->execute();
 
   $m->commit();
   jok();
