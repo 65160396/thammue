@@ -1,31 +1,44 @@
 <?php
+// /page/backend/ex_decline_request.php
 require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $uid = me();
 if (!$uid) jerr('not_logged_in', 401);
 
-$rid = (int)($input['request_id'] ?? 0);
-if ($rid<=0) jerr('bad_request');
+$in = json_decode(file_get_contents('php://input'), true) ?? [];
+$rid = (int)($in['request_id'] ?? 0);
+if ($rid<=0) jerr('bad_request', 400);
 
-$st = $mysqli->prepare("SELECT * FROM ex_requests WHERE id=?");
-$st->bind_param("i", $rid);
-$st->execute();
-$r = $st->get_result()->fetch_assoc();
+$m->begin_transaction();
+try {
+  $st = $m->prepare("
+    SELECT r.id, r.status,
+           it_req.user_id AS owner_user_id, it_off.user_id AS requester_user_id
+    FROM ".T_REQUESTS." r
+    JOIN ".T_ITEMS." it_req ON it_req.id = r.requested_item_id
+    JOIN ".T_ITEMS." it_off ON it_off.id = r.offered_item_id
+    WHERE r.id=? FOR UPDATE
+  ");
+  $st->bind_param("i", $rid);
+  $st->execute();
+  $req = stmt_one_assoc($st);
+  if (!$req) jerr('not_found', 404);
+  if ($uid !== (int)$req['owner_user_id']) jerr('forbidden', 403);
 
-if (!$r) jerr('not_found', 404);
-if ((int)$r['owner_user_id'] !== $uid) jerr('forbidden', 403);
-if ($r['status'] !== 'pending') jerr('invalid_status', 400);
+  $st = $m->prepare("UPDATE ".T_REQUESTS." SET status='declined', updated_at=NOW() WHERE id=?");
+  $st->bind_param("i", $rid);
+  $st->execute();
 
-$st = $mysqli->prepare("UPDATE ex_requests SET status='declined', updated_at=NOW() WHERE id=?");
-$st->bind_param("i", $rid);
-$st->execute();
+  $typ='request_declined'; $title='คำขอแลกถูกปฏิเสธ'; $body='ผู้ขายปฏิเสธคำขอแลกของคุณ';
+  $st = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at)
+                     VALUES (?,?,?,?,?,0,NOW())");
+  $st->bind_param("isiss", $req['requester_user_id'], $typ, $rid, $title, $body);
+  $st->execute();
 
-$user_id = (int)$r['requester_user_id'];
-$typ='status'; $title='คำขอถูกปฏิเสธ'; $body='คำขอแลกเปลี่ยนของคุณถูกปฏิเสธ';
-$st = $mysqli->prepare("INSERT INTO ex_notifications (user_id, type, ref_id, title, body, is_read, created_at) VALUES (?,?,?,?,?,0,NOW())");
-$st->bind_param("isiss", $user_id, $typ, $rid, $title, $body);
-$st->execute();
-
-jok();
+  $m->commit();
+  jok();
+} catch (Throwable $e) {
+  $m->rollback();
+  jerr('sql_fail: '.$e->getMessage(), 500);
+}

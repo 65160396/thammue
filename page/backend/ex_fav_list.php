@@ -1,19 +1,26 @@
 <?php
+// /page/backend/ex_fav_list.php
 require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $uid = me();
 if (!$uid) jerr('not_logged_in', 401);
 
-$st = $mysqli->prepare("
-  SELECT i.id, i.title, i.thumbnail_url AS thumb
-  FROM ex_favorites f
-  JOIN items i ON i.id=f.item_id
+/* ensure table exists */
+$m->query("CREATE TABLE IF NOT EXISTS ".T_FAVORITES." (
+  user_id INT NOT NULL, item_id INT NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(user_id, item_id), KEY(item_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+/* list favorites for user (join to ex_items) */
+$st = $m->prepare("
+  SELECT f.item_id, i.title, i.thumbnail_url
+  FROM ".T_FAVORITES." f
+  JOIN ".T_ITEMS." i ON i.id = f.item_id
   WHERE f.user_id=?
   ORDER BY f.created_at DESC
-  LIMIT 500
 ");
 $st->bind_param("i", $uid);
 $st->execute();
-$items = stmt_all_assoc($st);
-echo json_encode(['ok'=>true,'items'=>$items], JSON_UNESCAPED_UNICODE);
+$rows = stmt_all_assoc($st);
+echo json_encode(['ok'=>true,'favorites'=>$rows], JSON_UNESCAPED_UNICODE);

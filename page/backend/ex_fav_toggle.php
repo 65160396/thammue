@@ -1,40 +1,46 @@
 <?php
+// /page/backend/ex_fav_toggle.php
 require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $uid = me();
 if (!$uid) jerr('not_logged_in', 401);
 
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
-$item_id = (int)($input['item_id'] ?? 0);
-$action  = trim((string)($input['action'] ?? 'toggle'));
-if ($item_id<=0) jerr('bad_request');
+$in = json_decode(file_get_contents('php://input'), true) ?? [];
+$item_id = (int)($in['item_id'] ?? 0);
+$action  = strtolower(trim((string)($in['action'] ?? 'toggle')));
+if ($item_id<=0) jerr('bad_request', 400);
 
-if ($action==='remove'){
-  $st = $mysqli->prepare("DELETE FROM ex_favorites WHERE user_id=? AND item_id=?");
+/* create favorites table if not exists */
+$m->query("CREATE TABLE IF NOT EXISTS ".T_FAVORITES." (
+  user_id INT NOT NULL, item_id INT NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(user_id, item_id), KEY(item_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+if ($action === 'add') {
+  $st = $m->prepare("INSERT IGNORE INTO ".T_FAVORITES." (user_id,item_id,created_at) VALUES (?,?,NOW())");
   $st->bind_param("ii", $uid, $item_id);
   $st->execute();
-  echo json_encode(['ok'=>true,'removed'=>true], JSON_UNESCAPED_UNICODE); exit;
-}
-// toggle default
-$st = $mysqli->prepare("SELECT 1 FROM ex_favorites WHERE user_id=? AND item_id=?");
-$st->bind_param("ii", $uid, $item_id);
-$st->execute();
-$has = $st->get_result()->fetch_row();
-
-if ($has){
-  $st = $mysqli->prepare("DELETE FROM ex_favorites WHERE user_id=? AND item_id=?");
+  jok(['favorited'=>true]);
+} elseif ($action === 'remove') {
+  $st = $m->prepare("DELETE FROM ".T_FAVORITES." WHERE user_id=? AND item_id=?");
   $st->bind_param("ii", $uid, $item_id);
   $st->execute();
-  echo json_encode(['ok'=>true,'favorited'=>false], JSON_UNESCAPED_UNICODE); exit;
+  jok(['favorited'=>false]);
 } else {
-  $st = $mysqli->prepare("INSERT INTO ex_favorites (user_id, item_id, created_at) VALUES (?,?,NOW())");
+  $st = $m->prepare("SELECT 1 FROM ".T_FAVORITES." WHERE user_id=? AND item_id=? LIMIT 1");
   $st->bind_param("ii", $uid, $item_id);
   $st->execute();
-  echo json_encode(['ok'=>true,'favorited'=>true], JSON_UNESCAPED_UNICODE); exit;
+  $has = $st->get_result()->fetch_row();
+  if ($has) {
+    $st = $m->prepare("DELETE FROM ".T_FAVORITES." WHERE user_id=? AND item_id=?");
+    $st->bind_param("ii", $uid, $item_id);
+    $st->execute();
+    jok(['favorited'=>false]);
+  } else {
+    $st = $m->prepare("INSERT INTO ".T_FAVORITES." (user_id,item_id,created_at) VALUES (?,?,NOW())");
+    $st->bind_param("ii", $uid, $item_id);
+    $st->execute();
+    jok(['favorited'=>true]);
+  }
 }
-// ... ดึง $itemOwnerId จากตาราง ex_items ให้ได้ก่อน (เช่น SELECT user_id FROM ex_items WHERE id=?)
-if ((int)$itemOwnerId === (int)$uid) {
-  jerr('cannot_fav_own_item', 400);
-}
-

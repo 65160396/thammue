@@ -1,38 +1,56 @@
 <?php
+// /page/backend/ex_meeting_update.php
 require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $uid = me();
 if (!$uid) jerr('not_logged_in', 401);
 
-$rid = (int)($input['request_id'] ?? 0);
-$scheduled_at = trim((string)($input['scheduled_at'] ?? '')); // 'YYYY-MM-DD HH:MM:SS'
-$place = trim((string)($input['place'] ?? ''));
-$note  = trim((string)($input['note'] ?? ''));
-if ($rid<=0) jerr('bad_request');
+$in = json_decode(file_get_contents('php://input'), true) ?? [];
+$rid = (int)($in['request_id'] ?? 0);
+$scheduled_at = trim((string)($in['scheduled_at'] ?? ''));
+$place = trim((string)($in['place'] ?? ''));
+$note  = trim((string)($in['note'] ?? ''));
+if ($rid<=0) jerr('bad_request', 400);
 
-$st = $mysqli->prepare("SELECT requester_user_id, owner_user_id FROM ex_requests WHERE id=?");
+/* เช็กสิทธิ์จาก items */
+$st = $m->prepare("
+  SELECT it_req.user_id AS owner_user_id, it_off.user_id AS requester_user_id
+  FROM ".T_REQUESTS." r
+  JOIN ".T_ITEMS." it_req ON it_req.id = r.requested_item_id
+  JOIN ".T_ITEMS." it_off ON it_off.id = r.offered_item_id
+  WHERE r.id=? LIMIT 1
+");
 $st->bind_param("i", $rid);
 $st->execute();
-$r = $st->get_result()->fetch_assoc();
-if (!$r) jerr('not_found', 404);
-if ($uid !== (int)$r['requester_user_id'] && $uid !== (int)$r['owner_user_id']) jerr('forbidden', 403);
+$rrow = stmt_one_assoc($st);
+if (!$rrow) jerr('not_found', 404);
+if ($uid!==(int)$rrow['owner_user_id'] && $uid!==(int)$rrow['requester_user_id']) jerr('forbidden', 403);
 
-$st = $mysqli->prepare("
-  INSERT INTO ex_meetings (request_id, scheduled_at, place, note, created_at, updated_at)
-  VALUES (?,?,?,?,NOW(),NOW())
+/* ตารางนัดหมาย */
+$m->query("CREATE TABLE IF NOT EXISTS ex_meetings (
+  request_id INT PRIMARY KEY,
+  scheduled_at DATETIME NULL,
+  place VARCHAR(255) NULL,
+  note TEXT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$st = $m->prepare("
+  INSERT INTO ex_meetings (request_id,scheduled_at,place,note,updated_at)
+  VALUES (?,?,?,?,NOW())
   ON DUPLICATE KEY UPDATE scheduled_at=VALUES(scheduled_at), place=VALUES(place), note=VALUES(note), updated_at=NOW()
 ");
-$sa = ($scheduled_at !== '') ? $scheduled_at : None;
-# mysqli doesn't allow python None; will convert below
-$sa = ($scheduled_at !== '') ? $scheduled_at : NULL;
+$sa = ($scheduled_at!=='') ? $scheduled_at : null;
 $st->bind_param("isss", $rid, $sa, $place, $note);
 $st->execute();
 
-$other = ($uid===(int)$r['requester_user_id'])? (int)$r['owner_user_id'] : (int)$r['requester_user_id'];
-$typ='meeting'; $title='มีการอัปเดตนัดหมาย'; $body='มีการอัปเดตเวลา/สถานที่นัดหมายเพื่อแลกเปลี่ยน';
-$st = $mysqli->prepare("INSERT INTO ex_notifications (user_id, type, ref_id, title, body, is_read, created_at) VALUES (?,?,?,?,?,0,NOW())");
+/* แจ้งอีกฝั่ง */
+$other = ($uid===(int)$rrow['owner_user_id']) ? (int)$rrow['requester_user_id'] : (int)$rrow['owner_user_id'];
+$typ='meeting_updated'; $title='มีการอัปเดตนัดหมาย'; $body='มีการอัปเดตเวลา/สถานที่นัดหมายเพื่อแลกเปลี่ยน';
+$st = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at)
+                   VALUES (?,?,?,?,?,0,NOW())");
 $st->bind_param("isiss", $other, $typ, $rid, $title, $body);
 $st->execute();
+
 jok();

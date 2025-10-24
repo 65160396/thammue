@@ -1,52 +1,44 @@
 <?php
-// ยกเลิกรายการที่ "ฉันเป็นผู้ขอ" และยังเป็นสถานะ pending
-$REQUIRE_LOGIN = true;
-require_once __DIR__ . '/ex__items_common.php'; // <-- ใช้ไฟล์นี้เท่านั้น (เชื่อม shopdb_ex)
-header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store');
+// /page/backend/ex_request_cancel.php
+require_once __DIR__ . '/ex__common.php';
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+$uid = me();
+if (!$uid) jerr('not_logged_in', 401);
 
+$in = json_decode(file_get_contents('php://input'), true) ?? [];
+$rid = (int)($in['request_id'] ?? 0);
+if ($rid<=0) jerr('bad_request', 400);
+
+$m->begin_transaction();
 try {
-  // รับได้ทั้ง JSON และ form
-  $in = $_POST;
-  if (empty($in)) {
-    $raw = file_get_contents('php://input');
-    if ($raw) $in = json_decode($raw, true) ?: [];
-  }
-  $rid = (int)($in['request_id'] ?? 0);
-  if ($rid <= 0) jerr('bad_request');
-
-  // ดึงคำขอ
-  $st = $mysqli->prepare("SELECT id, requester_user_id, owner_user_id, status
-                          FROM ex_requests WHERE id=?");
-  $st->bind_param('i', $rid);
+  $st = $m->prepare("
+    SELECT r.id, r.status,
+           it_req.user_id AS owner_user_id, it_off.user_id AS requester_user_id
+    FROM ".T_REQUESTS." r
+    JOIN ".T_ITEMS." it_req ON it_req.id = r.requested_item_id
+    JOIN ".T_ITEMS." it_off ON it_off.id = r.offered_item_id
+    WHERE r.id=? FOR UPDATE
+  ");
+  $st->bind_param("i", $rid);
   $st->execute();
-  $r = $st->get_result()->fetch_assoc();
-  if (!$r) jerr('not_found', 404);
+  $req = stmt_one_assoc($st);
+  if (!$req) jerr('not_found', 404);
+  if ($uid !== (int)$req['requester_user_id']) jerr('forbidden', 403);
 
-  // ต้องเป็นผู้ขอ และยัง pending
-  if ((int)$r['requester_user_id'] !== (int)$uid) jerr('forbidden', 403);
-  if ($r['status'] !== 'pending') jerr('invalid_status', 400);
+  $st = $m->prepare("UPDATE ".T_REQUESTS." SET status='canceled', updated_at=NOW() WHERE id=?");
+  $st->bind_param("i", $rid);
+  $st->execute();
 
-  // อัปเดตเป็น cancelled
-  $st = $mysqli->prepare("UPDATE ex_requests
-                          SET status='cancelled', updated_at=NOW()
-                          WHERE id=?");
-  $st->bind_param('i', $rid);
-  if (!$st->execute()) jerr('db_update_fail', 500);
+  $typ='request_canceled'; $title='คำขอแลกถูกยกเลิก'; $body='ผู้ใช้ยกเลิกคำขอแลกที่ส่งถึงคุณ';
+  $st = $m->prepare("INSERT INTO ".T_NOTIFICATIONS." (user_id,type,ref_id,title,body,is_read,created_at)
+                     VALUES (?,?,?,?,?,0,NOW())");
+  $st->bind_param("isiss", $req['owner_user_id'], $typ, $rid, $title, $body);
+  $st->execute();
 
-  // แจ้งเตือนเจ้าของสินค้า
-  $owner_id = (int)$r['owner_user_id'];
-  $typ   = 'status';
-  $title = 'ผู้ขอแลกยกเลิกรายการ';
-  $body  = 'คำขอแลกเปลี่ยนถูกยกเลิกโดยผู้ขอ';
-  $st = $mysqli->prepare("INSERT INTO ex_notifications
-          (user_id, type, ref_id, title, body, is_read, created_at)
-          VALUES (?,?,?,?,?,0,NOW())");
-  $st->bind_param('isiss', $owner_id, $typ, $rid, $title, $body);
-  $st->execute(); // ไม่ต้อง hard fail ถ้า insert noti ล้มเหลว
-
-  jok(); // { ok: true }
+  $m->commit();
+  jok();
 } catch (Throwable $e) {
-  // กันกรณี error หลุด
-  jerr('server_error', 500);
+  $m->rollback();
+  jerr('sql_fail: '.$e->getMessage(), 500);
 }
