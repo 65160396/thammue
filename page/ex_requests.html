@@ -5,60 +5,207 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>คำขอแลกเปลี่ยนของฉัน | THAMMUE</title>
   <link rel="stylesheet" href="/css/ex.exchange.css" />
+  <link rel="stylesheet" href="/css/ex.header.css" />
+  <style>
+    body{background:#f6f8fb}
+    .wrap{max-width:1100px;margin:16px auto;padding:0 16px}
+    .grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
+    .row{display:flex;gap:12px;padding:12px;align-items:center;border-top:1px solid #f1f5f9}
+    .row:first-child{border-top:0}
+    .thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#f3f4f6}
+    .muted{color:#64748b}
+    .badge{display:inline-block;background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:999px;font-size:12px}
+    .actions{display:flex;gap:8px;margin-left:auto}
+    .btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.danger{color:#b91c1c;border-color:#fecaca}
+    .head{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+    h2{margin:0;font-weight:800}
+    .empty{padding:14px;color:#64748b}
+
+    /* modal เล็ก ๆ ตอนยอมรับ */
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:40}
+    .modal{position:fixed;inset:0;display:none;z-index:50;align-items:center;justify-content:center}
+    .modal.open,.backdrop.open{display:flex}
+    .box{background:#fff;border:1px solid #e5e7eb;border-radius:14px;width:min(520px,94vw)}
+    .box h3{margin:0;padding:12px 14px;border-bottom:1px solid #eef1f5}
+    .box .bd{padding:12px 14px}
+    .box .ft{padding:12px 14px;border-top:1px solid #eef1f5;display:flex;justify-content:flex-end;gap:8px}
+    .inp{width:100%;border:1px solid #e5e7eb;border-radius:10px;padding:8px}
+  </style>
 </head>
 <body>
-  <div class="ex-container">
-    <h1 class="ex-h1">คำขอแลกเปลี่ยนของฉัน</h1>
-    <div class="ex-card">
-      <div class="ex-row">
-        <div class="ex-col">
-          <h2 class="ex-h2">ขาเข้า (คนอื่นขอแลกกับฉัน)</h2>
-          <ul id="incoming" class="ex-list"></ul>
-        </div>
-        <div class="ex-col">
-          <h2 class="ex-h2">ขาออก (ฉันเป็นคนขอ)</h2>
-          <ul id="outgoing" class="ex-list"></ul>
-        </div>
+  <div data-include="/page/partials/ex_header.html"></div>
+
+  <main class="wrap">
+    <div class="grid">
+      <section>
+        <div class="head"><h2>ขาเข้า (คนอื่นขอแลกกับฉัน)</h2></div>
+        <div id="incoming" class="card"></div>
+      </section>
+      <section>
+        <div class="head"><h2>ขาออก (ฉันเป็นคนขอ)</h2></div>
+        <div id="outgoing" class="card"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal ยืนยันการ “ยอมรับ” -->
+  <div class="backdrop" id="accBackdrop"></div>
+  <div class="modal" id="accModal">
+    <div class="box">
+      <h3>ยืนยันการยอมรับคำขอ</h3>
+      <div class="bd">
+        <label class="muted">วัน–เวลา นัดรับ</label>
+        <input id="accAt" type="datetime-local" class="inp" style="margin:6px 0 10px">
+        <label class="muted">หมายเหตุ/สถานที่นัดรับ (ถ้ามี)</label>
+        <textarea id="accNote" class="inp" rows="3" placeholder="เช่น หน้าห้าง… ชั้น… ฯลฯ"></textarea>
+      </div>
+      <div class="ft">
+        <button class="btn" id="accCancel" type="button">ปิด</button>
+        <button class="btn primary" id="accSubmit" type="button">ยืนยัน</button>
       </div>
     </div>
-    <p class="ex-muted">* ใช้บัญชีล็อกอินเดียวกับระบบซื้อขาย</p>
   </div>
-  <script src="/js/ex.exchange.js"></script>
+
+  <script src="/js/ex.include.js"></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/ex.header.js"></script>
   <script>
-  (async function(){
-    function itemLi(r){
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div><b>#${r.id}</b> <span class="ex-badge">${r.status}</span></div>
-        <div>ของที่ขอ: ${r.requested_item_id} | ของที่เสนอ: ${r.offered_item_id}</div>
-        <div class="ex-muted">เมื่อ: ${r.created_at}</div>
-        <div class="ex-actions">
-          ${r.side==='incoming' && r.status==='pending' ? '<button class="ex-btn" data-act="accept">ยอมรับ</button><button class="ex-btn secondary" data-act="decline">ปฏิเสธ</button>' : ''}
-          ${r.side==='outgoing' && r.status==='pending' ? '<button class="ex-btn secondary" data-act="cancel">ยกเลิก</button>' : ''}
+  (function(){
+    const API = {
+      list   : '/page/backend/ex_requests_list.php',
+      decide : '/page/backend/ex_request_decide.php',
+      cancel : '/page/backend/ex_request_cancel.php',
+      badge  : '/page/backend/ex_badge_counts.php',
+      view   : id => '/page/ex_item_view.html?id='+id
+    };
+
+    const incoming = document.getElementById('incoming');
+    const outgoing = document.getElementById('outgoing');
+
+    function cardRow(r, side){
+      const el = document.createElement('div');
+      el.className = 'row';
+      el.innerHTML = `
+        <img class="thumb" src="${r.requested_thumb||''}" alt="">
+        <div>
+          <div><b>${escape(r.requested_title||'-')}</b> <span class="badge">${r.status}</span></div>
+          <div class="muted">ของฉันเสนอ: ${escape(r.offered_title||'-')}</div>
+          <div class="muted tiny">${r.created_at}</div>
         </div>
+        <div class="actions"></div>
       `;
-      li.addEventListener('click', async (ev)=>{
-        const btn = ev.target.closest('button'); if(!btn) return;
-        try{
-          if(btn.dataset.act==='accept'){ await Ex.exAccept(r.id); }
-          if(btn.dataset.act==='decline'){ await Ex.exDecline(r.id); }
-          if(btn.dataset.act==='cancel'){ await Ex.exCancel(r.id); }
-          location.reload();
-        }catch(e){ alert('เกิดข้อผิดพลาด: '+e.message); }
+      const acts = el.querySelector('.actions');
+
+      if (side==='incoming' && r.status==='pending'){
+        const a = btn('primary','ยอมรับ', async ()=>{
+          openAcc(r.id);
+        });
+        const b = btn('', 'ปฏิเสธ', async ()=>{
+          await decide(r.id, 'decline');
+        });
+        acts.append(a,b);
+      } else if (side==='outgoing' && r.status==='pending'){
+        acts.append(btn('danger','ยกเลิก', async ()=>{ await cancelRequest(r.id); }));
+      } else {
+        acts.append(document.createTextNode(''));
+      }
+      // คลิกที่รูป/ชื่อ -> ไปหน้า view ได้
+      el.querySelector('.thumb').addEventListener('click', ()=> location.href = API.view(r.requested_item_id));
+      el.querySelector('b').addEventListener('click', ()=> location.href = API.view(r.requested_item_id));
+      return el;
+    }
+
+    function btn(cls, text, on){
+      const b = document.createElement('button');
+      b.className = 'btn '+cls; b.type='button'; b.textContent = text;
+      b.addEventListener('click', async ()=>{
+        b.disabled = true; try{ await on(); } finally{ b.disabled = false; }
       });
-      return li;
+      return b;
     }
-    try{
-      const data = await Ex.exListMyRequests();
-      const incoming = document.getElementById('incoming');
-      const outgoing = document.getElementById('outgoing');
-      (data.incoming||[]).forEach(r=>incoming.appendChild(itemLi({...r, side:'incoming'})));
-      (data.outgoing||[]).forEach(r=>outgoing.appendChild(itemLi({...r, side:'outgoing'})));
-      if(!incoming.children.length) incoming.innerHTML = '<li class="ex-muted">ว่าง</li>';
-      if(!outgoing.children.length) outgoing.innerHTML = '<li class="ex-muted">ว่าง</li>';
-    }catch(e){
-      alert('โหลดข้อมูลไม่ได้: '+e.message);
+
+    async function load(){
+      incoming.innerHTML = ''; outgoing.innerHTML='';
+      try{
+        const r = await fetch(API.list, {credentials:'include', cache:'no-store'});
+        const d = await r.json();
+        const inArr = d?.incoming || [];
+        const outArr= d?.outgoing || [];
+        if (!inArr.length) incoming.innerHTML = '<div class="empty">ว่าง</div>';
+        else inArr.forEach(r=> incoming.appendChild(cardRow(r,'incoming')));
+        if (!outArr.length) outgoing.innerHTML = '<div class="empty">ว่าง</div>';
+        else outArr.forEach(r=> outgoing.appendChild(cardRow(r,'outgoing')));
+      }catch{
+        incoming.innerHTML='<div class="empty">โหลดไม่สำเร็จ</div>';
+        outgoing.innerHTML='<div class="empty">โหลดไม่สำเร็จ</div>';
+      }
     }
+
+    // ----- Decide flows -----
+    async function decide(id, action, extra={}){
+      const fd = new FormData();
+      fd.append('request_id', id);
+      fd.append('action', action);
+      if (extra.meet_at)   fd.append('meet_at', extra.meet_at);
+      if (extra.meet_note) fd.append('meet_note', extra.meet_note);
+      const r = await fetch(API.decide, {method:'POST', body:fd, credentials:'include', cache:'no-store'});
+      const d = await r.json().catch(()=>null);
+      if (!d?.ok){ alert('ทำรายการไม่สำเร็จ'); return; }
+      await load(); await refreshBadges();
+    }
+
+    async function cancelRequest(id){
+      const r = await fetch(API.cancel, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({request_id:id}),
+        credentials:'include', cache:'no-store'
+      });
+      const d = await r.json().catch(()=>null);
+      if (!d?.ok){ alert('ยกเลิกไม่สำเร็จ'); return; }
+      await load(); await refreshBadges();
+    }
+
+    // ----- Accept modal -----
+    const bd = document.getElementById('accBackdrop');
+    const md = document.getElementById('accModal');
+    const accAt = document.getElementById('accAt');
+    const accNote = document.getElementById('accNote');
+    const accCancel = document.getElementById('accCancel');
+    const accSubmit = document.getElementById('accSubmit');
+    let accId = 0;
+
+    function openAcc(id){ accId=id; bd.classList.add('open'); md.classList.add('open'); }
+    function closeAcc(){ bd.classList.remove('open'); md.classList.remove('open'); accId=0; }
+    accCancel.addEventListener('click', closeAcc);
+    bd.addEventListener('click', closeAcc);
+    accSubmit.addEventListener('click', async ()=>{
+      const meet_at = accAt.value || '';
+      const meet_note = accNote.value || '';
+      accSubmit.disabled = true;
+      try{ await decide(accId, 'accept', {meet_at, meet_note}); }
+      finally{ accSubmit.disabled=false; closeAcc(); accAt.value=''; accNote.value=''; }
+    });
+
+    async function refreshBadges(){
+      try{
+        const r = await fetch(API.badge, {credentials:'include', cache:'no-store'});
+        const b = await r.json();
+        const el = document.getElementById('reqBadge');
+        const el2= document.getElementById('reqBadgeMobile');
+        if(el){ el.hidden = !b.incoming_requests; el.textContent = b.incoming_requests||''; }
+        if(el2){ el2.hidden = !b.incoming_requests; el2.textContent = b.incoming_requests||''; }
+      }catch{}
+    }
+
+    function escape(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+
+    // boot
+    load();
   })();
   </script>
 </body>

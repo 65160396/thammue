@@ -35,19 +35,28 @@
     .flash{margin-top:10px;background:#e8f7ef;color:#14532d;border:1px solid #bbf7d0;padding:10px 12px;border-radius:10px;font-size:14px}
     #notfound .box{ text-align:center; font-weight:700 }
 
-    /* ป้าย “เป็นสินค้าของฉัน” */
     .own-banner{
-      margin-top:10px;
-      background:#ecfdf5;
-      color:#065f46;
-      border:1px solid #bbf7d0;
-      border-radius:10px;
-      padding:10px 12px;
-      font-weight:700;
+      margin-top:10px;background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;
+      border-radius:10px;padding:10px 12px;font-weight:700;
     }
 
-    @media (max-width:900px){.detail-grid{grid-template-columns:1fr}}
-  </style>
+    /* ===== Modal ===== */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:40}
+    .modal{position:fixed;inset:0;display:none;z-index:50;align-items:center;justify-content:center}
+    .modal.open,.modal-backdrop.open{display:flex}
+    .modal-card{width:min(720px,94vw);background:#fff;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f5}
+    .modal-title{font-weight:800}
+    .modal-body{padding:12px 16px;max-height:70vh;overflow:auto}
+    .modal-foot{padding:12px 16px;border-top:1px solid #eef1f5;display:flex;justify-content:flex-end;gap:8px}
+    .x{background:transparent;border:0;font-size:20px;cursor:pointer}
+    .my-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill, minmax(220px,1fr))}
+    .my-card{border:1px solid #eef1f5;border-radius:12px;overflow:hidden;background:#fff}
+    .my-thumb{height:140px;background:#f3f4f6;background-size:cover;background-position:center}
+    .my-body{padding:8px 10px}
+    .radio-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+    .note-box{width:100%;min-height:74px;border:1px solid #e5e7eb;border-radius:10px;padding:8px}
+    </style>
   </head>
   <body>
     <div data-include="/page/partials/ex_header.html"></div>
@@ -71,17 +80,15 @@
           <div class="box">
             <h2 id="title" class="detail-title">—</h2>
 
-            <!-- หมวดหมู่ / พื้นที่ -->
             <div class="meta">
               <span class="chip" id="cat">หมวด: -</span>
               <span class="chip" id="loc">พื้นที่: -</span>
             </div>
-            <!-- สถานที่นัดรับ -->
+
             <div id="pickupLine" class="muted meta2" style="display:none"></div>
 
             <div class="fav-row">
-              <button id="favBtn" class="btn btn-ghost" aria-pressed="false"
-                title="เพิ่ม/ลบรายการโปรด">
+              <button id="favBtn" class="btn btn-ghost" aria-pressed="false" title="เพิ่ม/ลบรายการโปรด">
                 <span id="favIcon" class="icon">🤍</span> รายการโปรด
               </button>
             </div>
@@ -90,24 +97,44 @@
 
             <div class="actions">
               <a id="chatBtn" class="btn btn-ghost" href="#">💬 ข้อความ</a>
-              <button id="openOffer" class="btn btn-primary"
-                type="button">แลกเปลี่ยนสินค้า</button>
+              <button id="openOffer" class="btn btn-primary" type="button">แลกเปลี่ยนสินค้า</button>
             </div>
 
-            <!-- ป้ายเจ้าของ -->
             <div id="ownBanner" class="own-banner" hidden>เป็นสินค้าของฉัน</div>
 
-            <div id="flash" class="flash" role="status" aria-live="polite"
-              hidden></div>
+            <div id="flash" class="flash" role="status" aria-live="polite" hidden></div>
           </div>
 
           <div class="box muted" style="margin-top:12px">
-            เจ้าของสินค้า: <span id="ownerName">-</span> · รหัสอ้างอิง: <span
-              id="refCode">-</span>
+            เจ้าของสินค้า: <span id="ownerName">-</span> · รหัสอ้างอิง: <span id="refCode">-</span>
           </div>
         </div>
       </div>
     </main>
+
+    <!-- ===== Modal ส่งคำขอแลก ===== -->
+    <div class="modal-backdrop" id="offerBackdrop" aria-hidden="true"></div>
+    <div class="modal" id="offerModal" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div id="offerTitle" class="modal-title">เลือก “สินค้าของฉัน” ที่จะใช้แลก</div>
+          <button class="x" id="offerClose" aria-label="ปิด">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="myItemsBox">
+            <div class="muted" id="myItemsHint">กำลังโหลดสินค้าของฉัน…</div>
+            <div class="my-grid" id="myItemsGrid"></div>
+          </div>
+          <div style="margin-top:10px">
+            <label class="muted" for="offerNote">โน้ตเพิ่มเติมถึงเจ้าของสินค้า</label>
+            <textarea id="offerNote" class="note-box" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-primary" id="offerSubmit" type="button">ยืนยันคำขอแลก</button>
+        </div>
+      </div>
+    </div>
 
     <script src="/js/ex.include.js"></script>
     <script src="/js/me.js"></script>
@@ -120,6 +147,9 @@
 
   const API = {
     getItem   : id => `/page/backend/ex_item_get.php?id=${encodeURIComponent(id)}`,
+    listMine  : `/page/backend/ex_list_my_items.php`,
+    createReq : `/page/backend/ex_request_create.php`,
+    badge     : `/page/backend/ex_badge_counts.php`,
     toggleFav : id => `/page/backend/ex_fav_toggle.php?item_id=${encodeURIComponent(id)}`, // optional
   };
 
@@ -141,6 +171,15 @@
   const $openOffer  = document.getElementById('openOffer');
   const $ownBanner  = document.getElementById('ownBanner');
 
+  // modal
+  const $mBackdrop  = document.getElementById('offerBackdrop');
+  const $mModal     = document.getElementById('offerModal');
+  const $mClose     = document.getElementById('offerClose');
+  const $mGrid      = document.getElementById('myItemsGrid');
+  const $mHint      = document.getElementById('myItemsHint');
+  const $mNote      = document.getElementById('offerNote');
+  const $mSubmit    = document.getElementById('offerSubmit');
+
   if (!itemId) { $notfound.style.display = ''; return; }
 
   fetch(API.getItem(itemId), { cache:'no-store', credentials:'include' })
@@ -153,33 +192,19 @@
 
         $detail.style.display = '';
         $title.textContent = it.title || '—';
-
-        // หมวดหมู่ / พื้นที่
-        $cat.textContent = `หมวด: ${it.category_name || '-'}`;
+        $cat.textContent   = `หมวด: ${it.category_name || '-'}`;
         const area = [it.addr_province, it.addr_subdistrict].filter(Boolean).join(' · ');
         $loc.textContent = `พื้นที่: ${area || '-'}`;
 
-        // สถานที่นัดรับ
-        const pickParts = [];
-        if (it.place_detail) pickParts.push(it.place_detail);
-        const area2 = [it.addr_subdistrict, it.addr_province].filter(Boolean).join(' · ');
-        if (area2) pickParts.push(area2);
-        if (it.addr_zipcode) pickParts.push(it.addr_zipcode);
-        // สถานที่นัดรับ: แสดงเฉพาะรายละเอียดที่ผู้ใช้พิมพ์
+        // สถานที่นัดรับ (แสดงเฉพาะรายละเอียดที่ผู้ใช้พิมพ์)
         const pickText = (it.place_detail || '').trim();
-        if (pickText) { $pickupLine.textContent = `สถานที่นัดรับ: ${pickText}`;
-        $pickupLine.style.display = '';
-        } else {
-         $pickupLine.style.display = 'none';
-        }
+        $pickupLine.style.display = pickText ? '' : 'none';
+        if (pickText) $pickupLine.textContent = `สถานที่นัดรับ: ${pickText}`;
 
-
-        // อื่น ๆ
         $desc.textContent  = it.description || '-';
         $owner.textContent = it.owner_name || 'ผู้ใช้';
         $ref.textContent   = it.ref_code || `EX${String(it.id||'').padStart(6,'0')}`;
 
-        // รูป
         const imgs = [];
         if (it.thumbnail_url) imgs.push(it.thumbnail_url);
         if (Array.isArray(it.images)) imgs.push(...it.images);
@@ -189,7 +214,6 @@
           renderThumbs(uniq);
         }
 
-        // ใช้ธงจาก API ตัดสินว่าเป็นเจ้าของหรือไม่
         if (it.is_owner) {
           markOwnerMode();
         } else if (it.owner_id) {
@@ -256,6 +280,81 @@
     $flash.hidden = false;
     setTimeout(()=>{ $flash.hidden = true; }, 2200);
   }
+
+  /* ===== Modal logic ===== */
+  function openOfferModal(){ $mBackdrop.classList.add('open'); $mModal.classList.add('open'); }
+  function closeOfferModal(){ $mBackdrop.classList.remove('open'); $mModal.classList.remove('open'); }
+  $mClose.addEventListener('click', closeOfferModal);
+  $mBackdrop.addEventListener('click', closeOfferModal);
+
+  $openOffer.addEventListener('click', async () => {
+    // โหลด “สินค้าของฉัน”
+    $mGrid.innerHTML = '';
+    $mHint.textContent = 'กำลังโหลดสินค้าของฉัน…';
+    openOfferModal();
+    try{
+      const r = await fetch(API.listMine, {credentials:'include', cache:'no-store'});
+      const d = await r.json();
+      if (!d?.ok){ $mHint.textContent = 'โหลดไม่สำเร็จ'; return; }
+      if (!Array.isArray(d.items) || d.items.length===0){
+        $mHint.textContent = 'คุณยังไม่มีสินค้า กรุณาอัปโหลดก่อน';
+        return;
+      }
+      $mHint.textContent = '';
+      const fr = document.createDocumentFragment();
+      d.items.forEach(it=>{
+        const art = document.createElement('article');
+        art.className='my-card';
+        art.innerHTML = `
+          <div class="my-thumb" style="background-image:url('${it.thumbnail_url||''}')"></div>
+          <div class="my-body">
+            <div style="font-weight:700">${escapeHtml(it.title||'-')}</div>
+            <label class="radio-row">
+              <input type="radio" name="offerItem" value="${it.id}">
+              ใช้ชิ้นนี้ในการแลก
+            </label>
+          </div>
+        `;
+        fr.appendChild(art);
+      });
+      $mGrid.appendChild(fr);
+    }catch(e){
+      $mHint.textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้';
+    }
+  });
+
+  $mSubmit.addEventListener('click', async ()=>{
+    const chosen = document.querySelector('input[name="offerItem"]:checked');
+    if(!chosen){ alert('กรุณาเลือกสินค้าที่จะใช้แลก'); return; }
+    const fd = new FormData();
+    fd.append('target_item_id', itemId);
+    fd.append('offer_item_id', chosen.value);
+    fd.append('note', $mNote.value||'');
+
+    $mSubmit.disabled = true;
+    try{
+      const r = await fetch(API.createReq, {method:'POST', body:fd, credentials:'include', cache:'no-store'});
+      const raw = await r.text(); let d;
+      try{ d = JSON.parse(raw); }catch{ alert('ส่งไม่สำเร็จ: '+raw.slice(0,120)); return; }
+      if(!d.ok){ alert('ส่งไม่สำเร็จ: '+(d.error||'unknown')); return; }
+      closeOfferModal();
+      flash('ส่งคำขอแล้ว');
+      refreshBadges();
+    }finally{ $mSubmit.disabled = false; }
+  });
+
+  async function refreshBadges(){
+    try{
+      const r = await fetch(API.badge, {credentials:'include', cache:'no-store'});
+      const b = await r.json();
+      const el = document.getElementById('reqBadge');
+      const el2= document.getElementById('reqBadgeMobile');
+      if(el){ el.hidden = !b.incoming_requests; el.textContent = b.incoming_requests||''; }
+      if(el2){ el2.hidden = !b.incoming_requests; el2.textContent = b.incoming_requests||''; }
+    }catch{}
+  }
+
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 })();
 </script>
 
