@@ -170,7 +170,7 @@
     }
 
     // ---------------- Badge: ดึงยอด + อัปเดตเลข ----------------
-    function setBadge(id, n){
+   function setBadge(id, n){
       const el = document.getElementById(id);
       if(!el) return;
       const v = Number(n||0);
@@ -190,22 +190,18 @@
         const d = await r.json().catch(()=>null);
         if(!d?.ok){ hideAllBadges(); return; }
 
-        const req  = Number(d.incoming_requests||0);
-        const fav  = Number(d.favorites||0);
-        const chat = Number(d.unread_messages||0);
+        // รองรับทั้งคีย์เก่า/ใหม่
+        const req  = Number(d.incoming_requests ?? d.pending_requests ?? 0);
+        const fav  = Number(d.favorites ?? 0);
+        const chat = Number(d.unread_messages ?? 0);
+        const noti = Number(d.unread_notifications ?? 0);
 
         setBoth('reqBadge','reqBadgeMobile', req);
         setBoth('favBadge','favBadgeMobile', fav);
         setBoth('chatBadge','chatBadgeMobile', chat);
-
-        // รวมเป็น badge รวมที่ "แจ้งเตือน" ถ้าต้องการ
-        setBadge('notiBadge', req + chat);
-      }catch{
-        hideAllBadges();
-      }
+        setBadge('notiBadge', req + chat + noti); // รวมเป็น badge “แจ้งเตือน” ถ้าต้องการ
+      }catch{ hideAllBadges(); }
     }
-
-    // เปิดให้หน้าอื่นเรียกได้หลังทำ action (เพิ่มโปรด/ส่งคำขอ/ส่งแชท)
     window.refreshExBadges = refreshExBadges;
 
     // เรียกครั้งแรก + ตั้ง interval

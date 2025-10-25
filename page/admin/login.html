@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin Login • THAMMUE</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body{display:grid;place-items:center;min-height:100vh;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    form{border:1px solid #e5e7eb;border-radius:16px;padding:24px;min-width:320px;background:#fff}
+    label{display:block;margin:10px 0 4px}
+    input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+    button{margin-top:12px;padding:10px 14px;border:1px solid #ddd;border-radius:10px;background:#111;color:#fff}
+    .msg{margin-top:10px;color:#b91c1c}
+  </style>
+</head>
+<body>
+  <form id="f">
+    <h2>เข้าสู่ระบบผู้ดูแล</h2>
+    <label>อีเมล</label>
+    <input type="email" name="email" required/>
+    <label>รหัสผ่าน</label>
+    <input type="password" name="password" required/>
+    <button type="submit">เข้าสู่ระบบ</button>
+    <div class="msg" id="msg"></div>
+  </form>
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const body = JSON.stringify({ email: fd.get('email'), password: fd.get('password') });
+      const res = await fetch('/page/backend/admin/login.php', { method:'POST', body, headers:{'Content-Type':'application/json'}, credentials:'include' });
+      const j = await res.json().catch(()=>({}));
+      if (!res.ok || !j.ok){ document.getElementById('msg').textContent = j.error || 'เข้าสู่ระบบล้มเหลว'; return; }
+      location.href = '/page/admin/index.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin • THAMMUE</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .card{border:1px solid #e5e7eb;border-radius:14px;padding:16px}
+    a.button{display:inline-block;padding:10px 14px;border:1px solid #ddd;border-radius:10px;text-decoration:none}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin • THAMMUE</h1>
+    <nav>
+      <a class="button" href="/page/admin/shops.html">อนุมัติร้านค้า</a>
+      <a class="button" href="/page/admin/kyc.html">KYC (แลกเปลี่ยน)</a>
+      <a class="button" href="/page/admin/reports.html">รายงานการแจ้ง</a>
+    </nav>
+  </header>
+  <p>ยินดีต้อนรับ, <span id="adminName"></span></p>
+  <script>
+    // If you want, fetch /page/backend/admin/whoami.php later
+    document.getElementById('adminName').textContent = 'ผู้ดูแลระบบ';
+  </script>
+</body>
+</html>

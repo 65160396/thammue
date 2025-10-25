@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>อนุมัติร้านค้า • Admin</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+    .card{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fff}
+    .muted{color:#6b7280;font-size:14px}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    button{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#111;color:#fff}
+    button.reject{background:#b91c1c}
+    .doc{display:inline-block;margin-right:8px}
+  </style>
+</head>
+<body>
+  <h2>คำขอเปิดร้าน (pending)</h2>
+  <div id="list" class="grid"></div>
+
+  <script>
+    async function load(){
+      const res = await fetch('/page/backend/admin/shops_list.php', {credentials:'include'});
+      const j = await res.json();
+      if(!j.ok){ document.getElementById('list').textContent='กรุณาเข้าสู่ระบบผู้ดูแล'; return; }
+      const frag = document.createDocumentFragment();
+      j.shops.forEach(s=>{
+        const el = document.createElement('div'); el.className='card';
+        const docs = [];
+        if (s.reg_doc) docs.push(`<a class="doc" target="_blank" href="${s.reg_doc}">📄 เอกสารจดทะเบียน</a>`);
+        if (s.id_rep)  docs.push(`<a class="doc" target="_blank" href="${s.id_rep}">🪪 บัตรผู้แทน</a>`);
+        el.innerHTML = `
+          <h3>${s.shop_name}</h3>
+          <div class="muted">ผู้ใช้ #${s.user_id}</div>
+          <div>อีเมล: ${s.email || '-'} / โทร: ${s.phone || '-'}</div>
+          <div>ที่รับของ: ${s.pickup_addr || '-'}</div>
+          <div>จังหวัด: ${s.province || s.v_province || '-'}</div>
+          <div>ประเภทผู้ขาย: ${s.seller_type || '-'}</div>
+          <div>${docs.join(' ')}</div>
+          <div class="actions">
+            <button onclick="decide(${s.id}, 'approve')">อนุมัติ</button>
+            <button class="reject" onclick="reject(${s.id})">ปฏิเสธ</button>
+          </div>`;
+        frag.appendChild(el);
+      });
+      const list = document.getElementById('list');
+      list.innerHTML='';
+      list.appendChild(frag);
+    }
+    async function decide(id, action, reason=''){
+      const res = await fetch('/page/backend/admin/shop_decide.php',{
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ shop_id:id, action, reason })
+      });
+      const j = await res.json(); if (j.ok) load(); else alert(j.error||'error');
+    }
+    function reject(id){
+      const reason = prompt('ระบุเหตุผลการปฏิเสธ (optional)');
+      decide(id, 'reject', reason||'');
+    }
+    load();
+  </script>
+</body>
+</html>

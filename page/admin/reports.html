@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>รายงานการแจ้ง • Admin</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;padding:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid #eee;padding:8px;text-align:left}
+    .btn{padding:6px 10px;border:1px solid #ddd;border-radius:10px;background:#111;color:#fff}
+  </style>
+</head>
+<body>
+  <h2>รายการแจ้ง (ex_item_reports)</h2>
+  <table>
+    <thead><tr><th>#</th><th>สินค้า</th><th>เหตุผล</th><th>เวลา</th><th></th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+  <script>
+    async function load(){
+      const res = await fetch('/page/backend/admin/reports_list.php', {credentials:'include'});
+      const j = await res.json(); if(!j.ok){ document.getElementById('tb').innerHTML='<tr><td colspan=5>กรุณาเข้าสู่ระบบผู้ดูแล</td></tr>'; return; }
+      const rows = (j.reports||[]).map(r=>`
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.item_title || '(#'+r.item_id+')'}</td>
+          <td>${r.reason}</td>
+          <td>${new Date(r.created_at).toLocaleString()}</td>
+          <td><button class="btn" onclick="resolve(${r.id})">ปิด</button></td>
+        </tr>
+      `).join('');
+      document.getElementById('tb').innerHTML = rows || '<tr><td colspan=5>ไม่พบรายการ</td></tr>';
+    }
+    async function resolve(id){
+      const res = await fetch('/page/backend/admin/reports_resolve.php', {
+        method:'POST', credentials:'include', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ report_id:id })
+      });
+      const j = await res.json(); if(j.ok) load(); else alert(j.error||'error');
+    }
+    load();
+  </script>
+</body>
+</html>

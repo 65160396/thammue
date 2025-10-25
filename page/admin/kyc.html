@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>KYC • Admin</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+    .card{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fff}
+    .muted{color:#6b7280;font-size:14px}
+    .imgs img{max-width:100%;border:1px solid #eee;border-radius:10px;margin-top:6px}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    button{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#111;color:#fff}
+    button.reject{background:#b91c1c}
+  </style>
+</head>
+<body>
+  <h2>KYC ที่รอดำเนินการ</h2>
+  <div id="list" class="grid"></div>
+
+  <script>
+    async function load(){
+      const res = await fetch('/page/backend/admin/kyc_list.php', {credentials:'include'});
+      const j = await res.json(); if (!j.ok){ document.getElementById('list').textContent='กรุณาเข้าสู่ระบบผู้ดูแล'; return; }
+      const frag = document.createDocumentFragment();
+      j.kyc.forEach(k=>{
+        const el = document.createElement('div'); el.className='card';
+        el.innerHTML = `
+          <h3>${k.full_name} (user #${k.user_id})</h3>
+          <div class="muted">${new Date(k.created_at).toLocaleString()}</div>
+          <div>วันเกิด: ${k.dob || '-'}</div>
+          <div>ที่อยู่บัตร: ${k.address || '-'}</div>
+          <div class="imgs">
+            ${k.id_front_url ? `<div>ด้านหน้า: <a target="_blank" href="${k.id_front_url}">${k.id_front_url}</a></div>`:''}
+            ${k.id_back_url  ? `<div>ด้านหลัง: <a target="_blank" href="${k.id_back_url}">${k.id_back_url}</a></div>`:''}
+            ${k.selfie_url   ? `<div>เซลฟี่: <a target="_blank" href="${k.selfie_url}">${k.selfie_url}</a></div>`:''}
+          </div>
+          <div class="actions">
+            <button onclick="decide(${k.id}, 'approve')">อนุมัติ</button>
+            <button class="reject" onclick="reject(${k.id})">ปฏิเสธ</button>
+          </div>`;
+        frag.appendChild(el);
+      });
+      const list = document.getElementById('list');
+      list.innerHTML='';
+      list.appendChild(frag);
+    }
+    async function decide(id, action, reason=''){
+      const res = await fetch('/page/backend/admin/kyc_decide.php',{
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ kyc_id:id, action, reason })
+      });
+      const j = await res.json(); if (j.ok) load(); else alert(j.error||'error');
+    }
+    function reject(id){
+      const reason = prompt('เหตุผลการปฏิเสธ (optional)');
+      decide(id, 'reject', reason||'');
+    }
+    load();
+  </script>
+</body>
+</html>
