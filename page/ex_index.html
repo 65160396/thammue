@@ -14,6 +14,12 @@
 
     <!-- สไตล์ Header -->
     <link rel="stylesheet" href="/css/ex.header.css">
+
+    <!-- ✅ จำกัดให้หน้าแรกแสดง “แนะนำ” แค่ 4 ชิ้น เสมอ -->
+    <style>
+      /* ซ่อนไอเท็มลำดับที่ 5 เป็นต้นไปใน #nearbyGrid */
+      #nearbyGrid > *:nth-child(n+5){ display:none !important; }
+    </style>
   </head>
   <body>
     <!-- Header/Topbar/Category: include ทีเดียวทุกหน้า -->
@@ -38,9 +44,9 @@
       <!-- สินค้าที่คุณสนใจ -->
       <section class="ex-section">
         <div class="ex-section-header">
-          <h2>ใกล้คุณ</h2>
-          <a class="ex-link-more"
-            href="/page/ex_requests.html?near=1">ดูทั้งหมด</a>
+          <h2>แนะนำ</h2>
+          <!-- ✅ ไปหน้า “ดูทั้งหมด” -->
+          <a class="ex-link-more" href="/page/ex_nearby_all.html">ดูทั้งหมด</a>
         </div>
         <div id="nearbyGrid" class="ex-cards"></div>
       </section>
@@ -52,8 +58,7 @@
             <h2>สินค้าเหลือใช้อย่าทิ้ง ลองมาแลกเปลี่ยนกัน</h2>
             <p class="muted">อัปโหลดรูปและบอกสิ่งที่อยากได้กลับ
               เราจะช่วยจับคู่ให้เหมาะทั้งราคา คุณค่า และระยะทาง</p>
-            <a class="btn btn-primary"
-              href="/page/ex_item_new.html">อัปโหลดสินค้าเพื่อแลก</a>
+            <a class="btn btn-primary" href="/page/ex_item_new.html">อัปโหลดสินค้าเพื่อแลก</a>
           </div>
         </div>
       </section>
@@ -80,18 +85,15 @@
         <div class="ex-reason-grid">
           <div class="ex-reason-card">
             <h3>ประหยัดค่าใช้จ่าย</h3>
-            <p>ลดการซื้อของใหม่ ใช้ของที่ยังใช้ได้คุ้ม
-              แลกเปลี่ยนกับสิ่งที่ต้องการได้ทันที</p>
+            <p>ลดการซื้อของใหม่ ใช้ของที่ยังใช้ได้คุ้ม แลกเปลี่ยนกับสิ่งที่ต้องการได้ทันที</p>
           </div>
           <div class="ex-reason-card">
             <h3>ลดขยะ สร้างคุณค่าใหม่</h3>
-            <p>สิ่งของที่ไม่ใช้แล้วไม่ต้องทิ้ง สามารถแลกให้คนอื่นนำไปใช้ต่อ
-              เกิดคุณค่า</p>
+            <p>สิ่งของที่ไม่ใช้แล้วไม่ต้องทิ้ง สามารถแลกให้คนอื่นนำไปใช้ต่อ เกิดคุณค่า</p>
           </div>
           <div class="ex-reason-card">
             <h3>ได้ของที่ตรงใจ</h3>
-            <p>เลือกสิ่งของที่คุณต้องการจริง ๆ จากการแลก ไม่ต้องลงทุนเพิ่ม
-              และยังสนุกกับการพบคนใหม่</p>
+            <p>เลือกสิ่งของที่คุณต้องการจริง ๆ จากการแลก ไม่ต้องลงทุนเพิ่ม และยังสนุกกับการพบคนใหม่</p>
           </div>
         </div>
       </section>
@@ -104,12 +106,9 @@
     <!-- 1) include partials (header/footer) + header behavior -->
     <script>
       (function initHeader(){
-        // รอจนกว่าจะมีปุ่ม hamburger แปลว่าพาร์เชียลโหลดแล้ว
         if (!document.getElementById('hamburgerBtn')) {
           return setTimeout(initHeader, 40);
         }
-
-        // ===== Search =====
         const q = document.getElementById('q');
         const qSuggest = document.getElementById('qSuggest');
         const btnSearch = document.getElementById('btnSearch');
@@ -139,7 +138,6 @@
           }
         }
 
-        // ===== User menu (desktop) =====
         const userMenu = document.getElementById('userMenu');
         const userBtn = document.getElementById('userArea');
         const userDd = document.getElementById('userDropdown');
@@ -157,7 +155,6 @@
         document.addEventListener('click', closeUserMenu);
         userDd?.addEventListener('click', (e)=> e.stopPropagation());
 
-        // ===== Drawer (mobile) =====
         const drawer   = document.getElementById('iconsDrawer');
         const backdrop = document.getElementById('iconsBackdrop');
         const hamb     = document.getElementById('hamburgerBtn');
@@ -185,7 +182,6 @@
         backdrop?.addEventListener('click', closeDrawer);
         window.addEventListener('keydown', (e)=> { if(e.key==='Escape') closeDrawer(); });
 
-        // ===== Sync เมนูโปรไฟล์เข้า Drawer =====
         const mobileToggle = document.getElementById('mobileProfileToggle');
         const mobileMenu   = document.getElementById('mobileAccountMenu');
 
@@ -225,7 +221,6 @@
           mobileMenu.hidden = expanded;
         });
 
-        // ถ้าเดสก์ท็อปเรนเดอร์เมนูล่าช้า ให้ sync อัตโนมัติเมื่อมีการเปลี่ยน
         if (userDd) {
           const mo = new MutationObserver(() => {
             if (!mobileMenu?.hidden) syncDesktopMenuToMobile();
@@ -240,9 +235,8 @@
     <script src="/js/ex.header.js"></script>
     <script src="/js/ex.include.js"></script>
 
-    <!-- ตัวนี้แทนของเดิม -->
-
+    <!-- สคริปต์เดิมของคุณ (คงไว้ได้) -->
     <script src="/js/ex.index.feed.js" defer></script>
-
+    <!-- ⚠️ ไม่จำเป็นต้องใช้แล้ว: <script src="/js/ex.home.nearby.js?v=1" defer></script> -->
   </body>
 </html>

@@ -37,7 +37,7 @@
         </div>
 
         <!-- ฟอร์ม -->
-        <form id="exchangeForm" novalidate>
+        <form id="exItemCreateForm" novalidate>
           <!-- STEP 1 -->
           <fieldset class="panel" data-step="1">
             <div class="field">
@@ -162,7 +162,6 @@
                 <label for="zipcode">รหัสไปรษณีย์</label>
                 <input id="zipcode" name="zipcode" type="text"
                   placeholder="ระบบจะกรอกให้อัตโนมัติ" readonly>
-                <!-- ถ้าต้องการให้แก้มือได้ ให้ลบ readonly ออก -->
               </div>
             </div>
 
@@ -174,7 +173,7 @@
 
             <div class="actions">
               <button type="button" class="btn ghost back">ย้อนกลับ</button>
-              <button type="submit" id="forceSubmit" class="btn primary">
+              <button type="submit" id="exUploadBtn" class="btn primary">
                 ยืนยันการอัพโหลดสินค้า
               </button>
             </div>
@@ -194,11 +193,11 @@
     <!-- ฟังก์ชันฟอร์ม -->
     <script>
     // ===== ตั้งค่า BASE ให้เป็น /page/backend (ไม่ใช่ /exchangepage) =====
-   const API_BASE   = '/page/backend';
-const CREATE_URL = API_BASE + '/ex_item_create.php';  // ถ้าไฟล์คุณอยู่อีกโฟลเดอร์ ให้แก้ path นี้จุดเดียว
+    const API_BASE   = '/page/backend';
+    const CREATE_URL = API_BASE + '/ex_item_create.php';  // ถ้าไฟล์คุณอยู่อีกโฟลเดอร์ ให้แก้ path นี้จุดเดียว
 
     (function () {
-      const form      = document.getElementById('exchangeForm');
+      const form      = document.getElementById('exItemCreateForm');
       const panels    = [...document.querySelectorAll('.panel')];
       const fill      = document.querySelector('.stepper-fill');
       const steps     = [...document.querySelectorAll('.step')];
@@ -291,6 +290,7 @@ const CREATE_URL = API_BASE + '/ex_item_create.php';  // ถ้าไฟล์�
         }
       });
     })();
-  </script>
+    </script>
+
   </body>
 </html>

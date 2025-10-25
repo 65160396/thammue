@@ -4,75 +4,153 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>รายการโปรด | THAMMUE</title>
+
+  <!-- สไตล์หลักของเว็บ -->
   <link rel="stylesheet" href="/css/ex.exchange.css">
   <link rel="stylesheet" href="/css/ex.header.css">
+
   <style>
-    body{background:#f6f8fb}
-    .wrap{max-width:1000px;margin:0 auto;padding:16px}
-    .card{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #eef1f5;border-radius:14px;padding:10px;margin:8px 0}
-    .thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;background:#f2f2f2}
-    .remove{margin-left:auto;border:1px solid #fcd5d5;background:#fff;padding:6px 10px;border-radius:10px;cursor:pointer}
-    .remove:hover{background:#fff5f5}
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --border:#eef1f5;
+      --muted:#64748b;
+      --text:#0f172a;
+    }
+    body{background:var(--bg); color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+
+    /* หัวข้อ */
+    .page-title{font-weight:800;margin:6px 0 14px}
+
+    /* กริดการ์ด */
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    }
+
+    /* การ์ดสินค้า */
+    .fav-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .fav-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px rgba(15,23,42,.06);
+      cursor:pointer;
+    }
+
+    /* รูป */
+    .fav-thumb{
+      width:100%;
+      height:170px; /* ปรับได้ตามต้องการ */
+      object-fit:cover;
+      background:#f2f2f2;
+      display:block;
+    }
+
+    /* เนื้อในการ์ด */
+    .fav-body{padding:12px 14px 16px}
+    .fav-title{font-weight:800; line-height:1.25; margin:2px 0 6px}
+    .fav-meta{font-size:13px; color:var(--muted); margin-bottom:14px}
+
+    /* ปุ่มดูรายละเอียด */
+    .btn{
+      display:inline-block;
+      border:none;
+      padding:10px 16px;
+      border-radius:999px;
+      background:#0b0b0b;
+      color:#fff;
+      font-weight:700;
+      line-height:1;
+      text-decoration:none;
+      transition:opacity .12s ease, transform .02s ease;
+     
+    }
+    .btn:hover{opacity:.9}
+    .btn:active{transform:translateY(1px)}
   </style>
 </head>
 <body>
+  <!-- Header -->
   <div data-include="/page/partials/ex_header.html"></div>
+
   <main class="wrap">
-    <h2 style="font-weight:800;margin:6px 0 14px">รายการโปรดของฉัน</h2>
-    <div id="list"></div>
+    <h2 class="page-title">รายการโปรดของฉัน</h2>
+
+    <div id="list" class="grid"></div>
     <div id="empty" style="color:#64748b">กำลังโหลด...</div>
   </main>
+
   <script src="/js/ex.include.js"></script>
   <script src="/js/me.js"></script>
   <script src="/js/ex.header.js"></script>
 
-
   <script>
   (async function(){
-    const list = document.getElementById('list');
+    const grid  = document.getElementById('list');
     const empty = document.getElementById('empty');
 
-    async function load(){
-      const r = await fetch('/page/backend/ex_favorites_list.php',{credentials:'include'});
-      const d = await r.json();
-      if(!d.ok){ empty.textContent = d.error || 'โหลดข้อมูลไม่สำเร็จ'; return; }
-      const items = d.items || [];
-      if(!items.length){ empty.textContent = 'ยังไม่มีรายการโปรด'; list.innerHTML=''; return; }
-      empty.textContent = '';
-      list.innerHTML = items.map(x => `
-        <div class="card" data-item-id="${x.item_id}">
-          <img class="thumb" src="${x.thumb || '/img/placeholder.png'}" alt="">
-          <div>
-            <div style="font-weight:700">${x.title || '—'}</div>
-            <div style="font-size:12px;color:#64748b">เพิ่มเมื่อ: ${x.created_at || '-'}</div>
-          </div>
-          <button class="remove">ลบออก</button>
-        </div>
-      `).join('');
+    // แก้ URL หน้ารายละเอียดให้ตรงโปรเจกต์ของคุณ
+    function detailUrl(id){
+      // ตัวอย่าง: /page/product/detail.html?id=xxx
+      return `/page/ex_item_view.html?id=${id}`;
     }
 
-    list.addEventListener('click', async (ev)=>{
-      const btn = ev.target.closest('.remove');
-      if(!btn) return;
-      const card = btn.closest('.card');
-      const id = +card.dataset.itemId;
-      btn.disabled = true;
-      const r = await fetch('/page/backend/ex_favorite_toggle.php',{
-        method:'POST',
-        credentials:'include',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:new URLSearchParams({item_id:id}).toString()
-      });
+    async function load(){
+      const r = await fetch('/page/backend/ex_favorites_list.php', { credentials:'include' });
       const d = await r.json();
-      if(d.ok){
-        card.remove();
-        if(!list.children.length) document.getElementById('empty').textContent = 'ยังไม่มีรายการโปรด';
-      }else{
-        alert(d.error || 'เอาออกไม่สำเร็จ');
+
+      if(!d.ok){
+        empty.textContent = d.error || 'โหลดข้อมูลไม่สำเร็จ';
+        grid.innerHTML = '';
+        return;
       }
-      btn.disabled = false;
+
+      const items = d.items || [];
+      if(!items.length){
+        empty.textContent = 'ยังไม่มีรายการโปรด';
+        grid.innerHTML = '';
+        return;
+      }
+
+      empty.textContent = '';
+
+      grid.innerHTML = items.map(x => {
+        const id    = x.item_id;
+        const img   = x.thumb || '/img/placeholder.png';
+        const title = x.title || '—';
+        // ใช้คีย์ตามที่แบ็กเอนด์มีจริง ถ้าไม่มีให้ fallback เป็น '—'
+        const cat   = x.category_name || x.category || '—';
+        const prov  = x.province || x.location || '—';
+
+        return `
+          <article class="fav-card" data-id="${id}">
+            <img class="fav-thumb" src="${img}" alt="">
+            <div class="fav-body">
+              <a class="btn" href="${detailUrl(id)}" onclick="event.stopPropagation()">ดูรายละเอียด</a>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // คลิกทั้งการ์ดเพื่อนำไปหน้ารายละเอียด
+    grid.addEventListener('click', (ev) => {
+      const card = ev.target.closest('.fav-card');
+      if(!card) return;
+      const id = card.getAttribute('data-id');
+      if(id) window.location.href = detailUrl(id);
     });
 
+    // โหลดข้อมูล
     load();
   })();
   </script>

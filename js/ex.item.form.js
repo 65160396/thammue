@@ -1,89 +1,104 @@
+// /js/ex.item.form.js  — safe & match IDs in your HTML
+(function () {
+  const $id     = document.getElementById('item_id');
+  const $title  = document.getElementById('title');
+  const $desc   = document.getElementById('description');
+  const $thumbI = document.getElementById('thumb');          // <input type=file>
+  const $prev   = document.getElementById('thumbPreview');   // <img>
+  const $urlBox = document.getElementById('thumbUrlBox');
+  const $btnUp  = document.getElementById('uploadBtn');
+  const $btn    = document.getElementById('updateBtn');
 
-/* /js/ex.item.form.js */
-(function(){
-  const Q = sel => document.querySelector(sel);
-  const img = Q('#thumbPreview');
-  const box = Q('#thumbUrlBox');
-  const file = Q('#thumb');
-  const uploadBtn = Q('#uploadBtn');
+  // กันพลาด: ถ้า element ใดไม่เจอ ให้หยุดและแจ้ง
+  const els = [$id,$title,$desc,$thumbI,$prev,$urlBox,$btnUp,$btn];
+  if (els.some(e => !e)) {
+    alert('หน้าฟอร์มไม่ครบ: ตรวจสอบ id ของ input ให้ตรงกับสคริปต์ (item_id,title,description,thumb,thumbPreview,thumbUrlBox,uploadBtn,updateBtn)');
+    return;
+  }
 
-  if (file) {
-    file.addEventListener('change', ()=>{
-      const f = file.files[0]; if(!f) return;
-      const url = URL.createObjectURL(f);
-      img && (img.src = url);
+  // ===== อ่านพารามิเตอร์ id =====
+  const params = new URLSearchParams(location.search);
+  const itemId = Number(params.get('id') || 0);
+  if (!itemId) {
+    alert('ไม่มีรหัสสินค้าใน URL');
+    history.back();
+    return;
+  }
+  $id.value = String(itemId);
+
+  // ===== โหลดข้อมูลเดิม =====
+  const GET_URL = `/page/backend/ex_item_get.php?id=${encodeURIComponent(itemId)}`;
+  fetch(GET_URL, { credentials:'include', cache:'no-store' })
+    .then(r => r.text())
+    .then(t => {
+      let j = null; try { j = JSON.parse(t); } catch {}
+      if (!j?.ok || !j.item) throw new Error(j?.error || 'ไม่พบข้อมูลสินค้า');
+      const it = j.item;
+      $title.value = it.title || '';
+      $desc.value  = it.description || '';
+      const imgUrl = it.thumbnail_url || (Array.isArray(it.images) ? it.images[0] : '') || '';
+      if (imgUrl) {
+        $prev.src = imgUrl;
+        $urlBox.textContent = imgUrl;
+      } else {
+        $prev.removeAttribute('src');
+        $urlBox.textContent = '(ยังไม่มีรูปหลัก)';
+      }
+    })
+    .catch(err => alert(err.message || 'โหลดข้อมูลล้มเหลว'));
+
+  // ===== พรีวิวรูปเมื่อเลือกไฟล์ใหม่ =====
+  $btnUp.addEventListener('click', () => $thumbI.click());
+  $thumbI.addEventListener('change', () => {
+    const f = $thumbI.files && $thumbI.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    $prev.src = url;
+    $urlBox.textContent = f.name;
+  });
+
+  // ===== อัปโหลดไฟล์รูปเฉพาะ (ถ้ามี) -> ได้ URL กลับมา =====
+  async function uploadThumbIfNeeded () {
+    const f = $thumbI.files && $thumbI.files[0];
+    if (!f) return null; // ไม่ได้เลือกไฟล์ใหม่
+    const fd = new FormData(); fd.append('file', f);
+    const r = await fetch('/page/backend/ex_item_upload.php', {
+      method:'POST', body:fd, credentials:'include'
     });
+    const j = await r.json().catch(()=>null);
+    if (!j?.ok || !j.url) throw new Error(j?.error || 'อัปโหลดรูปไม่สำเร็จ');
+    return j.url;
   }
 
-  async function uploadThumb(){
-    const f = file.files[0];
-    if (!f) { alert('ยังไม่ได้เลือกไฟล์'); return null; }
-    const fd = new FormData();
-    fd.append('image', f);
-    const res = await fetch('/page/backend/ex_item_upload_image.php', { method:'POST', credentials:'include', body: fd }).then(r=>r.json());
-    if (!res.ok) { alert(res.error||'อัปโหลดรูปไม่สำเร็จ'); return null; }
-    box.textContent = res.url || '';
-    img && (img.src = res.url || img.src);
-    return res.url || '';
-  }
+  // ===== ส่งอัปเดตข้อมูล =====
+  $btn.addEventListener('click', async () => {
+    try {
+      $btn.disabled = true;
 
-  uploadBtn && uploadBtn.addEventListener('click', uploadThumb);
+      const newThumb = await uploadThumbIfNeeded(); // ถ้าอัปโหลดรูปใหม่ จะได้ URL
 
-  // New item page
-  const saveBtn = Q('#saveBtn');
-  if (saveBtn){
-    saveBtn.addEventListener('click', async ()=>{
-      try{
-        const payload = {
-          title: Q('#title').value.trim(),
-          description: Q('#description').value.trim(),
-          price: parseFloat(Q('#price').value || '0') || null,
-          thumbnail_url: box.textContent.trim() || null
-        };
-        const res = await fetch('/page/backend/ex_item_create.php', {
-          method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify(payload)
-        }).then(r=>r.json());
-        if(!res.ok){ alert(res.error||'บันทึกไม่สำเร็จ'); return; }
-        alert('สร้างสินค้า #' + res.id + ' สำเร็จ');
-        location.href = '/page/ex_my_items.html';
-      }catch(e){ alert(e.message); }
-    });
-  }
+      const payload = {
+        id: itemId,
+        title: ($title.value || '').trim(),
+        description: ($desc.value || '').trim(),
+      };
+      if (newThumb) payload.thumbnail_url = newThumb;
 
-  // Edit item page
-  const updateBtn = Q('#updateBtn');
-  if (updateBtn){
-    const params = new URLSearchParams(location.search);
-    const item_id = parseInt(params.get('id')||'0',10);
-    if(!item_id){ alert('ไม่พบ item id'); location.href='/page/ex_my_items.html'; return; }
+      const r = await fetch('/page/backend/ex_item_update.php', {
+        method:'POST',
+        credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const j = await r.json().catch(()=>null);
+      if (!j?.ok) throw new Error(j?.error || 'อัปเดตไม่สำเร็จ');
 
-    // load current
-    (async function(){
-      const res = await fetch('/page/backend/ex_item_get.php?id='+item_id, {credentials:'include'}).then(r=>r.json());
-      if(!res.ok){ alert(res.error||'โหลดสินค้าไม่ได้'); return; }
-      Q('#item_id').value = res.item.id;
-      Q('#title').value = res.item.title || '';
-      Q('#description').value = res.item.description || '';
-      Q('#price').value = res.item.price || '';
-      if (res.item.thumbnail_url){ img && (img.src = res.item.thumbnail_url); box.textContent = res.item.thumbnail_url; }
-    })();
-
-    updateBtn.addEventListener('click', async ()=>{
-      try{
-        const payload = {
-          id: item_id,
-          title: Q('#title').value.trim(),
-          description: Q('#description').value.trim(),
-          price: parseFloat(Q('#price').value || '0') || null,
-          thumbnail_url: box.textContent.trim() || null
-        };
-        const res = await fetch('/page/backend/ex_item_update.php', {
-          method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify(payload)
-        }).then(r=>r.json());
-        if(!res.ok){ alert(res.error||'อัปเดตไม่สำเร็จ'); return; }
-        alert('อัปเดตแล้ว');
-        location.href = '/page/ex_my_items.html';
-      }catch(e){ alert(e.message); }
-    });
-  }
+      alert('อัปเดตเรียบร้อย');
+      location.href = `/page/ex_item_view.html?id=${encodeURIComponent(itemId)}`;
+    } catch (e) {
+      alert(e.message || 'เกิดข้อผิดพลาด');
+    } finally {
+      $btn.disabled = false;
+    }
+  });
 })();

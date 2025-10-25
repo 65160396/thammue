@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ค้นหา | THAMMUE</title>
+  <link rel="stylesheet" href="/css/ex.exchange.css">
+  <link rel="stylesheet" href="/css/ex.header.css">
+  <style>
+    body{background:#f6f8fb}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .head{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}
+    .head h2{margin:0;font-weight:800}
+    .muted{color:#64748b}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+    .thumb{aspect-ratio:4/3;background:#f3f4f6;background-size:cover;background-position:center}
+    .body{padding:10px}
+    .title{font-weight:800;margin:0 0 6px;line-height:1.25}
+    .meta{font-size:.9rem;color:#64748b}
+    .more{margin:16px 0;display:flex;justify-content:center}
+    .btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .empty{color:#64748b;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div data-include="/page/partials/ex_header.html"></div>
+
+  <main class="wrap">
+    <div class="head">
+      <h2 id="title">ผลการค้นหา</h2>
+      <a class="muted" href="/page/ex_index.html">⟵ กลับหน้าแรก</a>
+    </div>
+
+    <div id="list" class="grid" aria-live="polite"></div>
+    <div id="empty" class="empty" style="display:none">ไม่พบรายการที่ตรงกับคำค้น</div>
+
+    <div class="more">
+      <button id="loadMore" class="btn">โหลดเพิ่ม</button>
+    </div>
+  </main>
+
+  <script src="/js/ex.include.js"></script>
+  <script src="/js/me.js"></script>
+  <script src="/js/ex.header.js"></script>
+
+  <script>
+  (function(){
+    const params = new URLSearchParams(location.search);
+    const q = (params.get('q') || '').trim();
+    const catId = params.get('category_id') || '';
+    const $title = document.getElementById('title');
+    $title.textContent = q ? `ผลการค้นหา: “${q}”` : 'รายการทั้งหมด';
+
+    const API = '/page/backend/ex_items_search.php';
+    const $list = document.getElementById('list');
+    const $empty = document.getElementById('empty');
+    const $btn = document.getElementById('loadMore');
+
+    let page = 0;
+    const limit = 24;
+    let loading = false;
+    let done = false;
+
+    function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+    function pick(...arr){ for (const v of arr){ if (v) return v; } return ''; }
+
+    function card(it){
+      const href = `/page/ex_item_view.html?id=${encodeURIComponent(it.id)}`;
+      const img  = pick(it.thumbnail_url, it.images?.[0], '');
+      const title= esc(it.title || '-');
+      const cat  = it.category_name || '-';
+      const area = pick(it.addr_province, it.province, '') + (pick(it.addr_subdistrict, it.subdistrict, '') ? ' · ' + pick(it.addr_subdistrict, it.subdistrict, '') : '');
+
+      const el = document.createElement('a');
+      el.className = 'card';
+      el.href = href;
+      el.innerHTML = `
+        <div class="thumb" style="background-image:url('${img}')"></div>
+        <div class="body">
+          <div class="title">${title}</div>
+          <div class="meta">หมวด: ${esc(cat)}</div>
+          <div class="meta">พื้นที่: ${esc(area || '-')}</div>
+        </div>`;
+      return el;
+    }
+
+    async function load(){
+      if (loading || done) return;
+      loading = true; $btn.disabled = true; $btn.textContent = 'กำลังโหลด...';
+      try{
+        const url = new URL(API, location.origin);
+        url.searchParams.set('limit', String(limit));
+        url.searchParams.set('offset', String(page*limit));
+        if (q) url.searchParams.set('q', q);
+        if (catId) url.searchParams.set('category_id', catId);
+
+        const res = await fetch(url, {credentials:'include', cache:'no-store'});
+        const txt = await res.text();
+        let json = null; try{ json = JSON.parse(txt); }catch{}
+        const items = Array.isArray(json?.items) ? json.items : (Array.isArray(json) ? json : []);
+
+        if (page === 0 && items.length === 0) $empty.style.display = '';
+
+        const frag = document.createDocumentFragment();
+        items.forEach(it => frag.appendChild(card(it)));
+        $list.appendChild(frag);
+
+        if (items.length < limit) { done = true; $btn.style.display = 'none'; }
+        page++;
+      }catch(e){
+        console.error('search load error', e);
+      }finally{
+        loading = false; if (!done){ $btn.disabled = false; $btn.textContent = 'โหลดเพิ่ม'; }
+      }
+    }
+
+    $btn.addEventListener('click', load);
+    load(); // โหลดหน้าแรก
+  })();
+  </script>
+</body>
+</html>
