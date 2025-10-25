@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/ex__common.php';
+// /page/backend/ex_kyc_status.php
+require_once __DIR__ . '/ex__common.php'; // uses shopdb_ex
 $mysqli = dbx();
 if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 $uid = me();

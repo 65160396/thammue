@@ -1,0 +1,37 @@
+<!-- /page/partials/ex-kyc-modal.html -->
+<link rel="stylesheet" href="/css/ex.verify.modal.css" />
+<div class="ex-kyc-modal" id="exKycModal" hidden>
+  <div class="ex-kyc-dialog">
+    <h3>ยืนยันตัวตนเพื่อใช้งานการแลกเปลี่ยน</h3>
+    <p class="muted">กรอกข้อมูลครั้งเดียว ระบบจะส่งให้แอดมินตรวจสอบ (อนุมัติภายหลัง)</p>
+    <form id="exKycForm">
+      <label>ชื่อ-นามสกุล <input name="full_name" required></label>
+      <label>เลขบัตรประชาชน <input name="national_id" inputmode="numeric" required></label>
+      <div class="row">
+        <label>วันเกิด <input type="date" name="dob" required></label>
+      </div>
+      <label>ที่อยู่ตามบัตร <textarea name="address" required></textarea></label>
+      <div class="row">
+        <label>รูปบัตรด้านหน้า <input type="file" name="id_front" accept="image/*" required></label>
+        <label>รูปบัตรด้านหลัง <input type="file" name="id_back" accept="image/*" required></label>
+        <label>เซลฟี่คู่บัตร <input type="file" name="selfie" accept="image/*" required></label>
+      </div>
+      <div class="actions">
+        <button type="button" id="exKycCancel">ยกเลิก</button>
+        <button type="submit" id="exKycSubmit">ส่งยืนยันตัวตน</button>
+      </div>
+      <div class="msg" id="exKycMsg"></div>
+    </form>
+  </div>
+</div>
+<style>
+.ex-kyc-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:9999}
+.ex-kyc-dialog{background:#fff;border-radius:14px;padding:16px;max-width:560px;width:92%}
+.ex-kyc-modal .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ex-kyc-modal label{display:block;margin:8px 0}
+.ex-kyc-modal input, .ex-kyc-modal textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:10px}
+.ex-kyc-modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.ex-kyc-modal[hidden]{display:none}
+.muted{color:#6b7280;font-size:14px}
+.msg{margin-top:8px;color:#b91c1c}
+</style>
