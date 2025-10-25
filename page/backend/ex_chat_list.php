@@ -1,45 +1,61 @@
 <?php
+// รายการห้องของฉัน (ชื่อห้อง = ชื่อสินค้า)
+// ถ้าในห้องมี title อยู่แล้ว จะใช้ title นั้นก่อน จากนั้นค่อย fallback เป็นชื่อสินค้าหรือ Item#<id>
 require_once __DIR__ . '/ex__common.php';
-$mysqli = dbx();
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+$m = dbx();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $uid = me();
 if (!$uid) jerr('not_logged_in', 401);
 
-// Rooms list for current user
-$rooms = [];
-$stmt = $mysqli->prepare("
-  SELECT r.id, r.title, r.updated_at
+// ป้องกันกรณีตารางยังไม่ถูกสร้าง
+$m->query("CREATE TABLE IF NOT EXISTS ex_chat_rooms (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  item_id INT NULL,
+  title VARCHAR(255) NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+              ON UPDATE CURRENT_TIMESTAMP,
+  KEY(item_id), KEY(updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$m->query("CREATE TABLE IF NOT EXISTS ex_chat_participants (
+  room_id INT NOT NULL,
+  user_id INT NOT NULL,
+  PRIMARY KEY(room_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$m->query("CREATE TABLE IF NOT EXISTS ex_chat_messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  room_id INT NOT NULL,
+  user_id INT NOT NULL,
+  body TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY(room_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+// ชื่อห้อง = COALESCE(ชื่อห้องที่ตั้งไว้, ชื่อสินค้า, 'Item#<id>')
+$sql = "
+  SELECT
+    r.id,
+    COALESCE(r.title, i.title, CONCAT('Item#', r.item_id)) AS title,
+    r.updated_at
   FROM ex_chat_rooms r
-  JOIN ex_chat_participants p ON p.room_id=r.id
-  WHERE p.user_id=?
+  JOIN ex_chat_participants p ON p.room_id = r.id
+  LEFT JOIN ".T_ITEMS." i ON i.id = r.item_id
+  WHERE p.user_id = ?
   ORDER BY r.updated_at DESC
   LIMIT 200
-");
-$stmt->bind_param("i", $uid);
-$stmt->execute();
-$rooms = stmt_all_assoc($stmt);
-
-// If specific room requested, return messages
-$room_id = isset($_GET['room_id']) ? (int)$_GET['room_id'] : 0;
-$messages = [];
-if ($room_id > 0) {
-  // verify membership
-  $chk = $mysqli->prepare("SELECT 1 FROM ex_chat_participants WHERE user_id=? AND room_id=?");
-  $chk->bind_param("ii", $uid, $room_id);
-  $chk->execute();
-  $ok = $chk->get_result()->fetch_row();
-  if (!$ok) jerr('forbidden', 403);
-
-  $stmt = $mysqli->prepare("
-    SELECT m.id, m.user_id, m.body, m.created_at, (m.user_id = ?) AS is_me
-    FROM ex_chat_messages m
-    WHERE m.room_id=?
-    ORDER BY m.id ASC
-    LIMIT 500
-  ");
-  $stmt->bind_param("ii", $uid, $room_id);
-  $stmt->execute();
-  $messages = stmt_all_assoc($stmt);
+";
+$st = $m->prepare($sql);
+$st->bind_param('i', $uid);
+$st->execute();
+$rooms = [];
+$rs = $st->get_result();
+while ($row = $rs->fetch_assoc()) {
+  $rooms[] = [
+    'id'         => (int)$row['id'],
+    'title'      => $row['title'] ?? 'ห้องสนทนา',
+    'updated_at' => $row['updated_at'],
+  ];
 }
 
-echo json_encode(['ok'=>true,'rooms'=>$rooms,'messages'=>$messages], JSON_UNESCAPED_UNICODE);
+echo json_encode(['ok'=>true,'rooms'=>$rooms], JSON_UNESCAPED_UNICODE);

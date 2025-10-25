@@ -1,47 +1,49 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>แชต | THAMMUE</title>
 
-  <!-- สไตล์หลักของโปรเจกต์ -->
   <link rel="stylesheet" href="/css/ex.exchange.css" />
-  <!-- สไตล์แชต: ใช้ไฟล์ CSS ใหม่ที่คุณส่งมา (บันทึกเป็น /css/ex.chat.css) -->
+  <link rel="stylesheet" href="/css/ex.header.css" />
   <link rel="stylesheet" href="/css/ex.chat.css" />
-  <link rel="stylesheet" href="/css/ex.header.css">
+  <style>
+    /* กันกรณีไม่มี ex.chat.css */
+    :root{--line:#e9edf3} .chat-wrap{max-width:1100px;margin:18px auto;padding:0 16px}
+    .chat-grid{display:grid;grid-template-columns:320px 1fr;gap:16px}
+    .chat-list,.chat-box{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .chat-list-head,.chat-box-head{background:#f9fafb;padding:12px 14px;font-weight:700;border-bottom:1px solid var(--line)}
+    .chat-list ul{list-style:none;margin:0;padding:0;max-height:70vh;overflow:auto}
+    .chat-list li+li{border-top:1px solid var(--line)}
+    .chat-list li a{display:block;padding:12px 14px;text-decoration:none;color:#111}
+    .chat-list li.is-active a{background:#eef7ff}
+    .chat-msgs{padding:18px;height:62vh;overflow:auto;background:linear-gradient(#fafbff,#f6f7fb)}
+    .hint{color:#64748b}
+    .msg{max-width:72%;margin:8px 0;display:flex}
+    .msg.me{justify-content:flex-end}
+    .bubble{padding:10px 12px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+    .msg.me .bubble{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+    .at{display:block;font-size:11px;opacity:.7;margin-top:6px}
+    .chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+    .chat-input textarea{flex:1;height:48px;border:1px solid var(--line);border-radius:10px;padding:10px}
+    .chat-input button{min-width:84px;border:0;background:#111827;color:#fff;border-radius:10px}
+    @media (max-width:900px){.chat-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-  <!-- Header รวมทุกหน้า -->
   <div data-include="/page/partials/ex_header.html"></div>
 
-  <!-- หน้าหลักของแชต -->
   <div class="chat-wrap">
     <div class="chat-grid">
-      <!-- ซ้าย: รายการห้อง -->
       <aside class="chat-list">
         <div class="chat-list-head">ห้องของฉัน</div>
-        <ul id="convList">
-          <!-- จะถูกเติมด้วย JS: <li data-id="..."><a>...</a></li> -->
-        </ul>
+        <ul id="convList"></ul>
       </aside>
 
-      <!-- ขวา: ห้องสนทนา -->
       <section class="chat-box">
-        <div class="chat-box-head" id="chatHead">
-          เลือกห้องเพื่อเริ่มสนทนา
-          <span class="sub"></span>
-        </div>
-
-        <div id="chatMsgs" class="chat-msgs">
-          <div class="hint">ยังไม่มีข้อความ</div>
-          <!-- จะถูกเติมด้วย JS:
-               <div class="day-sep"><span>วันนี้</span></div>
-               <div class="msg you"><div class="bubble">…<span class="at">เวลา</span></div></div>
-               <div class="msg me"><div class="bubble">…<span class="at">เวลา</span></div></div>
-          -->
-        </div>
-
+        <div class="chat-box-head" id="chatHead">เลือกห้องเพื่อเริ่มสนทนา</div>
+        <div id="chatMsgs" class="chat-msgs"><div class="hint">ยังไม่มีข้อความ</div></div>
         <div class="chat-input">
           <textarea id="msgBox" placeholder="พิมพ์ข้อความ..."></textarea>
           <button id="btnSend" type="button">ส่ง</button>
@@ -50,15 +52,159 @@
     </div>
   </div>
 
-  <!-- สคริปต์รวมของโปรเจกต์ -->
   <script src="/js/ex.include.js"></script>
   <script src="/js/me.js"></script>
   <script src="/js/ex.header.js"></script>
 
-  <!-- ฟังก์ชัน REST helper (ถ้ามีใช้ในหน้าแชต) -->
-  <script src="/js/ex.exchange.js"></script>
+  <script>
+  (function(){
+    const API = {
+      list  : '/page/backend/ex_chat_list.php',
+      open  : '/page/backend/ex_chat_open.php',
+      fetch : (room_id, since_id) =>
+        `/page/backend/ex_chat_messages.php?room_id=${encodeURIComponent(room_id)}${since_id?`&since_id=${since_id}`:''}`,
+      send  : '/page/backend/ex_chat_send.php'
+    };
 
-  <!-- ลอจิกของหน้าแชต (ปรับ selectors ให้ตรงกับไอดีด้านบน) -->
-  <script src="/js/ex.chat.page.js"></script>
+    const $list  = document.getElementById('convList');
+    const $msgs  = document.getElementById('chatMsgs');
+    const $box   = document.getElementById('msgBox');
+    const $send  = document.getElementById('btnSend');
+    const $head  = document.getElementById('chatHead');
+
+    let rooms = [];
+    let current = 0;
+    let lastId  = 0;
+    let timer   = null;
+
+    const qs   = new URLSearchParams(location.search);
+    const qRoom= +(qs.get('room_id') || qs.get('chat_id') || 0);
+    const qTo  = +(qs.get('to') || 0);
+    const qItem= +(qs.get('item') || 0);
+
+    function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+
+    async function jget(url){
+      const r = await fetch(url,{credentials:'include',cache:'no-store'});
+      const t = await r.text(); try{return JSON.parse(t);}catch(e){throw new Error(t);}
+    }
+    async function jpost(url, fd){
+      const r = await fetch(url,{method:'POST',body:fd,credentials:'include',cache:'no-store'});
+      const t = await r.text(); try{return JSON.parse(t);}catch(e){throw new Error(t);}
+    }
+
+    function renderRooms(){
+      $list.innerHTML = '';
+      if (!rooms.length){ $list.innerHTML = '<li><a class="hint">ยังไม่มีห้องแชท</a></li>'; return; }
+      const fr = document.createDocumentFragment();
+      rooms.forEach(r=>{
+        const li = document.createElement('li');
+        li.dataset.id = r.id;
+        li.innerHTML = `<a><div style="font-weight:700">${esc(r.title||('Room#'+r.id))}</div><div class="hint">${esc(r.updated_at||'')}</div></a>`;
+        li.addEventListener('click',()=>openRoom(r.id));
+        fr.appendChild(li);
+      });
+      $list.appendChild(fr);
+      highlightCurrent();
+    }
+    function highlightCurrent(){
+      [...$list.children].forEach(li => li.classList.toggle('is-active', +li.dataset.id===+current));
+    }
+    function setRoomHeader(room_id){
+      const r = rooms.find(x=>+x.id===+room_id);
+      $head.textContent = r ? (r.title || ('Room#'+r.id)) : 'กำลังสนทนา';
+    }
+
+    function renderMessages(list, replace=false){
+      if (replace){ $msgs.innerHTML=''; lastId=0; }
+      if(!Array.isArray(list) || !list.length){
+        if (replace) $msgs.innerHTML = '<div class="hint">ยังไม่มีข้อความ</div>';
+        return;
+      }
+      const fr = document.createDocumentFragment();
+      list.forEach(m=>{
+        const dv = document.createElement('div');
+        dv.className = 'msg ' + (m.is_me ? 'me':'you');
+        dv.innerHTML = `<div class="bubble">${esc(m.body||'')}<span class="at">${esc(m.created_at||'')}</span></div>`;
+        fr.appendChild(dv);
+        if (m.id && m.id>lastId) lastId=m.id;
+      });
+      $msgs.appendChild(fr);
+      $msgs.scrollTop = $msgs.scrollHeight + 999;
+    }
+
+    async function openRoom(room_id){
+      current = room_id;
+      setRoomHeader(room_id);
+      highlightCurrent();
+
+      try{
+        const res = await jget(API.fetch(room_id));
+        renderMessages(res.items||[], true);
+      }catch(e){
+        $msgs.innerHTML = `<div class="hint">โหลดข้อความไม่ได้</div>`;
+      }
+
+      if (timer) clearInterval(timer);
+      timer = setInterval(async ()=>{
+        try{
+          const r = await jget(API.fetch(room_id, lastId));
+          if (r.items && r.items.length) renderMessages(r.items, false);
+        }catch{}
+      }, 3000);
+    }
+
+    async function ensureOpenFromQuery(){
+      if (qRoom>0){ await openRoom(qRoom); return; }
+      if (qTo>0){
+        const fd = new FormData();
+        fd.append('other_user_id', qTo);
+        if (qItem>0) fd.append('item_id', qItem);
+        const r = await jpost(API.open, fd);
+        if (r?.ok && r.room_id){
+          await loadRooms();
+          await openRoom(r.room_id);
+        }
+      }
+    }
+
+    async function loadRooms(){
+      const data = await jget(API.list);
+      rooms = data.rooms || [];
+      renderRooms();
+    }
+
+    async function send(){
+      if (!current) return;
+      const text = ($box.value||'').trim();
+      if (!text) return;
+      $send.disabled = true;
+      try{
+        const fd = new FormData();
+        fd.append('room_id', current);
+        fd.append('body', text);
+        const r = await jpost(API.send, fd);
+        if (r?.ok){
+          renderMessages([{id:lastId+1, body:text, is_me:true, created_at:new Date().toLocaleString()}]);
+          $box.value='';
+          $box.focus();
+        } else {
+          alert('ส่งไม่ได้: ' + (r?.error || 'unknown'));
+        }
+      }catch(e){
+        alert('ส่งไม่ได้: ' + (e.message||e));
+      }finally{$send.disabled=false;}
+    }
+
+    $send.addEventListener('click', send);
+    $box.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } });
+
+    (async()=>{
+      await loadRooms();
+      await ensureOpenFromQuery();
+      if (!current && rooms.length) openRoom(rooms[0].id);
+    })();
+  })();
+  </script>
 </body>
 </html>
