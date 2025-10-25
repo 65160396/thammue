@@ -2,8 +2,8 @@
    - เรียกใช้งานหลัง header ถูก include เสร็จ โดย ex.include.js จะเรียก window.exHeaderInit()
    - ผูก hamburger/drawer + dropdown โปรไฟล์
    - ดึงชื่อผู้ใช้/เมนูจาก /page/backend/me.php ผ่าน Me.get()
+   - เพิ่ม: ดึง badge จาก /page/backend/ex_badge_counts.php มาอัปเดตเลขแจ้งเตือน
 */
-
 (function () {
   // helper สั้นๆ
   const $  = (s, r = document) => r.querySelector(s);
@@ -111,7 +111,7 @@
           }
           // เดสก์ท็อป
           userDropdown.innerHTML = USER_MENU;
-          // มือถือ: แค่โชว์ชื่อบนปุ่ม และจะ sync เมนูเมื่อกด (ข้างล่าง)
+          // มือถือ
           if (mobileUserChip && name) mobileUserChip.textContent = `โปรไฟล์ · ${name}`;
           else if (mobileUserChip)    mobileUserChip.textContent = 'โปรไฟล์';
         } else {
@@ -169,8 +169,49 @@
       mo.observe(userDropdown, { childList: true, subtree: true });
     }
 
-    // เรียกครั้งแรก
+    // ---------------- Badge: ดึงยอด + อัปเดตเลข ----------------
+    function setBadge(id, n){
+      const el = document.getElementById(id);
+      if(!el) return;
+      const v = Number(n||0);
+      if(v>0){ el.textContent = v>99 ? '99+' : String(v); el.hidden = false; }
+      else { el.hidden = true; }
+    }
+    function setBoth(a,b,n){ setBadge(a,n); setBadge(b,n); }
+    function hideAllBadges(){
+      ['reqBadge','favBadge','chatBadge','notiBadge','reqBadgeMobile','favBadgeMobile','chatBadgeMobile']
+        .forEach(id => { const el = document.getElementById(id); if(el) el.hidden = true; });
+    }
+
+    async function refreshExBadges(){
+      try{
+        const r = await fetch('/page/backend/ex_badge_counts.php', {credentials:'include', cache:'no-store'});
+        if(!r.ok){ hideAllBadges(); return; }
+        const d = await r.json().catch(()=>null);
+        if(!d?.ok){ hideAllBadges(); return; }
+
+        const req  = Number(d.incoming_requests||0);
+        const fav  = Number(d.favorites||0);
+        const chat = Number(d.unread_messages||0);
+
+        setBoth('reqBadge','reqBadgeMobile', req);
+        setBoth('favBadge','favBadgeMobile', fav);
+        setBoth('chatBadge','chatBadgeMobile', chat);
+
+        // รวมเป็น badge รวมที่ "แจ้งเตือน" ถ้าต้องการ
+        setBadge('notiBadge', req + chat);
+      }catch{
+        hideAllBadges();
+      }
+    }
+
+    // เปิดให้หน้าอื่นเรียกได้หลังทำ action (เพิ่มโปรด/ส่งคำขอ/ส่งแชท)
+    window.refreshExBadges = refreshExBadges;
+
+    // เรียกครั้งแรก + ตั้ง interval
     renderUserUI();
+    refreshExBadges();
+    setInterval(refreshExBadges, 15000);
   };
 
   // ถ้า header อยู่ใน DOM แล้ว (เช่นบางหน้ารวมตรงๆ ไม่ได้ include) ให้เรียก init เลย

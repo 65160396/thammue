@@ -37,21 +37,11 @@
 
   <!-- ค้นหา + ไอคอนขวา -->
   <div class="search-container">
-    <!-- กล่องค้นหา (พร้อม suggestion) -->
+    <!-- กล่องค้นหา -->
     <form class="search-group" action="/page/ex_requests.html" method="get" role="search">
-      <input
-        id="q"
-        name="q"
-        type="text"
-        placeholder="ค้นหาสินค้า"
-        autocomplete="off"
-        autocapitalize="off"
-        spellcheck="false"
-        role="combobox"
-        aria-autocomplete="list"
-        aria-expanded="false"
-        aria-controls="qSuggest"
-        aria-haspopup="listbox" />
+      <input id="q" name="q" type="text" placeholder="ค้นหาสินค้า" autocomplete="off"
+             autocapitalize="off" spellcheck="false" role="combobox"
+             aria-autocomplete="list" aria-expanded="false" aria-controls="qSuggest" aria-haspopup="listbox" />
       <button id="btnSearch" class="search-button" type="submit" aria-label="ค้นหา">
         <img src="/img/Icon/search.png" alt="ค้นหา" />
       </button>
@@ -61,15 +51,15 @@
     <!-- ปุ่มไอคอน (เดสก์ท็อป) -->
     <div class="icon-buttons desktop-icons">
       <a class="action-button" href="/page/ex_requests.html" aria-label="คำขอแลกเปลี่ยน">
-        <img src="/img/Icon/exchange.png" alt="">
+        <img src="/img/Icon/exchange.png" alt="" />
         <span id="reqBadge" class="icon-badge" hidden>0</span>
       </a>
       <a class="action-button" href="/page/ex_favorites.html" aria-label="รายการโปรด">
-        <img src="/img/Icon/heart.png" alt="">
+        <img src="/img/Icon/heart.png" alt="" />
         <span id="favBadge" class="icon-badge" hidden>0</span>
       </a>
-      <a class="action-button" href="/page/ex_chat.html" aria-label="แชท">
-        <img src="/img/Icon/chat.png" alt="">
+      <a class="action-button" href="/page/storepage/exchat.html" aria-label="แชท">
+        <img src="/img/Icon/chat.png" alt="" />
         <span id="chatBadge" class="icon-badge" hidden>0</span>
       </a>
 
@@ -104,29 +94,87 @@
   <button class="icons-drawer__close" id="iconsClose" type="button" aria-label="ปิดเมนู">✕ ปิด</button>
 
   <a href="/page/ex_requests.html">
-    <img src="/img/Icon/exchange.png" alt=""> คำขอแลกเปลี่ยน
+    <img src="/img/Icon/exchange.png" alt="" /> คำขอแลกเปลี่ยน
     <span class="badge" id="reqBadgeMobile" hidden>0</span>
   </a>
 
   <a href="/page/ex_favorites.html">
-    <img src="/img/Icon/heart.png" alt=""> รายการโปรด
+    <img src="/img/Icon/heart.png" alt="" /> รายการโปรด
     <span class="badge" id="favBadgeMobile" hidden>0</span>
   </a>
 
-  <a href="/page/ex_chat.html">
-    <img src="/img/Icon/chat.png" alt=""> แชท
+  <a href="/page/storepage/exchat.html">
+    <img src="/img/Icon/chat.png" alt="" /> แชท
     <span class="badge" id="chatBadgeMobile" hidden>0</span>
   </a>
 
-  <!-- โปรไฟล์ใน Drawer (จะ sync เมนู/ชื่อกับเดสก์ท็อป) -->
+  <!-- โปรไฟล์ใน Drawer -->
   <button id="mobileProfileToggle" class="drawer-acc" aria-expanded="false" type="button">
-    <img src="/img/Icon/user.png" alt>
+    <img src="/img/Icon/user.png" alt="" />
     <span id="mobileUserChip">โปรไฟล์</span>
     <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
   </button>
   <div id="mobileAccountMenu" class="drawer-acc-menu" hidden></div>
 </aside>
 <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
+
+<!-- ===== Badge loader (ดึงยอดและอัปเดตทั้ง desktop/mobile) ===== -->
+<script>
+(function(){
+  // Drawer basic
+  const btn = document.getElementById('hamburgerBtn');
+  const drawer = document.getElementById('iconsDrawer');
+  const backdrop = document.getElementById('iconsBackdrop');
+  const closeBtn = document.getElementById('iconsClose');
+  function openDrawer(){ drawer.hidden=false; drawer.setAttribute('aria-hidden','false'); backdrop.hidden=false; btn?.setAttribute('aria-expanded','true'); }
+  function closeDrawer(){ drawer.hidden=true; drawer.setAttribute('aria-hidden','true'); backdrop.hidden=true; btn?.setAttribute('aria-expanded','false'); }
+  btn && btn.addEventListener('click', openDrawer);
+  closeBtn && closeBtn.addEventListener('click', closeDrawer);
+  backdrop && backdrop.addEventListener('click', closeDrawer);
+
+  // Badge helpers
+  function setBadge(id, n){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const v = Number(n||0);
+    if(v>0){ el.textContent = v>99 ? '99+' : String(v); el.hidden = false; }
+    else { el.hidden = true; }
+  }
+  function setBoth(a,b,n){ setBadge(a,n); setBadge(b,n); }
+  function hideAll(){
+    ['reqBadge','favBadge','chatBadge','notiBadge','reqBadgeMobile','favBadgeMobile','chatBadgeMobile']
+      .forEach(id=>{ const el=document.getElementById(id); if(el) el.hidden=true; });
+  }
+
+  async function refreshExBadges(){
+    try{
+      const r = await fetch('/page/backend/ex_badge_counts.php', {credentials:'include', cache:'no-store'});
+      if(!r.ok){ hideAll(); return; }
+      let d; try{ d = await r.json(); }catch{ hideAll(); return; }
+      if(!d?.ok){ hideAll(); return; }
+
+      const req  = Number(d.incoming_requests||0);
+      const fav  = Number(d.favorites||0);
+      const chat = Number(d.unread_messages||0);
+
+      setBoth('reqBadge','reqBadgeMobile', req);
+      setBoth('favBadge','favBadgeMobile', fav);
+      setBoth('chatBadge','chatBadgeMobile', chat);
+
+      // รวมไว้ที่ "แจ้งเตือน" ถ้าต้องการภาพรวม
+      setBadge('notiBadge', req + chat);
+    }catch(e){
+      hideAll();
+    }
+  }
+
+  // ให้หน้าอื่นเรียกซ้ำได้หลังทำ action เสร็จ
+  window.refreshExBadges = refreshExBadges;
+
+  document.addEventListener('DOMContentLoaded', refreshExBadges);
+  setInterval(refreshExBadges, 15000);
+})();
+</script>

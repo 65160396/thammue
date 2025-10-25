@@ -221,7 +221,8 @@
         if (it.is_owner) {
           markOwnerMode();
         } else if (it.owner_id) {
-          $chatBtn.href = `/page/ex_chat.html?to=${encodeURIComponent(it.owner_id)}&item=${encodeURIComponent(it.id)}`;
+          // ✅ ปุ่มข้อความ → หน้าแชทแลกเปลี่ยนแบบ with_item_id (ให้สร้าง/เปิดห้องโดยชื่อห้อง = ชื่อสินค้า)
+          $chatBtn.href = `/page/storepage/exchat.html?with_item_id=${encodeURIComponent(it.id)}`;
           // โหลดสถานะรายการโปรดเริ่มต้น
           initFavoriteState();
         }
