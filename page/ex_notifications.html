@@ -1,33 +1,85 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>การแจ้งเตือนแลกเปลี่ยน | THAMMUE</title>
-  <link rel="stylesheet" href="/css/ex.exchange.css" />
-</head>
-<body>
-  <div class="ex-container">
-    <h1 class="ex-h1">การแจ้งเตือน (แลกเปลี่ยน)</h1>
-    <div class="ex-card">
-      <ul id="notis" class="ex-list"></ul>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>การแจ้งเตือนแลกเปลี่ยน | THAMMUE</title>
+    <link rel="stylesheet" href="/css/ex.exchange.css" />
+    <link rel="stylesheet" href="/css/ex.header.css" />
+    <link rel="stylesheet" href="/css/ex.notifications.css">
+
+  </head>
+  <body>
+    <body class="ex-noti-page"></body>
+    <div data-include="/page/partials/ex_header.html"></div>
+    <div class="ex-container">
+      <h1 class="ex-h1">การแจ้งเตือน (แลกเปลี่ยน)</h1>
+      <div class="ex-card">
+        <ul id="notis" class="ex-list"></ul>
+      </div>
+      <p class="ex-muted">* ระบบนี้แยกตารางแจ้งเตือนสำหรับการแลกเปลี่ยน
+        (ex_notifications)</p>
     </div>
-    <p class="ex-muted">* ระบบนี้แยกตารางแจ้งเตือนสำหรับการแลกเปลี่ยน (ex_notifications)</p>
-  </div>
-  <script src="/js/ex.exchange.js"></script>
-  <script>
-    (async function(){
-      try{
-        const res = await Ex.exListNoti();
-        const ul = document.getElementById('notis');
-        if(!res.items || !res.items.length){ ul.innerHTML = '<li class="ex-muted">ไม่มีแจ้งเตือน</li>'; return; }
-        res.items.forEach(n=>{
-          const li = document.createElement('li');
-          li.innerHTML = `<div><b>${n.title||'-'}</b></div><div class="ex-muted">${n.body||''}</div><div class="ex-muted">${n.created_at}</div>`;
-          ul.appendChild(li);
-        });
-      }catch(e){ alert('โหลดแจ้งเตือนผิดพลาด: '+e.message); }
-    })();
-  </script>
-</body>
+    <script src="/js/ex.exchange.js"></script>
+    <script src="/js/ex.include.js"></script>
+    <script src="/js/me.js"></script>
+    <script src="/js/ex.header.js"></script>
+    <script>
+(function(){
+  const list  = document.getElementById('notis');   // ← ใช้ UL#notis ของหน้า
+  const empty = document.getElementById('empty') || (()=>{
+    const d=document.createElement('div');
+    d.id='empty'; d.style.color='#64748b';
+    list.parentElement.insertBefore(d, list); // วางไว้เหนือรายการ
+    return d;
+  })();
+
+  async function load(){
+    const r = await fetch('/page/backend/ex_notifications_list.php', {credentials:'include', cache:'no-store'});
+    const j = await r.json().catch(()=>null);
+    if(!j?.ok){ empty.textContent = j?.error || 'โหลดไม่สำเร็จ'; list.innerHTML=''; return; }
+    if(!j.items.length){ empty.textContent = 'ยังไม่มีการแจ้งเตือน'; list.innerHTML=''; return; }
+
+    empty.innerHTML = '<button id="markAll" class="btn">ทำเป็นอ่านแล้วทั้งหมด</button>';
+
+    list.innerHTML = j.items.map(n=>{
+      const typeCls = n.type==='request_accepted' ? 'accept'
+                    : n.type==='request_declined' ? 'decline'
+                    : 'normal';
+      const icon = n.type==='request_accepted' ? '✅'
+                  : n.type==='request_declined' ? '❌' : '🔔';
+      const href = (n.payload?.item_id) ? `/page/ex_item_view.html?id=${n.payload.item_id}` : 'javascript:void(0)';
+      const when = new Date((n.created_at||'').replace(' ','T')).toLocaleString();
+      const readCls = n.is_read ? 'read' : 'unread';
+      return `
+        <li>
+          <a href="${href}" class="noti ${typeCls} ${readCls}">
+            <div class="noti-row">
+              <div class="noti-ico">${icon}</div>
+              <div class="noti-txt">
+                <div class="noti-title">${n.title || 'การแจ้งเตือน'}</div>
+                ${n.body ? `<p class="noti-body">${n.body}</p>` : ''}
+              </div>
+              <div class="noti-time">${when}</div>
+            </div>
+          </a>
+        </li>
+      `;
+    }).join('');
+
+    document.getElementById('markAll')?.addEventListener('click', async ()=>{
+      await fetch('/page/backend/ex_notifications_mark_read.php',{
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'}, body:'{}'
+      });
+      load();
+      window.refreshExBadges?.(); // รีเฟรช badge บน header ถ้ามี
+    });
+  }
+  load();
+})();
+
+</script>
+
+  </body>
 </html>

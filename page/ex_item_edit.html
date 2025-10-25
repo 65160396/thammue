@@ -1,36 +1,56 @@
 
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>แก้ไขสินค้า | THAMMUE</title>
-  <link rel="stylesheet" href="/css/ex.exchange.css">
-  <link rel="stylesheet" href="/css/ex.items.css">
-</head>
-<body>
-  <div class="ex-container">
-    <h1 class="ex-h1">แก้ไขสินค้า</h1>
-    <div class="ex-card">
-      <div class="ex-form">
-        <input type="hidden" id="item_id">
-        <div class="row"><label>ชื่อสินค้า</label><input id="title" type="text"></div>
-        <div class="row"><label>คำอธิบาย</label><textarea id="description" rows="4"></textarea></div>
-        <div class="row"><label>รูปหลัก</label>
-          <div>
-            <img id="thumbPreview" class="ex-thumb" alt="preview">
-            <div style="margin-top:8px">
-              <input id="thumb" type="file" accept="image/*">
-              <button class="ex-btn secondary" id="uploadBtn" type="button">อัปโหลดใหม่</button>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>แก้ไขสินค้า | THAMMUE</title>
+    <link rel="stylesheet" href="/css/ex.exchange.css">
+    <link rel="stylesheet" href="/css/ex.items.css">
+  </head>
+  <body>
+    <div class="ex-container">
+      <h1 class="ex-h1">แก้ไขสินค้า</h1>
+      <div class="ex-card">
+        <div class="ex-form">
+          <form id="itemEditForm" class="ex-form" novalidate>
+            <input type="hidden" id="item_id" name="id">
+
+            <div class="row">
+              <label for="title">ชื่อสินค้า</label>
+              <input id="title" name="title" type="text" />
             </div>
-            <div class="ex-muted" id="thumbUrlBox" style="margin-top:6px"></div>
-          </div>
+
+            <div class="row">
+              <label for="description">คำอธิบาย</label>
+              <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+
+            <div class="row">
+              <label for="thumb">รูปหลัก</label>
+              <div>
+                <img id="thumbPreview" class="ex-thumb" alt="ตัวอย่างรูป">
+                <div style="margin-top:8px">
+                  <input id="thumb" name="thumb" type="file" accept="image/*">
+                  <button class="ex-btn secondary" id="uploadBtn"
+                    type="button">อัปโหลดใหม่</button>
+                </div>
+                <div class="ex-muted" id="thumbUrlBox"
+                  style="margin-top:6px"></div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div></div>
+              <button class="ex-btn" id="updateBtn"
+                type="button">อัปเดตสินค้า</button>
+            </div>
+          </form>
+
         </div>
-        <div class="row"><div></div><button class="ex-btn" id="updateBtn" type="button">อัปเดตสินค้า</button></div>
       </div>
     </div>
-  </div>
-  <script src="/js/ex.exchange.js"></script>
-  <script src="/js/ex.item.form.js"></script>
-</body>
+    <script src="/js/ex.exchange.js"></script>
+    <script src="/js/ex.item.form.js"></script>
+  </body>
 </html>

@@ -16,12 +16,6 @@ function col_exists(mysqli $db, string $table, string $col): bool {
 
 /**
  * ล็อก item ตาม schema ที่มีอยู่จริง
- * จะพยายามอัปเดตตามลำดับ:
- *   - status='locked' (ถ้ามีคอลัมน์ status)
- *   - is_locked=1     (ถ้ามีคอลัมน์ is_locked)
- *   - available=0     (ถ้ามีคอลัมน์ available)
- *   - locked_at=NOW() (ถ้ามีคอลัมน์ locked_at)
- * คืนค่า true ถ้าล็อกได้อย่างน้อย 1 ฟิลด์, false ถ้าไม่พบคอลัมน์ให้ล็อก
  */
 function lock_items_if_possible(mysqli $m, array $ids): bool {
   if (!$ids) return false;
@@ -39,9 +33,8 @@ function lock_items_if_possible(mysqli $m, array $ids): bool {
   if ($hasAvail)    { $sets[] = "available=?"; $types.='i'; $vals[]=0; }
   if ($hasLockedAt) { $sets[] = "locked_at=NOW()"; }
 
-  if (!$sets) return false; // ไม่มีคอลัมน์ให้ล็อก
+  if (!$sets) return false;
 
-  // สร้าง IN (?, ?, ?)
   $placeholders = implode(',', array_fill(0, count($ids), '?'));
   $types .= str_repeat('i', count($ids));
   $vals = array_merge($vals, $ids);
@@ -54,6 +47,27 @@ function lock_items_if_possible(mysqli $m, array $ids): bool {
   return true;
 }
 
+/** แจ้งเตือนแบบง่าย: สร้างตารางถ้ายังไม่มี แล้ว insert */
+function ex_notify_simple(mysqli $m, int $toUser, string $type, int $refId, string $title, string $body): void {
+  $m->query("
+    CREATE TABLE IF NOT EXISTS ex_notifications(
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      type VARCHAR(50) NOT NULL,
+      ref_id INT NULL,
+      title VARCHAR(255) NOT NULL,
+      body TEXT NULL,
+      is_read TINYINT(1) NOT NULL DEFAULT 0,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      KEY(user_id), KEY(type), KEY(is_read)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  ");
+  $ins = $m->prepare("INSERT INTO ex_notifications (user_id,type,ref_id,title,body,is_read,created_at)
+                      VALUES (?,?,?,?,?,0,NOW())");
+  $ins->bind_param("isiss", $toUser, $type, $refId, $title, $body);
+  $ins->execute();
+}
+
 try {
   $m = dbx();
   if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -63,15 +77,14 @@ try {
   $rid    = (int)($_POST['request_id'] ?? 0);
   $action = trim($_POST['action'] ?? '');
 
-  // รับจากฟอร์มโมดัล
+  // รับค่าจากโมดัล (ถ้ามี)
   $meet_date = trim($_POST['meet_date'] ?? '');
   $meet_time = trim($_POST['meet_time'] ?? '');
-  $place     = trim($_POST['place']     ?? '');
-  $note      = trim($_POST['note']      ?? '');
+  $place     = trim($_POST['meet_place'] ?? $_POST['place'] ?? '');
+  $note      = trim($_POST['meet_note']  ?? $_POST['note']  ?? '');
 
-  // normalize
-  $meet_date = $meet_date !== '' ? $meet_date : null;   // YYYY-MM-DD
-  $meet_time = $meet_time !== '' ? $meet_time : null;   // HH:MM
+  $meet_date = $meet_date !== '' ? $meet_date : null;
+  $meet_time = $meet_time !== '' ? $meet_time : null;
   $place     = $place     !== '' ? $place     : null;
   $note      = $note      !== '' ? $note      : null;
 
@@ -81,7 +94,7 @@ try {
 
   $m->begin_transaction();
 
-  // อ่านคำขอ + ตรวจสิทธิ์ + เอา item id มาด้วยเพื่อไปล็อก
+  // อ่านคำขอ + ตรวจสิทธิ์
   $st = $m->prepare("
     SELECT id, status, owner_user_id, requester_user_id,
            requested_item_id, offered_item_id
@@ -98,19 +111,24 @@ try {
   $itemReqId = (int)$req['requested_item_id'];
   $itemOffId = (int)$req['offered_item_id'];
 
-  // ให้เจ้าของ (owner) เป็นคนยอมรับ/ปฏิเสธ
+  // ให้เจ้าของเป็นคนกดตัดสิน
   if ($uid !== $owner) { $m->rollback(); echo json_encode(['ok'=>false,'error'=>'forbidden']); exit; }
 
+  /* ---------- DECLINE ---------- */
   if ($action === 'decline') {
     $st = $m->prepare("UPDATE ex_requests SET status='declined', updated_at=NOW() WHERE id=? AND owner_user_id=?");
     $st->bind_param('ii', $rid, $owner);
     $st->execute();
+
+    // ✨ แจ้งเตือนไปยังผู้ขอ
+    ex_notify_simple($m, $requester, 'request_declined', $rid, 'คำขอแลกถูกปฏิเสธ', 'เจ้าของสินค้าปฏิเสธคำขอแลกของคุณ');
+
     $m->commit();
     echo json_encode(['ok'=>true,'request_id'=>$rid]); exit;
   }
 
-  /* ========== accept ========== */
-  // ยืดหยุ่นตามคอลัมน์ที่มีจริง
+  /* ---------- ACCEPT ---------- */
+  // ยืดหยุ่นตามคอลัมน์ที่มีจริงใน ex_requests
   $has = function(mysqli $db, string $col): bool {
     $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME='ex_requests' AND COLUMN_NAME=?";
@@ -138,7 +156,7 @@ try {
   $st->bind_param($types, ...$params);
   $st->execute();
 
-  // sync เข้า ex_meetings
+  // sync เข้า ex_meetings (ถ้ามี uniq key request_id ก็จะ upsert)
   $st = $m->prepare("
     INSERT INTO ex_meetings
       (request_id, owner_user_id, requester_user_id, meet_date, meet_time, meet_place, meet_note, created_at, updated_at)
@@ -154,8 +172,11 @@ try {
   $st->bind_param("iiissss", $rid, $owner, $requester, $md, $mt, $mp, $mn);
   $st->execute();
 
-  // ---------- ล็อกสินค้า (เฉพาะตอน accept) ----------
+  // ล็อกสินค้า (ถ้าสามารถล็อกได้ตาม schema)
   $lockOk = lock_items_if_possible($m, array_filter([$itemReqId, $itemOffId]));
+
+  // ✨ แจ้งเตือนไปยังผู้ขอ (อยู่ “ก่อน” commit)
+  ex_notify_simple($m, $requester, 'request_accepted', $rid, 'คำขอแลกได้รับการยอมรับ', 'เจ้าของสินค้ายอมรับคำขอแลกของคุณ');
 
   $m->commit();
   echo json_encode(['ok'=>true,'request_id'=>$rid, 'lock_warn'=>($lockOk?false:true)]);
