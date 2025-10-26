@@ -9,7 +9,7 @@
 }
 .ex-hero-bg{
   position:absolute; inset:0;
-  background-image: var(--ex-hero, url('/img/hero/exchange-hero.jpg')); /* เปลี่ยนเป็นภาพของคุณได้ */
+  background-image: var(--ex-hero, url('/img/Illustration/people-meeting-barter-event-exchange-goods_23-2150208180.jpg')); /* เปลี่ยนเป็นภาพของคุณได้ */
   background-size: cover;
   background-position: center;
   filter: saturate(1) contrast(1) brightness(.9);
