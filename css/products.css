@@ -378,3 +378,186 @@
 .product-card .btn-detail:hover {
   background: #333;
 }
+/* ---------- 1) Mobile header: search + hamburger อยู่บรรทัดเดียว ---------- */
+/* ==================== MOBILE ONLY FIXES (≤768px) ==================== */
+/* ===== MOBILE: ช่องค้นหา ข้อความซ้าย ไอคอนขวา ===== */
+/* ===============================*/
+/*   MOBILE ONLY (<= 768px)       */
+/* ===============================*/
+@media (max-width: 768px) {
+  /* ===== 2.1 Top bar (แถบเมนูบน) ===== */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px; /* ระยะระหว่างไอเท็ม */
+    padding: 8px 10px;
+    white-space: nowrap; /* ห้ามตัดบรรทัด */
+    flex-wrap: nowrap; /* ย้ำว่าไม่ห่อบรรทัด */
+    overflow-x: auto; /* ถ้าพื้นที่ไม่พอให้เลื่อนข้าง */
+    -webkit-overflow-scrolling: touch;
+  }
+  .top-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .top-nav li {
+    flex: 0 0 auto; /* แต่ละรายการเป็นก้อนเล็ก ๆ */
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .top-nav a {
+    display: inline-block;
+    font-size: 14px; /* ย่อไซส์นิดให้พอดีบรรทัด */
+    padding: 4px 2px;
+  }
+
+  .top-divider {
+    display: inline-block;
+    margin: 0 6px;
+  }
+
+  /* เอา float ออกเพื่อไม่ให้ไหลลงบรรทัดใหม่ */
+  .top-nav .right {
+    margin-left: auto; /* ขยับไปชิดขวาในบรรทัดเดียวกัน */
+    float: none;
+  }
+
+  /* กันเคสมี <br> ในข้อความ */
+  .top-nav br {
+    display: none !important;
+  }
+  /* ===== 2.2 แถบหมวด (ล่างแถบดำ) ===== */
+  .category-buttons {
+    display: flex;
+    gap: 20px;
+    padding: 10px 12px 0;
+    overflow-x: auto; /* เลื่อนข้างได้ */
+    white-space: nowrap; /* ห้ามตัดบรรทัด */
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fff;
+  }
+  .category-buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-buttons .category-button {
+    position: relative;
+    display: inline-block;
+    padding: 10px 2px 12px; /* เว้นพื้นที่ให้เส้นใต้ */
+    color: #111;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  /* ซ่อน <br> ในชื่อหมวด (กันแตกสองบรรทัด) */
+  .category-buttons .category-button br {
+    display: none !important;
+  }
+
+  /* เส้นใต้แท็บที่ active (เหมือนแอปมือถือ) */
+  .category-buttons .category-button.active {
+    font-weight: 700;
+  }
+  .category-buttons .category-button.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 3px;
+    background: #111;
+    border-radius: 3px 3px 0 0;
+  }
+
+  /* ===== 2.3 ช่องค้นหา: ข้อความซ้าย, ไอคอนขวา ===== */
+  .header-wrapper {
+    background: #000;
+    color: #fff;
+    position: relative;
+    padding: 14px 16px 18px;
+  }
+  .header-wrapper .search-container {
+    display: block !important; /* แยกบรรทัดจากโลโก้ */
+    padding-right: 64px; /* กันไม่ให้ทับปุ่มเมนู */
+  }
+  .header-wrapper .search-group {
+    position: relative;
+    width: 280px;
+    max-width: 100%;
+    min-width: 0;
+    margin-left: 4px;
+  }
+  .header-wrapper .search-group input {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 14px;
+    background: #fff;
+    color: #111;
+    padding: 10px 48px 10px 14px; /* ← เผื่อพื้นที่ไอคอนขวา */
+    box-sizing: border-box;
+  }
+  /* เส้นกั้นก่อนปุ่มแว่น */
+  .header-wrapper .search-group::after {
+    content: "";
+    position: absolute;
+    right: 48px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: #e5e7eb;
+    pointer-events: none;
+  }
+  /* ปุ่มแว่นอยู่ขวาในช่อง */
+  .header-wrapper .search-group .search-button {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header-wrapper .search-group .search-button img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.85;
+  }
+
+  /* ปุ่มแฮมเบอร์เกอร์ลอยขวา */
+  #hamburgerBtn,
+  #hamburgerBtn.menu-toggle {
+    position: absolute;
+    right: 16px;
+    top: 48px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #1f2937;
+    border: 1px solid #374151;
+  }
+  #hamburgerBtn svg {
+    display: block;
+  }
+}
+
+/* จอเล็กมาก ปรับขนาดเล็กลงอีกนิด */
+@media (max-width: 360px) {
+  .header-wrapper .search-group {
+    width: 240px;
+  }
+  #hamburgerBtn {
+    right: 12px;
+  }
+}
