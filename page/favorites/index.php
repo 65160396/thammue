@@ -164,7 +164,6 @@ function h($s)
         });
     </script>
     <script src="/js/search/search.js"></script>
-    <script src="/js/search/search.js"></script>
     <script>
         Search.init({
             input: "#q",

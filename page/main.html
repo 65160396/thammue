@@ -10,31 +10,6 @@
     <link rel="stylesheet" href="/css/instyle.css" />
     <link rel="stylesheet" href="/css/search.css" />
     <link rel="stylesheet" href="/css/products.css" />
-
-    <!-- CSS เพิ่มสำหรับเมนูโปรไฟล์ใน Drawer -->
-    <style>
-      .icons-drawer .drawer-acc{
-        display:grid; grid-template-columns:32px 1fr auto;
-        align-items:center; gap:12px; width:100%;
-        padding:12px 8px; border-radius:12px; border:0;
-        background:transparent; color:#fff; text-align:left; cursor:pointer;
-      }
-      .icons-drawer .drawer-acc:hover{ background:rgba(255,255,255,.08); }
-      .icons-drawer .drawer-acc .chev{ width:16px; height:16px; opacity:.7; transition:transform .2s ease; }
-      .icons-drawer .drawer-acc[aria-expanded="true"] .chev{ transform:rotate(180deg); }
-      .icons-drawer .drawer-acc-menu{
-        display:flex; flex-direction:column; gap:2px;
-        margin-left:44px; padding:8px 0 12px;
-      }
-      .icons-drawer .drawer-acc-menu a{
-        padding:8px; border-radius:10px; color:#fff; text-decoration:none;
-      }
-      .icons-drawer .drawer-acc-menu a:hover{ background:rgba(255,255,255,.08); }
-      .icons-drawer .drawer-acc-menu hr{
-        border:none; border-top:1px solid rgba(255,255,255,.12); margin:6px 0;
-      }
-      .icons-drawer .drawer-acc-menu a.logout{ color:#ff6b6b; }
-    </style>
   </head>
 
   <body>
@@ -92,7 +67,7 @@
             <img src="/img/Icon/search.png" alt="ค้นหา" />
           </button>
 
-          <div id="qSuggest" class="search-suggest"></div>
+          <div id="qSuggest" class="search-suggest" hidden></div>
         </div>
 
         <div class="icon-buttons desktop-icons">
@@ -233,24 +208,45 @@
 
     <!-- ===== สคริปต์ท้ายหน้า ===== -->
     <script src="/js/search/search.js"></script>
+    <script src="/js/search/header-search.js"></script>
     <script>
-      if (!localStorage.getItem('searchHistory')) {
-        localStorage.setItem('searchHistory', JSON.stringify(['ทำมือ', 'สร้อยผ้า', 'งานประดิษฐ์']));
-      }
-    </script>
+Search.init({
+  input:   "#q",
+  button:  "#btnSearch",
+  results: "#results",
+  // (ถ้ามี element เหล่านี้ให้ใส่ด้วย จะช่วยเปิด/เคลียร์ผล)
+  section: "#searchSection",
+  count:   "#searchCount",
+  clear:   "#clearSearch",
+
+  endpoint: "/page/backend/search/search_favorites.php", // หรือไฟล์ PHP ที่คุณใช้จริง (ตัวที่แนบมาก็ใช้ได้)
+  per: 24,
+  sort: "relevance",
+  minLength: 1,
+  debounceMs: 300,
+  rememberLast: true
+});
+</script>
+
     <script>
-      // hotfix: บังคับโชว์เวลาโฟกัส เพื่อกันธีมอื่นที่ใช้ [hidden]{display:none!important}
-      const qEl = document.getElementById('q');
-      if (qEl) {
-        qEl.addEventListener('focus', () => {
-          const box = document.getElementById('qSuggest');
-          if (box) {
-            box.classList.add('show');
-            box.removeAttribute('hidden');
-          }
-        });
-      }
-    </script>
+// adapter: ให้ header-search.js เรียกมาที่นี่แทนการ redirect
+window.runSearch = function(term){
+  const q   = document.getElementById('q');
+  const btn = document.getElementById('btnSearch');
+  if (q) q.value = (term || q.value || '').trim();
+
+  // ถ้า Search.js มี method ให้เรียกตรง ๆ ก็ใช้เลย
+  if (window.Search && typeof Search.run === 'function') {
+    Search.run(q.value);                 // ชื่อ method แล้วแต่โปรเจ็กต์ของเธอ
+  } else if (btn) {
+    btn.click();                         // ให้ flow ของ Search.init ทำงานตามเดิม
+  }
+
+  // เปิดส่วนผลการค้นหา (ถ้าหน้านั้นมี)
+  const sec   = document.getElementById('searchSection');
+  if (sec) sec.hidden = false;
+};
+</script>
 
     <!-- โหลดหลังจากมี DOM ของ drawer/backdrop แล้ว -->
     <script src="/js/nav/hamburger.js"></script>
@@ -258,71 +254,69 @@
     <!-- เมนูโปรไฟล์สำหรับ Drawer (เรนเดอร์ตามสถานะล็อกอิน) -->
     <script>
       (function () {
-    const toggle = document.getElementById('mobileProfileToggle');
-    const menu   = document.getElementById('mobileAccountMenu');
-    const dd     = document.getElementById('userDropdown'); // เมนูเดสก์ท็อป
-    if (!toggle || !menu || !dd) return;
+        const toggle = document.getElementById('mobileProfileToggle');
+        const menu   = document.getElementById('mobileAccountMenu');
+        const dd     = document.getElementById('userDropdown'); // เมนูเดสก์ท็อป
+        if (!toggle || !menu || !dd) return;
 
-    // ช่วยบอกสถานะล็อกอินจากเดสก์ท็อป: มีลิงก์ .logout แปลว่าล็อกอินแล้ว
-    const isLoggedInFromDesktop = () => !!dd.querySelector('a.logout');
+        // ช่วยบอกสถานะล็อกอินจากเดสก์ท็อป: มีลิงก์ .logout แปลว่าล็อกอินแล้ว
+        const isLoggedInFromDesktop = () => !!dd.querySelector('a.logout');
 
-    // clone เมนูจากเดสก์ท็อปมาใส่ใน drawer (รักษา <hr> และ class .logout)
-    function syncMenuFromDesktop() {
-      const fr = document.createDocumentFragment();
-      const items = dd.querySelectorAll('a, hr');
-      if (items.length) {
-        items.forEach((el) => {
-          const clone = el.cloneNode(true);
-          // ลบ role/aria ที่ไม่จำเป็น และบังคับสีใน drawer
-          if (clone.tagName === 'A') {
-            clone.removeAttribute('role');
-            clone.style.color = 'inherit';
+        // clone เมนูจากเดสก์ท็อปมาใส่ใน drawer (รักษา <hr> และ class .logout)
+        function syncMenuFromDesktop() {
+          const fr = document.createDocumentFragment();
+          const items = dd.querySelectorAll('a, hr');
+          if (items.length) {
+            items.forEach((el) => {
+              const clone = el.cloneNode(true);
+              if (clone.tagName === 'A') {
+                clone.removeAttribute('role');
+                clone.style.color = 'inherit';
+              }
+              fr.appendChild(clone);
+            });
+            menu.innerHTML = '';
+            menu.appendChild(fr);
+            return true;
           }
-          fr.appendChild(clone);
+          return false;
+        }
+
+        // fallback ถ้าเดสก์ท็อปยังไม่เติมเมนู (เช่นโหลดช้า)
+        function renderFallback() {
+          if (isLoggedInFromDesktop()) {
+            menu.innerHTML = `
+              <a href="/page/account/index.html">บัญชีของฉัน</a>
+              <a href="/page/order/history.html">การซื้อของฉัน</a>
+              <a href="/page/account/change_password.html">เปลี่ยนรหัสผ่าน</a>
+              <hr>
+              <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
+            `;
+          } else {
+            menu.innerHTML = `
+              <a href="/page/login.html">เข้าสู่ระบบ</a>
+              <a href="/page/register.html">สมัครสมาชิก</a>
+            `;
+          }
+        }
+
+        // เปิด/ปิดเมนูโปรไฟล์ใน drawer
+        toggle.addEventListener('click', () => {
+          const expanded = toggle.getAttribute('aria-expanded') === 'true';
+          if (!expanded) {
+            const ok = syncMenuFromDesktop();
+            if (!ok) renderFallback();
+          }
+          toggle.setAttribute('aria-expanded', String(!expanded));
+          menu.hidden = expanded;
         });
-        menu.innerHTML = '';
-        menu.appendChild(fr);
-        return true;
-      }
-      return false;
-    }
 
-    // fallback ถ้าเดสก์ท็อปยังไม่เติมเมนู (เช่นโหลดช้า)
-    function renderFallback() {
-      if (isLoggedInFromDesktop()) {
-        menu.innerHTML = `
-          <a href="/page/account/index.html">บัญชีของฉัน</a>
-          <a href="/page/order/history.html">การซื้อของฉัน</a>
-          <a href="/page/account/change_password.html">เปลี่ยนรหัสผ่าน</a>
-          <hr>
-          <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
-        `;
-      } else {
-        menu.innerHTML = `
-          <a href="/page/login.html">เข้าสู่ระบบ</a>
-          <a href="/page/register.html">สมัครสมาชิก</a>
-        `;
-      }
-    }
-
-    // เปิด/ปิดเมนูโปรไฟล์ใน drawer
-    toggle.addEventListener('click', () => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      if (!expanded) {
-        // ครั้งแรกที่จะเปิด: พยายามซิงก์จากเดสก์ท็อปก่อน
-        const ok = syncMenuFromDesktop();
-        if (!ok) renderFallback();
-      }
-      toggle.setAttribute('aria-expanded', String(!expanded));
-      menu.hidden = expanded;
-    });
-
-    // ถ้าเดสก์ท็อปเติมเมนูภายหลัง (user-menu.js async) ให้ sync อัตโนมัติ
-    const mo = new MutationObserver(() => {
-      if (!menu.hidden) syncMenuFromDesktop();
-    });
-    mo.observe(dd, { childList: true, subtree: true });
-  })();
+        // ถ้าเดสก์ท็อปเติมเมนูภายหลัง (user-menu.js async) ให้ sync อัตโนมัติ
+        const mo = new MutationObserver(() => {
+          if (!menu.hidden) syncMenuFromDesktop();
+        });
+        mo.observe(dd, { childList: true, subtree: true });
+      })();
     </script>
 
     <script src="/js/notify-poll.js"></script>
