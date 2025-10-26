@@ -1,0 +1,106 @@
+/* ===== Notifications (General Page - Styled like Exchange) ===== */
+:root {
+  --noti-bg: #f6f8fb;
+  --noti-card: #fff;
+  --noti-border: #ddd;
+  --noti-text: #0f172a;
+  --noti-muted: #555;
+  --noti-primary: #111; /* ปุ่มสีดำแบบรูปสอง */
+  --noti-primary-hover: #000;
+}
+
+/* พื้นหลังรวม */
+body.noti-page {
+  background: var(--noti-bg);
+  color: var(--noti-text);
+  font-family: "Prompt", sans-serif;
+}
+
+/* โครงหลัก */
+.noti-wrap {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+/* แถบด้านบน */
+.noti-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 8px;
+}
+
+.noti-toolbar h1 {
+  font-weight: 700;
+  color: var(--noti-text);
+}
+
+.noti-toolbar .btn {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  background: var(--noti-primary);
+  color: #fff;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.noti-toolbar .btn:hover {
+  background: var(--noti-primary-hover);
+  opacity: 0.92;
+}
+
+/* กล่องแจ้งเตือน */
+.noti-item {
+  background: var(--noti-card);
+  border: 1px solid var(--noti-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  transition: 0.15s ease;
+  cursor: pointer;
+}
+.noti-item:hover {
+  background: #f7f9ff;
+  transform: translateY(-1px);
+}
+
+/* สถานะยังไม่ได้อ่าน */
+.noti-item.unread {
+  background: #eef4ff;
+  border-left: 5px solid #4b7bec;
+}
+
+/* ข้อความแจ้งเตือน */
+.noti-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--noti-text);
+}
+
+.noti-body {
+  margin: 0;
+  font-size: 14px;
+  color: var(--noti-muted);
+}
+
+/* เวลาแจ้งเตือน */
+.noti-time {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+/* ถ้าไม่มีแจ้งเตือน */
+.empty {
+  text-align: center;
+  color: #aaa;
+  margin-top: 50px;
+  font-size: 15px;
+}
