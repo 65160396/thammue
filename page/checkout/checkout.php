@@ -185,13 +185,17 @@ function full_addr($p)
     <title>ทำการสั่งซื้อ | THAMMUE</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/checkout.css" />
-
+    <link rel="stylesheet" href="/css/products.css" />
+    
 </head>
 
 <body class="checkout-page">
 
     <?php
     $HEADER_NO_CATS = true;
+    $HEADER_NO_SEARCH = true;   // ซ่อนช่องค้นหา
+    $HEADER_HIDE_ICONS = true;
+    $HEADER_NO_HAMBURGER = true;
     include __DIR__ . '/../partials/site-header.php';
     ?>
 

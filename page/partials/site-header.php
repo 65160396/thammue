@@ -3,13 +3,15 @@
 // ตัวแปรควบคุมการแสดงผลจากหน้าหลัก
 $HIDE_SEARCH = !empty($HEADER_NO_SEARCH); // ถ้า true จะไม่แสดงช่องค้นหา
 $HIDE_CATS   = !empty($HEADER_NO_CATS);   // ของเดิมไว้ใช้ได้เหมือนเดิม
+$HIDE_ICONS  = !empty($HEADER_HIDE_ICONS);
+$HIDE_HAMBURGER = !empty($HEADER_NO_HAMBURGER);
 ?>
 
 
 <!-- แถบบนสุด -->
 <ul class="top-nav">
     <!-- ซ้าย -->
-    <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+    <li><a href="/page/ex_index.html">แลกเปลี่ยนสินค้า</a></li>
     <li><span class="top-divider">|</span></li>
     <li><a id="openOrMyShop"
             href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
@@ -26,6 +28,13 @@ $HIDE_CATS   = !empty($HEADER_NO_CATS);   // ของเดิมไว้ใ�
     <div class="logo-container">
         <a href="/page/main.html" class="brand-text">THAMMUE</a>
     </div>
+
+    <?php if (!$HIDE_HAMBURGER): ?>
+        <button class="hamburger" id="hamburgerBtn" type="button"
+            aria-label="เมนู" aria-controls="iconsDrawer" aria-expanded="false">
+            <img src="/img/Icon/menu.png" alt="เมนู" />
+        </button>
+    <?php endif; ?>
 
 
 
@@ -55,38 +64,39 @@ $HIDE_CATS   = !empty($HEADER_NO_CATS);   // ของเดิมไว้ใ�
         <?php endif; ?>
 
 
-
-        <div class="icon-buttons">
-            <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
-                <img src="/img/Icon/heart.png" alt="รายการโปรด">
-                <span id="favBadge" class="icon-badge" hidden>0</span>
-            </a>
-
-
-            <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า" style="position:relative">
-                <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
-                <span id="cartBadge" class="icon-badge" hidden>0</span>
-            </a>
+        <?php if (!$HIDE_ICONS): ?>
+            <div class="icon-buttons desktop-icons">
+                <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
+                    <img src="/img/Icon/heart.png" alt="รายการโปรด">
+                    <span id="favBadge" class="icon-badge" hidden>0</span>
+                </a>
 
 
-            <a class="action-button" href="/page/storepage/chat.html"
-                aria-label="แชท" style="position:relative">
-                <img src="/img/Icon/chat.png" alt="แชท">
-                <span id="chatBadge" class="icon-badge" hidden>0</span>
-            </a>
+                <a class="action-button" href="/page/cart/index.php" aria-label="ตะกร้า" style="position:relative">
+                    <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า">
+                    <span id="cartBadge" class="icon-badge" hidden>0</span>
+                </a>
 
 
-            <div class="user-menu" id="userMenu">
-                <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
-                    <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                    <span class="user-chip" id="userChip" hidden></span>
-                    <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
-                <div class="user-dropdown" id="userDropdown" role="menu"></div>
+                <a class="action-button" href="/page/storepage/chat.html"
+                    aria-label="แชท" style="position:relative">
+                    <img src="/img/Icon/chat.png" alt="แชท">
+                    <span id="chatBadge" class="icon-badge" hidden>0</span>
+                </a>
+
+
+                <div class="user-menu" id="userMenu">
+                    <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+                        <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+                        <span class="user-chip" id="userChip" hidden></span>
+                        <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown" role="menu"></div>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
 </div>
 

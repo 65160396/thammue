@@ -23,9 +23,10 @@
   <body class="open-shop no-req-star">
     <!-- ========== Top black bar ========== -->
     <ul class="top-nav">
-      <li><a href="/exchangepage/public/index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><a href="/page/ex_index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
-      <li><a id="openOrMyShop" href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+      <li><a id="openOrMyShop"
+          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
 
       <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
@@ -41,18 +42,21 @@
       </div>
       <div class="search-container">
         <div class="icon-buttons">
-          <a class="action-button" href="/page/storepage/chat.html" aria-label="แชท" style="position:relative">
+          <a class="action-button" href="/page/storepage/chat.html"
+            aria-label="แชท" style="position:relative">
             <img src="/img/Icon/chat.png" alt="แชท" />
             <span id="chatBadge" class="icon-badge" hidden>0</span>
           </a>
 
           <div class="user-menu" id="userMenu">
-            <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+            <button class="user-area" id="userArea" aria-haspopup="true"
+              aria-expanded="false">
               <img src="/img/Icon/user.png" alt="โปรไฟล์" />
               <span class="user-chip" id="userChip" hidden></span>
               <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </button>
             <div class="user-dropdown" id="userDropdown" role="menu"></div>
@@ -65,7 +69,8 @@
     <section class="wizard-page">
       <div class="wizard-card">
         <h2 class="form-section">แก้ไขข้อมูลร้านค้า</h2>
-        <p class="hint">กรอกเฉพาะข้อมูลที่ต้องการแก้ไข แล้วกด “บันทึกการเปลี่ยนแปลง”</p>
+        <p class="hint">กรอกเฉพาะข้อมูลที่ต้องการแก้ไข แล้วกด
+          “บันทึกการเปลี่ยนแปลง”</p>
 
         <form id="shopForm" autocomplete="off">
           <input type="hidden" name="shop_id" id="shop_id" />
@@ -87,11 +92,13 @@
 
           <div class="field field--full">
             <label for="pickup_addr">ที่รับของ</label>
-            <textarea id="pickup_addr" name="pickup_addr" placeholder=""></textarea>
+            <textarea id="pickup_addr" name="pickup_addr"
+              placeholder></textarea>
           </div>
 
           <div class="actions">
-            <button type="button" class="btn ghost" id="btnCancel">ย้อนกลับ</button>
+            <button type="button" class="btn ghost"
+              id="btnCancel">ย้อนกลับ</button>
             <button type="submit" class="btn">บันทึกการเปลี่ยนแปลง</button>
           </div>
         </form>
