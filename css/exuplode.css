@@ -1,6 +1,6 @@
 /* ============ พื้นหลัง + กล่องหลัก ============ */
-body { background:#f6f8fb; }
-.upx-card{
+body { background:#f6f8fb; }                 /* อันนี้ปล่อยได้ (พื้นหลังหน้า) */
+.upx .upx-card{
   max-width: 900px;
   margin: 40px auto;
   padding: 22px 24px;
@@ -19,8 +19,7 @@ body { background:#f6f8fb; }
 }
 
 /* ============ Stepper ============ */
-/* โครง stepper 3 ช่องแบบบาง ๆ */
-.stepper{
+.upx .stepper{
   position:relative;
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -28,88 +27,75 @@ body { background:#f6f8fb; }
   align-items:flex-start;
   margin:10px 0 18px;
 }
-.stepper-line{
-  position:absolute;
-  top:14px; left:0; right:0;
-  height:2px; background:#e8ebf1; border-radius:2px;
-  z-index:0;
+.upx .stepper-line{
+  position:absolute; top:14px; left:0; right:0;
+  height:2px; background:#e8ebf1; border-radius:2px; z-index:0;
 }
-.stepper-line .stepper-fill{
+.upx .stepper-line .stepper-fill{
   width:0%; height:100%;
-  background:#111; border-radius:2px;
-  transition:width .25s ease;
+  background:#111; border-radius:2px; transition:width .25s ease;
 }
+.upx .step{ display:flex; flex-direction:column; align-items:center; gap:6px; z-index:1; }
+.upx .step .dot{ width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid #cfd6e2; }
+.upx .step .dot.active{ background:#111; border-color:#111; }
+.upx .step .label{ font-size:13px; color:#334155; white-space:nowrap; }
 
-/* จุด + ป้ายชื่อ */
-.step{
-  display:flex; flex-direction:column; align-items:center;
-  gap:6px; z-index:1;
-}
-.step .dot{
-  width:14px; height:14px; border-radius:50%;
-  background:#fff; border:2px solid #cfd6e2;
-}
-.step .dot.active{ background:#111; border-color:#111; }
-.step .label{
-  font-size:13px; color:#334155; white-space:nowrap;
-}
-
-/* มือถือ: ย่อขนาด */
+/* มือถือ */
 @media (max-width:640px){
-  .stepper{ column-gap:12px; }
-  .step .label{ font-size:12px; }
-  .step .dot{ width:12px; height:12px; }
+  .upx .stepper{ column-gap:12px; }
+  .upx .step .label{ font-size:12px; }
+  .upx .step .dot{ width:12px; height:12px; }
 }
 
 /* ============ ฟอร์ม ============ */
-.panel{ margin:0; padding:0; border:0; }
-.field{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
-.field label{ font-size:14px; font-weight:700; color:#0f172a; }
+.upx .panel{ margin:0; padding:0; border:0; }
+.upx .field{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+.upx .field label{ font-size:14px; font-weight:700; color:#0f172a; }
 
-/* อินพุตโทนบาง มน */
-input[type="text"], input[type="number"], select, textarea{
+/* อินพุตโทนบาง มน (scoped) */
+.upx input[type="text"],
+.upx input[type="number"],
+.upx select,
+.upx textarea{
   background:#fff; color:#111827;
-  border:1px solid #e1e6ef;
-  border-radius:12px;
+  border:1px solid #e1e6ef; border-radius:12px;
   padding:10px 12px; font-size:14.5px; outline:none;
 }
-textarea{ min-height:96px; resize:vertical; }
-input:focus, select:focus, textarea:focus{
+.upx textarea{ min-height:96px; resize:vertical; }
+.upx input:focus, .upx select:focus, .upx textarea:focus{
   border-color:#111; box-shadow:0 0 0 3px rgba(17,17,17,.06);
 }
 
 /* ============ อัปโหลดรูป ============ */
-.upload{ display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; }
-.visually-file{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+.upx .upload{ display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; }
+.upx .visually-file{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
 
-.upload-box{
-  width:120px; height:120px;
-  border:2px dashed #d7dee8;
-  background:#f8fafc;
-  border-radius:12px;
-  display:grid; place-items:center;
-  cursor:pointer; transition:transform .15s ease, background .2s;
+.upx .upload-box{
+  width:120px; height:120px; border:2px dashed #d7dee8; background:#f8fafc;
+  border-radius:12px; display:grid; place-items:center; cursor:pointer;
+  transition:transform .15s ease, background .2s;
 }
-.upload-box:hover{ transform:translateY(-1px); background:#f3f4f6; }
-.upload-box .plus{ font-size:34px; color:#6b7280; }
+.upx .upload-box:hover{ transform:translateY(-1px); background:#f3f4f6; }
+.upx .upload-box .plus{ font-size:34px; color:#6b7280; }
 
-.thumbs{ display:flex; flex-wrap:wrap; gap:10px; }
-.thumbs img{
+.upx .thumbs{ display:flex; flex-wrap:wrap; gap:10px; }
+.upx .thumbs img{
   width:120px; height:120px; object-fit:cover;
   border-radius:12px; border:1px solid #e5e7eb;
 }
 
 /* ============ ปุ่ม ============ */
-.actions{
-  display:flex; justify-content:center; gap:10px;
-  margin-top:18px;
-}
-.btn{
-  padding:9px 16px; border-radius:10px;
-  font-weight:700; font-size:14px; cursor:pointer;
+.upx .actions{ display:flex; justify-content:center; gap:10px; margin-top:18px; }
+.upx .btn{
+  padding:9px 16px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;
   border:2px solid #111; transition:filter .15s ease;
 }
-.btn.primary{ background:#111; color:#fff; }
-.btn.primary:hover{ filter:brightness(.95); }
-.btn.ghost{ background:#fff; color:#111; }
-.btn:disabled{ opacity:.6; cursor:not-allowed; }
+.upx .btn.primary{ background:#111; color:#fff; }
+.upx .btn.primary:hover{ filter:brightness(.95); }
+.upx .btn.ghost{ background:#fff; color:#111; }
+.upx .btn:disabled{ opacity:.6; cursor:not-allowed; }
+.icons-drawer a img,
+#iconsDrawer .drawer-acc > img{
+  width:24px !important; height:24px !important; object-fit:contain;
+  flex:0 0 24px; filter:none;
+}
