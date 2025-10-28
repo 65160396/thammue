@@ -47,3 +47,8 @@
   background: #000; /* ดำเข้มตอน hover */
   border-color: #000;
 }
+@media (max-width: 768px) {
+  .desktop-icons {
+    display: none !important;
+  }
+}

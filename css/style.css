@@ -1,4 +1,7 @@
-/* ========== body หน้าแรก ========== */
+/* ========== Global reset & base ========== */
+* {
+  box-sizing: border-box;
+}
 
 html,
 body {
@@ -7,11 +10,64 @@ body {
   width: 100%;
   height: 100%;
 }
+
 body {
   min-height: 100vh;
+  font-family: "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", Arial,
+    sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
 }
 
-/* ========== Header หลัก (แถวโลโก้ + ค้นหา + ไอคอน) ========== */
+img {
+  max-width: 100%;
+  display: block;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ========== CSS Variables (รวมไว้ที่เดียว) ========== */
+:root {
+  /* theme tokens */
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #1b1f24;
+  --muted: #6b7280;
+  --brand: #000000;
+  --brand-700: #000000;
+  --band: #e8f6f4;
+  --radius: 16px;
+  --shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+
+  /* drawer tokens */
+  --drawer-w: 300px;
+  --backdrop: rgba(0, 0, 0, 0.45);
+  --badge: #ff2d55;
+}
+
+/* ========== Layout helpers ========== */
+.container {
+  width: min(1100px, 100%);
+  margin-inline: auto;
+  padding: 0 16px;
+}
+.center {
+  text-align: center;
+}
+.mt-24 {
+  margin-top: 24px;
+}
+.muted {
+  color: var(--muted);
+}
+.tiny {
+  font-size: 12px;
+}
+
+/* ========== Header (แถวโลโก้ + ค้นหา + ไอคอน) ========== */
 .header-wrapper {
   display: flex;
   align-items: center;
@@ -53,8 +109,6 @@ body.login-page {
   white-space: nowrap;
   font-family: "Cinzel", "Times New Roman", serif;
 }
-
-/*จอเล็ก ซ่อนไว้หรือย่อขนาด*/
 @media (max-width: 768px) {
   .brand-text {
     font-size: 18px;
@@ -62,7 +116,7 @@ body.login-page {
   }
 }
 
-/* ===== แถบบนสุด (Top bar) ใช้ .top-nav เท่านั้น ===== */
+/* ===== Top bar ===== */
 .top-nav {
   list-style-type: none;
   margin: 0;
@@ -99,7 +153,6 @@ body.login-page {
   background-color: #107186;
 }
 
-/* ไอคอนใน top bar */
 .menu-icon {
   height: 20px;
   width: auto;
@@ -108,7 +161,7 @@ body.login-page {
   filter: invert(100%);
 }
 
-/* กล่องค้นหา + ปุ่มไอคอนขวา (generic) */
+/* ===== Search + Right icons ===== */
 .search-container {
   display: flex;
   align-items: center;
@@ -118,12 +171,10 @@ body.login-page {
   gap: 12px;
 }
 
-/* ===== Search box: กล่องเดียวโค้งมน + ไอคอนขวา ===== */
 .header-wrapper .search-container {
   flex: 1 1 auto;
   gap: 12px;
 }
-
 .header-wrapper .search-group {
   display: flex;
   align-items: center;
@@ -134,7 +185,6 @@ body.login-page {
   border-radius: 12px;
   overflow: hidden;
 }
-
 .header-wrapper .search-group input[type="text"] {
   flex: 1;
   height: 100%;
@@ -145,7 +195,6 @@ body.login-page {
   outline: none;
   background: #fff;
 }
-
 .header-wrapper .search-group .search-button {
   width: 56px;
   height: 100%;
@@ -162,13 +211,12 @@ body.login-page {
   height: 18px;
   opacity: 0.85;
 }
-
 .header-wrapper .search-group:focus-within {
   border-color: #111;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-/* ปุ่ม/ไอคอนขวา */
+/* ปุ่มไอคอนขวา */
 .search-container .icon-buttons {
   display: flex;
   align-items: center;
@@ -187,6 +235,7 @@ body.login-page {
   width: 36px;
   height: 36px;
   flex-shrink: 0;
+  position: relative; /* เผื่อ badge */
 }
 .search-container .action-button:hover {
   background: #111;
@@ -218,7 +267,6 @@ body.login-page {
 }
 
 /* ===== Hamburger button ===== */
-/* เดสก์ท็อป: ซ่อน hamburger เสมอ */
 .hamburger {
   display: none !important;
   background: transparent;
@@ -234,11 +282,10 @@ body.login-page {
   display: block;
 }
 
-/* มือถือ/จอเล็กเท่านั้นค่อยแสดง */
 @media (max-width: 992px) {
   .desktop-icons {
     display: none;
-  } /* ซ่อนไอคอนเดิม */
+  } /* ซ่อนไอคอนเดสก์ท็อป */
   .hamburger {
     display: inline-flex !important;
     align-items: center;
@@ -260,7 +307,6 @@ body.login-page {
     height: 24px;
   }
 
-  /* ให้ช่องค้นหายืดเต็มความกว้างบนมือถือ */
   .search-container {
     flex: 1 1 100%;
     order: 3;
@@ -270,21 +316,13 @@ body.login-page {
   }
 }
 
-/* ====== Mobile Header / Icons Drawer ====== */
-:root {
-  --drawer-w: 300px;
-  --backdrop: rgba(0, 0, 0, 0.45);
-  --badge: #ff2d55;
-}
-
-/* Backdrop */
+/* ===== Mobile Drawer ===== */
 .icons-backdrop {
   position: fixed;
   inset: 0;
   background: var(--backdrop);
   z-index: 90;
 }
-/* Drawer */
 .icons-drawer {
   position: fixed;
   top: 0;
@@ -338,9 +376,6 @@ body.login-page {
 }
 
 /* badge */
-.action-button {
-  position: relative;
-}
 .icon-badge {
   position: absolute;
   top: -6px;
@@ -378,7 +413,7 @@ body.login-page {
   touch-action: none;
 }
 
-/* ===== โฆษณา / หมวดหมู่ / หน้า login / แนะนำสินค้า ===== */
+/* ========== โฆษณา / หมวดหมู่ / Login / สินค้าแนะนำ ========== */
 .ad-banner {
   width: 100%;
   padding: 50px 0;
@@ -394,7 +429,7 @@ body.login-page {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/*หมวดหมู่*/
+/* หมวดหมู่ */
 .category-buttons {
   display: flex;
   justify-content: center;
@@ -532,7 +567,7 @@ body.login-page {
   text-decoration: none;
 }
 
-/* พื้นหลัง footer */
+/* ========== Footer (เวอร์ชันกล่องขาวบนพื้นเข้ม) ========== */
 .site-footer {
   background: #1a1a1a;
   padding: 28px 0 36px;
@@ -560,7 +595,6 @@ body.login-page {
   color: #444;
 }
 
-/* ลิงก์ */
 .footer-links {
   list-style: none;
   margin: 0;
@@ -580,7 +614,6 @@ body.login-page {
   text-decoration: underline;
 }
 
-/* Subscribe */
 .subscribe-form {
   display: flex;
   gap: 8px;
@@ -607,7 +640,6 @@ body.login-page {
   filter: brightness(0.95);
 }
 
-/* Social icons */
 .footer-social {
   display: flex;
   gap: 10px;
@@ -631,70 +663,13 @@ body.login-page {
   background: #eaeaea;
 }
 
-/* Responsive footer */
 @media (max-width: 900px) {
   .footer-inner {
     grid-template-columns: 1fr;
   }
 }
 
-/* ===== indexexchang theme tokens ===== */
-:root {
-  --bg: #f6f7fb;
-  --card: #ffffff;
-  --text: #1b1f24;
-  --muted: #6b7280;
-  --brand: #000000;
-  --brand-700: #000000;
-  --band: #e8f6f4;
-  --radius: 16px;
-  --shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-}
-
-* {
-  box-sizing: border-box;
-}
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-body {
-  font-family: "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", Arial,
-    sans-serif;
-  color: var(--text);
-  background: var(--bg);
-  line-height: 1.6;
-}
-img {
-  max-width: 100%;
-  display: block;
-}
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.container {
-  width: min(1100px, 100%);
-  margin-inline: auto;
-  padding: 0 16px;
-}
-
-/* Utilities */
-.center {
-  text-align: center;
-}
-.mt-24 {
-  margin-top: 24px;
-}
-.muted {
-  color: var(--muted);
-}
-.tiny {
-  font-size: 12px;
-}
-
+/* ========== Buttons ========== */
 .btn {
   display: inline-block;
   padding: 12px 18px;
@@ -726,7 +701,7 @@ a {
   font-size: 14px;
 }
 
-/* Hero */
+/* ========== Hero / Sections / Grid / Cards ========== */
 .hero {
   background: #d9d9d9;
   padding: 56px 0 72px;
@@ -745,7 +720,6 @@ a {
   flex-wrap: wrap;
 }
 
-/* Sections */
 .section {
   padding: 40px 0;
 }
@@ -766,7 +740,6 @@ a {
   font-weight: 600;
 }
 
-/* Grid */
 .grid {
   display: grid;
   gap: 18px;
@@ -789,7 +762,6 @@ a {
   }
 }
 
-/* Card */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -869,7 +841,7 @@ a {
   margin: 0 0 6px;
 }
 
-/* Footer (อีกชุดให้ครบ) */
+/* ========== Footer (อีกชุดให้ครบ) ========== */
 .footer {
   background: #fff;
   padding: 36px 0 24px;
@@ -925,7 +897,7 @@ a {
   background: #cbd5e1;
 }
 
-/* ===== Flash Toast ===== */
+/* ========== Flash Toast ========== */
 .flash-toast {
   position: fixed;
   top: 80px;
@@ -966,41 +938,13 @@ a {
   }
 }
 
-/* ชื่อผู้ใช้ถัดจากไอคอน + เมนูผู้ใช้ */
-.icon-buttons .user-area {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  text-decoration: none;
-}
-.icon-buttons .user-area img {
-  height: 26px;
-  width: auto;
-  display: block;
-}
-.icon-buttons .user-chip {
-  color: #fff;
-  font-size: 14px;
-  opacity: 0.9;
-  max-width: 140px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.icon-buttons .user-area:hover .user-chip {
-  opacity: 1;
-}
-@media (max-width: 640px) {
-  .icon-buttons .user-chip {
-    display: none;
-  }
-}
-
+/* ========== User menu (รวมซ้ำ) ========== */
 .user-menu {
   position: relative;
   z-index: 1;
 }
+
+/* user area (ใช้ได้ทั้งใน .icon-buttons และทั่วไป) */
 .user-area {
   background: transparent;
   border: 0;
@@ -1015,6 +959,13 @@ a {
   width: auto;
   display: block;
 }
+.user-area .chev {
+  width: 14px;
+  height: 14px;
+  opacity: 0.7;
+}
+
+/* chip เดสก์ท็อป/มือถือ */
 .user-chip {
   color: #fff;
   font-size: 14px;
@@ -1024,10 +975,8 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.user-area .chev {
-  width: 14px;
-  height: 14px;
-  opacity: 0.7;
+.user-area:hover .user-chip {
+  opacity: 1;
 }
 @media (max-width: 640px) {
   .user-chip {
@@ -1035,6 +984,7 @@ a {
   }
 }
 
+/* dropdown */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -1086,22 +1036,16 @@ a {
   color: #b91c1c;
 }
 
-/* ====== Header click fixes ====== */
-.icon-buttons .action-button {
-  position: relative;
-  z-index: 2;
-} /* กัน dropdown คลุมปุ่มแชท */
+/* ========== Click fixes & misc ========== */
 #qSuggest {
   position: absolute;
   z-index: 10;
 } /* กันกล่องแนะนำคำค้นทับ header */
-
-/* กัน element ที่ซ่อนไว้ยังคลุมคลิก (เช่น backdrop) */
 [hidden] {
   display: none !important;
 }
 
-/* Mobile Responsive (รวม) */
+/* ========== Mobile Responsive (รวม) ========== */
 @media screen and (max-width: 768px) {
   .top-nav {
     justify-content: center;

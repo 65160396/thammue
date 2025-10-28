@@ -193,3 +193,9 @@
     grid-area: status;
   }
 }
+/* ซ่อนไอคอนหัวเว็บบนมือถือ เพราะไปอยู่ในแฮมเบอร์เกอร์แล้ว */
+@media (max-width: 768px) {
+  .header-wrapper .icon-buttons.desktop-icons {
+    display: none !important;
+  }
+}

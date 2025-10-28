@@ -46,6 +46,8 @@ $orders = $stmt->fetchAll();
     <title>My Orders – คำสั่งซื้อของฉัน</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/orders.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+
 </head>
 
 <body class="orders-page">
@@ -168,11 +170,48 @@ $orders = $stmt->fetchAll();
     <!---ดูว่าเมลนี้มีร้านค้ายัง -->
     <script src="/js/store/shop-toggle.js"></script>
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleOpenOrMyShop();
-  });
-</script>
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleOpenOrMyShop();
+        });
+    </script>
     <script src="/js/cart-badge.js" defer></script>
+
+
+    <!-- ===== Drawer มือถือ ===== -->
+    <div class="icons-drawer" id="iconsDrawer" hidden>
+        <button class="icons-drawer__close" id="iconsClose" type="button">ปิด</button>
+
+        <a href="/page/favorites/index.php">
+            <img src="/img/Icon/heart.png" alt> รายการโปรด
+            <span class="badge" id="favBadgeMobile" hidden>0</span>
+        </a>
+
+        <a href="/page/cart/index.php">
+            <img src="/img/Icon/shopping-cart.png" alt> ตะกร้า
+            <span class="badge" id="cartBadgeMobile" hidden>0</span>
+        </a>
+
+        <a href="/page/storepage/chat.html">
+            <img src="/img/Icon/chat.png" alt> แชท
+            <span class="badge" id="chatBadgeMobile" hidden>0</span>
+        </a>
+
+        <!-- โปรไฟล์ (พับได้) -->
+        <button id="mobileProfileToggle" class="drawer-acc" aria-expanded="false" type="button">
+            <img src="/img/Icon/user.png" alt> โปรไฟล์
+            <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="mobileAccountMenu" class="drawer-acc-menu" hidden></div>
+    </div>
+    <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
+
+    <!-- ควบคุมเปิด/ปิด Drawer (โหลดหลัง DOM ของ Drawer) -->
+    <script src="/js/nav/hamburger.js"></script>
+    <script src="/js/nav/drawer-sync.js"></script>
+
 </body>
 
 

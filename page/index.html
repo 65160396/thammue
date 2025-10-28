@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Thammue</title>
+        <!-- CSS หลัก -->
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/products.css" />
     </head>
@@ -32,25 +33,66 @@
                 <a href="/page/index.html" class="brand-text">THAMMUE</a>
             </div>
 
+            <!-- ปุ่มแฮมเบอร์เกอร์ (มือถือ) -->
+            <button
+                class="hamburger"
+                id="hamburgerBtn"
+                type="button"
+                aria-label="เมนู"
+                aria-controls="iconsDrawer"
+                aria-expanded="false">
+                <img src="/img/Icon/menu.png" alt="เมนู" />
+            </button>
+
+            <!-- ค้นหา + ไอคอน (เดสก์ท็อป) -->
             <div class="search-container">
                 <div class="search-group">
-                    <input type="text" placeholder="ค้นหาสินค้า" />
-                    <button class="search-button" aria-label="ค้นหา">
+                    <input
+                        id="q"
+                        type="text"
+                        placeholder="ค้นหาสินค้า"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        role="combobox"
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-controls="qSuggest"
+                        aria-haspopup="listbox" />
+
+                    <button id="btnSearch" class="search-button" type="button"
+                        aria-label="ค้นหา">
                         <img src="/img/Icon/search.png" alt="ค้นหา" />
                     </button>
+
+                    <!-- ถ้าอยากทำ suggestion history ในอนาคต -->
+                    <div id="qSuggest" class="search-suggest" hidden></div>
                 </div>
-                <div class="icon-buttons">
-                    <button class="action-button"><img src="/img/Icon/heart.png"
-                            alt="รายการโปรด" /></button>
-                    <button class="action-button"><img
-                            src="/img/Icon/shopping-cart.png"
-                            alt="ตะกร้า" /></button>
-                    <button class="action-button"><img src="/img/Icon/chat.png"
-                            alt="แชท" /></button>
+
+                <!-- ใส่ id badge ให้ mirror ไปมือถือได้ -->
+                <div class="icon-buttons desktop-icons">
+                    <a class="action-button" href="/page/login.html"
+                        aria-label="รายการโปรด">
+                        <img src="/img/Icon/heart.png" alt="รายการโปรด" />
+                        <span id="favBadge" class="icon-badge" hidden>0</span>
+                    </a>
+
+                    <a class="action-button" href="/page/login.html"
+                        aria-label="ตะกร้า" style="position:relative">
+                        <img src="/img/Icon/shopping-cart.png" alt="ตะกร้า" />
+                        <span id="cartBadge" class="icon-badge" hidden>0</span>
+                    </a>
+
+                    <a class="action-button" href="/page/login.html"
+                        aria-label="แชท" style="position:relative">
+                        <img src="/img/Icon/chat.png" alt="แชท" />
+                        <span id="chatBadge" class="icon-badge" hidden>0</span>
+                    </a>
                 </div>
             </div>
         </div>
 
+        <!-- ปุ่มหมวด -->
         <div class="category-buttons">
             <a href="/page/category/handmade.html"
                 class="category-button">สินค้าแฮนเมด</a>
@@ -66,25 +108,44 @@
             <img src="/img/Illustration/โฆษณา.jpg" alt="โฆษณา" />
         </div>
 
+        <!-- ผลการค้นหา -->
+        <section id="searchSection" class="search-results" hidden>
+            <div class="search-results__head">
+                <h2>ผลการค้นหา <span id="searchCount"></span></h2>
+                <a href="#" id="clearSearch"
+                    class="btn btn-primary">ล้างการค้นหา</a>
+            </div>
+            <div id="results" class="product-grid"></div>
+        </section>
+
+        
         <!-- แนะนำสำหรับคุณ -->
         <div class="recommended-products">
             <h2>แนะนำสำหรับคุณ</h2>
             <div class="product-grid"></div>
         </div>
 
-        <script>
-(function () {
-  //ดึง path ปัจจุบันจาก URL"
-  var path = location.pathname.replace(/\/+/g,'/').toLowerCase();
-  document.querySelectorAll('.category-buttons a.category-button').forEach(function (a) {
-    var href = a.getAttribute('href').replace(/\/+/g,'/').toLowerCase();
-    if (path.endsWith(href)) {
-      // 5. เติม class "active" ให้ปุ่มนั้น
-      a.classList.add('active');
-    }
-  });
-})();
-</script>
+        <!-- ===== Drawer มือถือ ===== -->
+        <div class="icons-drawer" id="iconsDrawer" hidden>
+            <button class="icons-drawer__close" id="iconsClose"
+                type="button">ปิด</button>
+
+            <a href="/page/login.html">
+                <img src="/img/Icon/heart.png" alt /> รายการโปรด
+                <span class="badge" id="favBadgeMobile" hidden>0</span>
+            </a>
+
+            <a href="/page/login.html">
+                <img src="/img/Icon/shopping-cart.png" alt /> ตะกร้า
+                <span class="badge" id="cartBadgeMobile" hidden>0</span>
+            </a>
+
+            <a href="/page/login.html">
+                <img src="/img/Icon/chat.png" alt /> แชท
+                <span class="badge" id="chatBadgeMobile" hidden>0</span>
+            </a>
+        </div>
+        <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
 
         <!-- Footer -->
         <footer class="footer">
@@ -130,14 +191,31 @@
             </div>
         </footer>
 
+        <!-- JS รายการสินค้า -->
         <script src="/js/productsforsale/products-list.js"></script>
         <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    renderProducts({
-      endpoint: '/page/backend/productsforsale/get_products.php'
-    });
-  });
-</script>
+      document.addEventListener('DOMContentLoaded', () => {
+        renderProducts({ endpoint: '/page/backend/productsforsale/get_products.php' });
+      });
+    </script>
 
+        <!-- ระบาย active ปุ่มหมวด -->
+        <script>
+      (function () {
+        var path = location.pathname.replace(/\/+/g,'/').toLowerCase();
+        document.querySelectorAll('.category-buttons a.category-button').forEach(function (a) {
+          var href = a.getAttribute('href').replace(/\/+/g,'/').toLowerCase();
+          if (path.endsWith(href)) a.classList.add('active');
+        });
+      })();
+    </script>
+
+        <!-- badge counters (เดสก์ท็อป) — ไม่ error ถึงแม้ยังไม่ล็อกอิน -->
+        <script src="/js/fav-badge.js" defer></script>
+        <script src="/js/cart-badge.js" defer></script>
+
+        <!-- สคริปต์ควบคุม Drawer (ต้องโหลดหลัง DOM ของ drawer/backdrop) -->
+        <script src="/js/nav/hamburger.js"></script>
+        <script src="/js/nav/drawer-sync.js"></script>
     </body>
 </html>

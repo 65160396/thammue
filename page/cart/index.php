@@ -49,6 +49,7 @@ function imgPath($row)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/cart.css" />
+    <link rel="stylesheet" href="/css/products.css" />
 </head>
 
 <body class="cart-page">
@@ -269,6 +270,44 @@ function imgPath($row)
             updateQty(id, qty, row);
         });
     </script>
+
+    <!-- ===== Drawer มือถือ ===== -->
+    <div class="icons-drawer" id="iconsDrawer" hidden>
+        <button class="icons-drawer__close" id="iconsClose" type="button">ปิด</button>
+
+        <a href="/page/favorites/index.php">
+            <img src="/img/Icon/heart.png" alt=""> รายการโปรด
+            <span class="badge" id="favBadgeMobile" hidden>0</span>
+        </a>
+
+        <a href="/page/cart/index.php">
+            <img src="/img/Icon/shopping-cart.png" alt=""> ตะกร้า
+            <span class="badge" id="cartBadgeMobile" hidden>0</span>
+        </a>
+
+        <a href="/page/storepage/chat.html">
+            <img src="/img/Icon/chat.png" alt=""> แชท
+            <span class="badge" id="chatBadgeMobile" hidden>0</span>
+        </a>
+
+        <!-- โปรไฟล์แบบพับได้ -->
+        <button id="mobileProfileToggle" class="drawer-acc" aria-expanded="false" type="button">
+            <img src="/img/Icon/user.png" alt=""> โปรไฟล์
+            <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="mobileAccountMenu" class="drawer-acc-menu" hidden></div>
+    </div>
+    <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
+
+    <!-- โหลดหลังจากมี Drawer แล้ว -->
+    <script src="/js/nav/hamburger.js"></script>
+    <script src="/js/nav/drawer-sync.js"></script>
+
+
+
 
 </body>
 

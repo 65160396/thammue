@@ -138,7 +138,7 @@
     <!-- แนะนำสำหรับคุณ -->
     <section class="recommended-products">
       <h2>แนะนำสำหรับคุณ</h2>
-      <div id="homeGrid" class="product-grid"></div>
+      <div id="homeGrid" class="product-grid list-layout"></div>
     </section>
 
     <!-- ===== สคริปต์ส่วนบน (ไม่เกี่ยวกับ drawer) ===== -->
@@ -205,10 +205,11 @@
     </div>
 
     <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
-
+    <div data-include="/page/partials/ex_footer copy.html"></div>
     <!-- ===== สคริปต์ท้ายหน้า ===== -->
     <script src="/js/search/search.js"></script>
     <script src="/js/search/header-search.js"></script>
+    
     <script>
 Search.init({
   input:   "#q",
@@ -250,75 +251,9 @@ window.runSearch = function(term){
 
     <!-- โหลดหลังจากมี DOM ของ drawer/backdrop แล้ว -->
     <script src="/js/nav/hamburger.js"></script>
-
-    <!-- เมนูโปรไฟล์สำหรับ Drawer (เรนเดอร์ตามสถานะล็อกอิน) -->
-    <script>
-      (function () {
-        const toggle = document.getElementById('mobileProfileToggle');
-        const menu   = document.getElementById('mobileAccountMenu');
-        const dd     = document.getElementById('userDropdown'); // เมนูเดสก์ท็อป
-        if (!toggle || !menu || !dd) return;
-
-        // ช่วยบอกสถานะล็อกอินจากเดสก์ท็อป: มีลิงก์ .logout แปลว่าล็อกอินแล้ว
-        const isLoggedInFromDesktop = () => !!dd.querySelector('a.logout');
-
-        // clone เมนูจากเดสก์ท็อปมาใส่ใน drawer (รักษา <hr> และ class .logout)
-        function syncMenuFromDesktop() {
-          const fr = document.createDocumentFragment();
-          const items = dd.querySelectorAll('a, hr');
-          if (items.length) {
-            items.forEach((el) => {
-              const clone = el.cloneNode(true);
-              if (clone.tagName === 'A') {
-                clone.removeAttribute('role');
-                clone.style.color = 'inherit';
-              }
-              fr.appendChild(clone);
-            });
-            menu.innerHTML = '';
-            menu.appendChild(fr);
-            return true;
-          }
-          return false;
-        }
-
-        // fallback ถ้าเดสก์ท็อปยังไม่เติมเมนู (เช่นโหลดช้า)
-        function renderFallback() {
-          if (isLoggedInFromDesktop()) {
-            menu.innerHTML = `
-              <a href="/page/account/index.html">บัญชีของฉัน</a>
-              <a href="/page/order/history.html">การซื้อของฉัน</a>
-              <a href="/page/account/change_password.html">เปลี่ยนรหัสผ่าน</a>
-              <hr>
-              <a class="logout" href="/page/logout.php">ออกจากระบบ</a>
-            `;
-          } else {
-            menu.innerHTML = `
-              <a href="/page/login.html">เข้าสู่ระบบ</a>
-              <a href="/page/register.html">สมัครสมาชิก</a>
-            `;
-          }
-        }
-
-        // เปิด/ปิดเมนูโปรไฟล์ใน drawer
-        toggle.addEventListener('click', () => {
-          const expanded = toggle.getAttribute('aria-expanded') === 'true';
-          if (!expanded) {
-            const ok = syncMenuFromDesktop();
-            if (!ok) renderFallback();
-          }
-          toggle.setAttribute('aria-expanded', String(!expanded));
-          menu.hidden = expanded;
-        });
-
-        // ถ้าเดสก์ท็อปเติมเมนูภายหลัง (user-menu.js async) ให้ sync อัตโนมัติ
-        const mo = new MutationObserver(() => {
-          if (!menu.hidden) syncMenuFromDesktop();
-        });
-        mo.observe(dd, { childList: true, subtree: true });
-      })();
-    </script>
+    <script src="/js/nav/drawer-sync.js"></script>
 
     <script src="/js/notify-poll.js"></script>
+    <script src="/js/ex.include.js"></script>
   </body>
 </html>

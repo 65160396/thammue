@@ -32,12 +32,16 @@ $qrUrl = "https://promptpay.io/{$ppId}.png?amount={$amountStr}";
     <title>ชำระเงินด้วยพร้อมเพย์</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/payment_qr.css">
+    <link rel="stylesheet" href="/css/products.css" />
 </head>
 
 <body>
     <?php
     // ✅ ใช้ header กลางของเว็บ (เหมือนหน้า checkout)
     $HEADER_NO_CATS = true;                       // ซ่อนแถบหมวดหมู่ ถ้าไม่ต้องการให้โชว์
+    $HEADER_NO_SEARCH = true;
+    $HEADER_HIDE_ICONS = true;
+    $HEADER_NO_HAMBURGER = true;
     include __DIR__ . '/../partials/site-header.php';
     ?>
     <div class="wrap">

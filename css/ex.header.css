@@ -109,7 +109,12 @@ html, body { margin:0; padding:0; }
   padding:12px 8px; border-radius:12px; color:#fff; text-decoration:none;
 }
 .icons-drawer a:hover{ background:rgba(255,255,255,.08); }
-.icons-drawer a img{ width:24px; height:24px; filter:invert(1); }
+/* ยกเลิกการกลับสีของไอคอนในลิ้นชัก */
+.icons-drawer a img,
+#iconsDrawer .drawer-acc > img{
+  filter: none !important;
+  opacity: .95;          /* ใส่ได้เพื่อให้ดูนุ่มตา */
+}
 
 /* เมนูโปรไฟล์ย่อยใน Drawer */
 .drawer-acc{
@@ -297,3 +302,11 @@ html, body { margin:0; padding:0; }
 .nav-icon{ position:relative; display:inline-block; margin:0 6px; }
 
 .badge{display:inline-block;min-width:18px;padding:0 6px;border-radius:999px;background:#ef4444;color:#fff;font-size:12px;line-height:18px;text-align:center;margin-left:4px}
+.icons-drawer a img,
+#iconsDrawer .drawer-acc > img{
+  width:24px !important;
+  height:24px !important;
+  object-fit: contain;
+  flex: 0 0 24px;
+  filter: none;
+}
