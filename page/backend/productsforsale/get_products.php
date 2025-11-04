@@ -1,14 +1,19 @@
 <?php
+
+// 📂 /page/backend/(ชื่อไฟล์นี้มักจะใช้ชื่อ เช่น list_products.php หรือ products_api.php)
+// ✅ หน้าที่หลัก: เป็น API สำหรับ "ดึงรายการสินค้าทั้งหมด" จากฐานข้อมูล shopdb
+//   โดยสามารถค้นหา, กรองตามหมวดหมู่, เรียงลำดับ, และแบ่งหน้าได้
+//   พร้อมทั้งบอกด้วยว่า user ที่ล็อกอินอยู่เป็นเจ้าของสินค้านั้นหรือไม่
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 
 session_start(); // ใช้ตรวจเจ้าของ
 
-// ===== Debug (ใช้เฉพาะตอนทดสอบ) =====
-// error_reporting(E_ALL); ini_set('display_errors', 1);
+// 🔹 (ถ้ากำลังพัฒนา) สามารถเปิด debug ได้
 
-// ===== DB =====
+
+
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -26,7 +31,7 @@ function hasColumn(PDO $pdo, string $table, string $col): bool
 $hasProductUser = hasColumn($pdo, 'products', 'user_id');
 $hasShopUser    = hasColumn($pdo, 'shops',    'user_id');
 
-// ===== Params =====
+// อ่านค่าจาก URL
 $cat    = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
 $q      = trim($_GET['q'] ?? '');
 $sort   = strtolower($_GET['sort'] ?? 'created');  // created|price|name
@@ -35,12 +40,13 @@ $limit  = isset($_GET['limit']) ? max(0, (int)$_GET['limit']) : 0; // 0 = all
 $page   = max(1, (int)($_GET['page'] ?? 1));
 $offset = $limit ? ($page - 1) * $limit : 0;
 
-// ===== Sort map (ใช้ alias p.) =====
+// แผนที่คอลัมน์สำหรับเรียงลำดับ
 $sortMap = ['created' => 'p.created_at', 'price' => 'p.price', 'name' => 'p.name'];
 $sortCol = $sortMap[$sort] ?? 'p.created_at';
 $dirSql  = ($dir === 'asc') ? 'ASC' : 'DESC';
 
-// ===== Image helpers =====
+// ฟังก์ชันช่วยจัดการ path รูปสินค้า
+// เช่น ตรวจหาไฟล์จริงใน /uploads/products/{id}/
 function detectPageRoot(): string
 {
     $d = __DIR__;
@@ -71,7 +77,7 @@ function productMainImageWebPath(array $p): string
     return $WEB_PREFIX . '/img/placeholder.png';
 }
 
-// ===== WHERE (อิง p.) =====
+// เงื่อนไข WHERE (กรองตามหมวด, คำค้นหา)
 $where  = [];
 $params = [];
 if ($cat > 0) {
@@ -88,7 +94,7 @@ if ($q !== '') {
 }
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-// ===== COUNT =====
+// นับจำนวนสินค้าทั้งหมด (ใช้สำหรับ pagination)
 $stc = $pdo->prepare("SELECT COUNT(*)
                       FROM products p
                       LEFT JOIN categories c ON c.id = p.category_id
@@ -96,8 +102,8 @@ $stc = $pdo->prepare("SELECT COUNT(*)
 $stc->execute($params);
 $total = (int)$stc->fetchColumn();
 
-// ===== MAIN =====
-// owner fields เฉพาะเมื่อมีคอลัมน์จริง
+// ดึงข้อมูลสินค้าจริง
+// ตรวจสอบคอลัมน์ owner เพื่อบอกว่า user คนไหนเป็นเจ้าของ
 $ownerSelectProduct = $hasProductUser ? 'p.user_id AS product_owner_id,' : '0 AS product_owner_id,';
 $ownerSelectShop    = $hasShopUser    ? 's.user_id AS shop_owner_id,'    : '0 AS shop_owner_id,';
 

@@ -23,21 +23,22 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
-
+//ตรวจสอบว่าผู้ใช้นี้เคยกดถูกใจ (favorite) ไว้แล้วหรือไม่
 $st = $pdo->prepare("SELECT 1 FROM favorites WHERE item_type=? AND item_id=? AND user_id=?");
 $st->execute([$type, $id, $userId]);
 $exists = (bool)$st->fetchColumn();
-
+//  ถ้าเคยกดถูกใจแล้ว → ยกเลิก (ลบออก)
+//    ถ้ายังไม่เคย → เพิ่มเข้า favorites
 if ($exists) {
     $st = $pdo->prepare("DELETE FROM favorites WHERE item_type=? AND item_id=? AND user_id=?");
     $st->execute([$type, $id, $userId]);
-    $liked = false;
+    $liked = false;// ตอนนี้เป็นสถานะ "เลิกถูกใจ"
 } else {
     $st = $pdo->prepare("INSERT INTO favorites(item_type,item_id,user_id) VALUES (?,?,?)");
     $st->execute([$type, $id, $userId]);
-    $liked = true;
+    $liked = true;// ตอนนี้เป็นสถานะ "ถูกใจ"
 }
-
+//  นับจำนวนคนที่กดถูกใจสิ่งนี้ทั้งหมด
 $st = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE item_type=? AND item_id=?");
 $st->execute([$type, $id]);
 $count = (int)$st->fetchColumn();

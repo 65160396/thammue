@@ -11,7 +11,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ]);
-
+// ✅ ดึงโปรไฟล์พื้นฐานสำหรับตรวจความครบถ้วนก่อนสั่งซื้อ
 $st = $pdo->prepare("SELECT first_name,last_name,phone,addr_line,addr_subdistrict,addr_district,addr_province,addr_postcode
                      FROM user_profiles WHERE user_id=?");
 $st->execute([$userId]);
@@ -19,6 +19,7 @@ $pf = $st->fetch();
 
 
 /* ฟิลด์ที่ต้องครบก่อนสั่งซื้อ */
+// ✅ เช็กว่าข้อมูลผู้รับ/ที่อยู่ครบหรือยัง ไม่ครบให้พาไปตั้งค่าโปรไฟล์
 $needProfile = (
     !$pf ||
     $pf['first_name'] === '' || $pf['last_name'] === '' ||
@@ -36,6 +37,7 @@ if ($needProfile) {
 
 
 /* --- helper: สร้าง web path ของรูปสินค้าให้ถูกต้อง --- */
+// ✅ ฟังก์ชันจัด path รูปภาพให้เป็น URL พร้อมใช้บนหน้าเว็บ
 $WEB_PREFIX = '/page';
 function productImageWeb(int $productId, ?string $imagePath): string
 {
@@ -118,7 +120,7 @@ if ($mode === 'buy-now' && !empty($_SESSION['buy_now'])) {
             $items[]    = $row;
         }
     }
-
+// ✅ สรุปยอด + ค่าจัดส่ง (ตัวอย่าง fix 50)
     foreach ($items as $it) $subtotal += ((float)$it['price'] * (int)$it['qty']);
     $shipping = count($items) ? 50 : 0;
 
@@ -144,7 +146,7 @@ if ($mode === 'buy-now' && !empty($_SESSION['buy_now'])) {
         $whereIn = " AND c.id IN ($ph) ";
         $params  = array_merge($params, $selected);
     }
-
+    // ✅ ดึงสินค้าจากตะกร้าเฉพาะรายการที่เลือก
     $sql = "
       SELECT
         c.id AS cart_id,

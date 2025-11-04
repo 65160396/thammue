@@ -44,13 +44,13 @@ $stm = $pdo->prepare("
   WHERE p.id=?");
 $stm->execute([$userId, $productId]);
 $row = $stm->fetch();
-$line_qty   = (int)($row['quantity'] ?? 0);
-$unit_price = (float)($row['price'] ?? 0);
-$line_total = $line_qty * $unit_price;
+$line_qty   = (int)($row['quantity'] ?? 0); // จำนวนล่าสุด
+$unit_price = (float)($row['price'] ?? 0);  // ราคาต่อชิ้น
+$line_total = $line_qty * $unit_price;    // ยอดรวมของสินค้านี้
 
 // จำนวนชิ้นรวมใน badge (รวมตาม quantity)
 $cartCount = (int)$pdo->query("SELECT COALESCE(SUM(quantity),0) FROM cart WHERE user_id={$userId}")->fetchColumn();
-
+// ✅ ส่งข้อมูลกลับไปให้ JavaScript เพื่ออัปเดต UI
 echo json_encode([
     'qty'         => $line_qty,
     'line_total'  => $line_total,

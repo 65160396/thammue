@@ -12,12 +12,29 @@
       body{ background:#f6f8fb; }
       .wrap{max-width:1100px;margin:0 auto;padding:16px}
       .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-      .card{background:#fff;border:1px solid #eef1f5;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+
+      .card{
+        background:#fff;border:1px solid #eef1f5;border-radius:14px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative;
+        transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+      }
+      .card:hover{ border-color:#e3e8ef; box-shadow:0 8px 22px rgba(15,23,42,.08); transform:translateY(-1px); }
+
+      /* ลิงก์ครอบทั้งการ์ด */
+      .card-link{
+        display:block; color:inherit; text-decoration:none; height:100%;
+      }
+      .card-link:focus-visible{ outline:2px solid #111; outline-offset:2px; border-radius:12px; }
+
       .thumb{width:100%;height:170px;object-fit:cover;display:block;background:#f3f4f6}
       .body{padding:10px 12px}
       .title{font-weight:800;margin:4px 0 6px}
       .muted{color:#64748b;font-size:13px}
       .empty{margin-top:16px;text-align:center;color:#64748b}
+
+      /* กันเส้นใต้/สีน้ำเงินในลิงก์ภายในการ์ด */
+      .card-link .title,
+      .card-link .muted{ text-decoration:none; }
     </style>
   </head>
   <body>
@@ -35,7 +52,6 @@
     <script src="/js/ex.header.js"></script>
     <script>
     (async function(){
-      // เอา myId มาก่อน เพื่อใส่เป็น data-user (ให้สคริปต์สามจุดรู้ว่าเป็นเจ้าของ)
       const me = (window.Me && typeof Me.get==='function') ? await Me.get() : { ok:false };
       const myId = me?.ok ? (me.user?.id ?? null) : null;
 
@@ -57,30 +73,29 @@
           const card = document.createElement('article');
           card.className = 'ex-card-x card';
           card.setAttribute('data-id', it.id);
-          // หน้านี้เป็น “ของฉัน” ทั้งหมด ใส่ user เป็น myId เพื่อให้ขึ้นเมนู แก้ไข/ลบ
           if (myId != null) card.setAttribute('data-user', String(myId));
 
+          const href = `/page/ex_item_view.html?id=${encodeURIComponent(it.id)}`;
           card.innerHTML = `
-            <a href="/page/ex_item_view.html?id=${encodeURIComponent(it.id)}" aria-label="ดูรายละเอียด">
+            <a class="card-link" href="${href}" aria-label="ดูรายละเอียดสินค้า">
               <img class="thumb" src="${it.thumbnail_url || ''}" alt="">
+              <div class="body">
+                <div class="title">${it.title || '-'}</div>
+                <div class="muted">${(it.description || '').slice(0, 60) || '&nbsp;'}</div>
+              </div>
             </a>
-            <div class="body">
-              <a class="title" href="/page/ex_item_view.html?id=${encodeURIComponent(it.id)}">
-                ${it.title || '-'}
-              </a>
-              <div class="muted">${(it.description || '').slice(0, 60) || '&nbsp;'}</div>
-            </div>
           `;
           fr.appendChild(card);
         });
         grid.appendChild(fr);
 
-        // แจ้งให้สคริปต์สามจุดสแกนและติดตั้งเมนูในกริดนี้
+        // ติดตั้งเมนูสามจุด
         if (window.ExCardsKebab?.init) ExCardsKebab.init(grid);
 
       }catch(e){
-        document.getElementById('empty').textContent = 'โหลดรายการไม่สำเร็จ';
-        document.getElementById('empty').hidden = false;
+        const emptyEl = document.getElementById('empty');
+        emptyEl.textContent = 'โหลดรายการไม่สำเร็จ';
+        emptyEl.hidden = false;
       }
     })();
     </script>

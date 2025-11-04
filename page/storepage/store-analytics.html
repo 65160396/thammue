@@ -1,84 +1,35 @@
 <!DOCTYPE html>
 <html lang="th">
     <head>
+        <!-- [1] Meta & CSS หลักของหน้า “วิเคราะห์ยอดขาย” -->
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Thammue - วิเคราะห์ยอดขาย</title>
-
-        <!-- ใช้สไตล์หลักของระบบ -->
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/css/open-shop.css" />
         <link rel="stylesheet" href="/css/store-sales.css" />
     </head>
+
     <body class="open-shop store-sales-page">
+        <!-- [2] แถบบนสุด (Top nav: แลกเปลี่ยน/เปิดร้าน/แจ้งเตือน/ช่วยเหลือ/ภาษา) -->
+        <ul class="top-nav">...</ul>
 
-        <!-- แถบบนสุด -->
-        <ul class="top-nav">
-            <!-- ซ้าย -->
-            <li><a href="/page/ex_index.html">แลกเปลี่ยนสินค้า</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a id="openOrMyShop"
-                    href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
+        <!-- [3] Header (โลโก้ + ไอคอนแชท + เมนูโปรไฟล์ผู้ใช้) -->
+        <div class="header-wrapper">...</div>
 
-            <!-- ขวา -->
-            <li class="right"><a
-                    href="/page/notifications.html">แจ้งเตือน</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#help">ช่วยเหลือ</a></li>
-            <li><span class="top-divider">|</span></li>
-            <li><a href="#lang">ไทย</a></li>
-        </ul>
-
-        <!-- Header -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/page/main.html" class="brand-text">THAMMUE</a>
-            </div>
-            <div class="search-container">
-                <div class="icon-buttons">
-                    <a class="action-button" href="/page/storepage/chat.html"
-                        aria-label="แชท" style="position:relative">
-                        <img src="/img/Icon/chat.png" alt="แชท">
-                        <span id="chatBadge" class="icon-badge" hidden>0</span>
-                    </a>
-
-                    <!-- เมนูโปรไฟล์ -->
-                    <div class="user-menu" id="userMenu">
-                        <button class="user-area" id="userArea"
-                            aria-haspopup="true" aria-expanded="false">
-                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                            <span class="user-chip" id="userChip" hidden></span>
-                            <svg class="chev" viewBox="0 0 20 20"
-                                aria-hidden="true">
-                                <path d="M5.5 7.5l4.5 4 4.5-4"
-                                    fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown"
-                            role="menu"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== เนื้อหาหลัก ===== -->
+        <!-- [4] เนื้อหาหลักของหน้า -->
         <div class="wrap">
             <h2>วิเคราะห์ยอดขาย</h2>
 
-            <!-- ฟิลเตอร์ช่วงเวลา -->
+            <!-- [4.1] ส่วนฟิลเตอร์ช่วงเวลา + ระดับการรวมข้อมูล (day/week/month/year)
+             - ผู้ใช้เลือกช่วงวันที่และ granularity แล้วกด “ดูรายงาน” -->
             <div class="card">
                 <div
                     style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
-                    <div>
-                        <label for="f-from">ตั้งแต่</label>
-                        <input type="date" id="f-from" />
-                    </div>
-                    <div>
-                        <label for="f-to">ถึง</label>
-                        <input type="date" id="f-to" />
-                    </div>
+                    <div><label for="f-from">ตั้งแต่</label><input type="date"
+                            id="f-from" /></div>
+                    <div><label for="f-to">ถึง</label><input type="date"
+                            id="f-to" /></div>
                     <div>
                         <label for="f-group">ระดับการรวม</label>
                         <select id="f-group">
@@ -92,13 +43,14 @@
                 </div>
             </div>
 
-            <!-- กราฟรายได้ -->
+            <!-- [4.2] กราฟรายได้ตามช่วงเวลา (Chart.js จะวาดลงใน <canvas>) -->
             <div class="card">
                 <h3>กราฟรายได้ตามช่วงเวลา</h3>
                 <canvas id="chartRevenue" height="120"></canvas>
             </div>
 
-            <!-- ตาราง timeseries -->
+            <!-- [4.3] ตารางสรุปแบบ Time Series (ช่วง/รายได้/ออเดอร์/ชิ้น)
+             - JS เติมแถวลง <tbody id="ts-body"> จากผลลัพธ์ที่ดึงมา -->
             <div class="card">
                 <h3>รายละเอียดตามช่วง</h3>
                 <table class="table-basic">
@@ -113,37 +65,34 @@
                     <tbody id="ts-body"></tbody>
                 </table>
             </div>
-
+            
             <div class="actions">
                 <a class="btn back" id="btn-back">ย้อนกลับ</a>
             </div>
 
-            <!-- ===== คำสั่งโหลดไลบรารีกราฟ” ที่ชื่อว่า Chart.js ===== -->
+    
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script src="/js/me.js"></script>
             <script src="/js/user-menu.js"></script>
-            <script src="/js/store/shop-analytics.js"></script>
             <script src="/js/header-noti.js"></script>
             <script src="/js/notify-poll.js"></script>
-            <!---ดูว่าเมลนี้มีร้านค้ายัง -->
+            <script src="/js/store/shop-analytics.js"></script>
             <script src="/js/store/shop-toggle.js"></script>
             <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleOpenOrMyShop();
-  });
-</script>
+        document.addEventListener('DOMContentLoaded', () => { toggleOpenOrMyShop(); });
+      </script>
 
             <script>
-      // ✅ ผูก shop_id จาก URL ให้กับเมนูและปุ่มย้อนกลับ
-      (function(){
-        const qs = new URLSearchParams(location.search);
-        const shopId = qs.get('shop_id');
-        if (!shopId) return;
-        const back = document.getElementById('btn-back');
-        const navStore = document.getElementById('nav-store');
-        if (back) back.href = `/page/storepage/store-sales.html?shop_id=${encodeURIComponent(shopId)}`;
-        if (navStore) navStore.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
-      })();
-    </script>
-        </body>
-    </html>
+        (function(){
+          const qs = new URLSearchParams(location.search);
+          const shopId = qs.get('shop_id');
+          if (!shopId) return;
+          const back = document.getElementById('btn-back');
+          const navStore = document.getElementById('nav-store');
+          if (back) back.href = `/page/storepage/store-sales.html?shop_id=${encodeURIComponent(shopId)}`;
+          if (navStore) navStore.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
+        })();
+      </script>
+        </div>
+    </body>
+</html>

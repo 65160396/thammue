@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Thammue - ยอดขายร้าน</title>
-        <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/open-shop.css" />
-        <link rel="stylesheet" href="/css/store-sales.css" />
-    </head>
-    <body class="open-shop store-sales-page">
+  <head>
+    <!-- [1] Meta & CSS ของหน้ารายงานยอดขายร้าน -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thammue - ยอดขายร้าน</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/open-shop.css" />
+    <link rel="stylesheet" href="/css/store-sales.css" />
+  </head>
 
-        <!-- แถบบนสุด -->
+  <body class="open-shop store-sales-page">
+    <!-- [2] แถบบนสุด (Top nav: แลกเปลี่ยน/เปิดร้าน/แจ้งเตือน/ช่วยเหลือ/ภาษา) -->
     <ul class="top-nav">
-      <!-- ซ้าย -->
-     <li><a href="/page/ex_index.html">แลกเปลี่ยนสินค้า</a></li>
+      <li><a href="/page/ex_index.html">แลกเปลี่ยนสินค้า</a></li>
       <li><span class="top-divider">|</span></li>
-      <li><a id="openOrMyShop"
-          href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
-
-      <!-- ขวา -->
+      <li><a id="openOrMyShop" href="/page/open_a_shop.html">เปิดร้านค้า</a></li>
       <li class="right"><a href="/page/notifications.html">แจ้งเตือน</a></li>
       <li><span class="top-divider">|</span></li>
       <li><a href="#help">ช่วยเหลือ</a></li>
@@ -26,138 +23,134 @@
       <li><a href="#lang">ไทย</a></li>
     </ul>
 
-        <!-- Header (เหมือนหน้าอัปโหลดสินค้า) -->
-        <div class="header-wrapper">
-            <div class="logo-container">
-                <a href="/page/main.html" class="brand-text">THAMMUE</a>
-            </div>
-            <div class="search-container">
-                <div class="icon-buttons">
-                    
-                    <a class="action-button" href="/page/storepage/chat.html"
-            aria-label="แชท" style="position:relative">
+    <!-- [3] Header หลัก (โลโก้ + ไอคอนแชท + เมนูผู้ใช้) -->
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <a href="/page/main.html" class="brand-text">THAMMUE</a>
+      </div>
+      <div class="search-container">
+        <div class="icon-buttons">
+          <!-- ไอคอนแชท + badge แจ้งเตือนแชท -->
+          <a class="action-button" href="/page/storepage/chat.html" aria-label="แชท" style="position:relative">
             <img src="/img/Icon/chat.png" alt="แชท">
             <span id="chatBadge" class="icon-badge" hidden>0</span>
           </a>
 
-                    <!-- โปรไฟล์ -->
-                    <div class="user-menu" id="userMenu">
-                        <button class="user-area" id="userArea"
-                            aria-haspopup="true" aria-expanded="false">
-                            <img src="/img/Icon/user.png" alt="โปรไฟล์" />
-                            <span class="user-chip" id="userChip" hidden></span>
-                            <svg class="chev" viewBox="0 0 20 20"
-                                aria-hidden="true">
-                                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none"
-                                    stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown"
-                            role="menu"></div>
-                    </div>
-                </div>
-            </div>
+          <!-- โปรไฟล์ผู้ใช้ + dropdown -->
+          <div class="user-menu" id="userMenu">
+            <button class="user-area" id="userArea" aria-haspopup="true" aria-expanded="false">
+              <img src="/img/Icon/user.png" alt="โปรไฟล์" />
+              <span class="user-chip" id="userChip" hidden></span>
+              <svg class="chev" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu"></div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <!-- ===== เนื้อหา ===== -->
-        <div class="wrap">
-            <div class="title"
-                style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-                <h2>ยอดขายร้าน</h2>
-            </div>
+    <!-- [4] เนื้อหาหลักของหน้า: หัวข้อ + การ์ดสรุป + ตารางขายดี + สรุปตัวเลข + ปุ่มการทำงาน -->
+    <div class="wrap">
+      <!-- หัวข้อหน้า -->
+      <div class="title" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <h2>ยอดขายร้าน</h2>
+      </div>
 
-            <!-- ✅ บล็อกยอดขายรวมใหญ่ -->
-            <section class="card summary-highlight">
-                <div class="main-number">
-                    <div class="label">รายได้รวมทั้งหมด</div>
-                    <div class="value" id="sum-revenue-big">0.00</div>
-                    <div class="sub">
-                        <span id="sum-orders-small">0</span> คำสั่งซื้อ •
-                        <span id="sum-items-small">0</span> ชิ้น •
-                        เฉลี่ยต่อออเดอร์ <span id="avg-order-small">0.00</span>
-                        บาท
-                    </div>
-                </div>
-            </section>
-
-            <!-- สินค้าขายดี -->
-            <div class="card">
-                <h3>สินค้าขายดี</h3>
-                <table>
-                    <thead>
-                        <tr><th>สินค้า</th><th align="right">จำนวนขาย</th><th
-                                align="right">รายได้ (บาท)</th></tr>
-                    </thead>
-                    <tbody id="top-items"></tbody>
-                </table>
-            </div>
-
-            <!-- สรุปยอด -->
-            <div class="card" id="summary-card">
-                <h3>สรุปยอด</h3>
-                <div>คำสั่งซื้อ: <b id="sum-orders">-</b> รายการ</div>
-                <div>ขายแล้ว: <b id="sum-items">-</b> ชิ้น</div>
-                <div>รายได้รวม: <b id="sum-revenue">-</b> บาท</div>
-            </small>
-            </div>
-            <div class="actions">
-  <a class="btn back" id="btn-back">ย้อนกลับ</a>
-  <a class="btn btn-dark" id="btn-analytics">📊 ดูวิเคราะห์ยอดขาย</a>
-</div>
-
-           
-
+      <!-- [4.1] การ์ดสรุปรายได้รวมใหญ่ (ค่าจะแสดงผ่าน JS) -->
+      <section class="card summary-highlight">
+        <div class="main-number">
+          <div class="label">รายได้รวมทั้งหมด</div>
+          <div class="value" id="sum-revenue-big">0.00</div>
+          <div class="sub">
+            <span id="sum-orders-small">0</span> คำสั่งซื้อ •
+            <span id="sum-items-small">0</span> ชิ้น •
+            เฉลี่ยต่อออเดอร์ <span id="avg-order-small">0.00</span> บาท
+          </div>
         </div>
+      </section>
 
-        <!-- สคริปต์ระบบผู้ใช้/เมนู (เหมือนหน้าอื่น) -->
-        <script src="/js/me.js"></script>
-        <script src="/js/user-menu.js"></script>
+      <!-- [4.2] ตาราง “สินค้าขายดี” (เติมข้อมูลแถวโดย JS) -->
+      <div class="card">
+        <h3>สินค้าขายดี</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>สินค้า</th>
+              <th align="right">จำนวนขาย</th>
+              <th align="right">รายได้ (บาท)</th>
+            </tr>
+          </thead>
+          <tbody id="top-items"></tbody> <!-- ← JS จะเติมแถว -->
+        </table>
+      </div>
 
-        <!-- ผูกลิงก์ย้อนกลับ + เรียก API ยอดขาย -->
-         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="/js/store/shop-sales-page.js"></script>
-         <script src="/js/header-noti.js"></script>
-      <script src="/js/notify-poll.js"></script>
-      <!---ดูว่าเมลนี้มีร้านค้ายัง -->
-      <script src="/js/store/shop-toggle.js"></script>
-      <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleOpenOrMyShop();
-  });
-</script>
-        
+      <!-- [4.3] การ์ด “สรุปยอด” (คำสั่งซื้อ/จำนวนชิ้น/รายได้รวม) -->
+      <div class="card" id="summary-card">
+        <h3>สรุปยอด</h3>
+        <div>คำสั่งซื้อ: <b id="sum-orders">-</b> รายการ</div>
+        <div>ขายแล้ว: <b id="sum-items">-</b> ชิ้น</div>
+        <div>รายได้รวม: <b id="sum-revenue">-</b> บาท</div>
+      </small>
+      </div>
+      
+      <div class="actions">
+        <a class="btn back" id="btn-back">ย้อนกลับ</a>
+        <a class="btn btn-dark" id="btn-analytics">📊 ดูวิเคราะห์ยอดขาย</a>
+      </div>
+    </div>
 
-        <!-- ผูก shop_id ให้เมนู "ร้านค้า" และปุ่ม Back -->
-        <script>
-    (function(){
-      const qs = new URLSearchParams(location.search);
-      const shopId = qs.get('shop_id');
-      const back = document.getElementById('btn-back');
-      const navStore = document.getElementById('nav-store');
-      if (shopId) {
+    <!-- [5] สคริปต์ระบบผู้ใช้ + เมนูโปรไฟล์ (สถานะล็อกอิน, dropdown) -->
+    <script src="/js/me.js"></script>
+    <script src="/js/user-menu.js"></script>
+
+    <!-- [6] Chart.js (ไลบรารีกราฟที่อาจใช้ในหน้านี้/หน้า analytics) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- [7] JS หลักของหน้านี้: ดึงยอดขายจาก API แล้วใส่ค่าใน DOM (#sum-*, #top-items, ฯลฯ) -->
+    <script src="/js/store/shop-sales-page.js"></script>
+
+    <!-- [8] แจ้งเตือนส่วนหัว (badge/โพลแจ้งเตือน) -->
+    <script src="/js/header-noti.js"></script>
+    <script src="/js/notify-poll.js"></script>
+
+    <!-- [9] ปุ่ม “เปิดร้าน/ร้านของฉัน” และตั้งค่าหลัง DOM พร้อม -->
+    <script src="/js/store/shop-toggle.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        toggleOpenOrMyShop();
+      });
+    </script>
+
+    <!-- [10] ผูก shop_id ให้เมนู/ปุ่มย้อนกลับตามร้านที่เปิดดูอยู่ (อ่านจาก query string) -->
+    <script>
+      (function(){
+        const qs = new URLSearchParams(location.search);
+        const shopId = qs.get('shop_id');
+        const back = document.getElementById('btn-back');
+        const navStore = document.getElementById('nav-store');
+        if (shopId) {
+          if (back) back.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
+          if (navStore) navStore.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
+        }
+      })();
+    </script>
+
+    <!-- [11] ตั้งลิงก์ “ย้อนกลับ” และ “ดูวิเคราะห์ยอดขาย” ให้ต่อท้าย shop_id อัตโนมัติ -->
+    <script>
+      (function(){
+        const qs = new URLSearchParams(location.search);
+        const shopId = qs.get('shop_id');
+        if (!shopId) return;
+
+        const back = document.getElementById('btn-back');
         if (back) back.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
-        if (navStore) navStore.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
-      }
-    })();
-  </script>
 
-  <script>
-(function(){
-  const qs = new URLSearchParams(location.search);
-  const shopId = qs.get('shop_id');
-  if (!shopId) return;
-
-  // ปุ่มย้อนกลับ
-  const back = document.getElementById('btn-back');
-  if (back) back.href = `/page/storepage/store.html?shop_id=${encodeURIComponent(shopId)}`;
-
-  // ปุ่มดูวิเคราะห์ยอดขาย
-  const analytics = document.getElementById('btn-analytics');
-  if (analytics) analytics.href = `/page/storepage/store-analytics.html?shop_id=${encodeURIComponent(shopId)}`;
-})();
-</script>
-
-    </body>
+        const analytics = document.getElementById('btn-analytics');
+        if (analytics) analytics.href = `/page/storepage/store-analytics.html?shop_id=${encodeURIComponent(shopId)}`;
+      })();
+    </script>
+  </body>
 </html>

@@ -15,7 +15,7 @@ try {
         echo json_encode(['ok' => false, 'error' => 'unauthorized']);
         exit;
     }
-
+ // ✅ รับค่าจากฟอร์ม (id สินค้า + id ร้าน)
     $pid = (int)($_POST['product_id'] ?? 0);
     $sid = (int)($_POST['shop_id'] ?? 0);
     $uid = (int)$_SESSION['user_id'];
@@ -41,18 +41,20 @@ try {
     $chk->execute([$pid, $sid, $uid]);
     $r = $chk->fetch();
     if (!$r) {
+         // ❌ ถ้าไม่ใช่เจ้าของร้าน → ห้ามแก้ไข
         http_response_code(403);
         echo json_encode(['ok' => false, 'error' => 'forbidden']);
         exit;
     }
 
+    // ✅ สลับสถานะ is_active (1 = เปิดขาย, 0 = ปิดขาย)
     $current = (int)$r['is_active'];
     $new     = $current ? 0 : 1;
 
     // อัปเดตแบบเจาะจงร้านด้วย
     $u = $pdo->prepare("UPDATE products SET is_active = ? WHERE id = ? AND shop_id = ?");
     $u->execute([$new, $pid, $sid]);
-
+// ✅ ส่งผลลัพธ์กลับให้ Frontend ทราบสถานะใหม่
     echo json_encode(['ok' => true, 'is_active' => $new]);
 } catch (Throwable $e) {
     http_response_code(500);

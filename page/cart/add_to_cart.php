@@ -1,5 +1,7 @@
 <?php
+// ตั้งค่าหัวข้อของ HTTP Response ให้เป็น JSON และกำหนด charset เป็น UTF-8
 header('Content-Type: application/json; charset=utf-8');
+// เริ่มต้น session เพื่อเข้าถึงข้อมูล session ของผู้ใช้
 session_start();
 
 if (empty($_SESSION['user_id'])) {
@@ -7,18 +9,22 @@ if (empty($_SESSION['user_id'])) {
     echo json_encode(['error' => 'unauthorized']);
     exit;
 }
-$userId = (int)$_SESSION['user_id'];
 
+// เก็บ user_id จาก session ลงในตัวแปร $userId
+$userId = (int)$_SESSION['user_id'];
+// อ่านข้อมูล JSON ที่ถูกส่งมาจากฝั่ง client (เช่น ผ่าน fetch หรือ AJAX)
 $payload   = json_decode(file_get_contents('php://input'), true);
 $productId = (int)($payload['id']  ?? 0);
 $qty       = (int)($payload['qty'] ?? 1);
+
+// ตรวจสอบว่ามีการส่ง id สินค้ามาถูกต้องหรือไม่
 if ($productId <= 0) {
     http_response_code(400);
     echo json_encode(['error' => 'invalid id']);
     exit;
 }
 if ($qty <= 0) $qty = 1;
-
+// เชื่อมต่อฐานข้อมูล MySQL ด้วย PDO
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

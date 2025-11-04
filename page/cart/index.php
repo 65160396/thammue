@@ -25,7 +25,7 @@ $stm = $pdo->prepare($sql);
 $stm->execute([$userId]);
 $items = $stm->fetchAll();
 
-// helper
+// ✅ helper: escape HTML + สร้าง path รูปภาพ
 $WEB_PREFIX = '/page';
 function h($s)
 {
@@ -147,6 +147,7 @@ function imgPath($row)
         const BOX_SEL = '.ci';
 
         function recalc() {
+             // รวมราคาเฉพาะที่ติ๊กถูก
             let total = 0;
             const picked = [];
             const boxes = Array.from(document.querySelectorAll(BOX_SEL)); // query สดทุกครั้ง
@@ -164,7 +165,7 @@ function imgPath($row)
         // change รายการย่อย
         document.querySelectorAll(BOX_SEL).forEach(b => b.addEventListener('change', recalc));
 
-        // check-all
+        // ✅ ปุ่มเลือกทั้งหมด
         allBox?.addEventListener('change', () => {
             document.querySelectorAll(BOX_SEL).forEach(b => b.checked = allBox.checked);
             recalc();

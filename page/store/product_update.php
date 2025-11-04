@@ -21,7 +21,7 @@ function asFloat($s)
 try {
     if (!isset($_SESSION['user_id'])) throw new Exception('unauthorized', 401);
     $uid = (int)$_SESSION['user_id'];
-
+   // ✅ รับค่าจากฟอร์มแก้ไขสินค้า
     $id       = (int)($_POST['id'] ?? 0);
     $shopId   = (int)($_POST['shop_id'] ?? 0);
     $name     = safe($_POST['name'] ?? '');
@@ -29,12 +29,12 @@ try {
     $desc     = safe($_POST['description'] ?? '');
     $price    = asFloat($_POST['price'] ?? '');
     $stock    = max(0, (int)($_POST['stock_qty'] ?? 0));
-
+// ✅ ตรวจสอบความครบถ้วนของข้อมูล
     if ($id <= 0 || $shopId <= 0 || $name === '' || $category <= 0 || $desc === '' || $price === null) {
         throw new Exception('กรอกข้อมูลให้ครบถ้วน', 422);
     }
 
-    // สิทธิ์ร้าน
+    // สิทธิ์ร้านว่าร้านนี้เป็นของผู้ใช้จริงหรือไม่
     $chk = $pdo->prepare("SELECT id FROM shops WHERE id=? AND user_id=?");
     $chk->execute([$shopId, $uid]);
     if (!$chk->fetch()) throw new Exception('forbidden', 403);
@@ -44,7 +44,7 @@ try {
     $p->execute([$id, $shopId]);
     if (!$p->fetch()) throw new Exception('not found', 404);
 
-    $pdo->beginTransaction();
+    $pdo->beginTransaction();// ✅ เริ่ม Transaction เพื่อความปลอดภัย
 
     // อัปเดตข้อมูลหลัก
     $u = $pdo->prepare("UPDATE products
@@ -89,6 +89,7 @@ try {
     }
 
     $pdo->commit();
+    // ✅ เสร็จแล้ว redirect กลับไปหน้ารายการสินค้าในร้าน
     header('Location: /page/storepage/store-products.html?shop_id=' . $shopId);
     exit;
 } catch (Throwable $e) {

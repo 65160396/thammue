@@ -3,20 +3,23 @@ session_start();
 
 $dsn  = "mysql:host=127.0.0.1;dbname=shopdb;charset=utf8mb4";
 $dbu  = "root";
-$dbp  = ""; // แก้ตามเครื่อง
-
+$dbp  = "";  // แก้ให้ตรงกับเครื่องของผู้ใช้
+// ✅ ฟังก์ชันช่วย: ตรวจเงื่อนไข ถ้าไม่ผ่านให้หยุดและแจ้ง error
 function must($cond, $msg)
 {
     if (!$cond) {
         throw new RuntimeException($msg);
     }
 }
+// ✅ ฟังก์ชันบันทึกไฟล์ที่อัปโหลด (ใช้กับรูปบัตรหรือเอกสารยืนยัน)
 function saveUpload($key, $dir, $basename)
 {
+       // ถ้าไม่ได้อัปโหลดไฟล์ → ข้าม
     if (!isset($_FILES[$key]) || $_FILES[$key]['error'] === UPLOAD_ERR_NO_FILE) return null;
+     // ตรวจสถานะอัปโหลด
     must($_FILES[$key]['error'] === UPLOAD_ERR_OK, "อัปโหลดไฟล์ผิดพลาด ($key)");
     must($_FILES[$key]['size'] <= 5 * 1024 * 1024, "ไฟล์ $key เกิน 5MB");
-
+  // ตรวจชนิดไฟล์ (อนุญาตเฉพาะ JPG, PNG, PDF)
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($_FILES[$key]['tmp_name']);
     $ext  = match ($mime) {
         'image/jpeg' => 'jpg',
@@ -39,7 +42,7 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 
-    // ===== Step 1 =====
+     // ===== Step 1: เก็บข้อมูลพื้นฐานของร้าน =====
     $shop_name   = trim($_POST['shop_name']   ?? '');
     $pickup_addr = trim($_POST['pickup_addr'] ?? '');
     $email       = trim($_POST['email']       ?? '');
@@ -58,7 +61,7 @@ try {
         $user_id = (int)$u['id'];
     }
 
-    // upsert ร้าน
+     // ✅ บันทึก/อัปเดตร้าน (upsert)
     $up = $pdo->prepare("
     INSERT INTO shops (user_id, shop_name, pickup_addr, email, phone)
     VALUES (:uid,:sn,:addr,:em,:ph)
@@ -71,18 +74,20 @@ try {
   ");
     $up->execute([':uid' => $user_id, ':sn' => $shop_name, ':addr' => $pickup_addr, ':em' => $email, ':ph' => $phone]);
 
-    // ดึง shop_id
+   // ✅ ดึง shop_id ของร้านนั้น
     $sid = $pdo->prepare("SELECT id FROM shops WHERE user_id = ?");
     $sid->execute([$user_id]);
     $shop = $sid->fetch();
     must($shop, 'ไม่พบร้านที่เพิ่งบันทึก');
     $shop_id = (int)$shop['id'];
 
-    // ===== Step 2 =====
+     // ===== Step 2: เก็บข้อมูลยืนยันตัวตนผู้ขาย (บุคคลหรือบริษัท) =====
     $sellerType = $_POST['sellerType'] ?? null;
     must(in_array($sellerType, ['person', 'company'], true), 'กรุณาเลือกประเภทผู้ขาย');
 
     $baseDir = __DIR__ . "/../../uploads/shops/$shop_id/verify";
+
+    // ✅ เตรียมโครงข้อมูลสำหรับ insert/update
     $ver = [
         'seller_type'  => $sellerType,
         'citizen_name' => null,
@@ -94,28 +99,30 @@ try {
         'reg_doc'      => null,
         'id_rep'       => null,
     ];
-
+// ✅ แยกกรณี: บุคคลธรรมดา
     if ($sellerType === 'person') {
         $ver['citizen_name'] = trim($_POST['citizenName'] ?? '');
         $ver['citizen_id']   = trim($_POST['citizenId'] ?? '');
         must($ver['citizen_name'] !== '', 'กรุณากรอกชื่อ-นามสกุล');
         must(preg_match('/^\d{13}$/', $ver['citizen_id']), 'เลขบัตรประชาชนไม่ถูกต้อง');
-
+  // อัปโหลดรูปบัตรประชาชน หน้า-หลัง
         $ver['id_front'] = saveUpload('idFront', $baseDir, 'id_front');
         $ver['id_back']  = saveUpload('idBack',  $baseDir, 'id_back');
         must($ver['id_front'] && $ver['id_back'], 'กรุณาแนบรูปบัตรประชาชน');
-    } else { // company
+
+         // ✅ หรือถ้าเป็นนิติบุคคล
+    } else { 
         $ver['company_name'] = trim($_POST['companyName'] ?? '');
         $ver['tax_id']       = trim($_POST['taxId'] ?? '');
         must($ver['company_name'] !== '', 'กรุณากรอกชื่อบริษัท');
         must(preg_match('/^\d{10,13}$/', $ver['tax_id']), 'เลขผู้เสียภาษีไม่ถูกต้อง');
-
+    // แนบเอกสารจดทะเบียน + บัตรผู้แทน
         $ver['reg_doc'] = saveUpload('regDoc', $baseDir, 'reg_doc');
         $ver['id_rep']  = saveUpload('idRep',  $baseDir, 'id_rep');
         must($ver['reg_doc'] && $ver['id_rep'], 'กรุณาแนบเอกสารนิติบุคคล');
     }
 
-    // upsert verification
+    // ✅ บันทึกข้อมูลยืนยันตัวตนลงตาราง shop_verifications (upsert)
     $sv = $pdo->prepare("
     INSERT INTO shop_verifications
       (shop_id, seller_type, citizen_name, citizen_id, company_name, tax_id,
@@ -148,7 +155,7 @@ try {
         ':d2' => $ver['id_rep'],
     ]);
 
-    // ไปสเตปถัดไป/หน้าสำเร็จ
+       // ✅ เสร็จแล้วเปลี่ยนหน้าไปหน้าสำเร็จ
     header('Location: /verify_shop.php?ok=1');
     exit;
 } catch (Throwable $e) {

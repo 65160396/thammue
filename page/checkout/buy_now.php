@@ -14,6 +14,7 @@ $payload   = json_decode($raw, true) ?: [];
 $productId = (int)($payload['id'] ?? 0);
 $qty       = max(1, (int)($payload['qty'] ?? 1));
 
+// ✅ ตรวจสอบความถูกต้องของข้อมูล
 if ($productId <= 0) {
     http_response_code(400);
     header('Content-Type: application/json; charset=utf-8');
@@ -25,6 +26,8 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
+
+// ✅ ตรวจสอบว่าสินค้ามีอยู่จริงในตาราง products หรือไม่
 $stm = $pdo->prepare("SELECT id FROM products WHERE id=? LIMIT 1");
 $stm->execute([$productId]);
 if (!$stm->fetch()) {
@@ -33,11 +36,11 @@ if (!$stm->fetch()) {
     echo json_encode(['error' => 'not_found']);
     exit;
 }
-
+// ✅ เก็บข้อมูลสินค้าไว้ใน SESSION ชั่วคราว เพื่อใช้ต่อใน checkout.php
 $_SESSION['buy_now'] = ['product_id' => $productId, 'qty' => $qty];
-
+// ✅ ส่ง JSON กลับไปบอกว่าทำงานสำเร็จ พร้อม path ไปหน้า checkout
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode([
-    'ok' => true,
-    'checkout' => '/page/checkout/checkout.php?mode=buy-now'
+    'ok' => true,                                            // สถานะสำเร็จ
+    'checkout' => '/page/checkout/checkout.php?mode=buy-now' // หน้าชำระเงิน
 ]);

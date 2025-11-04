@@ -1,4 +1,8 @@
 <?php
+/* =========================
+   1) ตรวจสิทธิ์ผู้ใช้ (Session/Auth)
+   - ถ้าไม่ล็อกอิน -> เด้งไปหน้า login พร้อม next=/page/favorites/index.php
+   ========================= */
 session_start();
 if (empty($_SESSION['user_id'])) {
     header('Location: /page/login.html?next=' . rawurlencode('/page/favorites/index.php'));
@@ -6,13 +10,20 @@ if (empty($_SESSION['user_id'])) {
 }
 $userId = (int)$_SESSION['user_id'];
 
-/* DB */
+/* =========================
+   2) เชื่อมต่อฐานข้อมูล (PDO + UTF-8 + error mode)
+   ========================= */
 $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-/* ดึงสินค้าที่ถูกใจ + สถานะในตะกร้า (in_cart) */
+/* =========================
+   3) ดึง “รายการโปรด” ของผู้ใช้ + เช็คสถานะว่าอยู่ในตะกร้าไหม (in_cart)
+   - JOIN favorites -> products -> shops
+   - LEFT JOIN cart เพื่อตรวจสอบว่าผู้ใช้คนนี้มีสินค้านี้ในตะกร้าหรือยัง
+   - เรียงตามเวลาที่กดถูกใจล่าสุด (f.created_at DESC)
+   ========================= */
 $sql = "SELECT
           p.id, p.name, p.price, p.main_image,
           s.shop_name, s.province,
@@ -24,10 +35,12 @@ $sql = "SELECT
         WHERE f.user_id = ?
         ORDER BY f.created_at DESC";
 $stm = $pdo->prepare($sql);
-$stm->execute([$userId, $userId]); // ส่ง $userId สองครั้งให้ JOIN cart ทำงาน
+$stm->execute([$userId, $userId]);
 $items = $stm->fetchAll();
 
-/* helper */
+/* =========================
+   4) Helper สำหรับรูปสินค้า + escape HTML
+   ========================= */
 $WEB_PREFIX = '/page';
 function productImg($p)
 {
@@ -48,6 +61,7 @@ function h($s)
 <html lang="th">
 
 <head>
+    <!-- 5) เมตา + CSS หลักของหน้า “รายการโปรด” -->
     <meta charset="utf-8">
     <title>Thammue - รายการโปรด</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -55,18 +69,24 @@ function h($s)
     <link rel="stylesheet" href="/css/favorites.css" />
     <link rel="stylesheet" href="/css/search.css" />
     <link rel="stylesheet" href="/css/products.css" />
-
-
 </head>
 
 <body>
     <?php
-    // ให้ header แสดงเฉพาะแถบบน (โลโก้/ค้นหา/ไอคอน) และซ่อนเมนูหมวดหมู่
+    /* =========================
+       6) ส่วนหัวเว็บไซต์ (Header)
+       - ส่ง $HEADER_NO_CATS = true เพื่อซ่อนเมนูหมวดหมู่
+       - include ไฟล์ header กลางของไซต์
+       ========================= */
     $HEADER_NO_CATS = true;
     include __DIR__ . '/../partials/site-header.php';
     ?>
 
-    <!-- กล่องผลการค้นหา (เริ่มซ่อน) -->
+    <!-- =========================
+         7) กล่องผลการค้นหา (เฉพาะหน้า favorites)
+         - เริ่มต้น hidden, โชว์เมื่อมีการค้นหา
+         - มีปุ่มล้างการค้นหา + พื้นที่ผลลัพธ์ #results
+         ========================= -->
     <section id="searchSection" class="recommended-products" hidden>
         <div class="search-results__head">
             <h2>ผลการค้นหา <span id="searchCount"></span></h2>
@@ -75,11 +95,19 @@ function h($s)
         <div id="results" class="product-grid"></div>
     </section>
 
-
+    <!-- =========================
+         8) หัวข้อหลักของหน้า “รายการโปรด”
+         ========================= -->
     <div class="fav-header">
         <h1>รายการโปรด</h1>
     </div>
 
+    <!-- =========================
+         9) Grid แสดงสินค้าในรายการโปรด
+         - ว่าง: แสดง “ยังไม่มีรายการโปรด”
+         - มีรายการ: include การ์ดสินค้า (partials/product_card.php)
+         - ส่ง $opts เพื่อควบคุมปุ่ม “ลบออกจากโปรด” ในการ์ด
+         ========================= -->
     <div id="favWrap" class="recommended-products" style="padding-top:0">
         <div id="favGrid" class="product-grid">
             <?php if (!$items): ?>
@@ -93,13 +121,24 @@ function h($s)
         </div>
     </div>
 
+    <!-- =========================
+         10) สคริปต์พื้นฐานบัญชีผู้ใช้ + เมนูโปรไฟล์
+         ========================= -->
     <script src="/js/me.js"></script>
-    <script src="/js/user-menu.js"></script> <!-- เมนูโปรไฟล์ dropdown -->
+    <script src="/js/user-menu.js"></script>
 
-    <!-- ให้ badge ทั้งสองทำงานทุกหน้า -->
+    <!-- =========================
+         11) Badge ตะกร้า (ให้ทำงานทุกหน้า)
+         ========================= -->
     <script src="/js/cart-badge.js" defer></script>
 
-    <!-- เอาออกจากรายการโปรด -->
+    <!-- =========================
+         12) ลบออกจาก “รายการโปรด” (ฝั่งหน้า Favorites)
+         - ดักคลิกปุ่ม .remove-like
+         - เรียก /page/backend/likes_sale/toggle.php แบบ JSON
+         - อัปเดต DOM + ลด badge รายการโปรดแบบทันที
+         - ถ้าเหลือ 0 ชิ้น แสดงข้อความว่าง
+         ========================= -->
     <script>
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-like');
@@ -128,18 +167,17 @@ function h($s)
                 const data = await res.json();
 
                 if (!data.liked) {
-                    // ลบการ์ดออกจาก DOM
                     const card = btn.closest('.product-card');
                     card?.remove();
 
-                    // ลด badge รายการโปรดทันที
+                    // แจ้งระบบให้ลด badge โปรด
                     window.dispatchEvent(new CustomEvent('favorites:changed', {
                         detail: {
                             delta: -1
                         }
                     }));
 
-                    // ถ้าเหลือ 0 ชิ้น แสดงกล่องว่าง
+                    // ถ้าไม่มีการ์ดเหลือ แสดง empty state
                     const grid = document.getElementById('favGrid');
                     if (grid && !grid.querySelector('.product-card')) {
                         const empty = document.createElement('div');
@@ -156,9 +194,14 @@ function h($s)
         });
     </script>
 
-    <!-- ปุ่มเพิ่ม/ลบตะกร้า (ใช้ได้ทุกหน้า list) -->
+    <!-- =========================
+         13) ปุ่มเพิ่ม/ลบตะกร้า (สคริปต์ใช้งานได้ทุก list)
+         ========================= -->
     <script src="/js/cart.js"></script>
 
+    <!-- =========================
+         14) ปุ่ม “เปิดร้านของฉัน/เปิดร้านค้า” + init หลัง DOM พร้อม
+         ========================= -->
     <script src="/js/store/shop-toggle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -166,13 +209,18 @@ function h($s)
         });
     </script>
 
+    <!-- =========================
+         15) ระบบค้นหาแบบเฉพาะในหน้า Favorites
+         - เปลี่ยน endpoint เป็น /backend/search/search_favorites.php
+         - กำหนดจำนวน/ดีบาวน์/จดจำคำล่าสุด
+         ========================= -->
     <script src="/js/search/search.js"></script>
     <script>
         Search.init({
             input: "#q",
             button: "#btnSearch",
             results: "#results",
-            endpoint: "/page/backend/search/search_favorites.php", // << ใช้ endpoint ใหม่นี้
+            endpoint: "/page/backend/search/search_favorites.php",
             per: 24,
             sort: "relevance",
             minLength: 1,
@@ -180,7 +228,11 @@ function h($s)
             rememberLast: true
         });
     </script>
-    <!-- ===== Drawer มือถือ (เหมือนในรูป) ===== -->
+
+    <!-- =========================
+         16) Drawer ไอคอน (มือถือ) + Backdrop
+         - เมนูลัด: โปรด/ตะกร้า/แชท/โปรไฟล์พับได้
+         ========================= -->
     <div class="icons-drawer" id="iconsDrawer" hidden>
         <button class="icons-drawer__close" id="iconsClose" type="button">ปิด</button>
 
@@ -211,13 +263,11 @@ function h($s)
     </div>
     <div class="icons-backdrop" id="iconsBackdrop" hidden></div>
 
+    <!-- =========================
+         17) สคริปต์ควบคุมเมนูแฮมเบอร์เกอร์ + ซิงก์ Drawer/Badge
+         ========================= -->
     <script src="/js/nav/hamburger.js"></script>
     <script src="/js/nav/drawer-sync.js"></script>
-
-
-
-
-
 </body>
 
 </html>

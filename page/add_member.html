@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="th">
   <head>
+   
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>สมัครสมาชิก - กรอกข้อมูล</title>
@@ -9,7 +10,6 @@
   </head>
 
   <body class="auth">
-    <!-- แถบบนสุด -->
     <ul class="top-nav">
       <li class="right"><a href="#help">ช่วยเหลือ</a></li>
       <li><span class="top-divider">|</span></li>
@@ -18,117 +18,173 @@
 
     <div class="header-wrapper">
       <div class="logo-container">
-        <a href="/page/index.html" class="brand-link"
-          aria-label="กลับหน้าแรก THAMMUE">
+        <a href="/page/index.html" class="brand-link" aria-label="กลับหน้าแรก THAMMUE">
           <span class="brand-text">THAMMUE</span>
         </a>
       </div>
     </div>
 
+  
     <div class="auth-page">
-      <!-- Stepper: 2 ขั้น -->
       <div class="auth-steps" aria-hidden="true">
-        <span class="auth-dot is-active"></span><span
-          class="auth-line"></span>
+        <span class="auth-dot is-active"></span><span class="auth-line"></span>
         <span class="auth-dot"></span>
       </div>
+
+      <!-- ป้ายชื่อของแต่ละขั้นตอน -->
       <div class="auth-step-labels">
         <span class="is-active">กรอกข้อมูล</span>
         <span>สมัครสมาชิกเสร็จสิ้น</span>
       </div>
 
-      <!-- ฟอร์ม -->
-      <form class="auth-form" id="signupForm" action="./backend/register.php"
-        method="post" novalidate>
-        <label class="auth-label" for="email"><span
-            class="auth-req">*</span>อีเมล</label>
+      <!-- ฟอร์มสมัครสมาชิก -->
+      <form class="auth-form" id="signupForm" action="./backend/register.php" method="post" novalidate>
+        <!-- ช่องอีเมล + เครื่องหมาย * แสดงว่าจำเป็น -->
+        <label class="auth-label" for="email">
+          <span class="auth-req">*</span>อีเมล
+        </label>
+        <!-- type="email" จะช่วยตรวจรูปแบบคร่าว ๆ -->
         <input class="auth-input" id="email" name="email" type="email" required>
+        <!-- ข้อความแจ้งเตือน/ผลเช็กอีเมลซ้ำแบบเรียลไทม์ -->
         <small id="emailMsg" class="auth-field-msg"></small>
 
+        <!-- ช่องรหัสผ่าน + เงื่อนไขความยาวอย่างน้อย 8 ตัว -->
         <label class="auth-label" for="password">
           <span class="auth-req">*</span>รหัสผ่าน
-          <span class="auth-hint"
-            style="display:inline;margin-left:6px;">อย่างน้อย 8 ตัวอักษร</span>
+          <span class="auth-hint" style="display:inline;margin-left:6px;">อย่างน้อย 8 ตัวอักษร</span>
         </label>
-        <input class="auth-input" id="password" name="password" type="password"
-          minlength="8" required>
+        <input class="auth-input" id="password" name="password" type="password" minlength="8" required>
 
-        <label class="auth-label" for="confirm"><span
-            class="auth-req">*</span>ยืนยันรหัสผ่าน</label>
-        <input class="auth-input" id="confirm" name="confirm" type="password"
-          minlength="8" required>
+        <!-- ช่องยืนยันรหัสผ่าน (ต้องตรงกับช่องด้านบน) -->
+        <label class="auth-label" for="confirm">
+          <span class="auth-req">*</span>ยืนยันรหัสผ่าน
+        </label>
+        <input class="auth-input" id="confirm" name="confirm" type="password" minlength="8" required>
 
-        <label class="auth-label" for="display"><span
-            class="auth-req">*</span>ชื่อผู้ใช้</label>
-        <input class="auth-input" id="display" name="display" type="text"
-          required>
+        <!-- ชื่อที่จะแสดง/ชื่อผู้ใช้ -->
+        <label class="auth-label" for="display">
+          <span class="auth-req">*</span>ชื่อผู้ใช้
+        </label>
+        <input class="auth-input" id="display" name="display" type="text" required>
 
+        <!-- ปุ่มไปขั้นถัดไป/ส่งฟอร์ม -->
         <button class="auth-btn" type="submit" id="submitBtn">ถัดไป</button>
       </form>
     </div>
 
     <script>
-    // ===== ตรวจอีเมลซ้ำแบบทันที =====
+  
+
+    // อ้างอิง DOM ที่ต้องใช้
     const emailInput = document.getElementById('email');
     const emailMsg   = document.getElementById('emailMsg');
     const submitBtn  = document.getElementById('submitBtn');
+
+    // ตัวจับเวลาเพื่อทำ debounce (หน่วงก่อนยิงเช็ก)
     let debounceTimer;
 
-    emailInput.addEventListener('input', () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(checkEmail, 400); });
+    // เมื่อพิมพ์ในช่องอีเมล: เคลียร์ timer เดิม แล้วตั้งใหม่ 400ms
+    emailInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(checkEmail, 400);
+    });
+
+    // เมื่อผู้ใช้ออกจากช่อง (blur) ก็เช็กทันทีอีกครั้ง
     emailInput.addEventListener('blur', checkEmail);
 
+    // ฟังก์ชันเรียกไปเช็กกับ backend ว่า "อีเมลนี้ถูกใช้แล้วไหม"
     async function checkEmail(){
       const val = emailInput.value.trim();
-      // ถ้ายังไม่ใช่รูปแบบอีเมลที่ถูกต้อง ไม่ต้องเช็ก
+
+      // ถ้าไม่ผ่าน regex รูปแบบอีเมล -> ไม่ต้องยิงเช็ก, ล้างสถานะ/ข้อความ
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
         emailInput.classList.remove('is-invalid','is-valid');
         emailMsg.textContent = '';
         submitBtn.disabled = false;
         return;
       }
+
       try{
+        // ยิงคำขอไปยัง check_email.php แบบ application/x-www-form-urlencoded
         const res  = await fetch('./backend/check_email.php', {
           method: 'POST',
           headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          // ส่งพารามิเตอร์ email=...
           body: new URLSearchParams({email: val})
         });
+
+        // คาดหวังผลลัพธ์เป็น JSON เช่น { ok: true, taken: true/false }
         const data = await res.json();
+
         if(data.ok && data.taken){
+          // กรณี "อีเมลถูกใช้งานแล้ว"
           emailInput.classList.add('is-invalid');
           emailInput.classList.remove('is-valid');
           emailMsg.textContent = 'อีเมลนี้ถูกใช้งานแล้ว';
           emailMsg.className = 'auth-field-msg is-error';
           submitBtn.disabled = true;
+
         }else if(data.ok){
+          // กรณี "อีเมลยังไม่ถูกใช้"
           emailInput.classList.remove('is-invalid');
           emailInput.classList.add('is-valid');
           emailMsg.textContent = 'อีเมลนี้สามารถใช้งานได้';
           emailMsg.className = 'auth-field-msg is-success';
           submitBtn.disabled = false;
+
         }else{
           emailInput.classList.remove('is-valid','is-invalid');
           emailMsg.textContent = '';
           submitBtn.disabled = false;
         }
+
       }catch(err){
+        // ถ้ามี error ฝั่งเครือข่าย/เซิร์ฟเวอร์ -> แค่ log และ"อย่า"ล็อกผู้ใช้
         console.error(err);
-        submitBtn.disabled = false; // อย่าล็อกผู้ใช้ในกรณี error ฝั่งเซิร์ฟเวอร์
+        submitBtn.disabled = false; // ปล่อยให้ไปต่อได้
       }
     }
 
-    // ===== ตรวจความถูกต้องก่อน submit =====
+  
     const form = document.getElementById('signupForm');
+
     form.addEventListener('submit', (e) => {
       const email = emailInput.value.trim();
       const p     = document.getElementById('password').value;
       const c     = document.getElementById('confirm').value;
       const d     = document.getElementById('display').value.trim();
 
+      // ถ้าปุ่มถูก disable (เช่น อีเมลซ้ำ) ให้ยกเลิกส่ง
       if (submitBtn.disabled) { e.preventDefault(); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { e.preventDefault(); alert('กรุณากรอกอีเมลให้ถูกต้อง'); return; }
-      if (p.length < 8) { e.preventDefault(); alert('รหัสผ่านต้องอย่างน้อย 8 ตัวอักษร'); return; }
-      if (p !== c) { e.preventDefault(); alert('รหัสผ่านและยืนยันไม่ตรงกัน'); return; }
-      if (!d) { e.preventDefault(); alert('กรุณากรอกชื่อผู้ใช้'); return; }
+
+      // ตรวจรูปแบบอีเมลด้วย regex เดิมอีกครั้ง (กันพลาด)
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        e.preventDefault();
+        alert('กรุณากรอกอีเมลให้ถูกต้อง');
+        return;
+      }
+
+      // ตรวจความยาวรหัสผ่าน >= 8
+      if (p.length < 8) {
+        e.preventDefault();
+        alert('รหัสผ่านต้องอย่างน้อย 8 ตัวอักษร');
+        return;
+      }
+
+      // ตรวจว่ารหัสผ่านตรงกับยืนยันรหัสผ่าน
+      if (p !== c) {
+        e.preventDefault();
+        alert('รหัสผ่านและยืนยันไม่ตรงกัน');
+        return;
+      }
+
+      if (!d) {
+        e.preventDefault();
+        alert('กรุณากรอกชื่อผู้ใช้');
+        return;
+      }
+
+      // ถ้าผ่านทั้งหมด ฟอร์มจะถูกส่งไปที่ action (register.php)
     });
   </script>
   </body>

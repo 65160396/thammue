@@ -105,6 +105,12 @@ foreach ($items as &$r) {
 }
 unset($r);
 
+
+/* =========================================
+   [8] คำนวณสิทธิ์การกดปุ่ม (canPay / canCancel)
+   - ชำระได้: รอชำระ, ยังไม่ paid, ยังไม่หมด deadline
+   - ยกเลิกได้: รอชำระและยังไม่ paid
+   ========================================= */
 // สิทธิ์ปุ่ม
 $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
     && empty($order['paid_at'])
@@ -123,11 +129,19 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
 </head>
 
 <body class="order-view-page">
+
+    /* =========================================
+    [10] Header กลางของไซต์ (ปิดหมวด/ค้นหา)
+    ========================================= */
+
     <?php $HEADER_NO_CATS = true;
     $HEADER_NO_SEARCH = true;
     include __DIR__ . '/../partials/site-header.php'; ?>
     <div class="wrap">
-
+        <!-- =========================================
+         [11] กล่องสรุปออเดอร์ (Order Summary)
+         - แสดงเลขออเดอร์/รหัส/วัน-เวลา/สถานะ/ยอดรวม/วิธีชำระ
+         ========================================= -->
         <!-- สรุป -->
         <section class="card order-summary">
             <div class="left">
@@ -144,7 +158,10 @@ $canPay = in_array($order['status'], ['pending_payment', 'cod_pending'])
             </div>
         </section>
 
-        <!-- รายการสินค้า -->
+        <!-- =========================================
+         [12] รายการสินค้าในออเดอร์ (Items)
+         - ชื่อ/รูป/จำนวน/ราคา/รวมต่อรายการ
+         ========================================= -->
         <section class="card order-items">
             <h2>รายการสินค้า</h2>
             <?php if (!$items): ?>

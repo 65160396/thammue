@@ -5,7 +5,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=shopdb;charset=utf8mb4", "root", "",
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-/* --- รับ id --- */
+// ✅ รับ product id จาก query string และตรวจสอบความถูกต้อง
 $id = (int)($_GET['id'] ?? 0);
 if ($id <= 0) {
     http_response_code(404);
@@ -14,7 +14,7 @@ if ($id <= 0) {
 
 /* --- web path รูป --- */
 $WEB_PREFIX = '/page';
-
+// ✅ คืน "รูปหลัก" ของสินค้าเป็น URL ที่เปิดบนเว็บได้ (มี fallback เป็น placeholder)
 function productMainImageWebPath(array $p): string
 {
     global $WEB_PREFIX;

@@ -37,9 +37,10 @@ $HIDE_HAMBURGER = !empty($HEADER_NO_HAMBURGER);
     <?php endif; ?>
 
 
-
+  <!-- ✅ กล่องค้นหา + ไอคอน -->
     <div class="search-container">
         <?php if (!$HIDE_SEARCH): ?>
+             <!-- ช่องค้นหาสินค้า -->
             <div class="search-group">
                 <input
                     id="q"
@@ -65,6 +66,7 @@ $HIDE_HAMBURGER = !empty($HEADER_NO_HAMBURGER);
 
 
         <?php if (!$HIDE_ICONS): ?>
+            <!-- ✅ กลุ่มไอคอน: รายการโปรด / ตะกร้า / แชท / โปรไฟล์ -->
             <div class="icon-buttons desktop-icons">
                 <a class="action-button" href="/page/favorites/index.php" aria-label="รายการโปรด">
                     <img src="/img/Icon/heart.png" alt="รายการโปรด">

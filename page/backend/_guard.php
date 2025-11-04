@@ -1,8 +1,10 @@
 <?php
 // /page/backend/_guard.php
+// ✅ หน้าที่ของไฟล์นี้: ใช้เป็น "ตัวช่วย (Guard)" สำหรับไฟล์ backend อื่น ๆ
+// เพื่อเตรียมการเชื่อมต่อฐานข้อมูล, เปิด session, และตรวจสอบสถานะผู้ใช้
 header('Content-Type: application/json; charset=utf-8');
 
-// (ดีบัก) ให้เห็น error ชัด ๆ
+//  เปิดโหมดดีบัก – แสดง error ชัดเจน (ใช้เฉพาะตอนพัฒนา)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

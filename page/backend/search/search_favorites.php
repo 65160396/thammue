@@ -1,5 +1,6 @@
 <?php
 // /page/backend/search_favorites.php
+// ✅ หน้าที่ของไฟล์นี้: ดึง "รายการสินค้าที่ผู้ใช้กดถูกใจ (favorites)" ออกมาแสดงผลแบบมีค้นหาและจัดเรียงได้
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 require __DIR__ . '/../config.php';
@@ -20,7 +21,7 @@ try {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]
     );
-
+  // ✅ เตรียมตัวแปรสำหรับค้นหา / จัดเรียง / แบ่งหน้า
     $userId   = (int)$_SESSION['user_id'];
     $q        = trim($_GET['q'] ?? '');
     $sort     = strtolower($_GET['sort'] ?? 'relevance');
@@ -28,25 +29,25 @@ try {
     $perPage  = min(60, max(1, (int)($_GET['per'] ?? 24)));
     $offset   = ($page - 1) * $perPage;
 
-    // ===== WHERE / BIND
+     // ✅ เงื่อนไขพื้นฐาน: ต้องเป็น favorite ของ user นี้ และเป็นประเภทสินค้า
     $where = ["f.user_id = :uid", "f.item_type = 'product'"];
     $bind  = [':uid' => $userId];
 
     if ($q !== '') {
-        // LIKE ง่าย ๆ (ถ้าอยากแรงมากค่อยทำ FULLTEXT ทีหลัง)
+        // ✅ ถ้ามีคำค้นหา → เพิ่มเงื่อนไข LIKE
         $where[]    = "(p.name LIKE :q OR p.description LIKE :q)";
         $bind[':q'] = "%$q%";
     }
 
     $whereSql = 'WHERE ' . implode(' AND ', $where);
 
-    // ===== ORDER BY
-    $orderBy = "ORDER BY f.created_at DESC"; // default = รายการโปรดล่าสุดขึ้นก่อน
+      // ✅ วิธีเรียงข้อมูล (เรียงตามราคาหรือวันที่)
+    $orderBy = "ORDER BY f.created_at DESC"; // เริ่มต้น = รายการโปรดล่าสุด
     if ($sort === 'price_asc')  $orderBy = "ORDER BY p.price ASC";
     if ($sort === 'price_desc') $orderBy = "ORDER BY p.price DESC";
     if ($sort === 'newest')     $orderBy = "ORDER BY p.created_at DESC";
 
-    // ===== COUNT
+     // ✅ นับจำนวนทั้งหมดของรายการที่ตรงเงื่อนไข (เพื่อใช้แบ่งหน้า)
     $sqlCount = "SELECT COUNT(DISTINCT p.id)
                FROM favorites f
                JOIN products p ON p.id = f.item_id AND f.item_type = 'product'
@@ -55,10 +56,10 @@ try {
     $st->execute($bind);
     $total = (int)$st->fetchColumn();
 
-    // ===== MAIN QUERY
+   
     $per = (int)$perPage;
     $off = (int)$offset;
-
+ // ✅ ดึงข้อมูลหลัก (สินค้าที่กดถูกใจ)
     $sql = "
     SELECT DISTINCT
       p.id,

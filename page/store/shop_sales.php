@@ -25,7 +25,7 @@ try {
     $from = date('Y-m-d', strtotime('-30 days'));
   }
 
-  // mapping group by
+   // ✅ นิยาม expression สำหรับ group by ตามที่ขอ
   if ($group === 'week') {
     // กลุ่มตามปี+สัปดาห์ เช่น 2025-W42
     $gbExpr = "DATE_FORMAT(COALESCE(o.paid_at, o.created_at), '%x-W%v')";
@@ -38,7 +38,7 @@ try {
     $group = 'day';
   }
 
-
+  // ✅ นิยาม “ออเดอร์สำเร็จ” (paid/shipped หรือมี paid_at)
   $successCond = "(o.status IN ('paid','shipped') OR o.paid_at IS NOT NULL)";
 
   // ==== สรุปช่วงที่เลือก ====
@@ -58,7 +58,7 @@ try {
   ");
   $q1->execute([':sid' => $shopId, ':from' => $from . ' 00:00:00', ':to' => $to . ' 23:59:59']);
   $sum = $q1->fetch() ?: ['total_orders' => 0, 'total_items_sold' => 0, 'total_revenue' => 0, 'qr_revenue' => 0, 'cod_revenue' => 0];
-
+  // ✅ ค่าเฉลี่ยรายออเดอร์
   $avgPerOrder = ($sum['total_orders'] ?? 0) ? (float)$sum['total_revenue'] / (int)$sum['total_orders'] : 0;
 
   // ยกเลิกในช่วง
@@ -113,7 +113,7 @@ try {
   ");
   $qTs->execute([':sid' => $shopId, ':from' => $from . ' 00:00:00', ':to' => $to . ' 23:59:59']);
   $timeseries = $qTs->fetchAll();
-
+ // ✅ breakdown รายได้ตามวิธีจ่าย + สัดส่วน (เปอร์เซ็นต์)
   $qr  = (float)($sum['qr_revenue']  ?? 0);
   $cod = (float)($sum['cod_revenue'] ?? 0);
   $totalPay = $qr + $cod;
@@ -123,7 +123,7 @@ try {
     'qr_pct'      => $totalPay > 0 ? round($qr  * 100 / $totalPay, 2) : 0,
     'cod_pct'     => $totalPay > 0 ? round($cod * 100 / $totalPay, 2) : 0,
   ];
-
+  // ✅ ส่งผลลัพธ์เป็น JSON สำหรับแดชบอร์ดร้าน
   echo json_encode([
     'ok' => true,
     'params' => ['from' => $from, 'to' => $to, 'group' => $group],
